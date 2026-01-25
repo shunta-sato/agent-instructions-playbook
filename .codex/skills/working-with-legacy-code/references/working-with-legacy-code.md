@@ -39,52 +39,14 @@ Common targets:
 - UUID generation
 - external I/O (HTTP/DB/FS)
 
-### 3.1 Example: function injection (C++)
+### 3.1–3.2 Example sets (language-specific)
 
-```cpp
-using NextIndexFn = std::function<size_t(size_t)>;
+Choose the example set that matches your stack. These files mirror the “Create seams” guidance
+above with concrete snippets for common nondeterminism and I/O boundaries.
 
-class QuizCore {
- public:
-  explicit QuizCore(NextIndexFn next_index) : next_index_(std::move(next_index)) {}
-
-  size_t Next(size_t n) { return next_index_(n); }
-
- private:
-  NextIndexFn next_index_;
-};
-
-// production
-QuizCore core([](size_t n) { return static_cast<size_t>(std::rand()) % n; });
-
-// test
-QuizCore core_test([](size_t) { return 4; });
-```
-
-### 3.2 Example: TimeProvider
-
-```cpp
-class Clock {
- public:
-  virtual ~Clock() = default;
-  virtual std::chrono::system_clock::time_point Now() const = 0;
-};
-
-class SystemClock final : public Clock {
- public:
-  std::chrono::system_clock::time_point Now() const override { return std::chrono::system_clock::now(); }
-};
-
-class FakeClock final : public Clock {
- public:
-  explicit FakeClock(std::chrono::system_clock::time_point now) : now_(now) {}
-  std::chrono::system_clock::time_point Now() const override { return now_; }
-  void Set(std::chrono::system_clock::time_point now) { now_ = now; }
-
- private:
-  std::chrono::system_clock::time_point now_;
-};
-```
+- C++: `references/working-with-legacy-code-cpp.md`
+- Python: `references/working-with-legacy-code-py.md`
+- TypeScript: `references/working-with-legacy-code-ts.md`
 
 ## 4. Keep the outside thin, make the inside deterministic (Humble Object direction)
 
