@@ -22,6 +22,10 @@ Invoke this skill **before refactoring** if any of the following is true:
 ## How to use
 
 0) Open `references/working-with-legacy-code.md`. Pick the headings that match your situation and follow the order.
+   - For language-specific example snippets, open one of:
+     - `references/working-with-legacy-code-cpp.md`
+     - `references/working-with-legacy-code-py.md`
+     - `references/working-with-legacy-code-ts.md`
 
 1) Create a safety net first:
    - Write a characterization test (current behavior) or a high-level regression test.
