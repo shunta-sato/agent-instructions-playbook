@@ -44,6 +44,15 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - Failure paths (exceptions/return values/branches):
 - Testing strategy:
 
+## 3.5) Observability plan (mandatory when runtime behavior changes)
+
+- Operations to observe (user-facing or system-facing actions):
+- Identifiers for correlation (request_id/job_id/trace_id):
+- Logs (minimum: start / outcome / failure) with required fields:
+- Metrics (minimum: errors + latency; add golden signals if relevant):
+- Traces (span boundaries and correlation to logs/metrics):
+- Safety (no secrets/PII; OWASP/NIST logging guidance):
+
 ### Requirements-doc plan (only when requirements change)
 
 - Docs to update (paths):

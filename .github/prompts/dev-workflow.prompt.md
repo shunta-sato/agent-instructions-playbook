@@ -11,18 +11,23 @@ Use this prompt to execute a consistent end-to-end workflow for any change in th
 2) Change Brief (1 paragraph)
 - Intent, inputs/outputs, constraints, assumptions, and success criteria.
 
-3) Plan (3–5 steps)
+3) Observability Plan (when runtime behavior changes)
+- Operations, identifiers, and the minimum start/outcome/failure logs.
+- Errors + latency metrics (golden signals if relevant).
+- Trace/log correlation and safety (no secrets/PII).
+
+4) Plan (3–5 steps)
 - Keep one purpose per change.
 
-4) Implement
+5) Implement
 - Prefer minimal diffs.
 - Preserve readability and modularity.
 
-5) Verify
+6) Verify
 - Provide the exact commands to run: build / format-lint / tests.
 - If you cannot run commands, explain what to run and what you expect to see.
 
-6) Finish with Self Review
+7) Finish with Self Review
 - Readability: naming, intent-focused comments, control flow, tests.
 - Modularity: cohesion/coupling/boundaries.
 - Documentation: update docs when behavior/spec changes.

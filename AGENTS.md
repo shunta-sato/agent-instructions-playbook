@@ -16,6 +16,14 @@ This file is intentionally short. Detailed handbooks live in **Skills** and must
 - You are the author. Reduce places where readers get stuck (naming, branching, error paths, edge cases).
 - No large cleanups. However, leave touched code slightly easier to read than before.
 
+## Observability (mandatory)
+
+Operational debugging is a required output. If runtime behavior changes, readers must be able to answer “what happened?” and “why?” from the system’s emitted signals.
+
+Rules:
+- **If runtime behavior changes, add or update observability** (logs/metrics/traces) so failures are diagnosable without stepping through code.
+- **If unsure, explicitly invoke `$observability`.**
+
 ## 1. Mandatory workflow
 
 ### 1.1 Before you start implementation (MUST)

@@ -29,6 +29,7 @@ Invoke this skill **before every submission**. It is mandatory.
    - Readability (naming, comments, control flow, tests)
    - Modularity / coupling / boundaries (worst-level rating)
    - Boundary error handling (translation, no swallowed failures)
+   - Observability (logs/metrics/traces for runtime behavior changes)
    - Documentation (requirements / acceptance criteria / verification method)
 
 3) If you changed C++:

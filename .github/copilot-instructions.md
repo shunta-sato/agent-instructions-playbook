@@ -11,7 +11,8 @@ Produce changes that are **easy to understand and safe to change**.
 1. Read the relevant code and tests before editing.
 2. Write a short *Change Brief* (intent, inputs/outputs, constraints, assumptions).
 3. Prefer minimal diffs that reduce reading time.
-4. Verify with the project’s commands:
+4. If runtime behavior changes, add observability signals (logs/metrics/traces) so failures are diagnosable.
+5. Verify with the project’s commands:
    - build: `<fill>`
    - format/lint: `<fill>`
    - tests: `<fill>`

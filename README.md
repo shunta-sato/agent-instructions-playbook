@@ -49,6 +49,7 @@ If you want to use this repo as a “template”, keep the files at the root as 
 - `error-handling`
 - `modularity`
 - `nfr-iso25010`
+- `observability`
 - `quality-gate`
 - `requirements-documentation`
 - `requirements-to-design`
