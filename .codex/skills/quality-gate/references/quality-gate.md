@@ -3,6 +3,11 @@
 Before you submit, confirm all items below.
 
 - Checks are **all green** (build / format / static analysis / tests). Write the exact commands and key results.
+- Observability (when runtime behavior changes):
+  - logs: start/outcome/failure present with identifiers
+  - metrics: errors + latency (golden signals if relevant)
+  - traces: spans/correlation IDs connect logs and metrics
+  - safety: no secrets/PII; logging guidance followed
 - C++ documentation (when C++ was touched):
   - `.hpp`: Doxygen for all declarations (including private)
   - `.cpp`: paragraph intent comments; boundary/coupling-point contract notes

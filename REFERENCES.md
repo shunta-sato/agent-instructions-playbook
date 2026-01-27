@@ -35,6 +35,15 @@ This playbook is inspired by, or aligned with, the following sources.
   - https://www.incose.org/docs/default-source/working-groups/requirements-wg/rwg_iw2023/gtwr_introduction_and_concepts_012823.pdf
   - https://www.incose.org/docs/default-source/working-groups/requirements-wg/rwg_iw2023/gtwr_characteristics_section_2_012823.pdf
 
+## Observability / Logging
+
+- Google SRE Book, “Monitoring Distributed Systems”: https://sre.google/sre-book/monitoring-distributed-systems/
+- OpenTelemetry concepts and signal model: https://opentelemetry.io/docs/concepts/
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+- NIST SP 800-92, “Guide to Computer Security Log Management”: https://csrc.nist.gov/publications/detail/sp/800-92/final
+- The Twelve-Factor App, “Logs”: https://12factor.net/logs
+- ROS 2 Logging (throttling/once-only patterns): https://docs.ros.org/en/rolling/Concepts/Logging.html
+
 ## Documentation and static analysis tools
 
 - Doxygen configuration options:
