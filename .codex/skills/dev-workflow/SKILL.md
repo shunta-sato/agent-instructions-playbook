@@ -28,6 +28,13 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 2) Create a Test List (3–10). Decide whether to proceed with TDD.
    - If doing TDD, explicitly invoke `$test-driven-development`.
 
+2.5) **Concurrency & Performance check (mandatory):**
+   - If concurrency/parallelism is introduced or changed: invoke `$concurrency-core` and `$thread-safety-tooling`.
+   - If ROS2 code is affected: also invoke `$concurrency-ros2`.
+   - If Android code is affected: also invoke `$concurrency-android`.
+   - If runtime behavior changes: invoke `$observability`.
+   - If performance targets are part of the goal: invoke `$nfr-iso25010`.
+
 3) **Legacy check (mandatory):** if tests are missing or behavior is nondeterministic, explicitly invoke `$working-with-legacy-code` *before* refactoring.
 
 4) **C++ header gate (mandatory):** if `.hpp` / `.h` is in scope, explicitly invoke `$code-readability` and apply the mandatory Doxygen rules.

@@ -8,6 +8,12 @@ Before you submit, confirm all items below.
   - metrics: errors + latency (golden signals if relevant)
   - traces: spans/correlation IDs connect logs and metrics
   - safety: no secrets/PII; logging guidance followed
+- Concurrency gate (when concurrency/parallelism exists):
+  - Concurrency Plan is present and complete
+  - no unbounded queues/threads without backpressure explanation
+  - shutdown/cancellation strategy exists and is documented
+  - observability added for concurrent paths
+  - verification matrix present (TSan/static/stress plan) or explicit justification
 - C++ documentation (when C++ was touched):
   - `.hpp`: Doxygen for all declarations (including private)
   - `.cpp`: paragraph intent comments; boundary/coupling-point contract notes
