@@ -24,6 +24,14 @@ This playbook is inspired by, or aligned with, the following sources.
 - Michael Feathers, *Working Effectively with Legacy Code* (Pearson): https://mitpressbookstore.mit.edu/book/9780131177055
 - Bass / Clements / Kazman, *Software Architecture in Practice, 3rd Edition* (SEI/CMU): https://www.sei.cmu.edu/library/software-architecture-in-practice-third-edition/
 
+## Code smells / Anti-patterns
+
+- Martin Fowler — Code Smell: https://martinfowler.com/bliki/CodeSmell.html
+- Refactoring.guru — Code Smells catalog: https://refactoring.guru/refactoring/smells
+- Martin Fowler — Anemic Domain Model: https://martinfowler.com/bliki/AnemicDomainModel.html
+- Foote & Yoder — Big Ball of Mud: https://www.laputan.org/mud/
+- Hillside — AntiPatterns book page: https://hillside.net/antipatterns-book
+
 ## Requirements / NFR
 
 - ISO/IEC/IEEE 29148:2018 (requirements engineering standard, overview): https://www.iso.org/standard/72089.html

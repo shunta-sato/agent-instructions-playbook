@@ -38,14 +38,21 @@ If you want to use this repo as a “template”, keep the files at the root as 
 - Use prompt files:
   - `/dev-workflow`
   - `/quality-gate`
+  - `/review-antipatterns`
   - `/review-readability`
   - `/review-modularity`
   - `/write-requirements`
+
+## Smells & anti-patterns triage
+
+Use `$code-smells-and-antipatterns` to detect **new or worsened** design smells in a diff and propose the smallest fix.  
+It is **mandatory for structural changes** (new modules, boundary changes, or refactors across layers) and is recorded in `$dev-workflow` and enforced in `$quality-gate`.
 
 ## Included Codex skills
 
 - `architecture-boundaries`
 - `code-readability`
+- `code-smells-and-antipatterns`
 - `concurrency-android`
 - `concurrency-core`
 - `concurrency-ros2`

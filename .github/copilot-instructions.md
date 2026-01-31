@@ -25,6 +25,7 @@ Use these prompt files to keep behavior consistent:
 - `/quality-gate` — final checklist before finishing
 - `/review-readability` — readability review
 - `/review-modularity` — cohesion/coupling/boundaries review
+- `/review-antipatterns` — new/worsened smells & anti-patterns review
 - `/write-requirements` — requirement/spec writing workflow
 
 ## Language-specific highlights

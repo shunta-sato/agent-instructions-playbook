@@ -91,4 +91,5 @@ Skills are designed to load detailed instructions **only when needed**. If you n
 - Modularity handbook (cohesion/coupling/boundaries; evaluate at the lowest unit): `$modularity`
 - Error-handling handbook (exception translation at boundaries, failure-path design): `$error-handling`
 - Architecture boundaries handbook (dependency direction, DIP, DTOs, boundary placement): `$architecture-boundaries`
+- Smells & anti-patterns triage (new/worsened only): `$code-smells-and-antipatterns`
 - Quality attributes / NFR template (ISO/IEC 25010): `$nfr-iso25010`
