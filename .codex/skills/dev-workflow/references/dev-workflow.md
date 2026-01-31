@@ -44,6 +44,14 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - Failure paths (exceptions/return values/branches):
 - Testing strategy:
 
+## 3.25) Concurrency & performance check (mandatory when relevant)
+
+- If concurrency/parallelism is introduced or changed: invoke `$concurrency-core` and `$thread-safety-tooling`.
+- If ROS2 code is affected: also invoke `$concurrency-ros2`.
+- If Android code is affected: also invoke `$concurrency-android`.
+- If runtime behavior changes: invoke `$observability`.
+- If performance targets are part of the goal: invoke `$nfr-iso25010`.
+
 ## 3.5) Observability plan (mandatory when runtime behavior changes)
 
 - Operations to observe (user-facing or system-facing actions):

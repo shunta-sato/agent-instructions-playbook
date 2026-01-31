@@ -33,7 +33,19 @@ This playbook is inspired by, or aligned with, the following sources.
   - Overview by the original author: https://alistairmavin.com/ears/
 - INCOSE Requirements WG, “Guide to Writing Requirements” (characteristics excerpts):
   - https://www.incose.org/docs/default-source/working-groups/requirements-wg/rwg_iw2023/gtwr_introduction_and_concepts_012823.pdf
-  - https://www.incose.org/docs/default-source/working-groups/requirements-wg/rwg_iw2023/gtwr_characteristics_section_2_012823.pdf
+- https://www.incose.org/docs/default-source/working-groups/requirements-wg/rwg_iw2023/gtwr_characteristics_section_2_012823.pdf
+
+## Concurrency / Threading / Platform guidance
+
+- Pattern-Oriented Software Architecture, Volume 2 (Schmidt, Stal, Rohnert, Buschmann): https://www.wiley.com/en-us/Pattern-Oriented+Software+Architecture%2C+Volume+2%3A+Patterns+for+Concurrent+and+Networked+Objects-p-9780471606956
+- Java Concurrency in Practice (Goetz et al.): https://jcip.net/
+- ROS 2 Executors and Callback Groups (rclcpp): https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Executors.html
+- ROS 2 Services (sync/async behavior): https://docs.ros.org/en/rolling/Concepts/Services.html
+- Android WorkManager overview: https://developer.android.com/topic/libraries/architecture/workmanager
+- Android background execution limits (Android 8+): https://developer.android.com/about/versions/oreo/background
+- Foreground service restrictions (Android 12+): https://developer.android.com/about/versions/12/foreground-services
+- ThreadSanitizer documentation: https://clang.llvm.org/docs/ThreadSanitizer.html
+- Clang Thread Safety Analysis: https://clang.llvm.org/docs/ThreadSafetyAnalysis.html
 
 ## Observability / Logging
 

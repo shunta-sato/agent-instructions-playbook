@@ -31,6 +31,7 @@ If you want to use this repo as a “template”, keep the files at the root as 
 ### Codex
 - Use `$dev-workflow` for any change.
 - Finish with `$quality-gate`.
+- When introducing or changing concurrency/parallelism, invoke `$concurrency-core` and `$thread-safety-tooling` (plus `$concurrency-ros2` or `$concurrency-android` when relevant).
 
 ### Copilot (VS Code)
 - Copilot always reads `.github/copilot-instructions.md`.
@@ -45,6 +46,9 @@ If you want to use this repo as a “template”, keep the files at the root as 
 
 - `architecture-boundaries`
 - `code-readability`
+- `concurrency-android`
+- `concurrency-core`
+- `concurrency-ros2`
 - `dev-workflow`
 - `error-handling`
 - `modularity`
@@ -54,6 +58,7 @@ If you want to use this repo as a “template”, keep the files at the root as 
 - `requirements-documentation`
 - `requirements-to-design`
 - `test-driven-development`
+- `thread-safety-tooling`
 - `working-with-legacy-code`
 
 ## Versioning
