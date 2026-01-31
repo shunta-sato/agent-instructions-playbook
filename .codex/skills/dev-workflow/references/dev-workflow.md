@@ -44,6 +44,11 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - Failure paths (exceptions/return values/branches):
 - Testing strategy:
 
+### Smells / anti-patterns scan (only when structural change)
+
+- If the change adds new units or moves responsibilities across boundaries, explicitly invoke `$code-smells-and-antipatterns`.
+- Record: the 0–3 findings and the chosen minimal fix (or justification if not new/worsened).
+
 ## 3.25) Concurrency & performance check (mandatory when relevant)
 
 - If concurrency/parallelism is introduced or changed: invoke `$concurrency-core` and `$thread-safety-tooling`.

@@ -25,6 +25,8 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 1.5) If runtime behavior changes, add an Observability Plan (logs/metrics/traces) and invoke `$observability` when unsure.
 
+1.75) If the change is structural (new modules, boundary changes, refactors across layers), invoke `$code-smells-and-antipatterns`.
+
 2) Create a Test List (3–10). Decide whether to proceed with TDD.
    - If doing TDD, explicitly invoke `$test-driven-development`.
 

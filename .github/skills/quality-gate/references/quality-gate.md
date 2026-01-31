@@ -17,6 +17,10 @@ Before you submit, confirm all items below.
   - updated requirements/acceptance are unambiguous and measurable
   - verification method and trace (design/tests) exists
   - if unsure, invoke `$requirements-documentation`
+- Smells / anti-patterns (when structural change):
+  - `$code-smells-and-antipatterns` was run
+  - It reports **0 new/worsened** findings (or all such findings were fixed)
+  - Any “not fixed” items are explicitly marked as “not introduced/worsened” and include a follow-up note
 - Readability:
   - identify up to 3 reader-stoppers and fix with minimal diffs (with cited headings from `code-readability`)
 - Modularity:
