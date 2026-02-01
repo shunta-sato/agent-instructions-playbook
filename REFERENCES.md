@@ -6,14 +6,17 @@ This playbook is inspired by, or aligned with, the following sources.
 
 ### OpenAI Codex
 - AGENTS.md discovery and size cap (`project_doc_max_bytes`): https://developers.openai.com/codex/guides/agents-md/
-- Sample configuration showing the default `project_doc_max_bytes = 32768`: https://developers.openai.com/codex/config-sample
+- Advanced config (includes `project_doc_max_bytes` and related knobs): https://developers.openai.com/codex/config-advanced/
+- Skills overview (discovery locations, explicit `$` invocation): https://developers.openai.com/codex/skills/
 - Skills format and “only load body when invoked” (progressive disclosure): https://developers.openai.com/codex/skills/create-skill
 
 ### GitHub Copilot / VS Code
-- Repository custom instructions (`.github/copilot-instructions.md`) and path-specific instructions (`.github/instructions/*.instructions.md`): https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot
-- Prompt files (`.github/prompts/*.prompt.md`): https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files
+- Repository custom instructions (`.github/copilot-instructions.md`) and path-specific instructions (`.github/instructions/*.instructions.md`): https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
+- Prompt files (recommended location `.github/prompts/`, run via `/prompt-name` in chat): https://code.visualstudio.com/docs/copilot/customization/prompt-files
+- GitHub Docs prompt files (Customization library): https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files
 - VS Code Agent Skills (`.github/skills/*/SKILL.md`) and progressive disclosure model: https://code.visualstudio.com/docs/copilot/customization/agent-skills
-- GitHub “About Agent Skills” (concepts and supported products): https://docs.github.com/copilot/concepts/agents/about-agent-skills
+- VS Code Copilot settings reference (default search locations for instruction/prompt files): https://code.visualstudio.com/docs/copilot/reference/copilot-settings
+- GitHub “About Agent Skills” (concepts and supported products): https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
 
 ## Readability / Clean code / Architecture
 

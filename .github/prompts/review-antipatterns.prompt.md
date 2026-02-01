@@ -5,4 +5,4 @@ Output up to 3 findings max, each with: evidence, risk, smallest fix, and which 
 Rules:
 - Do not propose large refactors.
 - If it is not new/worsened, label as out-of-scope (optional note only).
-- Prefer routing fixes to: $code-readability / $modularity / $architecture-boundaries / $working-with-legacy-code.
+- Prefer routing fixes to these playbooks: code-readability, modularity, architecture-boundaries, working-with-legacy-code.
