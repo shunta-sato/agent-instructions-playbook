@@ -52,6 +52,24 @@ If you want to use this repo as a template, keep the files at the root as above 
 - Stored under `.github/skills/` (recommended).
 - Enable the `chat.useAgentSkills` setting in VS Code (preview) to use them.
 
+## Maintaining the AGENTS.md index
+
+This repo embeds a generated, compressed playbook index into `AGENTS.md` so agents can find the right files without needing to “decide” to load a skill.
+
+After editing any of these:
+- `.codex/skills/**`
+- `.github/skills/**`
+- `.github/prompts/**`
+- `.github/instructions/**`
+
+Run:
+
+```bash
+python scripts/generate_agent_index.py --write
+```
+
+CI will fail if the index is out of date.
+
 ## Canonical commands
 
 `COMMANDS.md` is the single place to record how to build / format / lint / test the project.
