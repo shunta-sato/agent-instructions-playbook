@@ -20,30 +20,30 @@ important|Prefer repo playbooks/references over pre-training for project-specifi
 defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md
 skills|name|short|codex_skill|github_skill|prompt
-skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|/workspace/agent-instructions-playbook/.codex/skills/architecture-boundaries/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/architecture-boundaries/SKILL.md|-
-skill|code-readability|Code readability|/workspace/agent-instructions-playbook/.codex/skills/code-readability/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/code-readability/SKILL.md|-
-skill|code-smells-and-antipatterns|Smells & anti-patterns triage|/workspace/agent-instructions-playbook/.codex/skills/code-smells-and-antipatterns/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/code-smells-and-antipatterns/SKILL.md|-
-skill|concurrency-android|Android concurrency and background work|/workspace/agent-instructions-playbook/.codex/skills/concurrency-android/SKILL.md|-|-
-skill|concurrency-core|Concurrency design patterns and planning|/workspace/agent-instructions-playbook/.codex/skills/concurrency-core/SKILL.md|-|-
-skill|concurrency-ros2|ROS 2 concurrency patterns|/workspace/agent-instructions-playbook/.codex/skills/concurrency-ros2/SKILL.md|-|-
-skill|dev-workflow|End-to-end dev workflow|/workspace/agent-instructions-playbook/.codex/skills/dev-workflow/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/dev-workflow/SKILL.md|/dev-workflow
-skill|error-handling|Boundary error handling|/workspace/agent-instructions-playbook/.codex/skills/error-handling/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/error-handling/SKILL.md|-
-skill|modularity|Modularity (cohesion/coupling)|/workspace/agent-instructions-playbook/.codex/skills/modularity/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/modularity/SKILL.md|-
-skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|/workspace/agent-instructions-playbook/.codex/skills/nfr-iso25010/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/nfr-iso25010/SKILL.md|-
-skill|observability|Observability plan and checklist|/workspace/agent-instructions-playbook/.codex/skills/observability/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/observability/SKILL.md|-
-skill|quality-gate|Final quality gate|/workspace/agent-instructions-playbook/.codex/skills/quality-gate/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/quality-gate/SKILL.md|/quality-gate
-skill|requirements-documentation|Requirements documentation|/workspace/agent-instructions-playbook/.codex/skills/requirements-documentation/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/requirements-documentation/SKILL.md|-
-skill|requirements-to-design|Requirements → design|/workspace/agent-instructions-playbook/.codex/skills/requirements-to-design/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/requirements-to-design/SKILL.md|-
-skill|test-driven-development|Test-driven development workflow|/workspace/agent-instructions-playbook/.codex/skills/test-driven-development/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/test-driven-development/SKILL.md|-
-skill|thread-safety-tooling|Thread-safety verification|/workspace/agent-instructions-playbook/.codex/skills/thread-safety-tooling/SKILL.md|-|-
-skill|working-with-legacy-code|Working with legacy code safely|/workspace/agent-instructions-playbook/.codex/skills/working-with-legacy-code/SKILL.md|/workspace/agent-instructions-playbook/.github/skills/working-with-legacy-code/SKILL.md|-
+skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.codex/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
+skill|code-readability|Code readability|.codex/skills/code-readability/SKILL.md|.github/skills/code-readability/SKILL.md|-
+skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.codex/skills/code-smells-and-antipatterns/SKILL.md|.github/skills/code-smells-and-antipatterns/SKILL.md|-
+skill|concurrency-android|Android concurrency and background work|.codex/skills/concurrency-android/SKILL.md|-|-
+skill|concurrency-core|Concurrency design patterns and planning|.codex/skills/concurrency-core/SKILL.md|-|-
+skill|concurrency-ros2|ROS 2 concurrency patterns|.codex/skills/concurrency-ros2/SKILL.md|-|-
+skill|dev-workflow|End-to-end dev workflow|.codex/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
+skill|error-handling|Boundary error handling|.codex/skills/error-handling/SKILL.md|.github/skills/error-handling/SKILL.md|-
+skill|modularity|Modularity (cohesion/coupling)|.codex/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
+skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.codex/skills/nfr-iso25010/SKILL.md|.github/skills/nfr-iso25010/SKILL.md|-
+skill|observability|Observability plan and checklist|.codex/skills/observability/SKILL.md|.github/skills/observability/SKILL.md|-
+skill|quality-gate|Final quality gate|.codex/skills/quality-gate/SKILL.md|.github/skills/quality-gate/SKILL.md|/quality-gate
+skill|requirements-documentation|Requirements documentation|.codex/skills/requirements-documentation/SKILL.md|.github/skills/requirements-documentation/SKILL.md|-
+skill|requirements-to-design|Requirements → design|.codex/skills/requirements-to-design/SKILL.md|.github/skills/requirements-to-design/SKILL.md|-
+skill|test-driven-development|Test-driven development workflow|.codex/skills/test-driven-development/SKILL.md|.github/skills/test-driven-development/SKILL.md|-
+skill|thread-safety-tooling|Thread-safety verification|.codex/skills/thread-safety-tooling/SKILL.md|-|-
+skill|working-with-legacy-code|Working with legacy code safely|.codex/skills/working-with-legacy-code/SKILL.md|.github/skills/working-with-legacy-code/SKILL.md|-
 prompts|name|short|path|related_skill
-prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|/workspace/agent-instructions-playbook/.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
-prompt|review-modularity|Review the selected diff/files focusing on modularity.|/workspace/agent-instructions-playbook/.github/prompts/review-modularity.prompt.md|modularity
-prompt|review-readability|Review the selected diff/files focusing on *reading time*.|/workspace/agent-instructions-playbook/.github/prompts/review-readability.prompt.md|code-readability
-prompt|write-requirements|Write or update requirements/specs for the described change.|/workspace/agent-instructions-playbook/.github/prompts/write-requirements.prompt.md|requirements-documentation
+prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
+prompt|review-modularity|Review the selected diff/files focusing on modularity.|.github/prompts/review-modularity.prompt.md|modularity
+prompt|review-readability|Review the selected diff/files focusing on *reading time*.|.github/prompts/review-readability.prompt.md|code-readability
+prompt|write-requirements|Write or update requirements/specs for the described change.|.github/prompts/write-requirements.prompt.md|requirements-documentation
 instructions|title|applyTo|path|first_rule
-instruction|C++ instructions (readability + maintai…|**/*.{h,hpp,hh,hxx,cpp,cc,cxx}|/workspace/agent-instructions-playbook/.github/instructions/cpp.instructions.md|Doxygen documentation is mandatory for this repository.
+instruction|C++ instructions (readability + maintai…|**/*.{h,hpp,hh,hxx,cpp,cc,cxx}|.github/instructions/cpp.instructions.md|Doxygen documentation is mandatory for this repository.
 end|AGENT_INDEX_V1
 ```
 <!-- END AGENT INDEX (generated) -->

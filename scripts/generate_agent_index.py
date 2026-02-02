@@ -39,14 +39,6 @@ class SkillMeta:
 
 
 @dataclass(frozen=True)
-class PromptMeta:
-    name: str
-    short: str
-    path: str
-    related_skill: str  # "-" if none
-
-
-@dataclass(frozen=True)
 class InstructionMeta:
     title: str
     apply_to: str
@@ -125,7 +117,7 @@ def _parse_prompt_file(prompt_md: Path) -> Tuple[str, str]:
     raise ValueError(f"Missing '# <name>' heading: {prompt_md}")
 
 
-def _parse_instruction_file(instr_md: Path) -> InstructionMeta:
+def _parse_instruction_file(repo_root: Path, instr_md: Path) -> InstructionMeta:
     txt = _read_text(instr_md)
 
     apply_to = ""
@@ -162,7 +154,7 @@ def _parse_instruction_file(instr_md: Path) -> InstructionMeta:
     return InstructionMeta(
         title=_truncate(title, 40),
         apply_to=_truncate(apply_to, 40),
-        path=str(instr_md.as_posix()),
+        path=str(instr_md.relative_to(repo_root).as_posix()),
         first_rule=_truncate(first_rule, 72),
     )
 
@@ -174,12 +166,12 @@ def _collect_skills(repo_root: Path, prompts: Dict[str, str]) -> List[SkillMeta]
     for p in glob.glob(str(repo_root / ".codex" / "skills" / "*" / "SKILL.md")):
         md = Path(p)
         name, short = _parse_skill_frontmatter(md)
-        codex[name] = (short, str(md.as_posix()))
+        codex[name] = (short, str(md.relative_to(repo_root).as_posix()))
 
     for p in glob.glob(str(repo_root / ".github" / "skills" / "*" / "SKILL.md")):
         md = Path(p)
         name, short = _parse_skill_frontmatter(md)
-        github[name] = (short, str(md.as_posix()))
+        github[name] = (short, str(md.relative_to(repo_root).as_posix()))
 
     names = sorted(set(codex.keys()) | set(github.keys()))
     out: List[SkillMeta] = []
@@ -239,7 +231,7 @@ def _build_index_text(
     # Instructions (path-specific rules)
     instrs: List[InstructionMeta] = []
     for p in glob.glob(str(repo_root / ".github" / "instructions" / "*.instructions.md")):
-        instrs.append(_parse_instruction_file(Path(p)))
+        instrs.append(_parse_instruction_file(repo_root, Path(p)))
     instrs.sort(key=lambda x: x.path)
 
     lines: List[str] = []
@@ -262,7 +254,7 @@ def _build_index_text(
     if extra_prompt_names:
         lines.append("prompts|name|short|path|related_skill")
         for name in extra_prompt_names:
-            path = f"{repo_root.as_posix()}/.github/prompts/{name}.prompt.md"
+            path = f".github/prompts/{name}.prompt.md"
             related = prompt_to_skill.get(name, "-")
             lines.append(f"prompt|{name}|{prompts[name]}|{path}|{related}")
 
