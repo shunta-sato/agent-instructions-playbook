@@ -18,35 +18,32 @@ Have one reason to change. Avoid gathering unrelated changes into one place.
 
 The goal of design here is to protect the stable core rules from the outer layers that change often (UI, DB, frameworks). The more you protect the core, the easier it becomes to test and the more resilient it is to change.
 
-### 16.1 Aim for independence
+### 16.1 Keep the core isolated from volatile details
 
-Use these five goals as guidance. You do not need to satisfy all of them from the start, but they are useful decision axes.
+This section is a high-level summary. For the primary sources, see `REFERENCES.md`.
 
-- Independent of frameworks. Frameworks should be swappable tools.
-- Independent of UI. Whether Web or CLI, the core processing should not change.
-- Independent of databases. Changing DB type or ORM should not break the core.
-- Independent of external services. Do not leak outside concerns inward.
-- Testable. You should be able to test the core without UI or DB.
+- Treat frameworks as plumbing: the core should compile without framework-specific annotations and types.
+- Keep UI as an adapter: the core should run and be testable without any UI process.
+- Treat persistence as replaceable: map between domain shapes and DB/ORM models at the boundary.
+- Wrap external services: keep SDK/client details at the edge, and translate their failures into domain-level errors.
+- Make the core easy to test: unit tests for core logic should run without DB/network/UI; integration tests live near boundaries.
 
-### 16.2 Align dependency direction
+### 16.2 Keep dependency direction pointing toward the core
 
-Core code should not know names or types from outer code. This is the **Dependency Rule**.
+The inner layer must not import from the outer layer.
 
-- Imports/includes should point from “outside → inside.” Inner layers must not depend on outer layers.
-- Do not bring outer data formats (HTTP request types, DB row types, etc.) into the inner layer. Convert them at the boundary into shapes that fit the inner layer.
+- Imports/includes should point from outer → inner. Inner layers must not depend on outer layers.
+- Convert outer data formats (HTTP requests, DB rows, SDK models, etc.) at the boundary before crossing inward.
+- If the core needs an outer capability, define an interface/port in the core and implement it outside.
 
-### 16.3 A rough layer guide
+### 16.3 Minimal layer sketch
 
-As a minimal breakdown, think in four layers, often explained as **Four Concentric Circles**.
+A practical mental model is a few layers with clear responsibilities:
 
-- **Center**: business rules (Entities)  
-  The most stable rules: what is allowed, what is forbidden, etc.
-- **Next**: application steps (Use Cases)  
-  A place to assemble “input → process → output” independent of UI/API.
-- **Next**: translation and connection (Interface Adapters)  
-  Web entry points, view formatting, DB access translation, etc. Convert between inner and outer shapes.
-- **Outer**: mechanisms and tools (Frameworks & Drivers)  
-  Web frameworks, DB drivers, message queues, etc. Mostly “glue.”
+- **Core rules**: domain objects and invariants (stable policy).
+- **Application flow**: use-case orchestration (“input → process → output”).
+- **Adapters**: translation between core shapes and outer shapes (controllers, presenters, repositories, etc.).
+- **Infrastructure**: frameworks, DB drivers, message queues, SDKs; mostly wiring/glue.
 
 ### 16.4 Crossing boundaries
 
