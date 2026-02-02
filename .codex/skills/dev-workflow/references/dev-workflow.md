@@ -12,6 +12,18 @@ When in doubt, come back here and **only fill the blanks**.
 - Assumptions (separate unknowns explicitly):
 - Boundaries (UI/HTTP/DB/external services):
 
+## 0.25) Applicable path-specific rules (mandatory)
+
+Before editing, identify any matching `.github/instructions/*.instructions.md` files.
+
+- Copilot: these apply automatically via `applyTo`.
+- Codex CLI / other tools: open the matching instruction files (see AGENTS.md → Agent Index → `instructions|...`) and follow them.
+
+Fill in:
+- Files to be edited:
+- Matching instruction files:
+- Notes / conflicts:
+
 ## 1) Requirements (EARS + acceptance criteria)
 
 ### EARS (“shall” statements)

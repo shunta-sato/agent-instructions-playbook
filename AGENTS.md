@@ -18,6 +18,7 @@ AGENT_INDEX_V1
 meta|format=v1|max_bytes=8192|codex_invoke=$<skill>|prompt_invoke=/<prompt>
 important|Prefer repo playbooks/references over pre-training for project-specific decisions.
 defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
+path_rules|copilot=auto_apply_applyTo|codex=manual_open
 core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md
 skills|name|short|codex_skill|github_skill|prompt
 skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.codex/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
@@ -68,8 +69,15 @@ end|AGENT_INDEX_V1
 - Agent Skills (VS Code / compatible agents): skills in `.github/skills/` load on demand when relevant.
 
 ## Language/path-specific rules
-- Follow `.github/instructions/*.instructions.md` when present.
-- C++: `.github/instructions/cpp.instructions.md` is mandatory for `**/*.{h,hpp,hh,hxx,cpp,cc,cxx}`.
+
+We store path-specific rules under `.github/instructions/` so GitHub Copilot can auto-apply them via `applyTo` globs.
+
+- GitHub Copilot / VS Code: matching `*.instructions.md` files apply automatically when the file being edited matches `applyTo`.
+- Codex CLI (and tools that only read `AGENTS.md`): these files are NOT auto-applied. Before editing, use the Agent Index above (`instructions|...` records) to find every matching instruction file, open it, and follow it.
+
+Codex matching rule:
+1) For each file you plan to edit, collect every instruction file whose `applyTo` matches that path.
+2) Apply all matches. If instructions conflict, prefer the more specific `applyTo`. If still unclear, stop and ask before editing.
 
 ## Verification commands
 Use the canonical commands in `COMMANDS.md` (build, format/lint, tests).
