@@ -1,28 +1,28 @@
 ## 3. Naming (variables, functions, classes)
 
-Names are small comments. A good name lets the reader extract key information without extra explanation.
+A name should carry the key facts the reader needs, without forcing them to read the implementation first.
+If you need an extra comment to decode a name, prefer improving the name.
 
-### 3.1 Pack information into names
+### 3.1 Put key facts into names
 
-- Avoid vague verbs (e.g., `get`). Use verbs that reflect what really happens.  
-  Example: if it reads from cache, use `ReadFromCache`; if it fetches from the network, use `Download`.
-- Avoid empty names like `tmp` or `retval` unless there is a clear reason.  
-  If “short-lived temporary storage” is the most important fact, `tmp` can be valid. Otherwise, include the purpose.
-- If a value has a unit, put the unit in the name.  
-  Example: `elapsed_ms` helps prevent mistakes in calculations and display.
-- If a property is risky or easy to miss, make that visible in the name.  
-  Example: `untrusted_*` / `unsafe_*`; before escaping, `raw_*` / `unescaped_*`.
-- If you need a comment to explain the name, change the name. Do not use comments to patch a weak name.
+- Avoid generic verbs (e.g., `get`, `do`, `process`). Use a verb that matches the actual action.  
+  Example: `FetchUserProfileFromApi` vs `ReadUserProfileFromCache` makes the data source explicit.
+- Avoid placeholder names like `tmp` or `retval` unless the short lifetime or “just a return value” is the most important fact.
+- If a value has a unit, include it in the name when it prevents mistakes.  
+  Example: `timeout_ms`, `size_bytes`, `max_items`.
+- If trust or safety changes how a value must be handled, surface that in the name.  
+  Example: `untrusted_*`, `user_input_*`, `raw_*` (before validation/escaping).
+- If the best explanation is “see comment”, rename instead of patching with comments.
 
-### 3.2 Choose names that cannot be misread
+### 3.2 Choose names that resist misinterpretation
 
-After choosing a name, intentionally ask: “Can this be read as something else?” Remove ambiguity early.
+After naming something, try to misread it like a new teammate would. If a plausible wrong interpretation exists, rename now.
 
-- Avoid words like `filter` that can mean “keep” or “drop.” Prefer one-sided words like `select` or `exclude`.
-- When working with ranges and bounds, choose words that prevent boundary mistakes.  
-  Example: use `min` / `max` for bounds; `first` / `last` for inclusive endpoints; `begin` / `end` for half-open ranges.
-- For booleans, make it clear what is true when the value is true.  
-  Prefer `is_*` / `has_*` / `can_*`. Use negative forms (`not_*`) only when necessary.
+- Avoid overloaded verbs that can imply opposite outcomes. Prefer explicit pairs like `include` / `exclude`, `keep` / `drop`.
+- For ranges and boundaries, encode inclusiveness/exclusiveness in the name.  
+  Example: `start_inclusive` + `end_exclusive` (half-open), or `lower_inclusive` + `upper_inclusive` when both ends are included.
+- For booleans, make “true means what?” obvious.  
+  Prefer `is_*` / `has_*` / `can_*`. Avoid negated names (`not_*`, `disable_*`) unless the negative concept is the natural one.
 
 ### 3.3 Names should be pronounceable, searchable, and distinguishable
 
