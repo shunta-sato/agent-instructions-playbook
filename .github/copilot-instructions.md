@@ -1,10 +1,10 @@
 # GitHub Copilot Repository Instructions
 
-These instructions complement `AGENTS.md` and the Codex skills under `.codex/skills/`.
+These instructions complement `AGENTS.md` and the playbooks under `.github/` and `.codex/`.
 
 ## Primary goal
 
-Produce changes that are **easy to understand and safe to change**.
+Produce changes that are easy to understand and safe to change.
 
 ## Always do this
 
@@ -12,10 +12,8 @@ Produce changes that are **easy to understand and safe to change**.
 2. Write a short *Change Brief* (intent, inputs/outputs, constraints, assumptions).
 3. Prefer minimal diffs that reduce reading time.
 4. If runtime behavior changes, add observability signals (logs/metrics/traces) so failures are diagnosable.
-5. Verify with the project’s commands:
-   - build: `<fill>`
-   - format/lint: `<fill>`
-   - tests: `<fill>`
+5. Verify with the canonical commands in `COMMANDS.md` (build, format/lint, tests).
+   - If you cannot run them, say why and provide a reproducible procedure.
 
 ## Use the on-demand prompts
 
@@ -31,6 +29,6 @@ Use these prompt files to keep behavior consistent:
 ## Language-specific highlights
 
 - **C++ headers (`.hpp`)**: Doxygen comments are required for *all declarations*, including `private` members.
-- **C++ sources (`.cpp`)**: comments must explain **intent / assumptions / pitfalls** (not restate code), and replace “magic values” with named constants or enums.
+- **C++ sources (`.cpp`)**: comments must explain intent / assumptions / pitfalls (not restate code), and replace “magic values” with named constants or enums.
 
 (See `.github/instructions/cpp.instructions.md` for the full rules.)
