@@ -243,6 +243,7 @@ def _build_index_text(
         "important|Prefer repo playbooks/references over pre-training for project-specific decisions."
     )
     lines.append("defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md")
+    lines.append("path_rules|copilot=auto_apply_applyTo|codex=manual_open")
     lines.append("core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md")
 
     lines.append("skills|name|short|codex_skill|github_skill|prompt")

@@ -3,6 +3,9 @@
 Before you submit, confirm all items below.
 
 - Checks are **all green** (build / format / static analysis / tests). Write the exact commands and key results.
+- Path-specific instructions (when applicable):
+  - Identify matching `.github/instructions/*.instructions.md` by `applyTo`.
+  - Confirm they were followed (or state why none applied).
 - Observability (when runtime behavior changes):
   - logs: start/outcome/failure present with identifiers
   - metrics: errors + latency (golden signals if relevant)
