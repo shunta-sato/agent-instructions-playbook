@@ -32,6 +32,10 @@ Invoke this skill **before every submission**. It is mandatory.
    - Concurrency (plan, shutdown/cancellation, observability, verification)
    - Observability (logs/metrics/traces for runtime behavior changes)
    - Documentation (requirements / acceptance criteria / verification method)
+  - Bugfix evidence + report (when bugfix mode triggered):
+    - Bug Report exists (PR description, issue comment, or docs file).
+    - Report includes repro (or why impossible), evidence, Five Whys root cause, verification, and at least one measurable prevention action.
+    - Workaround-only changes include documented risk, removal plan, and follow-up tracking task.
 
 3) If you changed C++:
    - `.hpp`: verify Doxygen completeness for all declarations (including private).

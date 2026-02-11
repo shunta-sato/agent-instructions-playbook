@@ -22,6 +22,7 @@ path_rules|copilot=auto_apply_applyTo|codex=manual_open
 core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md
 skills|name|short|codex_skill|github_skill|prompt
 skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.codex/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
+skill|bug-investigation-and-rca|Bug investigation & RCA|.codex/skills/bug-investigation-and-rca/SKILL.md|.github/skills/bug-investigation-and-rca/SKILL.md|-
 skill|code-readability|Code readability|.codex/skills/code-readability/SKILL.md|.github/skills/code-readability/SKILL.md|-
 skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.codex/skills/code-smells-and-antipatterns/SKILL.md|.github/skills/code-smells-and-antipatterns/SKILL.md|-
 skill|concurrency-android|Android concurrency and background work|.codex/skills/concurrency-android/SKILL.md|-|-
@@ -39,6 +40,7 @@ skill|test-driven-development|Test-driven development workflow|.codex/skills/tes
 skill|thread-safety-tooling|Thread-safety verification|.codex/skills/thread-safety-tooling/SKILL.md|-|-
 skill|working-with-legacy-code|Working with legacy code safely|.codex/skills/working-with-legacy-code/SKILL.md|.github/skills/working-with-legacy-code/SKILL.md|-
 prompts|name|short|path|related_skill
+prompt|bug-report|Generate an evidence-based Bug Report (RCA) for the bug being fixed in …|.github/prompts/bug-report.prompt.md|-
 prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
 prompt|review-modularity|Review the selected diff/files focusing on modularity.|.github/prompts/review-modularity.prompt.md|modularity
 prompt|review-readability|Review the selected diff/files focusing on *reading time*.|.github/prompts/review-readability.prompt.md|code-readability
@@ -64,7 +66,7 @@ end|AGENT_INDEX_V1
 2) Before finishing, apply the `quality-gate` playbook and address findings.
 
 ### How to run a playbook (depends on your tool)
-- OpenAI Codex: invoke a skill with `$<skill-name>` (for example `$dev-workflow`, `$quality-gate`, `$observability`). You can also use `/skills` to browse skills.
+- OpenAI Codex: invoke a skill with `$<skill-name>` (for example `$dev-workflow`, `$quality-gate`, `$observability`, `$bug-investigation-and-rca`). You can also use `/skills` to browse skills.
 - VS Code prompt files: type `/` then the prompt name (for example `/dev-workflow`, `/quality-gate`).
 - Agent Skills (VS Code / compatible agents): skills in `.github/skills/` load on demand when relevant.
 

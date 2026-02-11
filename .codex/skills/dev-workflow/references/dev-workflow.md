@@ -61,6 +61,15 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - If the change adds new units or moves responsibilities across boundaries, explicitly invoke `$code-smells-and-antipatterns`.
 - Record: the 0–3 findings and the chosen minimal fix (or justification if not new/worsened).
 
+## 3.2) Bugfix mode (required when task is a bug/regression/flaky/crash/hang)
+
+- Invoke `$bug-investigation-and-rca` before implementation.
+- Do not implement the fix until all three exist:
+  - reproduction or an explicit reason reproduction is currently impossible
+  - captured evidence (logs/metrics/traces, stack trace, repro, or failing test output)
+  - a leading hypothesis plus verification plan
+- If a workaround/ops-only mitigation is proposed, include a prevention follow-up task with owner/tracking.
+
 ## 3.25) Concurrency & performance check (mandatory when relevant)
 
 - If concurrency/parallelism is introduced or changed: invoke `$concurrency-core` and `$thread-safety-tooling`.

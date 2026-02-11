@@ -22,6 +22,10 @@ Before you submit, confirm all items below.
   - `.cpp`: paragraph intent comments; boundary/coupling-point contract notes
   - constants: meaning/unit/range (or rationale)
   - unit tests: make why/what readable
+- Bugfix evidence + report (required when bugfix mode was triggered):
+  - Bug Report exists (PR description, issue comment, or docs file)
+  - Report includes repro (or why reproduction is currently impossible), evidence, Five Whys root cause, verification, and at least one prevention action with measurable end state
+  - Workaround-only changes are blocked unless risk, removal plan, and follow-up task are documented
 - Requirements documentation (when requirements/acceptance changed):
   - updated requirements/acceptance are unambiguous and measurable
   - verification method and trace (design/tests) exists
