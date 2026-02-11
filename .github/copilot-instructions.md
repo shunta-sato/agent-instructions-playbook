@@ -25,6 +25,7 @@ Use these prompt files to keep behavior consistent:
 - `/review-modularity` — cohesion/coupling/boundaries review
 - `/review-antipatterns` — new/worsened smells & anti-patterns review
 - `/write-requirements` — requirement/spec writing workflow
+- `/bug-report` — evidence-based Bug Report (RCA) for bugfix/regression/flaky/incidents
 
 ## Language-specific highlights
 
@@ -32,3 +33,5 @@ Use these prompt files to keep behavior consistent:
 - **C++ sources (`.cpp`)**: comments must explain intent / assumptions / pitfalls (not restate code), and replace “magic values” with named constants or enums.
 
 (See `.github/instructions/cpp.instructions.md` for the full rules.)
+
+When fixing bugs/regressions/flakes/incidents, run `/bug-report` and keep facts separate from assumptions.

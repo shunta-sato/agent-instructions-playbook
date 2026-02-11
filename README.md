@@ -37,6 +37,7 @@ If you want to use this repo as a template, keep the files at the root as above 
 - Finish with `$quality-gate`.
 - When runtime behavior changes, use `$observability`.
 - When introducing or changing concurrency/parallelism, invoke `$concurrency-core` and `$thread-safety-tooling` (plus `$concurrency-ros2` or `$concurrency-android` when relevant).
+- When fixing bugs/regressions/flakes/crashes/hangs, invoke `$bug-investigation-and-rca` before implementation and produce the Bug Report (RCA).
 
 ### Copilot (VS Code)
 
@@ -47,6 +48,7 @@ If you want to use this repo as a template, keep the files at the root as above 
 **Prompt files**
 - Stored under `.github/prompts/` by default.
 - Run them by typing `/` and the prompt name in chat (for example: `/dev-workflow`).
+- Use `/bug-report` for bugfix/regression/flaky/incidents to generate the deterministic Bug Report template.
 
 **Agent Skills (optional)**
 - Stored under `.github/skills/` (recommended).
@@ -83,6 +85,7 @@ It is recommended for structural changes (new modules, boundary changes, or refa
 ## Included skills
 
 - `architecture-boundaries`
+- `bug-investigation-and-rca`
 - `code-readability`
 - `code-smells-and-antipatterns`
 - `concurrency-android`
@@ -106,3 +109,7 @@ This repository follows Semantic Versioning (SemVer).
 Skill renames are treated as breaking changes.
 
 Generated: 2026-02-01
+
+## Bugfix mode triggers (required)
+
+Use bugfix mode (via `$dev-workflow` + `$bug-investigation-and-rca`) when tasks mention bug/regression/flaky/crash/hang/incident, when behavior-level test failures are being fixed, or when workaround-only mitigation is considered. Paste the resulting Bug Report (RCA) in the PR description, issue comment, or a tracked docs file.

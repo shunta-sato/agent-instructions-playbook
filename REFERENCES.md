@@ -77,3 +77,14 @@ This playbook is inspired by, or aligned with, the following sources.
 ## Versioning
 
 - Semantic Versioning 2.0.0: https://semver.org/
+
+
+## Bug investigation / postmortem / reporting
+
+- Google SRE Workbook — Postmortem Culture: https://sre.google/workbook/postmortem-culture/
+- Google SRE Book — Blameless Postmortem: https://sre.google/sre-book/postmortem-culture/
+- NIST SP 800-61r2 PDF (Lessons Learned / post-incident activity): https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf
+- Atlassian Postmortem template (includes Five Whys section): https://www.atlassian.com/incident-management/postmortem/templates
+- Atlassian 5 Whys analysis template: https://www.atlassian.com/software/confluence/templates/5-whys-analysis
+- Jira bug report template (steps/expected/actual/environment): https://www.atlassian.com/en/software/jira/templates/bug-report
+- Mozilla bug writing guidelines (steps/expected/actual; facts vs speculations): https://devdoc.net/web/developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines.html

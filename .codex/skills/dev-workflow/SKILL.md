@@ -25,6 +25,11 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 1.5) If runtime behavior changes, add an Observability Plan (logs/metrics/traces) and invoke `$observability` when unsure.
 
+1.6) **Bugfix mode (required when task is a bug/regression/flaky/crash/hang):**
+   - Invoke `$bug-investigation-and-rca`.
+   - Do **not** implement the fix until reproduction/evidence is captured, a leading hypothesis is stated, and a verification plan exists.
+   - If only a workaround is proposed, include a follow-up prevention task.
+
 1.75) If the change is structural (new modules, boundary changes, refactors across layers), invoke `$code-smells-and-antipatterns`.
 
 2) Create a Test List (3–10). Decide whether to proceed with TDD.
