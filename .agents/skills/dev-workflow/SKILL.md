@@ -42,6 +42,10 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - If runtime behavior changes: invoke `$observability`.
    - If performance targets are part of the goal: invoke `$nfr-iso25010`.
 
+2.6) **Constrained / low-level synthesis check (mandatory when relevant):**
+   - If you are implementing strict-constraint code (alignment/padding, SIMD/intrinsics, kernels, DSL/codegen, strict ABI/hardware APIs),
+     or if the task repeatedly fails to compile/test: invoke `$staged-lowering` before large edits.
+
 3) **Legacy check (mandatory):** if tests are missing or behavior is nondeterministic, explicitly invoke `$working-with-legacy-code` *before* refactoring.
 
 4) **C++ header gate (mandatory):** if `.hpp` / `.h` is in scope, explicitly invoke `$code-readability` and apply the mandatory Doxygen rules.

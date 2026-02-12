@@ -21,6 +21,10 @@ Before you submit, confirm all items below.
   - shutdown/cancellation strategy exists and is documented
   - observability added for concurrent paths
   - verification matrix present (TSan/static/stress plan) or explicit justification
+- Constrained code synthesis gate (when strict constraints exist OR `$staged-lowering` was used):
+  - Staged Lowering Plan exists (IR/DSL + pass plan)
+  - Per-pass Verification Log exists (commands + key results)
+  - alignment/padding/bounds/ABI edge cases are handled in a dedicated pass (not mixed into initial wiring)
 - C++ documentation (when C++ was touched):
   - `.hpp`: Doxygen for all declarations (including private)
   - `.cpp`: paragraph intent comments; boundary/coupling-point contract notes
