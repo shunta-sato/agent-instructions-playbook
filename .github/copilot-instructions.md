@@ -1,6 +1,6 @@
 # GitHub Copilot Repository Instructions
 
-These instructions complement `AGENTS.md` and the playbooks under `.github/` and `.codex/`.
+These instructions complement `AGENTS.md` and the playbooks under `.github/` and `.agents/`.
 
 ## Primary goal
 

@@ -50,7 +50,13 @@ Optional (golden signals when relevant):
 - Scrub or hash identifiers where required.
 - Follow OWASP Logging Cheat Sheet and NIST SP 800-92 guidance.
 
-## 7) Noise control
+## 7) Concurrency observability
+
+- Correlate logs across threads/tasks using trace_id/span_id or job_id.
+- Prefer structured logs; avoid logging secrets.
+- Measure queue length, worker utilization, and callback latency when applicable.
+
+## 8) Noise control
 
 - Throttle or sample high-frequency logs.
 - Prefer boundary logging (once per operation).

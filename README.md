@@ -2,7 +2,7 @@
 
 A reusable instruction set that works with:
 
-- **OpenAI Codex** (`AGENTS.md` + `.codex/skills/…`)
+- **OpenAI Codex** (`AGENTS.md` + `.agents/skills/…`)
 - **GitHub Copilot (VS Code)** (`AGENTS.md`, `.github/copilot-instructions.md`, `.github/instructions/…`, `.github/prompts/…`, and optional `.github/skills/…`)
 
 This repo is designed around **thin always-on rules** and **thick on-demand playbooks**.
@@ -18,7 +18,7 @@ Recommended layout (self-contained):
 
 AGENTS.md
 COMMANDS.md
-.codex/skills/...
+.agents/skills/...
 .github/
 copilot-instructions.md
 instructions/
@@ -60,8 +60,8 @@ If you want to use this repo as a template, keep the files at the root as above 
 This repo embeds a generated, compressed playbook index into `AGENTS.md` so agents can find the right files without needing to “decide” to load a skill.
 
 After editing any of these:
-- `.codex/skills/**`
-- `.github/skills/**`
+- `.agents/skills/**`
+- `.github/skills/**` (generated mirror; do not edit manually)
 - `.github/prompts/**`
 - `.github/instructions/**`
 

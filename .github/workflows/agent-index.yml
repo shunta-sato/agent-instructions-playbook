@@ -16,5 +16,8 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Check skills mirror is up to date
+        run: python scripts/sync_agent_skills.py --check
+
       - name: Check AGENTS.md index is up to date
         run: python scripts/generate_agent_index.py --check

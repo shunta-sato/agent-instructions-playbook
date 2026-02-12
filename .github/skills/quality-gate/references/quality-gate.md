@@ -15,6 +15,12 @@ Before you submit, confirm all items below.
   - UI Visual Verification Report exists and uses the required format
   - snapshots were verified, or baselines were updated intentionally with rationale
   - artifact paths are listed (diff images/reports/snapshot folders)
+- Concurrency gate (when concurrency/parallelism exists):
+  - Concurrency Plan is present and complete
+  - no unbounded queues/threads without backpressure explanation
+  - shutdown/cancellation strategy exists and is documented
+  - observability added for concurrent paths
+  - verification matrix present (TSan/static/stress plan) or explicit justification
 - C++ documentation (when C++ was touched):
   - `.hpp`: Doxygen for all declarations (including private)
   - `.cpp`: paragraph intent comments; boundary/coupling-point contract notes
