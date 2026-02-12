@@ -6,6 +6,7 @@ Use this prompt to execute a consistent end-to-end workflow for any change in th
 
 1) Read
 - Identify entry points and impacted code paths.
+- For complex or long-running tasks, run `/execution-plans` and keep `plans/<slug>.md` updated.
 - Skim relevant tests (or add a reproduction plan if none exist).
 
 2) Change Brief (1 paragraph)

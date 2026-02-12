@@ -18,6 +18,8 @@ Recommended layout (self-contained):
 
 AGENTS.md
 COMMANDS.md
+PLANS.md
+plans/
 .agents/skills/...
 .github/
 copilot-instructions.md
@@ -34,6 +36,7 @@ If you want to use this repo as a template, keep the files at the root as above 
 
 ### Codex
 - Use `$dev-workflow` for any change.
+- Use `$execution-plans` for complex/long-running work and keep `plans/<slug>.md` updated.
 - Finish with `$quality-gate`.
 - When runtime behavior changes, use `$observability`.
 - When UI code changes, invoke `$visual-regression-testing` and the matching platform skill (`$visual-regression-ios|android|web`) and produce a UI Visual Verification Report.
@@ -118,6 +121,7 @@ Required output:
 - `concurrency-ros2`
 - `dev-workflow`
 - `error-handling`
+- `execution-plans`
 - `modularity`
 - `nfr-iso25010`
 - `observability`

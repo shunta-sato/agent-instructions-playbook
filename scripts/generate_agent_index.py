@@ -222,6 +222,7 @@ def _build_index_text(
         "write-requirements": "requirements-documentation",
         "dev-workflow": "dev-workflow",
         "quality-gate": "quality-gate",
+        "status-update": "execution-plans",
     }
 
     # Prompts that do not share the same name with a skill are listed explicitly.
@@ -244,7 +245,7 @@ def _build_index_text(
     )
     lines.append("defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md")
     lines.append("path_rules|copilot=auto_apply_applyTo|codex=manual_open")
-    lines.append("core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md")
+    lines.append("core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md")
 
     lines.append("skills|name|short|codex_skill|github_skill|prompt")
     for s in skills:

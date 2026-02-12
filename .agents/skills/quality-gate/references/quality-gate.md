@@ -6,6 +6,10 @@ Before you submit, confirm all items below.
 - Path-specific instructions (when applicable):
   - Identify matching `.github/instructions/*.instructions.md` by `applyTo`.
   - Confirm they were followed (or state why none applied).
+- ExecPlan (when an ExecPlan was used for this work):
+  - the plan file exists under `plans/` and is linked in the final response/PR
+  - Progress (WBS), Decision log, Surprises, and Handoff are up to date
+  - outcomes/follow-ups are recorded when the task is complete
 - Observability (when runtime behavior changes):
   - logs: start/outcome/failure present with identifiers
   - metrics: errors + latency (golden signals if relevant)
