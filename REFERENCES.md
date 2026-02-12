@@ -5,6 +5,8 @@ This playbook is inspired by, or aligned with, the following sources.
 ## Tooling: how instructions/skills are loaded
 
 ### OpenAI Codex
+- OpenAI, *Codex — Example: using AGENTS.md and ExecPlan* (planning/handoff pattern): https://cookbook.openai.com/examples/codex/agents_md
+- Anthropic, *Claude Code common workflows* (planning and iterative execution): https://docs.anthropic.com/en/docs/claude-code/common-workflows
 - AGENTS.md discovery and size cap (`project_doc_max_bytes`): https://developers.openai.com/codex/guides/agents-md/
 - Advanced config (includes `project_doc_max_bytes` and related knobs): https://developers.openai.com/codex/config-advanced/
 - Skills overview (discovery locations, explicit `$` invocation): https://developers.openai.com/codex/skills/

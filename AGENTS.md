@@ -19,7 +19,7 @@ meta|format=v1|max_bytes=8192|codex_invoke=$<skill>|prompt_invoke=/<prompt>
 important|Prefer repo playbooks/references over pre-training for project-specific decisions.
 defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 path_rules|copilot=auto_apply_applyTo|codex=manual_open
-core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md
+core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
 skills|name|short|codex_skill|github_skill|prompt
 skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.agents/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md|.github/skills/bug-investigation-and-rca/SKILL.md|-
@@ -30,6 +30,7 @@ skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/c
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md|.github/skills/concurrency-ros2/SKILL.md|-
 skill|dev-workflow|End-to-end dev workflow|.agents/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md|.github/skills/error-handling/SKILL.md|-
+skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md|.github/skills/execution-plans/SKILL.md|/execution-plans
 skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
 skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.agents/skills/nfr-iso25010/SKILL.md|.github/skills/nfr-iso25010/SKILL.md|-
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md|.github/skills/observability/SKILL.md|-
@@ -49,6 +50,7 @@ prompt|bug-report|Generate an evidence-based Bug Report (RCA) for the bug being 
 prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
 prompt|review-modularity|Review the selected diff/files focusing on modularity.|.github/prompts/review-modularity.prompt.md|modularity
 prompt|review-readability|Review the selected diff/files focusing on *reading time*.|.github/prompts/review-readability.prompt.md|code-readability
+prompt|status-update|Generate a short, human-readable status update for ongoing work.|.github/prompts/status-update.prompt.md|execution-plans
 prompt|ui-verify|Use this prompt when UI code changes or when asked for screenshot/snaps…|.github/prompts/ui-verify.prompt.md|-
 prompt|write-requirements|Write or update requirements/specs for the described change.|.github/prompts/write-requirements.prompt.md|requirements-documentation
 instructions|title|applyTo|path|first_rule
@@ -70,6 +72,8 @@ end|AGENT_INDEX_V1
 ## Mandatory workflow for code/test changes
 1) Apply the `dev-workflow` playbook end-to-end before editing.
 2) Before finishing, apply the `quality-gate` playbook and address findings.
+
+If work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`.
 
 ### How to run a playbook (depends on your tool)
 - OpenAI Codex: invoke a skill with `$<skill-name>` (for example `$dev-workflow`, `$quality-gate`, `$observability`, `$bug-investigation-and-rca`). You can also use `/skills` to browse skills.

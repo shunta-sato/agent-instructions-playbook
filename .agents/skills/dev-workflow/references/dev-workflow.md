@@ -24,6 +24,27 @@ Fill in:
 - Matching instruction files:
 - Notes / conflicts:
 
+## 0.5) ExecPlan (planning/WBS/handoff) — mandatory when complex
+
+If this work is complex or long-running, create/update an ExecPlan **before** editing code.
+
+Triggers (any => ExecPlan required):
+
+- expected > ~2 hours of focused work or multiple milestones/PRs
+- crosses boundaries (modules/layers/services) or introduces a new unit
+- meaningful unknowns (API choices, rollout, concurrency, performance targets)
+- you may stop/resume later or need handoff readiness
+
+Fill in:
+
+- ExecPlan required? yes|no (why):
+- ExecPlan path (if yes): plans/<slug>.md
+- Approval needed? yes|no (risky/irreversible change):
+
+If ExecPlan is used:
+
+- You may keep sections 1–3 short by linking to the ExecPlan, but do not leave required fields blank.
+
 ## 1) Requirements (EARS + acceptance criteria)
 
 ### EARS (“shall” statements)
