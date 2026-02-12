@@ -139,3 +139,27 @@ How to decide commands:
 - Format:
 - Static analysis:
 - Tests:
+
+## 5.5) UI verification (mandatory when UI changed)
+
+- Invoke `$visual-regression-testing`.
+- Invoke matching platform skill(s):
+  - iOS: `$visual-regression-ios`
+  - Android: `$visual-regression-android`
+  - Web: `$visual-regression-web`
+- Run repository UI command contract:
+  - Option A: `make ui-verify` / `make ui-record` (`make ui-artifacts` optional)
+  - Option B: `./tools/ui/verify.sh` / `./tools/ui/record.sh`
+- Fill and include the required output:
+
+```markdown
+## UI Visual Verification Report
+- Platform: ios|android|web
+- Environment: OS + key tool versions
+- Command(s) executed:
+- Snapshot output path(s):
+- Baseline updated?: yes|no
+- Review summary:
+  - If diff: why accepted or what to fix
+  - If cannot run: why + how CI should cover it
+```

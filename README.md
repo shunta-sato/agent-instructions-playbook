@@ -36,6 +36,7 @@ If you want to use this repo as a template, keep the files at the root as above 
 - Use `$dev-workflow` for any change.
 - Finish with `$quality-gate`.
 - When runtime behavior changes, use `$observability`.
+- When UI code changes, invoke `$visual-regression-testing` and the matching platform skill (`$visual-regression-ios|android|web`) and produce a UI Visual Verification Report.
 - When introducing or changing concurrency/parallelism, invoke `$concurrency-core` and `$thread-safety-tooling` (plus `$concurrency-ros2` or `$concurrency-android` when relevant).
 - When fixing bugs/regressions/flakes/crashes/hangs, invoke `$bug-investigation-and-rca` before implementation and produce the Bug Report (RCA).
 
@@ -82,6 +83,29 @@ If you use this repo as a template, replace the `<fill>` placeholders with real 
 Use the `code-smells-and-antipatterns` playbook (Codex: `$code-smells-and-antipatterns`) to detect **new or worsened** design smells in a diff and propose the smallest fix.
 It is recommended for structural changes (new modules, boundary changes, or refactors across layers) and is referenced by `dev-workflow` and `quality-gate`.
 
+## UI visual verification contract
+
+When UI changes are in scope, this repository expects one canonical verification interface:
+
+- Make-based contract: `make ui-verify`, `make ui-record`, optional `make ui-artifacts`; or
+- Script-based contract: `./tools/ui/verify.sh`, `./tools/ui/record.sh`.
+
+Agents should discover which option the repository exposes, execute it, review visual diffs against requested/design-intent behavior, and update baselines only for intentional changes.
+
+Required output:
+
+```markdown
+## UI Visual Verification Report
+- Platform: ios|android|web
+- Environment: OS + key tool versions
+- Command(s) executed:
+- Snapshot output path(s):
+- Baseline updated?: yes|no
+- Review summary:
+  - If diff: why accepted or what to fix
+  - If cannot run: why + how CI should cover it
+```
+
 ## Included skills
 
 - `architecture-boundaries`
@@ -101,6 +125,10 @@ It is recommended for structural changes (new modules, boundary changes, or refa
 - `requirements-to-design`
 - `test-driven-development`
 - `thread-safety-tooling`
+- `visual-regression-android`
+- `visual-regression-ios`
+- `visual-regression-testing`
+- `visual-regression-web`
 - `working-with-legacy-code`
 
 ## Versioning

@@ -11,6 +11,10 @@ Before you submit, confirm all items below.
   - metrics: errors + latency (golden signals if relevant)
   - traces: spans/correlation IDs connect logs and metrics
   - safety: no secrets/PII; logging guidance followed
+- UI verification gate (when UI changed):
+  - UI Visual Verification Report exists and uses the required format
+  - snapshots were verified, or baselines were updated intentionally with rationale
+  - artifact paths are listed (diff images/reports/snapshot folders)
 - Concurrency gate (when concurrency/parallelism exists):
   - Concurrency Plan is present and complete
   - no unbounded queues/threads without backpressure explanation
