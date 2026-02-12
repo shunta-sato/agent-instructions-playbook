@@ -34,6 +34,7 @@ skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execu
 skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
 skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.agents/skills/nfr-iso25010/SKILL.md|.github/skills/nfr-iso25010/SKILL.md|-
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md|.github/skills/observability/SKILL.md|-
+skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md|.github/skills/project-initialization/SKILL.md|-
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md|.github/skills/quality-gate/SKILL.md|/quality-gate
 skill|requirements-documentation|Requirements documentation|.agents/skills/requirements-documentation/SKILL.md|.github/skills/requirements-documentation/SKILL.md|-
 skill|requirements-to-design|Requirements → design|.agents/skills/requirements-to-design/SKILL.md|.github/skills/requirements-to-design/SKILL.md|-
@@ -47,6 +48,7 @@ skill|visual-regression-web|Web visual regression defaults|.agents/skills/visual
 skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md|.github/skills/working-with-legacy-code/SKILL.md|-
 prompts|name|short|path|related_skill
 prompt|bug-report|Generate an evidence-based Bug Report (RCA) for the bug being fixed in …|.github/prompts/bug-report.prompt.md|-
+prompt|initialize|Use this prompt to initialize a freshly copied repository template.|.github/prompts/initialize.prompt.md|-
 prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
 prompt|review-modularity|Review the selected diff/files focusing on modularity.|.github/prompts/review-modularity.prompt.md|modularity
 prompt|review-readability|Review the selected diff/files focusing on *reading time*.|.github/prompts/review-readability.prompt.md|code-readability
@@ -93,6 +95,8 @@ Codex matching rule:
 
 ## Verification commands
 Use the canonical commands in `COMMANDS.md` (build, format/lint, tests).
+If `COMMANDS.md` still contains `<fill>`, treat the project as uninitialized: do not guess commands, run `$project-initialization` or `/initialize` first.
+Initialization completes only after `make verify` succeeds; remove `<fill>` only after that success.
 If you cannot run a command, state why and provide a reproducible procedure.
 
 ## Required final response format

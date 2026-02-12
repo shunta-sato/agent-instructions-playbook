@@ -14,6 +14,8 @@ Produce changes that are easy to understand and safe to change.
 4. If runtime behavior changes, add observability signals (logs/metrics/traces) so failures are diagnosable.
 5. Verify with the canonical commands in `COMMANDS.md` (build, format/lint, tests).
    - If you cannot run them, say why and provide a reproducible procedure.
+6. If `COMMANDS.md` contains `<fill>`, do not guess project commands or proceed with normal implementation until initialization is completed via `/initialize` or `$project-initialization`.
+7. Consider initialization complete only after `make verify` succeeds; only then may `<fill>` be removed from `COMMANDS.md`.
 
 ## Use the on-demand prompts
 
