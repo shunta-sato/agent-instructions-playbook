@@ -38,12 +38,17 @@ skill|requirements-documentation|Requirements documentation|.codex/skills/requir
 skill|requirements-to-design|Requirements → design|.codex/skills/requirements-to-design/SKILL.md|.github/skills/requirements-to-design/SKILL.md|-
 skill|test-driven-development|Test-driven development workflow|.codex/skills/test-driven-development/SKILL.md|.github/skills/test-driven-development/SKILL.md|-
 skill|thread-safety-tooling|Thread-safety verification|.codex/skills/thread-safety-tooling/SKILL.md|-|-
+skill|visual-regression-android|Android visual regression defaults|.codex/skills/visual-regression-android/SKILL.md|.github/skills/visual-regression-android/SKILL.md|-
+skill|visual-regression-ios|iOS visual regression defaults|.codex/skills/visual-regression-ios/SKILL.md|.github/skills/visual-regression-ios/SKILL.md|-
+skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.codex/skills/visual-regression-testing/SKILL.md|.github/skills/visual-regression-testing/SKILL.md|-
+skill|visual-regression-web|Web visual regression defaults|.codex/skills/visual-regression-web/SKILL.md|.github/skills/visual-regression-web/SKILL.md|-
 skill|working-with-legacy-code|Working with legacy code safely|.codex/skills/working-with-legacy-code/SKILL.md|.github/skills/working-with-legacy-code/SKILL.md|-
 prompts|name|short|path|related_skill
 prompt|bug-report|Generate an evidence-based Bug Report (RCA) for the bug being fixed in …|.github/prompts/bug-report.prompt.md|-
 prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
 prompt|review-modularity|Review the selected diff/files focusing on modularity.|.github/prompts/review-modularity.prompt.md|modularity
 prompt|review-readability|Review the selected diff/files focusing on *reading time*.|.github/prompts/review-readability.prompt.md|code-readability
+prompt|ui-verify|Use this prompt when UI code changes or when asked for screenshot/snaps…|.github/prompts/ui-verify.prompt.md|-
 prompt|write-requirements|Write or update requirements/specs for the described change.|.github/prompts/write-requirements.prompt.md|requirements-documentation
 instructions|title|applyTo|path|first_rule
 instruction|C++ instructions (readability + maintai…|**/*.{h,hpp,hh,hxx,cpp,cc,cxx}|.github/instructions/cpp.instructions.md|Doxygen documentation is mandatory for this repository.

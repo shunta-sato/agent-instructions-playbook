@@ -49,6 +49,11 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 6) Verification: run the repo’s canonical commands for build / format / static analysis / tests until green.
 
+6.5) **UI verification (mandatory when UI changes):**
+   - Invoke `$visual-regression-testing`.
+   - Invoke the matching platform skill(s): `$visual-regression-ios`, `$visual-regression-android`, and/or `$visual-regression-web`.
+   - Run repo-defined UI verify/record commands and include a UI Visual Verification Report with artifact paths.
+
 7) Before submitting, explicitly invoke `$quality-gate` and keep fixing until it reports 0 findings.
 
 ## Output expectation

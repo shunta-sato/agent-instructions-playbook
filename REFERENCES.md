@@ -18,6 +18,14 @@ This playbook is inspired by, or aligned with, the following sources.
 - VS Code Copilot settings reference (default search locations for instruction/prompt files): https://code.visualstudio.com/docs/copilot/reference/copilot-settings
 - GitHub “About Agent Skills” (concepts and supported products): https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
 
+## UI visual verification / snapshot testing
+
+- Nacho Bassino, *Automating UI verification for AI coding agents* (example contract using Make targets and AGENTS flow): https://nachbaur.com/posts/ai-agent-ui-testing/
+- Playwright docs, *Visual comparisons / snapshot testing*: https://playwright.dev/docs/test-snapshots
+- Point-Free SnapshotTesting (Swift): https://github.com/pointfreeco/swift-snapshot-testing
+- CashApp Paparazzi (Android): https://github.com/cashapp/paparazzi
+- Roborazzi (Android/Compose screenshot testing): https://github.com/takahirom/roborazzi
+
 ## Readability / Clean code / Architecture
 
 - Dustin Boswell & Trevor Foucher, *The Art of Readable Code* (O’Reilly). (Press release with ISBN): https://www.oreilly.com/pub/pr/2942

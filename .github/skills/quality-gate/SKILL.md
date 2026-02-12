@@ -30,6 +30,7 @@ Invoke this skill **before every submission**. It is mandatory.
    - Modularity / coupling / boundaries (worst-level rating)
    - Boundary error handling (translation, no swallowed failures)
    - Observability (logs/metrics/traces for runtime behavior changes)
+   - UI verification gate (report exists, snapshot status is explicit, artifacts listed)
    - Documentation (requirements / acceptance criteria / verification method)
   - Bugfix evidence + report (when bugfix mode triggered):
     - Bug Report exists (PR description, issue comment, or docs file).
