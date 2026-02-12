@@ -163,7 +163,7 @@ def _collect_skills(repo_root: Path, prompts: Dict[str, str]) -> List[SkillMeta]
     codex = {}
     github = {}
 
-    for p in glob.glob(str(repo_root / ".codex" / "skills" / "*" / "SKILL.md")):
+    for p in glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md")):
         md = Path(p)
         name, short = _parse_skill_frontmatter(md)
         codex[name] = (short, str(md.relative_to(repo_root).as_posix()))

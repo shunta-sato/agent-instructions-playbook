@@ -35,6 +35,8 @@ ISO/IEC 25010: Functional suitability
 
 ISO/IEC 25010: Performance efficiency
 
+Example metrics to make performance explicit: latency percentiles (p50/p95/p99), throughput, resource utilization, and queue length. Concurrency is a design lever, but it must be tied to measurable thresholds and verified with tests/monitoring.
+
 | Item | Metric | Threshold | Measurement method | Tests / monitoring | Design notes |
 |---|---|---|---|---|---|
 | Time behavior | latency p95/p99; throughput; deadline-miss rate | p95 ≤ X ms, p99 ≤ Y ms; miss rate ≤ Z% | load tests for percentiles; tracing for breakdown | load tests in CI; monitor latency percentiles and timeout rate in prod | reduce work (cache); add resources (scale); control resource usage (priority/scheduling/queue limits) |

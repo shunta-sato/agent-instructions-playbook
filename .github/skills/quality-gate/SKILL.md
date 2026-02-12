@@ -29,6 +29,7 @@ Invoke this skill **before every submission**. It is mandatory.
    - Readability (naming, comments, control flow, tests)
    - Modularity / coupling / boundaries (worst-level rating)
    - Boundary error handling (translation, no swallowed failures)
+   - Concurrency (plan, shutdown/cancellation, observability, verification)
    - Observability (logs/metrics/traces for runtime behavior changes)
    - UI verification gate (report exists, snapshot status is explicit, artifacts listed)
    - Documentation (requirements / acceptance criteria / verification method)

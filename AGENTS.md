@@ -3,7 +3,7 @@
 This repository is a reusable playbook for software-development agents.
 
 Keep this file short. Put detailed guidance in the on-demand playbooks under:
-- `.codex/skills/<name>/SKILL.md` (Codex skills)
+- `.agents/skills/<name>/SKILL.md` (Codex skills)
 - `.github/skills/<name>/SKILL.md` (Agent Skills)
 - `.github/prompts/<name>.prompt.md` (VS Code prompt files)
 
@@ -21,28 +21,28 @@ defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 path_rules|copilot=auto_apply_applyTo|codex=manual_open
 core|AGENTS.md|COMMANDS.md|README.md|REFERENCES.md
 skills|name|short|codex_skill|github_skill|prompt
-skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.codex/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
-skill|bug-investigation-and-rca|Bug investigation & RCA|.codex/skills/bug-investigation-and-rca/SKILL.md|.github/skills/bug-investigation-and-rca/SKILL.md|-
-skill|code-readability|Code readability|.codex/skills/code-readability/SKILL.md|.github/skills/code-readability/SKILL.md|-
-skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.codex/skills/code-smells-and-antipatterns/SKILL.md|.github/skills/code-smells-and-antipatterns/SKILL.md|-
-skill|concurrency-android|Android concurrency and background work|.codex/skills/concurrency-android/SKILL.md|-|-
-skill|concurrency-core|Concurrency design patterns and planning|.codex/skills/concurrency-core/SKILL.md|-|-
-skill|concurrency-ros2|ROS 2 concurrency patterns|.codex/skills/concurrency-ros2/SKILL.md|-|-
-skill|dev-workflow|End-to-end dev workflow|.codex/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
-skill|error-handling|Boundary error handling|.codex/skills/error-handling/SKILL.md|.github/skills/error-handling/SKILL.md|-
-skill|modularity|Modularity (cohesion/coupling)|.codex/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
-skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.codex/skills/nfr-iso25010/SKILL.md|.github/skills/nfr-iso25010/SKILL.md|-
-skill|observability|Observability plan and checklist|.codex/skills/observability/SKILL.md|.github/skills/observability/SKILL.md|-
-skill|quality-gate|Final quality gate|.codex/skills/quality-gate/SKILL.md|.github/skills/quality-gate/SKILL.md|/quality-gate
-skill|requirements-documentation|Requirements documentation|.codex/skills/requirements-documentation/SKILL.md|.github/skills/requirements-documentation/SKILL.md|-
-skill|requirements-to-design|Requirements → design|.codex/skills/requirements-to-design/SKILL.md|.github/skills/requirements-to-design/SKILL.md|-
-skill|test-driven-development|Test-driven development workflow|.codex/skills/test-driven-development/SKILL.md|.github/skills/test-driven-development/SKILL.md|-
-skill|thread-safety-tooling|Thread-safety verification|.codex/skills/thread-safety-tooling/SKILL.md|-|-
-skill|visual-regression-android|Android visual regression defaults|.codex/skills/visual-regression-android/SKILL.md|.github/skills/visual-regression-android/SKILL.md|-
-skill|visual-regression-ios|iOS visual regression defaults|.codex/skills/visual-regression-ios/SKILL.md|.github/skills/visual-regression-ios/SKILL.md|-
-skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.codex/skills/visual-regression-testing/SKILL.md|.github/skills/visual-regression-testing/SKILL.md|-
-skill|visual-regression-web|Web visual regression defaults|.codex/skills/visual-regression-web/SKILL.md|.github/skills/visual-regression-web/SKILL.md|-
-skill|working-with-legacy-code|Working with legacy code safely|.codex/skills/working-with-legacy-code/SKILL.md|.github/skills/working-with-legacy-code/SKILL.md|-
+skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.agents/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
+skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md|.github/skills/bug-investigation-and-rca/SKILL.md|-
+skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md|.github/skills/code-readability/SKILL.md|-
+skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.agents/skills/code-smells-and-antipatterns/SKILL.md|.github/skills/code-smells-and-antipatterns/SKILL.md|-
+skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md|.github/skills/concurrency-android/SKILL.md|-
+skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md|.github/skills/concurrency-core/SKILL.md|-
+skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md|.github/skills/concurrency-ros2/SKILL.md|-
+skill|dev-workflow|End-to-end dev workflow|.agents/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
+skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md|.github/skills/error-handling/SKILL.md|-
+skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
+skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.agents/skills/nfr-iso25010/SKILL.md|.github/skills/nfr-iso25010/SKILL.md|-
+skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md|.github/skills/observability/SKILL.md|-
+skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md|.github/skills/quality-gate/SKILL.md|/quality-gate
+skill|requirements-documentation|Requirements documentation|.agents/skills/requirements-documentation/SKILL.md|.github/skills/requirements-documentation/SKILL.md|-
+skill|requirements-to-design|Requirements → design|.agents/skills/requirements-to-design/SKILL.md|.github/skills/requirements-to-design/SKILL.md|-
+skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md|.github/skills/test-driven-development/SKILL.md|-
+skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md|.github/skills/thread-safety-tooling/SKILL.md|-
+skill|visual-regression-android|Android visual regression defaults|.agents/skills/visual-regression-android/SKILL.md|.github/skills/visual-regression-android/SKILL.md|-
+skill|visual-regression-ios|iOS visual regression defaults|.agents/skills/visual-regression-ios/SKILL.md|.github/skills/visual-regression-ios/SKILL.md|-
+skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md|.github/skills/visual-regression-testing/SKILL.md|-
+skill|visual-regression-web|Web visual regression defaults|.agents/skills/visual-regression-web/SKILL.md|.github/skills/visual-regression-web/SKILL.md|-
+skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md|.github/skills/working-with-legacy-code/SKILL.md|-
 prompts|name|short|path|related_skill
 prompt|bug-report|Generate an evidence-based Bug Report (RCA) for the bug being fixed in …|.github/prompts/bug-report.prompt.md|-
 prompt|review-antipatterns|Review the selected diff/files focusing on NEW or WORSENED code smells …|.github/prompts/review-antipatterns.prompt.md|code-smells-and-antipatterns
