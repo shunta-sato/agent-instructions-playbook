@@ -36,6 +36,7 @@ skill|observability|Observability plan and checklist|.agents/skills/observabilit
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md|.github/skills/quality-gate/SKILL.md|/quality-gate
 skill|requirements-documentation|Requirements documentation|.agents/skills/requirements-documentation/SKILL.md|.github/skills/requirements-documentation/SKILL.md|-
 skill|requirements-to-design|Requirements → design|.agents/skills/requirements-to-design/SKILL.md|.github/skills/requirements-to-design/SKILL.md|-
+skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md|.github/skills/staged-lowering/SKILL.md|/staged-lowering
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md|.github/skills/test-driven-development/SKILL.md|-
 skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md|.github/skills/thread-safety-tooling/SKILL.md|-
 skill|visual-regression-android|Android visual regression defaults|.agents/skills/visual-regression-android/SKILL.md|.github/skills/visual-regression-android/SKILL.md|-

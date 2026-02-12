@@ -39,6 +39,7 @@ If you want to use this repo as a template, keep the files at the root as above 
 - When UI code changes, invoke `$visual-regression-testing` and the matching platform skill (`$visual-regression-ios|android|web`) and produce a UI Visual Verification Report.
 - When introducing or changing concurrency/parallelism, invoke `$concurrency-core` and `$thread-safety-tooling` (plus `$concurrency-ros2` or `$concurrency-android` when relevant).
 - When fixing bugs/regressions/flakes/crashes/hangs, invoke `$bug-investigation-and-rca` before implementation and produce the Bug Report (RCA).
+- When implementing strict-constraint code (alignment/padding, kernels/intrinsics, DSL/codegen) or when compile/test failures repeat, invoke `$staged-lowering`.
 
 ### Copilot (VS Code)
 
@@ -123,6 +124,7 @@ Required output:
 - `quality-gate`
 - `requirements-documentation`
 - `requirements-to-design`
+- `staged-lowering`
 - `test-driven-development`
 - `thread-safety-tooling`
 - `visual-regression-android`

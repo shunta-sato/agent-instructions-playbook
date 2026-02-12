@@ -78,6 +78,11 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - If runtime behavior changes: invoke `$observability`.
 - If performance targets are part of the goal: invoke `$nfr-iso25010`.
 
+## 3.3) Constrained / low-level synthesis check (mandatory when relevant)
+
+- If strict constraints exist (alignment/padding, ABI, intrinsics, kernel pipelines, DSL/codegen), invoke `$staged-lowering`.
+- Produce: Staged Lowering Plan (IR first) + Per-pass Verification Log.
+
 ## 3.5) Observability plan (mandatory when runtime behavior changes)
 
 - Operations to observe (user-facing or system-facing actions):

@@ -96,3 +96,7 @@ This playbook is inspired by, or aligned with, the following sources.
 - Atlassian 5 Whys analysis template: https://www.atlassian.com/software/confluence/templates/5-whys-analysis
 - Jira bug report template (steps/expected/actual/environment): https://www.atlassian.com/en/software/jira/templates/bug-report
 - Mozilla bug writing guidelines (steps/expected/actual; facts vs speculations): https://devdoc.net/web/developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines.html
+
+## Constrained code synthesis / staged lowering
+
+- Wen et al., *AscendCraft: Automatic Ascend NPU Kernel Generation via DSL-Guided Transcompilation* (arXiv:2601.22760): https://arxiv.org/abs/2601.22760
