@@ -1,0 +1,42 @@
+ui_contract:
+  locale: ja-JP
+  platforms: [web] # allowed: android, ios, web (one or more)
+  accessibility_target: WCAG2.2-AA
+
+rules:
+  decision_points:
+    max_top_level_destinations: 5
+    max_primary_actions_per_screen: 1
+
+  information_layout:
+    require_clear_screen_goal: true
+    require_progressive_disclosure: true
+
+  states_and_errors:
+    must_define_states: [idle, loading, success, failure]
+    preserve_input_on_error: true
+    error_message_must_include: [what_happened, what_user_can_do_next]
+
+  accessibility:
+    require_labels_for_controls: true
+    require_focus_visible: true
+    require_min_target_size: true
+    require_contrast: true
+
+  agent_specific:
+    require_capability_disclosure: true
+    require_plan_preview_before_execute: true
+    require_explain_why_for_critical_actions: true
+    require_undo_or_safe_rollback: true
+    require_audit_log: true
+    require_change_notification: true
+
+platform_overrides:
+  android: {}
+  ios: {}
+  web: {}
+
+outputs_required:
+  - ui_spec.json
+  - auto_review.json
+  - diff_summary.md

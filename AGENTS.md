@@ -41,6 +41,10 @@ skill|requirements-to-design|Requirements → design|.agents/skills/requirements
 skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md|.github/skills/staged-lowering/SKILL.md|/staged-lowering
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md|.github/skills/test-driven-development/SKILL.md|-
 skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md|.github/skills/thread-safety-tooling/SKILL.md|-
+skill|uiux-android|Android UI/UX adapter for UIUX Pack|.agents/skills/uiux-android/SKILL.md|.github/skills/uiux-android/SKILL.md|-
+skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md|.github/skills/uiux-core/SKILL.md|/uiux-core
+skill|uiux-ios|iOS UI/UX adapter for UIUX Pack|.agents/skills/uiux-ios/SKILL.md|.github/skills/uiux-ios/SKILL.md|-
+skill|uiux-web|Web UI/UX adapter for UIUX Pack|.agents/skills/uiux-web/SKILL.md|.github/skills/uiux-web/SKILL.md|-
 skill|visual-regression-android|Android visual regression defaults|.agents/skills/visual-regression-android/SKILL.md|.github/skills/visual-regression-android/SKILL.md|-
 skill|visual-regression-ios|iOS visual regression defaults|.agents/skills/visual-regression-ios/SKILL.md|.github/skills/visual-regression-ios/SKILL.md|-
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md|.github/skills/visual-regression-testing/SKILL.md|-
