@@ -28,6 +28,16 @@ This playbook is inspired by, or aligned with, the following sources.
 - CashApp Paparazzi (Android): https://github.com/cashapp/paparazzi
 - Roborazzi (Android/Compose screenshot testing): https://github.com/takahirom/roborazzi
 
+## UI/UX core and platform guidance
+
+- ISO 9241 (usability and human-centred design): https://www.iso.org/standard/77520.html
+- WCAG 2.2: https://www.w3.org/TR/WCAG22/
+- Nielsen Norman Group, *10 Usability Heuristics for User Interface Design*: https://www.nngroup.com/articles/ten-usability-heuristics/
+- Amershi et al., *Guidelines for Human-AI Interaction*: https://www.microsoft.com/en-us/research/publication/guidelines-for-human-ai-interaction/
+- Material Design (Android): https://m3.material.io/
+- Apple Human Interface Guidelines (iOS): https://developer.apple.com/design/human-interface-guidelines/
+- WAI-ARIA Authoring Practices Guide (Web): https://www.w3.org/WAI/ARIA/apg/
+
 ## Readability / Clean code / Architecture
 
 - Dustin Boswell & Trevor Foucher, *The Art of Readable Code* (O’Reilly). (Press release with ISBN): https://www.oreilly.com/pub/pr/2942

@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "product": "<fill>",
+    "platforms": ["web"],
+    "locale": "ja-JP",
+    "accessibility_target": "WCAG2.2-AA",
+    "design_system": {
+      "name": "<fill>",
+      "tokens_version": "1.0.0"
+    }
+  },
+  "goals": [
+    "<fill>"
+  ],
+  "constraints": {
+    "max_top_level_destinations": 5,
+    "max_primary_actions_per_screen": 1
+  },
+  "information_architecture": {
+    "screens": [
+      {
+        "id": "<fill>",
+        "name": "<fill>",
+        "goal": "<fill>",
+        "primary_action": "<fill>",
+        "secondary_actions": []
+      }
+    ],
+    "navigation": [
+      { "from": "<fill>", "to": "<fill>", "trigger": "<fill>" }
+    ],
+    "decision_points": [
+      {
+        "id": "<fill>",
+        "screen": "<fill>",
+        "question": "<fill>",
+        "options": ["<fill>"],
+        "why_unavoidable": "<fill>"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "<fill>",
+      "type": "<fill>",
+      "screen": "<fill>",
+      "label": "<fill>",
+      "a11y": {
+        "name": "<fill>",
+        "role": "<fill>"
+      },
+      "states": ["default", "disabled"]
+    }
+  ],
+  "states_and_errors": {
+    "global_states": ["idle", "loading", "success", "failure"],
+    "error_model": [
+      {
+        "code": "<fill>",
+        "user_message": "<fill>",
+        "recovery_actions": ["<fill>"],
+        "preserve_user_input": true
+      }
+    ]
+  }
+}

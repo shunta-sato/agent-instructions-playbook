@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "platforms": ["web"],
+    "accessibility_target": "WCAG2.2-AA"
+  },
+  "metrics": {
+    "top_level_destinations_count": 0,
+    "decision_points_count": 0,
+    "primary_actions_per_screen": {}
+  },
+  "summary": {
+    "result": "unknown",
+    "blocking_issues": 0,
+    "non_blocking_issues": 0
+  },
+  "checks": [
+    {
+      "id": "core.decision_points.max_top_level_destinations",
+      "type": "auto",
+      "result": "unknown",
+      "evidence": [],
+      "reason_if_unknown": "<fill or empty>"
+    }
+  ],
+  "human_review_questions": [
+    "<fill>"
+  ],
+  "diff": {
+    "changed_screens": [],
+    "added_components": [],
+    "removed_components": []
+  }
+}

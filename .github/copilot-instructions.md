@@ -28,6 +28,8 @@ Use these prompt files to keep behavior consistent:
 - `/review-antipatterns` — new/worsened smells & anti-patterns review
 - `/write-requirements` — requirement/spec writing workflow
 - `/bug-report` — evidence-based Bug Report (RCA) for bugfix/regression/flaky/incidents
+- `/uiux-core` — UI/UX design and review workflow with deterministic UIUX Pack outputs
+- `/ui-verify` — snapshot/screenshot verification workflow for UI visual changes
 
 ## Language-specific highlights
 
