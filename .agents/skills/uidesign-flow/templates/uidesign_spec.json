@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "status": "draft",
+    "locale": "ja-JP",
+    "created_at": "<fill: YYYY-MM-DD>",
+    "inputs": {
+      "uiux_pack_path": "<fill>",
+      "uiux_spec_ref": "<fill>",
+      "tonemana_spec_ref": "<fill>"
+    }
+  },
+  "tone_and_manner": {
+    "pattern_id": "<fill: from ui_spec.json meta.tone_and_manner.pattern_id>",
+    "token_snapshot": {
+      "json_ref": "tokens/resolved.tokens.json",
+      "css_ref": "tokens/resolved.tokens.css"
+    }
+  },
+  "representative_screens": {
+    "entry": {
+      "uiux_screen_id": "<fill>",
+      "preview_html_ref": "previews/screens/entry.html"
+    },
+    "form": {
+      "uiux_screen_id": "<fill>",
+      "preview_html_ref": "previews/screens/form.html"
+    },
+    "status": {
+      "uiux_screen_id": "<fill>",
+      "preview_html_ref": "previews/screens/status.html"
+    }
+  },
+  "preview_set": {
+    "index_html_ref": "previews/index.html",
+    "components_html_ref": "previews/components.html",
+    "notes": "Previews are for review only. They must be stable and comparable."
+  },
+  "feedback_protocol": {
+    "human_feedback_ref": "review_notes.md",
+    "rules": [
+      "Always reference preview page + element + state",
+      "Write concrete change request (what/why)",
+      "Do not request navigation/IA changes here; route those to uiux-core"
+    ]
+  }
+}

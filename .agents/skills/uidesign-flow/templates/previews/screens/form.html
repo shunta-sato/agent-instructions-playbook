@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Representative Screen: form</title>
+  <link rel="stylesheet" href="../../tokens/resolved.tokens.css" />
+  <link rel="stylesheet" href="../preview.css" />
+  <script defer src="../preview.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-row">
+      <div>
+        <h1 class="h1">Form (representative)</h1>
+        <p class="p"><a href="../index.html">Back</a> / uiux_screen_id: <span class="kbd">&lt;fill&gt;</span></p>
+      </div>
+      <button id="theme-toggle" class="btn" type="button">Toggle theme</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2 class="h1">入力</h2>
+      <p class="p">エラーの見え方と、次の行動が分かるかを見ます。</p>
+
+      <div class="field" style="margin-top: var(--tm-space-4, 16px);">
+        <label class="label" for="name">名前</label>
+        <input class="input" id="name" placeholder="例：山田 太郎" />
+        <div class="help">必須</div>
+      </div>
+
+      <div class="field" style="margin-top: var(--tm-space-4, 16px);">
+        <label class="label" for="tel">電話番号（error）</label>
+        <input class="input error-state" id="tel" value="123" />
+        <div class="error">入力に誤りがあります。確認してください。</div>
+      </div>
+
+      <div class="row" style="margin-top: var(--tm-space-6, 24px); justify-content: flex-end;">
+        <button class="btn" type="button">下書きを保存</button>
+        <button class="btn btn-primary" type="button">送信</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

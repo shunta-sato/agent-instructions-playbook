@@ -29,6 +29,7 @@ Use these prompt files to keep behavior consistent:
 - `/write-requirements` — requirement/spec writing workflow
 - `/bug-report` — evidence-based Bug Report (RCA) for bugfix/regression/flaky/incidents
 - `/uiux-core` — UI/UX design and review workflow with deterministic UIUX Pack outputs
+- `/uidesign-flow` — tone-and-manner → tokens → previews → deterministic UIDesign Pack
 - `/ui-verify` — snapshot/screenshot verification workflow for UI visual changes
 - `/tonemana-catalog` — Tone & Manner catalog generation workflow with seven default patterns
 - `/tonemana-apply` — Tone & Manner pack apply workflow for UIUX references

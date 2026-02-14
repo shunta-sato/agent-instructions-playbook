@@ -43,6 +43,7 @@ This playbook is inspired by, or aligned with, the following sources.
 - Canva, *トンマナとは？意味や使い方を理解してデザインに統一感を* (definition including tone as atmosphere and manner as explicit rules): https://www.canva.com/ja_jp/learn/what-is-tone-manner/
 - A List Apart, *Style Tiles and How They Work* (visual comparison artifact between mood and full comps): https://alistapart.com/article/style-tiles-and-how-they-work/
 - Design Tokens Community Group, *Design Tokens Format Module* (exchange format with `$type` / `$value`): https://www.designtokens.org/TR/2025.10/format/
+- Design Tokens Community Group: https://www.designtokens.org/
 - Nielsen Norman Group, *Design Systems vs. Style Guides* (consistency context for cross-product execution): https://www.nngroup.com/articles/design-systems-vs-style-guides/
 
 ## Readability / Clean code / Architecture
