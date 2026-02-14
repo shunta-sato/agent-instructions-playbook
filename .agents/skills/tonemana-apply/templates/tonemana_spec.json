@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "locale": "ja-JP",
+    "status": "draft",
+    "version": "0.1.0",
+    "selected_pattern_id": "<fill>",
+    "catalog": {
+      "index_ref": "tonemana/catalog/catalog_index.yaml",
+      "pattern_ref": "tonemana/catalog/patterns/<fill>.yaml",
+      "tokens": {
+        "dtcg_json_ref": "tonemana/catalog/tokens/<fill>.tokens.json",
+        "css_vars_ref": "tonemana/catalog/tokens/<fill>.tokens.css"
+      },
+      "preview_ref": "tonemana/catalog/previews/index.html?pattern=<fill>"
+    }
+  },
+  "applies_to": ["product-ui"],
+  "overrides": {
+    "tokens_patch": {},
+    "writing_style_patch": {}
+  },
+  "writing_style": {
+    "politeness": "<fill>",
+    "sentence": "<fill>",
+    "punctuation": {
+      "exclamation": "<fill>",
+      "emoji": "<fill>"
+    },
+    "do_dont": {
+      "do": "<fill>",
+      "dont": "<fill>"
+    }
+  },
+  "notes": {
+    "rationale": ["<fill>"],
+    "tradeoffs": ["<fill>"]
+  }
+}

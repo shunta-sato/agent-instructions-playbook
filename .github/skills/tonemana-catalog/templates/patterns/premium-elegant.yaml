@@ -1,0 +1,24 @@
+pattern:
+  id: "premium-elegant"
+  label: "プレミアム・エレガント"
+  summary: "余白で魅せる。静かに上質。"
+  suitable_for: ["marketing-site", "product-ui", "docs"]
+  tokens:
+    dtcg_json: "tonemana/catalog/tokens/premium-elegant.tokens.json"
+    css_vars: "tonemana/catalog/tokens/premium-elegant.tokens.css"
+  visual_rules:
+    spacing_unit_px: 10
+    radius_px: 10
+    elevation: "low"
+    imagery: "editorial"
+  writing_style:
+    politeness: "polite"
+    sentence: "medium"
+    punctuation:
+      exclamation: "avoid"
+      emoji: "avoid"
+    do_dont:
+      do: "ご不便をおかけしております。復旧まで今しばらくお待ちください。"
+      dont: "障害発生中。待って。"
+  preview:
+    html: "tonemana/catalog/previews/index.html?pattern=premium-elegant"

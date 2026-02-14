@@ -1,0 +1,24 @@
+pattern:
+  id: "trust-corporate"
+  label: "信頼・コーポレート"
+  summary: "堅実に伝える。信頼を崩さない。"
+  suitable_for: ["product-ui", "docs", "marketing-site"]
+  tokens:
+    dtcg_json: "tonemana/catalog/tokens/trust-corporate.tokens.json"
+    css_vars: "tonemana/catalog/tokens/trust-corporate.tokens.css"
+  visual_rules:
+    spacing_unit_px: 8
+    radius_px: 6
+    elevation: "low"
+    imagery: "structured"
+  writing_style:
+    politeness: "polite"
+    sentence: "short"
+    punctuation:
+      exclamation: "avoid"
+      emoji: "avoid"
+    do_dont:
+      do: "内容を確認のうえ、承認をお願いします。"
+      dont: "これでOKです！すぐ承認して！"
+  preview:
+    html: "tonemana/catalog/previews/index.html?pattern=trust-corporate"

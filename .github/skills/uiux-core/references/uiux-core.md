@@ -37,6 +37,14 @@ Always follow these three rules:
 5) If platform-specific behavior exists, invoke platform adapter skill  
    - Adapter only adds `platform_overrides` and PF-specific checks (do not add new artifact names)
 
+## Tone & Manner integration (when available)
+
+When a project includes Tone & Manner artifacts, treat them as references for consistency, not as structural UI changes.
+
+- Fill `meta.tone_and_manner` in `ui_spec.json`.
+- Reference both `tonemana/catalog/...` assets and the selected pack `tonemana/YYYYMMDD-<slug>/tonemana_spec.json`.
+- Keep focus on visual and writing consistency; do not change navigation, screen structure, or feature behavior only because Tone & Manner references were added.
+
 ## Core design rules
 
 ### 1) Do not over-expand destinations and branches

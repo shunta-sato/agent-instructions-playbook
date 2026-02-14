@@ -1,0 +1,21 @@
+:root {
+  --color-background: #F7FAF5;
+  --color-surface: #EAF3E4;
+  --color-text-primary: #1F2A1F;
+  --color-text-secondary: #4B5D4B;
+  --color-brand-primary: #4D7C0F;
+  --color-brand-accent: #65A30D;
+  --color-status-success: #2F855A;
+  --color-status-warning: #B7791F;
+  --color-status-error: #C53030;
+
+  --font-family: "Noto Sans JP", system-ui, sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --spacing-unit: 8px;
+}

@@ -1,0 +1,24 @@
+pattern:
+  id: "modern-tech"
+  label: "モダン・テック"
+  summary: "情報を速く届ける。輪郭はシャープ。"
+  suitable_for: ["product-ui", "docs", "marketing-site"]
+  tokens:
+    dtcg_json: "tonemana/catalog/tokens/modern-tech.tokens.json"
+    css_vars: "tonemana/catalog/tokens/modern-tech.tokens.css"
+  visual_rules:
+    spacing_unit_px: 8
+    radius_px: 6
+    elevation: "medium"
+    imagery: "geometric"
+  writing_style:
+    politeness: "neutral"
+    sentence: "short"
+    punctuation:
+      exclamation: "avoid"
+      emoji: "avoid"
+    do_dont:
+      do: "処理に失敗しました。ログを確認して再実行してください。"
+      dont: "処理ミス！もう一回！"
+  preview:
+    html: "tonemana/catalog/previews/index.html?pattern=modern-tech"
