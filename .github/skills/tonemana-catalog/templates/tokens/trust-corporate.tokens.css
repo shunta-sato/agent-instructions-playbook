@@ -1,0 +1,21 @@
+:root {
+  --color-background: #F8FAFC;
+  --color-surface: #EEF2F7;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #334155;
+  --color-brand-primary: #1D4ED8;
+  --color-brand-accent: #2563EB;
+  --color-status-success: #15803D;
+  --color-status-warning: #B45309;
+  --color-status-error: #B91C1C;
+
+  --font-family: system-ui, sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.5;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+
+  --spacing-unit: 8px;
+}

@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "scope": "tonemana-pack",
+    "status": "draft"
+  },
+  "checks": [
+    {
+      "id": "tm-contract-exists",
+      "result": "pass",
+      "evidence": "tonemana_contract.yaml"
+    },
+    {
+      "id": "tm-spec-exists",
+      "result": "pass",
+      "evidence": "tonemana_spec.json"
+    },
+    {
+      "id": "tm-uiux-ref-applied",
+      "result": "unknown",
+      "evidence": "ui_contract.yaml, ui_spec.json, diff_summary.md"
+    }
+  ],
+  "human_review_required": [
+    "Confirm visual consistency across key screens",
+    "Confirm writing_style examples match intended manner"
+  ]
+}

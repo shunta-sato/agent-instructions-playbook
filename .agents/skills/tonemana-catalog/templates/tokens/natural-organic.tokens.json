@@ -1,0 +1,84 @@
+{
+  "color": {
+    "background": {
+      "$type": "color",
+      "$value": "#F7FAF5"
+    },
+    "surface": {
+      "$type": "color",
+      "$value": "#EAF3E4"
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "#1F2A1F"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "#4B5D4B"
+      }
+    },
+    "brand": {
+      "primary": {
+        "$type": "color",
+        "$value": "#4D7C0F"
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "#65A30D"
+      }
+    },
+    "status": {
+      "success": {
+        "$type": "color",
+        "$value": "#2F855A"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#B7791F"
+      },
+      "error": {
+        "$type": "color",
+        "$value": "#C53030"
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "$type": "fontFamily",
+      "$value": [
+        "Noto Sans JP",
+        "system-ui",
+        "sans-serif"
+      ]
+    },
+    "baseSize": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "lineHeight": {
+      "$type": "number",
+      "$value": 1.6
+    }
+  },
+  "radius": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "6px"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "12px"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "20px"
+    }
+  },
+  "spacing": {
+    "unit": {
+      "$type": "dimension",
+      "$value": "8px"
+    }
+  }
+}

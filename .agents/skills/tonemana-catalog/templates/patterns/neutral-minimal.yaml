@@ -1,0 +1,24 @@
+pattern:
+  id: "neutral-minimal"
+  label: "ニュートラル・ミニマル"
+  summary: "迷わせない。読める。装飾は控える。"
+  suitable_for: ["product-ui", "docs", "marketing-site"]
+  tokens:
+    dtcg_json: "tonemana/catalog/tokens/neutral-minimal.tokens.json"
+    css_vars: "tonemana/catalog/tokens/neutral-minimal.tokens.css"
+  visual_rules:
+    spacing_unit_px: 8
+    radius_px: 8
+    elevation: "low"
+    imagery: "minimal"
+  writing_style:
+    politeness: "polite"
+    sentence: "short"
+    punctuation:
+      exclamation: "avoid"
+      emoji: "avoid"
+    do_dont:
+      do: "通信が不安定です。接続を確認して、もう一度お試しください。"
+      dont: "エラー！もう一回！"
+  preview:
+    html: "tonemana/catalog/previews/index.html?pattern=neutral-minimal"

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tonemana Style Tile</title>
+  <link rel="stylesheet" href="./style-tile.css" />
+  <link id="patternTokens" rel="stylesheet" href="../tokens/neutral-minimal.tokens.css" />
+</head>
+<body>
+  <header class="stack">
+    <h1>Tone &amp; Manner Preview</h1>
+    <p class="muted">Compare visual rules and writing style from catalog patterns.</p>
+  </header>
+
+  <main class="grid">
+    <section class="card stack">
+      <h2>Components</h2>
+      <div class="row">
+        <button class="btn-primary">主要アクション</button>
+        <button class="btn-secondary">副次アクション</button>
+      </div>
+      <label>入力項目
+        <input type="text" placeholder="メールアドレス" />
+      </label>
+      <ul>
+        <li>リスト項目 A</li>
+        <li>リスト項目 B</li>
+      </ul>
+    </section>
+
+    <section class="card stack">
+      <h2>Typography</h2>
+      <h3>見出しサンプル</h3>
+      <p>本文サンプル。読みやすさと行間を確認します。<a href="#">リンク</a>の見え方も確認します。</p>
+      <div class="alert" role="alert">
+        エラー文例: 通信が不安定です。接続を確認して、もう一度お試しください。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const pattern = new URLSearchParams(window.location.search).get('pattern') || 'neutral-minimal';
+    document.getElementById('patternTokens').href = `../tokens/${pattern}.tokens.css`;
+  </script>
+</body>
+</html>

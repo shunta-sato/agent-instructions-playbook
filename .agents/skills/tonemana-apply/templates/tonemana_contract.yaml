@@ -1,0 +1,24 @@
+tonemana_contract:
+  locale: "ja-JP"
+  catalog_ref: "tonemana/catalog/catalog_index.yaml"
+  selected_pattern_id: "<fill>"
+  applies_to: ["product-ui"]
+  fixed_assets:
+    colors: []
+    fonts: []
+    logo: ""
+  constraints:
+    must_not:
+      - "low_contrast_text"
+      - "color_only_state"
+    must_keep: []
+  outputs_required:
+    - "tonemana_spec.json"
+    - "auto_review.json"
+    - "diff_summary.md"
+  apply_to_uiux_pack:
+    uiux_pack_path: "<fill>"
+    write_refs_into:
+      - "ui_contract.yaml"
+      - "ui_spec.json"
+      - "diff_summary.md"
