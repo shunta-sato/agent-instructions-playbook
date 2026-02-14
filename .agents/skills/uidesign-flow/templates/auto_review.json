@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "result": "unknown"
+  },
+  "summary": {
+    "blocking_issues": 0,
+    "non_blocking_issues": 0
+  },
+  "checks": [
+    {
+      "id": "UIDESIGN-INPUT-UIUX-PACK",
+      "type": "auto",
+      "result": "unknown",
+      "evidence": [],
+      "reason_if_unknown": "<fill or empty>"
+    },
+    {
+      "id": "UIDESIGN-INPUT-TONEMANA-WIRED",
+      "type": "auto",
+      "result": "unknown",
+      "evidence": [],
+      "reason_if_unknown": "<fill or empty>"
+    },
+    {
+      "id": "UIDESIGN-TOKEN-SNAPSHOT",
+      "type": "auto",
+      "result": "unknown",
+      "evidence": [],
+      "reason_if_unknown": "<fill or empty>"
+    },
+    {
+      "id": "UIDESIGN-PREVIEWS-EXIST",
+      "type": "auto",
+      "result": "unknown",
+      "evidence": [],
+      "reason_if_unknown": "<fill or empty>"
+    },
+    {
+      "id": "UIDESIGN-NO-FILL-REMAINS",
+      "type": "auto",
+      "result": "unknown",
+      "evidence": [],
+      "reason_if_unknown": "<fill or empty>"
+    }
+  ],
+  "human_review_questions": [
+    "Do the previews look consistent with the intended direction?",
+    "Is the primary action visually clear without relying on extra explanations?",
+    "Do error states look readable and recoverable (not only color cues)?",
+    "Does spacing/typography feel balanced across components and screens?",
+    "Is dark mode (if used) still readable and not low-contrast?"
+  ],
+  "diff": {
+    "changed_files": [],
+    "notes": "<fill or empty>"
+  }
+}

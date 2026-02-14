@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UIDesign Preview</title>
+  <link rel="stylesheet" href="../tokens/resolved.tokens.css" />
+  <link rel="stylesheet" href="./preview.css" />
+  <script defer src="./preview.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-row">
+      <div>
+        <h1 class="h1">UIDesign Preview</h1>
+        <p class="p">
+          Pattern: <strong>&lt;fill: pattern_id&gt;</strong>
+          / UIUX Pack: <span class="kbd">&lt;fill: uiux/YYYYMMDD-...&gt;</span>
+        </p>
+      </div>
+      <div class="row">
+        <button id="theme-toggle" class="btn" type="button">Toggle theme</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <p class="p">Open these pages and write feedback in <span class="kbd">review_notes.md</span>.</p>
+      <ul>
+        <li><a href="./components.html">Components</a></li>
+        <li><a href="./screens/entry.html">Representative screen: entry</a></li>
+        <li><a href="./screens/form.html">Representative screen: form</a></li>
+        <li><a href="./screens/status.html">Representative screen: status</a></li>
+      </ul>
+    </div>
+  </main>
+</body>
+</html>

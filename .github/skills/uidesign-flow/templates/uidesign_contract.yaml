@@ -1,0 +1,48 @@
+uidesign_contract:
+  locale: ja-JP
+
+  inputs:
+    uiux_pack_path: "<fill: uiux/YYYYMMDD-<slug>/>"
+    uiux_contract_ref: "<fill: uiux/.../ui_contract.yaml>"
+    uiux_spec_ref: "<fill: uiux/.../ui_spec.json>"
+
+    # Must already be wired in ui_spec.json meta.tone_and_manner
+    tonemana_spec_ref: "<fill: tonemana/.../tonemana_spec.json>"
+    token_refs:
+      json: "<fill: path from ui_spec.json meta.tone_and_manner.token_refs.json>"
+      css: "<fill: path from ui_spec.json meta.tone_and_manner.token_refs.css>"
+
+  representative_screens:
+    entry:
+      uiux_screen_id: "<fill>"
+      preview_html_ref: "previews/screens/entry.html"
+    form:
+      uiux_screen_id: "<fill>"
+      preview_html_ref: "previews/screens/form.html"
+    status:
+      uiux_screen_id: "<fill>"
+      preview_html_ref: "previews/screens/status.html"
+
+rules:
+  do_not_change:
+    - "uiux information_architecture (screens/navigation/decision_points)"
+  must:
+    - "Snapshot token_refs into tokens/resolved.tokens.*"
+    - "Previews must use only token variables for colors/spacing/typography"
+    - "No external network dependencies in previews (no CDN/fonts)"
+    - "Provide a structured human feedback file (review_notes.md)"
+
+outputs_required:
+  - uidesign_spec.json
+  - auto_review.json
+  - diff_summary.md
+  - review_notes.md
+  - tokens/resolved.tokens.json
+  - tokens/resolved.tokens.css
+  - previews/index.html
+  - previews/components.html
+  - previews/screens/entry.html
+  - previews/screens/form.html
+  - previews/screens/status.html
+  - previews/preview.css
+  - previews/preview.js
