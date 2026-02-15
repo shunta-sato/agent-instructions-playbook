@@ -44,6 +44,7 @@ skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-saf
 skill|tonemana-apply|Choose a Tone & Manner pattern, produce an approved Tonemana Pack, and …|.agents/skills/tonemana-apply/SKILL.md|.github/skills/tonemana-apply/SKILL.md|/tonemana-apply
 skill|tonemana-catalog|Create or update a Tone & Manner catalog (7 default patterns) with prev…|.agents/skills/tonemana-catalog/SKILL.md|.github/skills/tonemana-catalog/SKILL.md|/tonemana-catalog
 skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/skills/uidesign-flow/SKILL.md|.github/skills/uidesign-flow/SKILL.md|/uidesign-flow
+skill|uidesign-orchestrator|uiux → tonemana → uidesign (orchestration)|.agents/skills/uidesign-orchestrator/SKILL.md|.github/skills/uidesign-orchestrator/SKILL.md|/uidesign-orchestrator
 skill|uiux-android|Android UI/UX adapter for UIUX Pack|.agents/skills/uiux-android/SKILL.md|.github/skills/uiux-android/SKILL.md|-
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md|.github/skills/uiux-core/SKILL.md|/uiux-core
 skill|uiux-ios|iOS UI/UX adapter for UIUX Pack|.agents/skills/uiux-ios/SKILL.md|.github/skills/uiux-ios/SKILL.md|-

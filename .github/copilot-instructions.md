@@ -33,6 +33,7 @@ Use these prompt files to keep behavior consistent:
 - `/ui-verify` — snapshot/screenshot verification workflow for UI visual changes
 - `/tonemana-catalog` — Tone & Manner catalog generation workflow with seven default patterns
 - `/tonemana-apply` — Tone & Manner pack apply workflow for UIUX references
+- `/uidesign-orchestrator` — End-to-end orchestration (uiux → tonemana → uidesign previews)
 
 ## Language-specific highlights
 

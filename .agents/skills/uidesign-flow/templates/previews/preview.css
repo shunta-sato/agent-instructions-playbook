@@ -1,30 +1,57 @@
-/* preview.css — uses tm token variables (copied into ../tokens/resolved.tokens.css) */
+/* preview.css — uses tone-and-manner token variables (from ../tokens/resolved.tokens.css)
+   Expected variables (from tonemana-catalog *.tokens.css):
+   - --color-background, --color-surface, --color-text-primary, --color-text-secondary
+   - --color-brand-primary, --color-brand-accent
+   - --color-status-success, --color-status-warning, --color-status-error
+   - --font-family, --font-size-base, --line-height-base
+   - --radius-sm, --radius-md, --radius-lg
+   - --spacing-unit
+*/
 
 :root {
   color-scheme: light dark;
+
+  /* derived spacing scale (preview-only) */
+  --space-1: calc(var(--spacing-unit, 8px) * 0.5);
+  --space-2: calc(var(--spacing-unit, 8px) * 1);
+  --space-3: calc(var(--spacing-unit, 8px) * 1.5);
+  --space-4: calc(var(--spacing-unit, 8px) * 2);
+  --space-6: calc(var(--spacing-unit, 8px) * 3);
+
+  /* derived typography (preview-only) */
+  --font-size-body: var(--font-size-base, 16px);
+  --font-size-caption: calc(var(--font-size-base, 16px) * 0.875);
+  --font-size-title: calc(var(--font-size-base, 16px) * 1.5);
+  --line-height-body: var(--line-height-base, 1.5);
+
+  /* derived colors (preview-only) */
+  --color-border: color-mix(in srgb, var(--color-text-secondary, #6B7280) 35%, transparent);
+  --color-surface-2: color-mix(in srgb, var(--color-surface, #F6F7F9) 70%, var(--color-background, #ffffff));
+  --color-focus: var(--color-brand-accent, var(--color-brand-primary, #0B5FFF));
+  --color-on-primary: var(--color-background, #ffffff);
 }
 
 html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--tm-font-family-base, system-ui, sans-serif);
-  background: var(--tm-color-bg, #ffffff);
-  color: var(--tm-color-text, #111111);
+  font-family: var(--font-family, system-ui, sans-serif);
+  background: var(--color-background, #ffffff);
+  color: var(--color-text-primary, #111111);
 }
 
-a { color: var(--tm-color-primary, #0B5FFF); }
+a { color: var(--color-brand-primary, #0B5FFF); }
 
 .header {
   position: sticky;
   top: 0;
-  background: var(--tm-color-surface, #F6F7F9);
-  border-bottom: 1px solid var(--tm-color-border, #D1D5DB);
-  padding: var(--tm-space-3, 12px) var(--tm-space-4, 16px);
+  background: var(--color-surface, #F6F7F9);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-4);
 }
 
 .header-row {
   display: flex;
-  gap: var(--tm-space-3, 12px);
+  gap: var(--space-3);
   align-items: center;
   justify-content: space-between;
 }
@@ -32,33 +59,32 @@ a { color: var(--tm-color-primary, #0B5FFF); }
 .container {
   max-width: 980px;
   margin: 0 auto;
-  padding: var(--tm-space-6, 24px) var(--tm-space-4, 16px);
+  padding: var(--space-6) var(--space-4);
 }
 
 .card {
-  background: var(--tm-color-surface-2, #ffffff);
-  border: 1px solid var(--tm-color-border, #D1D5DB);
-  border-radius: var(--tm-radius-m, 10px);
-  box-shadow: var(--tm-shadow-1, 0 1px 2px rgba(0,0,0,0.08));
-  padding: var(--tm-space-4, 16px);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  padding: var(--space-4);
 }
 
 .h1 {
-  font-family: var(--tm-font-family-display, var(--tm-font-family-base, system-ui));
-  font-size: var(--tm-font-size-title, 24px);
+  font-size: var(--font-size-title);
   margin: 0;
 }
 
 .p {
-  font-size: var(--tm-font-size-body, 16px);
-  line-height: var(--tm-line-height-body, 1.5);
-  margin: var(--tm-space-2, 8px) 0 0 0;
-  color: var(--tm-color-text-muted, #4B5563);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  margin: var(--space-2) 0 0 0;
+  color: var(--color-text-secondary, #4B5563);
 }
 
 .row {
   display: flex;
-  gap: var(--tm-space-4, 16px);
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
@@ -66,26 +92,26 @@ a { color: var(--tm-color-primary, #0B5FFF); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--tm-space-2, 8px);
-  padding: var(--tm-space-2, 8px) var(--tm-space-4, 16px);
-  border-radius: var(--tm-radius-m, 10px);
-  border: 1px solid var(--tm-color-border, #D1D5DB);
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--color-border);
   background: transparent;
-  color: var(--tm-color-text, #111111);
-  font-weight: var(--tm-font-weight-medium, 600);
+  color: var(--color-text-primary, #111111);
+  font-weight: 600;
   cursor: pointer;
 }
 
 .btn-primary {
-  background: var(--tm-color-primary, #0B5FFF);
-  border-color: var(--tm-color-primary, #0B5FFF);
-  color: var(--tm-color-on-primary, #ffffff);
+  background: var(--color-brand-primary, #0B5FFF);
+  border-color: var(--color-brand-primary, #0B5FFF);
+  color: var(--color-on-primary);
 }
 
 .btn-danger {
-  background: var(--tm-color-danger, #B91C1C);
-  border-color: var(--tm-color-danger, #B91C1C);
-  color: #ffffff;
+  background: var(--color-status-error, #B91C1C);
+  border-color: var(--color-status-error, #B91C1C);
+  color: var(--color-on-primary);
 }
 
 .btn:disabled {
@@ -94,59 +120,59 @@ a { color: var(--tm-color-primary, #0B5FFF); }
 }
 
 .btn:focus, .input:focus {
-  outline: 3px solid color-mix(in srgb, var(--tm-color-focus, #2563EB) 65%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 65%, transparent);
   outline-offset: 2px;
 }
 
 .field {
   display: grid;
-  gap: var(--tm-space-1, 4px);
+  gap: var(--space-1);
 }
 
 .label {
-  font-size: var(--tm-font-size-caption, 14px);
-  font-weight: var(--tm-font-weight-medium, 600);
+  font-size: var(--font-size-caption);
+  font-weight: 600;
 }
 
 .input {
   height: 44px;
-  padding: 0 var(--tm-space-3, 12px);
-  border-radius: var(--tm-radius-m, 10px);
-  border: 1px solid var(--tm-color-border, #D1D5DB);
-  background: var(--tm-color-surface-2, #ffffff);
-  color: var(--tm-color-text, #111111);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--color-border);
+  background: var(--color-background, #ffffff);
+  color: var(--color-text-primary, #111111);
 }
 
 .help {
-  font-size: var(--tm-font-size-caption, 14px);
-  color: var(--tm-color-text-muted, #4B5563);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary, #4B5563);
 }
 
 .error {
-  font-size: var(--tm-font-size-caption, 14px);
-  color: var(--tm-color-danger, #B91C1C);
+  font-size: var(--font-size-caption);
+  color: var(--color-status-error, #B91C1C);
 }
 
 .input.error-state {
-  border-color: var(--tm-color-danger, #B91C1C);
+  border-color: var(--color-status-error, #B91C1C);
 }
 
 .alert {
-  border-radius: var(--tm-radius-m, 10px);
-  padding: var(--tm-space-3, 12px) var(--tm-space-4, 16px);
-  border: 1px solid var(--tm-color-border, #D1D5DB);
-  background: var(--tm-color-surface, #F6F7F9);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface, #F6F7F9);
 }
 
-.alert-success { border-color: color-mix(in srgb, var(--tm-color-success, #15803D) 55%, var(--tm-color-border, #D1D5DB)); }
-.alert-warning { border-color: color-mix(in srgb, var(--tm-color-warning, #B45309) 55%, var(--tm-color-border, #D1D5DB)); }
-.alert-danger  { border-color: color-mix(in srgb, var(--tm-color-danger,  #B91C1C) 55%, var(--tm-color-border, #D1D5DB)); }
+.alert-success { border-color: color-mix(in srgb, var(--color-status-success, #15803D) 55%, var(--color-border)); }
+.alert-warning { border-color: color-mix(in srgb, var(--color-status-warning, #B45309) 55%, var(--color-border)); }
+.alert-danger  { border-color: color-mix(in srgb, var(--color-status-error,  #B91C1C) 55%, var(--color-border)); }
 
 .kbd {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  border: 1px solid var(--tm-color-border, #D1D5DB);
+  border: 1px solid var(--color-border);
   border-bottom-width: 2px;
   padding: 2px 6px;
-  border-radius: 6px;
-  background: var(--tm-color-surface-2, #ffffff);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-surface-2);
 }

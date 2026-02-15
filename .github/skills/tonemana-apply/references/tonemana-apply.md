@@ -27,3 +27,28 @@ Every note should point to a concrete target by ID, file path, or heading so edi
 - Keep catalog assets immutable.
 - Store only minimal overrides in `tonemana_spec.json` (`tokens_patch`, `writing_style_patch`).
 - Never mutate source pattern templates when applying to a specific pack.
+
+## UIUX wiring (required)
+
+When applying a pattern to a project, update the target UIUX Pack `ui_spec.json` to include this canonical block:
+
+```json
+{
+  "meta": {
+    "tone_and_manner": {
+      "pattern_id": "<selected_pattern_id>",
+      "tonemana_spec_ref": "tonemana/YYYYMMDD-<slug>/tonemana_spec.json",
+      "token_refs": {
+        "json": "tonemana/catalog/tokens/<selected_pattern_id>.tokens.json",
+        "css": "tonemana/catalog/tokens/<selected_pattern_id>.tokens.css"
+      }
+    }
+  }
+}
+```
+
+Rules:
+
+* `pattern_id` must match the catalog id
+* token_refs must point to catalog `*.tokens.*`
+* do not write token values into ui_spec.json (reference only)

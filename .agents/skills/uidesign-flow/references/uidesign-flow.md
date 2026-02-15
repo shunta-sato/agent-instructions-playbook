@@ -18,11 +18,11 @@ A UIUX Pack with `ui_spec.json` containing:
 {
   "meta": {
     "tone_and_manner": {
-      "pattern_id": "neutral_plain",
+      "pattern_id": "neutral-minimal",
       "tonemana_spec_ref": "tonemana/20260214-example/tonemana_spec.json",
       "token_refs": {
-        "json": "tonemana/catalog/tokens/neutral_plain.json",
-        "css": "tonemana/catalog/tokens/neutral_plain.css"
+        "json": "tonemana/catalog/tokens/neutral-minimal.tokens.json",
+        "css": "tonemana/catalog/tokens/neutral-minimal.tokens.css"
       }
     }
   }
