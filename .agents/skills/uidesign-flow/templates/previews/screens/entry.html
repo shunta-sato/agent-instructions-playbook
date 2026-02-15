@@ -3,39 +3,64 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="uiux-platforms" content="<fill: android,web>" />
   <title>Representative Screen: entry</title>
   <link rel="stylesheet" href="../../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="../preview.css" />
+  <link rel="stylesheet" href="../review.css" />
+  <script defer src="../viewports.js"></script>
   <script defer src="../preview.js"></script>
+  <script defer src="../review.js"></script>
 </head>
 <body>
-  <header class="header">
-    <div class="header-row">
+  <header class="toolbar">
+    <div class="toolbar-row">
       <div>
         <h1 class="h1">Entry (representative)</h1>
         <p class="p"><a href="../index.html">Back</a> / uiux_screen_id: <span class="kbd">&lt;fill&gt;</span></p>
       </div>
-      <button id="theme-toggle" class="btn" type="button">Toggle theme</button>
+      <div class="toolbar-controls">
+        <select id="viewport-select" class="toolbar-select" aria-label="Viewport preset"></select>
+        <button id="orientation-toggle" class="btn" type="button">Portrait</button>
+        <label class="p" style="margin: 0;"><input id="scale-to-fit" type="checkbox" checked /> Scale to fit</label>
+        <button id="theme-toggle" class="btn" type="button">Toggle theme</button>
+        <button id="review-toggle" class="btn" type="button" aria-pressed="false">Review Mode</button>
+        <button id="export-json" class="btn" type="button">Export JSON</button>
+        <button id="export-markdown" class="btn" type="button">Export Markdown</button>
+        <button id="clear-review" class="btn" type="button">Clear</button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="row" style="align-items: center; justify-content: space-between;">
+  <main class="preview-shell">
+    <section class="device-stage" data-device-stage>
       <div>
-        <h2 class="h1">ホーム</h2>
-        <p class="p">次に何をすれば良いかが、すぐ分かるかを見ます。</p>
-      </div>
-      <button class="btn btn-primary" type="button">作成する</button>
-    </div>
+        <p class="device-label" data-viewport-label></p>
+        <div class="device-frame" data-device-frame>
+          <div class="device-viewport" data-review-root>
+            <div class="container">
+              <div class="row" style="align-items: center; justify-content: space-between;">
+                <div>
+                  <h2 class="h1">ホーム</h2>
+                  <p class="p">次に何をすれば良いかが、すぐ分かるかを見ます。</p>
+                </div>
+                <button class="btn btn-primary" type="button">作成する</button>
+              </div>
 
-    <div class="card" style="margin-top: var(--tm-space-4, 16px);">
-      <h3 class="h1" style="font-size: 18px;">最近の項目</h3>
-      <div style="display: grid; gap: var(--tm-space-2, 8px); margin-top: var(--tm-space-3, 12px);">
-        <div class="card">項目A — 状態: 完了</div>
-        <div class="card">項目B — 状態: 進行中</div>
-        <div class="card">項目C — 状態: 失敗</div>
+              <div class="card" style="margin-top: var(--tm-space-4, 16px);">
+                <h3 class="h1" style="font-size: 18px;">最近の項目</h3>
+                <div style="display: grid; gap: var(--tm-space-2, 8px); margin-top: var(--tm-space-3, 12px);">
+                  <div class="card">項目A — 状態: 完了</div>
+                  <div class="card">項目B — 状態: 進行中</div>
+                  <div class="card">項目C — 状態: 失敗</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+      <aside class="review-panel"><h2>Review Comments</h2><ol id="review-list" class="review-list"></ol></aside>
+    </section>
   </main>
 </body>
 </html>
