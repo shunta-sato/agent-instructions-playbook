@@ -14,9 +14,15 @@
 
   function detectPlatforms() {
     const attr = document.documentElement.getAttribute('data-uiux-platforms') || '';
-    const values = attr
+    const normalized = attr.trim().toLowerCase();
+
+    if (!normalized || normalized.includes('<fill')) {
+      return ['android'];
+    }
+
+    const values = normalized
       .split(',')
-      .map((value) => value.trim().toLowerCase())
+      .map((value) => value.trim())
       .filter(Boolean);
     return values;
   }
