@@ -39,6 +39,25 @@ Always follow these three rules:
 
 ## Tone & Manner integration (when available)
 
+Canonical schema for `meta.tone_and_manner`:
+
+```json
+{
+  "meta": {
+    "tone_and_manner": {
+      "pattern_id": "neutral-minimal",
+      "tonemana_spec_ref": "tonemana/YYYYMMDD-<slug>/tonemana_spec.json",
+      "token_refs": {
+        "json": "tonemana/catalog/tokens/neutral-minimal.tokens.json",
+        "css": "tonemana/catalog/tokens/neutral-minimal.tokens.css"
+      }
+    }
+  }
+}
+```
+
+
+
 When a project includes Tone & Manner artifacts, treat them as references for consistency, not as structural UI changes.
 
 - Fill `meta.tone_and_manner` in `ui_spec.json`.
