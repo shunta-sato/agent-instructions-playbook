@@ -1,27 +1,46 @@
 (function () {
   function setTheme(next) {
-    if (next === "dark") {
-      document.documentElement.setAttribute("data-theme", "dark");
+    if (next === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
-      document.documentElement.removeAttribute("data-theme");
+      document.documentElement.removeAttribute('data-theme');
     }
-    try { localStorage.setItem("uidesign_theme", next); } catch (_) {}
+    try { localStorage.setItem('uidesign_theme', next); } catch (_) {}
   }
 
   function getTheme() {
-    try { return localStorage.getItem("uidesign_theme"); } catch (_) { return null; }
+    try { return localStorage.getItem('uidesign_theme'); } catch (_) { return null; }
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const saved = getTheme();
-    if (saved === "dark") setTheme("dark");
+  function detectPlatforms() {
+    const attr = document.documentElement.getAttribute('data-uiux-platforms') || '';
+    const values = attr
+      .split(',')
+      .map((value) => value.trim().toLowerCase())
+      .filter(Boolean);
+    return values;
+  }
 
-    const btn = document.getElementById("theme-toggle");
-    if (btn) {
-      btn.addEventListener("click", function () {
-        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-        setTheme(isDark ? "light" : "dark");
+  document.addEventListener('DOMContentLoaded', function () {
+    const saved = getTheme();
+    if (saved === 'dark') setTheme('dark');
+
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', function () {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        setTheme(isDark ? 'light' : 'dark');
       });
+    }
+
+    if (window.UIDesignViewport) {
+      window.UIDesignViewport.init({
+        platforms: detectPlatforms()
+      });
+    }
+
+    if (window.UIDesignReview) {
+      window.UIDesignReview.init();
     }
   });
 })();

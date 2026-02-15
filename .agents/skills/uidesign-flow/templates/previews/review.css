@@ -1,0 +1,42 @@
+.review-panel {
+  position: fixed;
+  right: 0;
+  top: 180px;
+  width: 320px;
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-surface, #F6F7F9);
+  padding: var(--space-3);
+}
+
+.review-mode #deviceCanvas {
+  cursor: crosshair;
+}
+
+.review-mode #deviceCanvas *:hover {
+  outline: 2px dashed var(--color-brand-primary, #0B5FFF);
+  outline-offset: 2px;
+}
+
+.review-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 6px);
+  background: var(--color-background, #fff);
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.review-item-head {
+  font-size: var(--font-size-caption);
+}
+
+.review-item-meta {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary, #4B5563);
+}
+
+.review-empty {
+  color: var(--color-text-secondary, #4B5563);
+  font-size: var(--font-size-caption);
+}

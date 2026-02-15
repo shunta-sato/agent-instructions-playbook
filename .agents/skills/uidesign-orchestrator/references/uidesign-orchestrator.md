@@ -73,6 +73,8 @@ Stop if UIDesign Pack still contains `<fill>`.
 
 ### Step 4 — report next action for humans
 
-* Provide the path to `uidesign/.../previews/index.html`
-* Ask humans to write feedback in `uidesign/.../review_notes.md`
+* Provide `tonemana/catalog/previews/index.html` and note that 7 catalog patterns can be switched from the UI selector.
+* Provide `uidesign/.../previews/index.html` as the review start point.
+* Include a short review instruction: `Review: ON` → click elements to comment → `Export Markdown`/`Export JSON`.
+* Keep `uidesign/.../review_notes.md` as the Markdown export destination.
 * If humans request IA/navigation changes, route them to uiux-core (not uidesign-flow)

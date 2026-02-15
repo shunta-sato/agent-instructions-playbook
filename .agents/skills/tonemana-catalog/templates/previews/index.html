@@ -11,6 +11,10 @@
   <header class="stack">
     <h1>Tone &amp; Manner Preview</h1>
     <p class="muted">Compare visual rules and writing style from catalog patterns.</p>
+    <label class="pattern-control" for="patternSelect">
+      Pattern
+      <select id="patternSelect" aria-label="Select tone and manner pattern"></select>
+    </label>
   </header>
 
   <main class="grid">
@@ -40,8 +44,41 @@
   </main>
 
   <script>
-    const pattern = new URLSearchParams(window.location.search).get('pattern') || 'neutral-minimal';
-    document.getElementById('patternTokens').href = `../tokens/${pattern}.tokens.css`;
+    const PATTERNS = [
+      'neutral-minimal',
+      'trust-corporate',
+      'warm-friendly',
+      'modern-tech',
+      'natural-organic',
+      'premium-elegant',
+      'bold-energetic'
+    ];
+
+    function applyPattern(pattern) {
+      const nextPattern = PATTERNS.includes(pattern) ? pattern : 'neutral-minimal';
+      document.getElementById('patternTokens').href = `../tokens/${nextPattern}.tokens.css`;
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('pattern', nextPattern);
+      history.replaceState({}, '', url);
+      return nextPattern;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const initialPattern = applyPattern(params.get('pattern') || 'neutral-minimal');
+
+    const select = document.getElementById('patternSelect');
+    PATTERNS.forEach((pattern) => {
+      const option = document.createElement('option');
+      option.value = pattern;
+      option.textContent = pattern;
+      select.appendChild(option);
+    });
+    select.value = initialPattern;
+
+    select.addEventListener('change', (event) => {
+      applyPattern(event.target.value);
+    });
   </script>
 </body>
 </html>

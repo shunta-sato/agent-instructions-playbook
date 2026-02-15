@@ -1,14 +1,18 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-uiux-platforms="android,web">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>UIDesign Components</title>
   <link rel="stylesheet" href="../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="./preview.css" />
+  <link rel="stylesheet" href="./viewports.css" />
+  <link rel="stylesheet" href="./review.css" />
+  <script defer src="./viewports.js"></script>
+  <script defer src="./review.js"></script>
   <script defer src="./preview.js"></script>
 </head>
-<body>
+<body class="has-review-panel">
   <header class="header">
     <div class="header-row">
       <div>
@@ -19,50 +23,76 @@
     </div>
   </header>
 
-  <main class="container">
+  <div class="preview-toolbar">
     <div class="row">
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2 class="h1" style="font-size: 18px;">Buttons</h2>
-        <div class="row" style="margin-top: var(--tm-space-3, 12px);">
-          <button class="btn btn-primary" type="button">Primary</button>
-          <button class="btn" type="button">Secondary</button>
-          <button class="btn btn-danger" type="button">Danger</button>
-          <button class="btn btn-primary" type="button" disabled>Disabled</button>
-        </div>
-      </div>
+      <label for="viewportSelect">Viewport</label>
+      <select id="viewportSelect" aria-label="Viewport preset"></select>
+      <span id="viewportSizeLabel" class="viewport-size-label"></span>
+    </div>
+    <div class="row">
+      <button id="orientationToggle" class="btn" type="button">Landscape</button>
+      <button id="scaleToFitToggle" class="btn" type="button">Scale: Fit</button>
+      <button id="reviewModeToggle" class="btn" type="button">Review: OFF</button>
+      <button id="exportReviewJson" class="btn" type="button">Export JSON</button>
+      <button id="exportReviewMarkdown" class="btn" type="button">Export Markdown</button>
+    </div>
+  </div>
 
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2 class="h1" style="font-size: 18px;">Inputs</h2>
-        <div class="field" style="margin-top: var(--tm-space-3, 12px);">
-          <label class="label" for="email">Email</label>
-          <input class="input" id="email" placeholder="example@example.com" />
-          <div class="help">例：example@example.com</div>
-        </div>
+  <section id="previewStage" class="preview-stage">
+    <div id="deviceCanvas" class="device-canvas">
+      <div id="deviceFrame" class="device-frame">
+        <main class="container">
+          <div class="row">
+            <div class="card" style="flex: 1; min-width: 280px;">
+              <h2 class="h1" style="font-size: 18px;">Buttons</h2>
+              <div class="row" style="margin-top: var(--tm-space-3, 12px);">
+                <button class="btn btn-primary" type="button">Primary</button>
+                <button class="btn" type="button">Secondary</button>
+                <button class="btn btn-danger" type="button">Danger</button>
+                <button class="btn btn-primary" type="button" disabled>Disabled</button>
+              </div>
+            </div>
 
-        <div class="field" style="margin-top: var(--tm-space-4, 16px);">
-          <label class="label" for="code">Code (error)</label>
-          <input class="input error-state" id="code" value="12" />
-          <div class="error">入力に誤りがあります。確認してください。</div>
-        </div>
+            <div class="card" style="flex: 1; min-width: 280px;">
+              <h2 class="h1" style="font-size: 18px;">Inputs</h2>
+              <div class="field" style="margin-top: var(--tm-space-3, 12px);">
+                <label class="label" for="email">Email</label>
+                <input class="input" id="email" placeholder="example@example.com" />
+                <div class="help">例：example@example.com</div>
+              </div>
+
+              <div class="field" style="margin-top: var(--tm-space-4, 16px);">
+                <label class="label" for="code">Code (error)</label>
+                <input class="input error-state" id="code" value="12" />
+                <div class="error">入力に誤りがあります。確認してください。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: var(--tm-space-4, 16px);">
+            <div class="card" style="flex: 1; min-width: 280px;">
+              <h2 class="h1" style="font-size: 18px;">Alerts / status</h2>
+              <div style="display: grid; gap: var(--tm-space-3, 12px); margin-top: var(--tm-space-3, 12px);">
+                <div class="alert alert-success">保存しました。</div>
+                <div class="alert alert-warning">注意：確認が必要です。</div>
+                <div class="alert alert-danger">失敗しました。もう一度お試しください。</div>
+              </div>
+            </div>
+
+            <div class="card" style="flex: 1; min-width: 280px;">
+              <h2 class="h1" style="font-size: 18px;">Typography</h2>
+              <p class="p">短い説明文。読みやすさと余白のバランスを確認します。</p>
+              <p class="p">「同じ意味内容」で比較するため、文章は固定します。</p>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
+  </section>
 
-    <div class="row" style="margin-top: var(--tm-space-4, 16px);">
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2 class="h1" style="font-size: 18px;">Alerts / status</h2>
-        <div style="display: grid; gap: var(--tm-space-3, 12px); margin-top: var(--tm-space-3, 12px);">
-          <div class="alert alert-success">保存しました。</div>
-          <div class="alert alert-warning">注意：確認が必要です。</div>
-          <div class="alert alert-danger">失敗しました。もう一度お試しください。</div>
-        </div>
-      </div>
-
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2 class="h1" style="font-size: 18px;">Typography</h2>
-        <p class="p">短い説明文。読みやすさと余白のバランスを確認します。</p>
-        <p class="p">「同じ意味内容」で比較するため、文章は固定します。</p>
-      </div>
-    </div>
-  </main>
+  <aside class="review-panel">
+    <h2 class="h1" style="font-size:18px;">Pinned Review</h2>
+    <div id="reviewBoard"></div>
+  </aside>
 </body>
 </html>
