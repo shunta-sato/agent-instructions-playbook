@@ -54,18 +54,21 @@
       'bold-energetic'
     ];
 
-    function applyPattern(pattern) {
+    function applyPattern(pattern, syncUrl = true) {
       const nextPattern = PATTERNS.includes(pattern) ? pattern : 'neutral-minimal';
       document.getElementById('patternTokens').href = `../tokens/${nextPattern}.tokens.css`;
 
-      const url = new URL(window.location.href);
-      url.searchParams.set('pattern', nextPattern);
-      history.replaceState({}, '', url);
+      if (syncUrl) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('pattern', nextPattern);
+        history.replaceState({}, '', url);
+      }
       return nextPattern;
     }
 
     const params = new URLSearchParams(window.location.search);
-    const initialPattern = applyPattern(params.get('pattern') || 'neutral-minimal');
+    const hasPatternParam = params.has('pattern');
+    const initialPattern = applyPattern(params.get('pattern') || 'neutral-minimal', hasPatternParam);
 
     const select = document.getElementById('patternSelect');
     PATTERNS.forEach((pattern) => {

@@ -52,6 +52,14 @@
     return lines.join('\n');
   }
 
+
+  function createCommentId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+    return `comment-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+  }
+
   function download(name, text, type) {
     const blob = new Blob([text], { type });
     const url = URL.createObjectURL(blob);
@@ -114,7 +122,7 @@
       const reason = window.prompt('Reason (optional):', '') || '';
 
       state.comments.push({
-        id: crypto.randomUUID(),
+        id: createCommentId(),
         page: window.location.pathname.split('/').pop() || 'unknown',
         element: toElementPath(target),
         state: inferState(target),
