@@ -11,6 +11,10 @@
   <header class="stack">
     <h1>Tone &amp; Manner Preview</h1>
     <p class="muted">Compare visual rules and writing style from catalog patterns.</p>
+    <label class="pattern-picker" for="patternSelect">
+      Pattern
+      <select id="patternSelect"></select>
+    </label>
   </header>
 
   <main class="grid">
@@ -40,8 +44,47 @@
   </main>
 
   <script>
-    const pattern = new URLSearchParams(window.location.search).get('pattern') || 'neutral-minimal';
-    document.getElementById('patternTokens').href = `../tokens/${pattern}.tokens.css`;
+    const DEFAULT_PATTERN = 'neutral-minimal';
+    const PATTERNS = [
+      'neutral-minimal',
+      'warm-trust',
+      'bold-energy',
+      'calm-breath',
+      'smart-premium',
+      'nature-soft',
+      'playful-pop'
+    ];
+
+    const patternTokens = document.getElementById('patternTokens');
+    const patternSelect = document.getElementById('patternSelect');
+    const params = new URLSearchParams(window.location.search);
+    const initialPattern = params.get('pattern');
+    const selectedPattern = PATTERNS.includes(initialPattern) ? initialPattern : DEFAULT_PATTERN;
+
+    PATTERNS.forEach((patternId) => {
+      const option = document.createElement('option');
+      option.value = patternId;
+      option.textContent = patternId;
+      patternSelect.appendChild(option);
+    });
+
+    function updatePattern(patternId, shouldReplaceState = false) {
+      patternTokens.href = `../tokens/${patternId}.tokens.css`;
+      patternSelect.value = patternId;
+      params.set('pattern', patternId);
+      const nextUrl = `${window.location.pathname}?${params.toString()}`;
+      if (shouldReplaceState) {
+        window.history.replaceState({}, '', nextUrl);
+      } else {
+        window.history.pushState({}, '', nextUrl);
+      }
+    }
+
+    patternSelect.addEventListener('change', () => {
+      updatePattern(patternSelect.value);
+    });
+
+    updatePattern(selectedPattern, true);
   </script>
 </body>
 </html>
