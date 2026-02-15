@@ -176,3 +176,11 @@ a { color: var(--color-brand-primary, #0B5FFF); }
   border-radius: var(--radius-sm, 4px);
   background: var(--color-surface-2);
 }
+
+body.has-review-panel {
+  padding-right: 336px;
+}
+
+.header {
+  z-index: 30;
+}

@@ -1,4 +1,12 @@
-# UIDesign Review Notes (human)
+# UIDesign Review Notes (export destination)
+
+このファイルは **手書きメモ用ではなく、Preview の Export Markdown 出力先** です。
+
+## Browser review flow
+1. `previews/index.html` から対象画面を開く
+2. ツールバーで `Review: ON` を有効化
+3. 要素クリックで `Change` / `Reason` を入力
+4. `Export Markdown` でこのファイルに貼り付け
 
 ## How to write feedback
 Write each item as:

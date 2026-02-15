@@ -1,14 +1,18 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-uiux-platforms="<fill: meta.platforms_csv>">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Representative Screen: entry</title>
   <link rel="stylesheet" href="../../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="../preview.css" />
+  <link rel="stylesheet" href="../viewports.css" />
+  <link rel="stylesheet" href="../review.css" />
+  <script defer src="../viewports.js"></script>
+  <script defer src="../review.js"></script>
   <script defer src="../preview.js"></script>
 </head>
-<body>
+<body class="has-review-panel">
   <header class="header">
     <div class="header-row">
       <div>
@@ -19,23 +23,49 @@
     </div>
   </header>
 
-  <main class="container">
-    <div class="row" style="align-items: center; justify-content: space-between;">
-      <div>
-        <h2 class="h1">ホーム</h2>
-        <p class="p">次に何をすれば良いかが、すぐ分かるかを見ます。</p>
-      </div>
-      <button class="btn btn-primary" type="button">作成する</button>
+  <div class="preview-toolbar">
+    <div class="row">
+      <label for="viewportSelect">Viewport</label>
+      <select id="viewportSelect" aria-label="Viewport preset"></select>
+      <span id="viewportSizeLabel" class="viewport-size-label"></span>
     </div>
+    <div class="row">
+      <button id="orientationToggle" class="btn" type="button">Landscape</button>
+      <button id="scaleToFitToggle" class="btn" type="button">Scale: Fit</button>
+      <button id="reviewModeToggle" class="btn" type="button">Review: OFF</button>
+      <button id="exportReviewJson" class="btn" type="button">Export JSON</button>
+      <button id="exportReviewMarkdown" class="btn" type="button">Export Markdown</button>
+    </div>
+  </div>
 
-    <div class="card" style="margin-top: var(--tm-space-4, 16px);">
-      <h3 class="h1" style="font-size: 18px;">最近の項目</h3>
-      <div style="display: grid; gap: var(--tm-space-2, 8px); margin-top: var(--tm-space-3, 12px);">
-        <div class="card">項目A — 状態: 完了</div>
-        <div class="card">項目B — 状態: 進行中</div>
-        <div class="card">項目C — 状態: 失敗</div>
+  <section id="previewStage" class="preview-stage">
+    <div id="deviceCanvas" class="device-canvas">
+      <div id="deviceFrame" class="device-frame">
+        <main class="container">
+          <div class="row" style="align-items: center; justify-content: space-between;">
+            <div>
+              <h2 class="h1">ホーム</h2>
+              <p class="p">次に何をすれば良いかが、すぐ分かるかを見ます。</p>
+            </div>
+            <button class="btn btn-primary" type="button">作成する</button>
+          </div>
+
+          <div class="card" style="margin-top: var(--tm-space-4, 16px);">
+            <h3 class="h1" style="font-size: 18px;">最近の項目</h3>
+            <div style="display: grid; gap: var(--tm-space-2, 8px); margin-top: var(--tm-space-3, 12px);">
+              <div class="card">項目A — 状態: 完了</div>
+              <div class="card">項目B — 状態: 進行中</div>
+              <div class="card">項目C — 状態: 失敗</div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
-  </main>
+  </section>
+
+  <aside class="review-panel">
+    <h2 class="h1" style="font-size:18px;">Pinned Review</h2>
+    <div id="reviewBoard"></div>
+  </aside>
 </body>
 </html>

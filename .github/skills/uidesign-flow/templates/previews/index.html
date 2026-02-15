@@ -1,14 +1,18 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-uiux-platforms="<fill: meta.platforms_csv>">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>UIDesign Preview</title>
   <link rel="stylesheet" href="../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="./preview.css" />
+  <link rel="stylesheet" href="./viewports.css" />
+  <link rel="stylesheet" href="./review.css" />
+  <script defer src="./viewports.js"></script>
+  <script defer src="./review.js"></script>
   <script defer src="./preview.js"></script>
 </head>
-<body>
+<body class="has-review-panel">
   <header class="header">
     <div class="header-row">
       <div>
@@ -24,16 +28,42 @@
     </div>
   </header>
 
-  <main class="container">
-    <div class="card">
-      <p class="p">Open these pages and write feedback in <span class="kbd">review_notes.md</span>.</p>
-      <ul>
-        <li><a href="./components.html">Components</a></li>
-        <li><a href="./screens/entry.html">Representative screen: entry</a></li>
-        <li><a href="./screens/form.html">Representative screen: form</a></li>
-        <li><a href="./screens/status.html">Representative screen: status</a></li>
-      </ul>
+  <div class="preview-toolbar">
+    <div class="row">
+      <label for="viewportSelect">Viewport</label>
+      <select id="viewportSelect" aria-label="Viewport preset"></select>
+      <span id="viewportSizeLabel" class="viewport-size-label"></span>
     </div>
-  </main>
+    <div class="row">
+      <button id="orientationToggle" class="btn" type="button">Landscape</button>
+      <button id="scaleToFitToggle" class="btn" type="button">Scale: Fit</button>
+      <button id="reviewModeToggle" class="btn" type="button">Review: OFF</button>
+      <button id="exportReviewJson" class="btn" type="button">Export JSON</button>
+      <button id="exportReviewMarkdown" class="btn" type="button">Export Markdown</button>
+    </div>
+  </div>
+
+  <section id="previewStage" class="preview-stage">
+    <div id="deviceCanvas" class="device-canvas">
+      <div id="deviceFrame" class="device-frame">
+        <main class="container">
+          <div class="card">
+            <p class="p">Open these pages and capture feedback with Review Mode (click elements to add comments).</p>
+            <ul>
+              <li><a href="./components.html">Components</a></li>
+              <li><a href="./screens/entry.html">Representative screen: entry</a></li>
+              <li><a href="./screens/form.html">Representative screen: form</a></li>
+              <li><a href="./screens/status.html">Representative screen: status</a></li>
+            </ul>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <aside class="review-panel">
+    <h2 class="h1" style="font-size:18px;">Pinned Review</h2>
+    <div id="reviewBoard"></div>
+  </aside>
 </body>
 </html>

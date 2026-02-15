@@ -1,14 +1,18 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-uiux-platforms="<fill: meta.platforms_csv>">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Representative Screen: form</title>
   <link rel="stylesheet" href="../../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="../preview.css" />
+  <link rel="stylesheet" href="../viewports.css" />
+  <link rel="stylesheet" href="../review.css" />
+  <script defer src="../viewports.js"></script>
+  <script defer src="../review.js"></script>
   <script defer src="../preview.js"></script>
 </head>
-<body>
+<body class="has-review-panel">
   <header class="header">
     <div class="header-row">
       <div>
@@ -19,28 +23,54 @@
     </div>
   </header>
 
-  <main class="container">
-    <div class="card">
-      <h2 class="h1">入力</h2>
-      <p class="p">エラーの見え方と、次の行動が分かるかを見ます。</p>
+  <div class="preview-toolbar">
+    <div class="row">
+      <label for="viewportSelect">Viewport</label>
+      <select id="viewportSelect" aria-label="Viewport preset"></select>
+      <span id="viewportSizeLabel" class="viewport-size-label"></span>
+    </div>
+    <div class="row">
+      <button id="orientationToggle" class="btn" type="button">Landscape</button>
+      <button id="scaleToFitToggle" class="btn" type="button">Scale: Fit</button>
+      <button id="reviewModeToggle" class="btn" type="button">Review: OFF</button>
+      <button id="exportReviewJson" class="btn" type="button">Export JSON</button>
+      <button id="exportReviewMarkdown" class="btn" type="button">Export Markdown</button>
+    </div>
+  </div>
 
-      <div class="field" style="margin-top: var(--tm-space-4, 16px);">
-        <label class="label" for="name">名前</label>
-        <input class="input" id="name" placeholder="例：山田 太郎" />
-        <div class="help">必須</div>
-      </div>
+  <section id="previewStage" class="preview-stage">
+    <div id="deviceCanvas" class="device-canvas">
+      <div id="deviceFrame" class="device-frame">
+        <main class="container">
+          <div class="card">
+            <h2 class="h1">入力</h2>
+            <p class="p">エラーの見え方と、次の行動が分かるかを見ます。</p>
 
-      <div class="field" style="margin-top: var(--tm-space-4, 16px);">
-        <label class="label" for="tel">電話番号（error）</label>
-        <input class="input error-state" id="tel" value="123" />
-        <div class="error">入力に誤りがあります。確認してください。</div>
-      </div>
+            <div class="field" style="margin-top: var(--tm-space-4, 16px);">
+              <label class="label" for="name">名前</label>
+              <input class="input" id="name" placeholder="例：山田 太郎" />
+              <div class="help">必須</div>
+            </div>
 
-      <div class="row" style="margin-top: var(--tm-space-6, 24px); justify-content: flex-end;">
-        <button class="btn" type="button">下書きを保存</button>
-        <button class="btn btn-primary" type="button">送信</button>
+            <div class="field" style="margin-top: var(--tm-space-4, 16px);">
+              <label class="label" for="tel">電話番号（error）</label>
+              <input class="input error-state" id="tel" value="123" />
+              <div class="error">入力に誤りがあります。確認してください。</div>
+            </div>
+
+            <div class="row" style="margin-top: var(--tm-space-6, 24px); justify-content: flex-end;">
+              <button class="btn" type="button">下書きを保存</button>
+              <button class="btn btn-primary" type="button">送信</button>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
-  </main>
+  </section>
+
+  <aside class="review-panel">
+    <h2 class="h1" style="font-size:18px;">Pinned Review</h2>
+    <div id="reviewBoard"></div>
+  </aside>
 </body>
 </html>
