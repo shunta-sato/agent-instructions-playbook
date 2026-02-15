@@ -3,37 +3,60 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="uiux-platforms" content="<fill: android,web>" />
   <title>UIDesign Preview</title>
   <link rel="stylesheet" href="../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="./preview.css" />
+  <link rel="stylesheet" href="./review.css" />
+  <script defer src="./viewports.js"></script>
   <script defer src="./preview.js"></script>
+  <script defer src="./review.js"></script>
 </head>
 <body>
-  <header class="header">
-    <div class="header-row">
+  <header class="toolbar">
+    <div class="toolbar-row">
       <div>
         <h1 class="h1">UIDesign Preview</h1>
-        <p class="p">
-          Pattern: <strong>&lt;fill: pattern_id&gt;</strong>
-          / UIUX Pack: <span class="kbd">&lt;fill: uiux/YYYYMMDD-...&gt;</span>
-        </p>
+        <p class="p">Pattern: <strong>&lt;fill: pattern_id&gt;</strong> / UIUX Pack: <span class="kbd">&lt;fill: uiux/YYYYMMDD-...&gt;</span></p>
       </div>
-      <div class="row">
+      <div class="toolbar-controls">
+        <select id="viewport-select" class="toolbar-select" aria-label="Viewport preset"></select>
+        <button id="orientation-toggle" class="btn" type="button">Portrait</button>
+        <label class="p" style="margin: 0;"><input id="scale-to-fit" type="checkbox" checked /> Scale to fit</label>
         <button id="theme-toggle" class="btn" type="button">Toggle theme</button>
+        <button id="review-toggle" class="btn" type="button" aria-pressed="false">Review Mode</button>
+        <button id="export-json" class="btn" type="button">Export JSON</button>
+        <button id="export-markdown" class="btn" type="button">Export Markdown</button>
+        <button id="clear-review" class="btn" type="button">Clear</button>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="card">
-      <p class="p">Open these pages and write feedback in <span class="kbd">review_notes.md</span>.</p>
-      <ul>
-        <li><a href="./components.html">Components</a></li>
-        <li><a href="./screens/entry.html">Representative screen: entry</a></li>
-        <li><a href="./screens/form.html">Representative screen: form</a></li>
-        <li><a href="./screens/status.html">Representative screen: status</a></li>
-      </ul>
-    </div>
+  <main class="preview-shell">
+    <section class="device-stage" data-device-stage>
+      <div>
+        <p class="device-label" data-viewport-label></p>
+        <div class="device-frame" data-device-frame>
+          <div class="device-viewport" data-review-root>
+            <div class="container">
+              <div class="card">
+                <p class="p">Open these pages and review comments directly in this preview. Export to <span class="kbd">review_notes.md</span> format later.</p>
+                <ul>
+                  <li><a href="./components.html">Components</a></li>
+                  <li><a href="./screens/entry.html">Representative screen: entry</a></li>
+                  <li><a href="./screens/form.html">Representative screen: form</a></li>
+                  <li><a href="./screens/status.html">Representative screen: status</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="review-panel">
+        <h2>Review Comments</h2>
+        <ol id="review-list" class="review-list"></ol>
+      </aside>
+    </section>
   </main>
 </body>
 </html>

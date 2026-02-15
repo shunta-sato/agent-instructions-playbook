@@ -48,6 +48,20 @@ input {
   color: var(--color-text-primary);
 }
 .muted { color: var(--color-text-secondary); }
+.pattern-picker {
+  display: inline-flex;
+  gap: calc(var(--spacing-unit) * 0.5);
+  align-items: center;
+}
+
+.pattern-picker select {
+  border: 1px solid var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: calc(var(--spacing-unit) * 0.5);
+}
+
 .alert {
   border-left: 4px solid var(--color-status-error);
   background: color-mix(in oklab, var(--color-status-error) 10%, var(--color-surface));

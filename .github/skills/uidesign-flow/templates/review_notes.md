@@ -1,6 +1,9 @@
-# UIDesign Review Notes (human)
+# UIDesign Review Notes (export destination)
 
-## How to write feedback
+## How to collect feedback
+Use Preview `Review Mode` to click elements and add comments, then export as JSON/Markdown.
+This file is the destination format after export (or copy/paste), not a manual-only worksheet.
+
 Write each item as:
 - Page: (components.html | entry.html | form.html | status.html)
 - Element: (button/input/alert/card/typography/etc)

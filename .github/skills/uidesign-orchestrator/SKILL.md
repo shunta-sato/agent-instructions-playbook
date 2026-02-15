@@ -24,3 +24,10 @@ This skill does not change information architecture (IA). IA changes belong to `
 3) Ensure tone-and-manner pack + UIUX wiring (`tonemana-apply`)
 4) Generate/update UIDesign Pack (`uidesign-flow`)
 5) Report what changed and where humans should review
+
+## Required completion message
+
+Always include:
+- `tonemana/catalog/previews/index.html` (mention UI-based 7-pattern switching)
+- `uidesign/.../previews/index.html` (review entry point)
+- A short reminder: `Review Mode` → click to comment → `Export JSON/Markdown`
