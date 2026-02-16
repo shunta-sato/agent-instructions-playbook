@@ -1,4 +1,17 @@
 (function () {
+  function toElement(node) {
+    if (!node) return null;
+    if (node.nodeType === Node.ELEMENT_NODE) return node;
+    if (node.nodeType === Node.TEXT_NODE) return node.parentElement;
+    return null;
+  }
+
+  function closestFromNode(node, selector) {
+    const el = toElement(node);
+    if (!el) return null;
+    return el.closest(selector);
+  }
+
   function isTypingTarget(el) {
     if (!el) return false;
     const tag = el.tagName && el.tagName.toLowerCase();
@@ -154,7 +167,10 @@
     fileWarn.className = 'rv-file-warning';
     fileWarn.textContent = 'file:// ではコピーが不安定です。http://localhost で開いてください（例: python -m http.server 8000）。';
     if (location.protocol === 'file:') {
-      document.querySelector('.toolbar-controls').appendChild(fileWarn);
+      const toolbarControls = document.querySelector('.toolbar-controls');
+      if (toolbarControls) {
+        toolbarControls.appendChild(fileWarn);
+      }
     }
 
     const badge = document.createElement('span');
@@ -338,17 +354,17 @@
 
     root.addEventListener('mouseover', function (event) {
       if (!reviewOn) return;
-      const el = event.target.closest('*');
-      if (!el || el.closest('.rv-pin-layer')) return;
+      const el = toElement(event.target);
+      if (!el || closestFromNode(el, '.rv-pin-layer')) return;
       document.querySelectorAll('.rv-hover').forEach((n) => n.classList.remove('rv-hover'));
       el.classList.add('rv-hover');
     });
 
     root.addEventListener('click', function (event) {
       if (!reviewOn) return;
-      if (event.target.closest('.rv-pin')) return;
-      const el = event.target.closest('*');
-      if (!el || el.closest('.toolbar') || el.closest('.rv-panel')) return;
+      if (closestFromNode(event.target, '.rv-pin')) return;
+      const el = toElement(event.target);
+      if (!el || closestFromNode(el, '.toolbar') || closestFromNode(el, '.rv-panel')) return;
       event.preventDefault();
       const page = store.pagePath();
       const coords = rectToTarget(root, el);
@@ -434,7 +450,7 @@
       exportMenu.classList.toggle('is-open');
     });
     document.addEventListener('click', function (event) {
-      if (!event.target.closest('.rv-export')) exportMenu.classList.remove('is-open');
+      if (!closestFromNode(event.target, '.rv-export')) exportMenu.classList.remove('is-open');
     });
     exportMenu.querySelector('[data-export-json]').addEventListener('click', function () {
       exp.download('annotations.json', JSON.stringify(exp.buildJson({ packId: store.packId, version: store.version, annotations }), null, 2), 'application/json');
