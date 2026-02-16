@@ -42,6 +42,10 @@ Must include:
 * `auto_review.json`
 * `diff_summary.md`
 * `review_notes.md`
+* `previews/review/review.css`
+* `previews/review/review_store.js`
+* `previews/review/review_export.js`
+* `previews/review/review_ui.js`
 * `tokens/resolved.tokens.json`
 * `tokens/resolved.tokens.css`
 * `previews/index.html`
@@ -64,7 +68,11 @@ The HTML is for review. It does not have to match product code structure, but it
 
 ## Feedback rules (human)
 
-Humans must write feedback into `review_notes.md` with:
+Humans review directly in browser Review Mode and export `review_notes.generated.md` / `annotations.json`.
+
+For exceptional manual edits in `review_notes.md`, keep annotation IDs and always include page + element.
+
+Review feedback should include:
 
 * page reference (components.html or which screen html)
 * element reference (button, input, alert, card…)
