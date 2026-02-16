@@ -1,6 +1,10 @@
 # UIDesign Review Notes (export destination)
 
 ## How to collect feedback
+> [!IMPORTANT]
+> このファイルは手書き前提ではありません。Preview の Review UI でコメントし、**Export Markdown** で生成した内容を反映してください。
+> 例外的に手で追記する場合は、`[anno-xxxx]` ID を残し、Page と Element を必ず記載してください。
+
 Use Preview `Review Mode` to click elements and add comments, then export as JSON/Markdown.
 This file is the destination format after export (or copy/paste), not a manual-only worksheet.
 

@@ -7,10 +7,12 @@
   <title>Representative Screen: status</title>
   <link rel="stylesheet" href="../../tokens/resolved.tokens.css" />
   <link rel="stylesheet" href="../preview.css" />
-  <link rel="stylesheet" href="../review.css" />
+  <link rel="stylesheet" href="../review/review.css" />
   <script defer src="../viewports.js"></script>
   <script defer src="../preview.js"></script>
-  <script defer src="../review.js"></script>
+  <script defer src="../review/review_store.js"></script>
+  <script defer src="../review/review_export.js"></script>
+  <script defer src="../review/review_ui.js"></script>
 </head>
 <body>
   <header class="toolbar">
@@ -23,11 +25,18 @@
         <select id="viewport-select" class="toolbar-select" aria-label="Viewport preset"></select>
         <button id="orientation-toggle" class="btn" type="button">Portrait</button>
         <label class="p" style="margin: 0;"><input id="scale-to-fit" type="checkbox" checked /> Scale to fit</label>
+        <button id="review-toggle" class="btn" type="button" aria-pressed="false">Review</button>
+        <div class="rv-export">
+          <button id="review-export-button" class="btn" type="button" aria-haspopup="true" aria-expanded="false">Export</button>
+          <div id="review-export-menu" class="rv-menu" role="menu">
+            <button class="btn" type="button" data-export-json>Export JSON</button>
+            <button class="btn" type="button" data-export-markdown>Export Markdown</button>
+            <button class="btn" type="button" data-copy-markdown>Copy Markdown</button>
+          </div>
+        </div>
+        <button id="review-import-button" class="btn" type="button">Import</button>
+        <input id="review-import-input" type="file" accept="application/json" hidden />
         <button id="theme-toggle" class="btn" type="button">Toggle theme</button>
-        <button id="review-toggle" class="btn" type="button" aria-pressed="false">Review Mode</button>
-        <button id="export-json" class="btn" type="button">Export JSON</button>
-        <button id="export-markdown" class="btn" type="button">Export Markdown</button>
-        <button id="clear-review" class="btn" type="button">Clear</button>
       </div>
     </div>
   </header>
@@ -47,15 +56,15 @@
 
                 <div class="card" style="flex: 1; min-width: 280px;">
                   <h2 class="h1" style="font-size: 18px;">成功</h2>
-                  <div class="alert alert-success">完了しました。</div>
+                  <div class="alert alert-success" data-review-id="status_success">完了しました。</div>
                   <div class="row" style="margin-top: var(--tm-space-3, 12px);">
-                    <button class="btn btn-primary" type="button">次へ</button>
+                    <button class="btn btn-primary" type="button" data-review-id="status_next">次へ</button>
                   </div>
                 </div>
 
                 <div class="card" style="flex: 1; min-width: 280px;">
                   <h2 class="h1" style="font-size: 18px;">失敗</h2>
-                  <div class="alert alert-danger">失敗しました。接続を確認して、もう一度お試しください。</div>
+                  <div class="alert alert-danger" data-review-id="status_failure">失敗しました。接続を確認して、もう一度お試しください。</div>
                   <div class="row" style="margin-top: var(--tm-space-3, 12px);">
                     <button class="btn" type="button">戻る</button>
                     <button class="btn btn-primary" type="button">再試行</button>
@@ -66,7 +75,7 @@
           </div>
         </div>
       </div>
-      <aside class="review-panel"><h2>Review Comments</h2><ol id="review-list" class="review-list"></ol></aside>
+      
     </section>
   </main>
 </body>
