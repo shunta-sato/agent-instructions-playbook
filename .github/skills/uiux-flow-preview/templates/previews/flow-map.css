@@ -1,0 +1,36 @@
+:root {
+  --bg: #0b1220;
+  --panel: #111c2f;
+  --text: #e5ecfb;
+  --muted: #96a5c3;
+  --node: #1b3052;
+  --node-focus: #3a82f7;
+  --edge: #4d658f;
+  --edge-focus: #4dd1ff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--text); background: var(--bg); font-family: Inter, system-ui, sans-serif; }
+.toolbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: #0d1629; border-bottom: 1px solid #24395f; }
+.toolbar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { min-width: 24px; min-height: 24px; padding: 6px 10px; border-radius: 8px; border: 1px solid #38517b; background: #152846; color: var(--text); cursor: pointer; }
+#flow-search { min-height: 28px; border-radius: 8px; border: 1px solid #38517b; background: #0c1730; color: var(--text); padding: 4px 8px; }
+.layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100vh - 56px); }
+.canvas-wrap { position: relative; overflow: hidden; }
+.flow-canvas { width: 100%; height: 100%; touch-action: none; background: radial-gradient(circle at 20% 20%, #112039, #071022); }
+.side-panel { overflow: auto; border-left: 1px solid #24395f; background: var(--panel); padding: 12px; }
+.meta { margin: 0 0 8px; color: var(--muted); }
+.panel-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.side-panel ol, .side-panel ul { margin: 6px 0 14px; padding-left: 20px; }
+.side-panel li { margin-bottom: 6px; }
+.flow-node rect { fill: var(--node); stroke: #4c6f9f; stroke-width: 2; }
+.flow-node text { fill: #eef4ff; font-size: 13px; pointer-events: none; }
+.flow-node.is-focus rect { stroke: var(--node-focus); filter: drop-shadow(0 0 6px rgba(58,130,247,.8)); }
+.flow-node.is-dim { opacity: 0.25; }
+.flow-edge path { stroke: var(--edge); stroke-width: 2.5; fill: none; marker-end: url(#flow-arrow); }
+.flow-edge text { fill: #9cb6e2; font-size: 11px; }
+.flow-edge.is-focus path { stroke: var(--edge-focus); stroke-width: 3; }
+.flow-edge.is-dim { opacity: 0.2; }
+.minimap { position: absolute; right: 12px; bottom: 12px; width: 220px; height: 150px; border: 1px solid #35507e; background: rgba(9, 17, 33, .85); border-radius: 8px; overflow: hidden; }
+.minimap svg { width: 100%; height: 100%; display: block; }
+.minimap .viewport { fill: rgba(77, 209, 255, .15); stroke: #4dd1ff; stroke-width: 1.5; }
+.search-hit { outline: 2px solid #ffe082; }

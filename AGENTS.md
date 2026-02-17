@@ -47,6 +47,7 @@ skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/sk
 skill|uidesign-orchestrator|uiux → tonemana → uidesign (orchestration)|.agents/skills/uidesign-orchestrator/SKILL.md|.github/skills/uidesign-orchestrator/SKILL.md|/uidesign-orchestrator
 skill|uiux-android|Android UI/UX adapter for UIUX Pack|.agents/skills/uiux-android/SKILL.md|.github/skills/uiux-android/SKILL.md|-
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md|.github/skills/uiux-core/SKILL.md|/uiux-core
+skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.agents/skills/uiux-flow-preview/SKILL.md|.github/skills/uiux-flow-preview/SKILL.md|-
 skill|uiux-ios|iOS UI/UX adapter for UIUX Pack|.agents/skills/uiux-ios/SKILL.md|.github/skills/uiux-ios/SKILL.md|-
 skill|uiux-web|Web UI/UX adapter for UIUX Pack|.agents/skills/uiux-web/SKILL.md|.github/skills/uiux-web/SKILL.md|-
 skill|visual-regression-android|Android visual regression defaults|.agents/skills/visual-regression-android/SKILL.md|.github/skills/visual-regression-android/SKILL.md|-
