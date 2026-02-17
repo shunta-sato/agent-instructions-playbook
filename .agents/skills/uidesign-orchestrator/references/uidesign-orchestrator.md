@@ -75,13 +75,15 @@ Stop if UIDesign Pack still contains `<fill>`.
 
 Always include these links in the completion message:
 
+* `uiux/<pack>/previews/flow-map.html` — transition agreement entry point (pan/zoom + focus review).
+* `uidesign/<pack>/previews/index.html` — styling review starting point.
 * `tonemana/catalog/previews/index.html` — 7-pattern switch is available in UI.
-* `uidesign/.../previews/index.html` — review starting point.
 
 Always include this short procedure:
 
-1. Open previews and switch pattern/viewport as needed.
-2. Turn on `Review Mode` and click elements to add comments.
-3. `Export JSON` or `Export Markdown` and use it as input for `review_notes.md`.
+1. Confirm screen transitions in `flow-map.html` (focus + Next/Prev/Go/Back).
+2. Then open UIDesign previews and switch pattern/viewport as needed.
+3. Turn on `Review Mode` and click elements to add comments.
+4. `Export JSON` or `Export Markdown` and use it as input for `review_notes.md`.
 
 If humans request IA/navigation changes, route them to uiux-core (not uidesign-flow).

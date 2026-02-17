@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UIUX Flow Map Preview</title>
+  <link rel="stylesheet" href="./flow-map.css" />
+  <link rel="stylesheet" href="./review/review.css" />
+  <script>
+    window.UIUX_SPEC = {
+      "meta": { "product": "<fill>", "platforms": ["web"] },
+      "information_architecture": {
+        "screens": [
+          { "id": "home", "name": "Home", "goal": "<fill>" },
+          { "id": "detail", "name": "Detail", "goal": "<fill>" }
+        ],
+        "navigation": [
+          { "from": "home", "to": "detail", "trigger": "item_select" }
+        ],
+        "decision_points": []
+      }
+    };
+  </script>
+  <script defer src="./flow-map_panzoom.js"></script>
+  <script defer src="./flow-map_focus.js"></script>
+  <script defer src="./flow-map_minimap.js"></script>
+  <script defer src="./flow-map.js"></script>
+  <script defer src="./review/review_store.js"></script>
+  <script defer src="./review/review_export.js"></script>
+  <script defer src="./review/review_ui.js"></script>
+</head>
+<body>
+  <header class="toolbar">
+    <h1 class="h1">Flow Map</h1>
+    <div class="toolbar-actions">
+      <button type="button" class="btn" data-action="zoom-in" data-review-id="flow_ui_zoom_in">+</button>
+      <button type="button" class="btn" data-action="zoom-out" data-review-id="flow_ui_zoom_out">-</button>
+      <button type="button" class="btn" data-action="fit" data-review-id="flow_ui_fit">Fit</button>
+      <button type="button" class="btn" data-action="home" data-review-id="flow_ui_home">Home</button>
+      <button type="button" class="btn" data-action="follow" aria-pressed="false" data-review-id="flow_ui_follow">Follow</button>
+      <label class="search-label" for="flow-search">Search</label>
+      <input id="flow-search" type="search" placeholder="screen id / name" data-review-id="flow_ui_search" />
+      <button id="review-toggle" class="btn" type="button" aria-pressed="false" data-review-id="flow_ui_review_toggle">Review</button>
+      <div class="rv-export">
+        <button id="review-export-button" class="btn" type="button" aria-haspopup="true" data-review-id="flow_ui_export">Export</button>
+        <div id="review-export-menu" class="rv-menu" role="menu">
+          <button class="btn" type="button" data-export-json>Export JSON</button>
+          <button class="btn" type="button" data-export-markdown>Export Markdown</button>
+          <button class="btn" type="button" data-copy-markdown>Copy Markdown</button>
+        </div>
+      </div>
+      <button id="review-import-button" class="btn" type="button" data-review-id="flow_ui_import">Import</button>
+      <input id="review-import-input" type="file" accept="application/json" hidden />
+    </div>
+  </header>
+
+  <main class="layout" data-review-root>
+    <section class="canvas-wrap">
+      <svg class="flow-canvas" viewBox="0 0 1600 1200">
+        <defs>
+          <marker id="flow-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z"></path>
+          </marker>
+        </defs>
+        <g data-world>
+          <g data-edge-layer></g>
+          <g data-node-layer></g>
+        </g>
+      </svg>
+      <div class="minimap" data-minimap data-review-id="flow_ui_minimap"></div>
+    </section>
+
+    <aside class="side-panel">
+      <h2 class="h2">Focus Review</h2>
+      <p class="meta" data-focus-title>Select a screen node.</p>
+      <p class="meta" data-focus-goal></p>
+
+      <div class="panel-actions">
+        <button type="button" class="btn" data-action="prev" data-review-id="flow_ui_prev">Prev</button>
+        <button type="button" class="btn" data-action="next" data-review-id="flow_ui_next">Next</button>
+        <button type="button" class="btn" data-action="go" data-review-id="flow_ui_go">Go</button>
+        <button type="button" class="btn" data-action="back" data-review-id="flow_ui_back">Back</button>
+      </div>
+
+      <section>
+        <h3>Outgoing</h3>
+        <ol data-outgoing-list></ol>
+      </section>
+      <section>
+        <h3>Incoming</h3>
+        <ol data-incoming-list></ol>
+      </section>
+      <section>
+        <h3>Decision points</h3>
+        <ul data-decision-list></ul>
+      </section>
+    </aside>
+  </main>
+</body>
+</html>

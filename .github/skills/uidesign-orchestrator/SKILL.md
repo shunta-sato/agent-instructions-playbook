@@ -28,6 +28,7 @@ This skill does not change information architecture (IA). IA changes belong to `
 ## Required completion message
 
 Always include:
+- `uiux/<pack>/previews/flow-map.html` (transition agreement entry point)
+- `uidesign/<pack>/previews/index.html` (visual styling review entry point)
 - `tonemana/catalog/previews/index.html` (mention UI-based 7-pattern switching)
-- `uidesign/.../previews/index.html` (review entry point)
-- A short reminder: `Review Mode` → click to comment → `Export JSON/Markdown`
+- A short reminder: agree transitions first, then compare tone-and-manner in Review Mode (`Export JSON/Markdown`).
