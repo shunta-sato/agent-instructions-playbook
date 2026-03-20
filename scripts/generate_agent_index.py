@@ -201,10 +201,8 @@ def _embed_into_agents_md(agents_text: str, index_text: str) -> str:
 
 def _embed_into_readme(readme_text: str, catalog_text: str) -> str:
     if README_SKILLS_BEGIN_MARKER not in readme_text or README_SKILLS_END_MARKER not in readme_text:
-        raise ValueError(
-            "Missing markers in README.md. Required markers:\n"
-            f"{README_SKILLS_BEGIN_MARKER}\n{README_SKILLS_END_MARKER}"
-        )
+        # README skill catalog is optional. If markers are absent, preserve README as-is.
+        return readme_text
 
     pre, rest = readme_text.split(README_SKILLS_BEGIN_MARKER, 1)
     _, post = rest.split(README_SKILLS_END_MARKER, 1)
