@@ -35,9 +35,9 @@ If you want to use this repo as a template, keep the files at the root as above 
 ## Quick start
 
 ### Codex
-- Use `$dev-workflow` for any change (it now starts with risk routing: low / normal / high).
+- Use `$dev-workflow` for any change to decide risk route and required triggered branches.
 - Use `$execution-plans` for complex/long-running work and keep `plans/<slug>.md` updated.
-- Finish with `$quality-gate`.
+- Finish with `$quality-gate` for submit/no-submit exit criteria.
 - Trigger required branches only when facts require them:
   - runtime behavior changes → `$observability`
   - UI changes → `$visual-regression-testing` + matching platform visual skill(s)
@@ -46,15 +46,15 @@ If you want to use this repo as a template, keep the files at the root as above 
   - strict-constraint code or repeated compile/test failure loops → `$staged-lowering`
   - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
 
-### Dev-workflow routing examples (required vs optional)
+### Dev-workflow routing examples (required branches only)
 
-| Case | Risk | Required | Optional |
-|---|---|---|---|
-| Small local change | Low | compact brief + impacted tests + canonical minimal verify + `$quality-gate` | `$test-driven-development`, `$modularity`, `$architecture-boundaries` |
-| Bugfix | Normal (or High if wide impact) | bugfix branch: `$bug-investigation-and-rca` + verification evidence + `$quality-gate` | `$observability` when runtime signal changes |
-| UI change | Normal | UI branch: `$visual-regression-testing` + platform visual skill(s) + UI report + `$quality-gate` | extra design skills if structure changes |
-| Concurrency change | High | concurrency branch: `$concurrency-core` + `$thread-safety-tooling` (+ variant skills) + full verify + `$quality-gate` | `$nfr-iso25010` when explicit perf targets exist |
-| Legacy/refactor | High | legacy branch: `$working-with-legacy-code` before refactor + safety-net tests + full verify + `$quality-gate` | `$code-smells-and-antipatterns` for additional triage |
+| Case | Risk | Required route / branch outputs |
+|---|---|---|
+| Small local change | Low | compact brief + impacted tests + canonical minimum verify depth + handoff to `$quality-gate` |
+| Bugfix | Normal (or High if wide impact) | trigger bugfix branch: `$bug-investigation-and-rca` evidence + risk-required verify depth + handoff to `$quality-gate` |
+| UI change | Normal | trigger UI branch: `$visual-regression-testing` + platform visual skill(s) + UI report + handoff to `$quality-gate` |
+| Concurrency change | High | trigger concurrency branch: `$concurrency-core` + `$thread-safety-tooling` (+ variant skills) + full verify depth + handoff to `$quality-gate` |
+| Legacy/refactor | High | trigger legacy branch: `$working-with-legacy-code` before refactor + safety-net evidence + full verify depth + handoff to `$quality-gate` |
 
 ### Copilot (VS Code)
 

@@ -97,6 +97,8 @@ Keep each gotcha repo-specific and action-oriented; avoid generic advice that ca
 1) Apply the `dev-workflow` playbook end-to-end before editing (start with risk routing: low / normal / high, then execute trigger-based required branches only when applicable).
 2) Before finishing, apply the `quality-gate` playbook and address findings.
 
+Role split: `dev-workflow` decides required route/branches; `quality-gate` decides submit readiness via exit criteria.
+
 If work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`.
 
 ### How to run a playbook (depends on your tool)

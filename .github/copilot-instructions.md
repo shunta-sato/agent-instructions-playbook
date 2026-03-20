@@ -21,8 +21,8 @@ Produce changes that are easy to understand and safe to change.
 
 Use these prompt files to keep behavior consistent:
 
-- `/dev-workflow` — end-to-end change workflow
-- `/quality-gate` — final checklist before finishing
+- `/dev-workflow` — routing workflow (risk + required trigger branches)
+- `/quality-gate` — final exit-criteria gate (submit/no-submit)
 - `/review-readability` — readability review
 - `/review-modularity` — cohesion/coupling/boundaries review
 - `/review-antipatterns` — new/worsened smells & anti-patterns review

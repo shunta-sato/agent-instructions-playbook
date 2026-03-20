@@ -1,34 +1,31 @@
 # dev-workflow
 
-Use this prompt to execute a consistent end-to-end workflow for any change in this repository.
+Use this prompt to route a task: decide risk and required trigger branches only.
 
 ## Workflow
 
-1) Read
-- Identify entry points and impacted code paths.
-- For complex or long-running tasks, run `/execution-plans` and keep `plans/<slug>.md` updated.
-- Skim relevant tests (or add a reproduction plan if none exist).
+1) Risk route first
+- Classify `low` / `normal` / `high` with one-line rationale.
+- State required planning depth and required verification depth for that risk.
 
-2) Change Brief (1 paragraph)
-- Intent, inputs/outputs, constraints, assumptions, and success criteria.
+2) Required trigger branches
+- Mark each as `triggered` or `not triggered` with evidence:
+  - bug/regression/flaky/crash/hang → `/bug-report` or `$bug-investigation-and-rca`
+  - structural boundary/refactor change → `$code-smells-and-antipatterns`
+  - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
+  - runtime behavior change → `$observability`
+  - strict low-level constraints/repeated compile-test loops → `$staged-lowering`
+  - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
+  - UI change → `/ui-verify` or `$visual-regression-testing` (+ platform skill)
 
-3) Observability Plan (when runtime behavior changes)
-- Operations, identifiers, and the minimum start/outcome/failure logs.
-- Errors + latency metrics (golden signals if relevant).
-- Trace/log correlation and safety (no secrets/PII).
+3) Route summary (handoff contract)
+- Selected risk route
+- Triggered required branches
+- Required verification depth before gate
 
-4) Plan (3–5 steps)
-- Keep one purpose per change.
+4) Implement + verify at the routed depth
+- Keep diffs minimal.
+- Run canonical commands at required depth.
 
-5) Implement
-- Prefer minimal diffs.
-- Preserve readability and modularity.
-
-6) Verify
-- Provide the exact commands to run: build / format-lint / tests.
-- If you cannot run commands, explain what to run and what you expect to see.
-
-7) Finish with Self Review
-- Readability: naming, intent-focused comments, control flow, tests.
-- Modularity: cohesion/coupling/boundaries.
-- Documentation: update docs when behavior/spec changes.
+5) Hand off to `/quality-gate`
+- Do not make final submit/no-submit judgment here.

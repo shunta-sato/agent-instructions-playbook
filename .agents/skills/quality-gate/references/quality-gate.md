@@ -1,60 +1,56 @@
-# Quality gate checklist
+# Quality-gate exit checklist
 
-Before you submit, confirm all items below.
+This checklist is for `$quality-gate` only.
+Focus on final decision criteria, not broad re-review taxonomy.
 
-- Checks are **all green** (build / format / static analysis / tests). Write the exact commands and key results.
-- Path-specific instructions (when applicable):
-  - Identify matching `.github/instructions/*.instructions.md` by `applyTo`.
-  - Confirm they were followed (or state why none applied).
-- ExecPlan (when an ExecPlan was used for this work):
-  - the plan file exists under `plans/` and is linked in the final response/PR
-  - Progress (WBS), Decision log, Surprises, and Handoff are up to date
-  - outcomes/follow-ups are recorded when the task is complete
-- Observability (when runtime behavior changes):
-  - logs: start/outcome/failure present with identifiers
-  - metrics: errors + latency (golden signals if relevant)
-  - traces: spans/correlation IDs connect logs and metrics
-  - safety: no secrets/PII; logging guidance followed
-- UI verification gate (when UI changed):
-  - UI Visual Verification Report exists and uses the required format
-  - snapshots were verified, or baselines were updated intentionally with rationale
-  - artifact paths are listed (diff images/reports/snapshot folders)
-- Concurrency gate (when concurrency/parallelism exists):
-  - Concurrency Plan is present and complete
-  - no unbounded queues/threads without backpressure explanation
-  - shutdown/cancellation strategy exists and is documented
-  - observability added for concurrent paths
-  - verification matrix present (TSan/static/stress plan) or explicit justification
-- Constrained code synthesis gate (when strict constraints exist OR `$staged-lowering` was used):
-  - Staged Lowering Plan exists (IR/DSL + pass plan)
-  - Per-pass Verification Log exists (commands + key results)
-  - alignment/padding/bounds/ABI edge cases are handled in a dedicated pass (not mixed into initial wiring)
-- C++ documentation (when C++ was touched):
-  - `.hpp`: Doxygen for all declarations (including private)
-  - `.cpp`: paragraph intent comments; boundary/coupling-point contract notes
-  - constants: meaning/unit/range (or rationale)
-  - unit tests: make why/what readable
-- Bugfix evidence + report (required when bugfix mode was triggered):
-  - Bug Report exists (PR description, issue comment, or docs file)
-  - Report includes repro (or why reproduction is currently impossible), evidence, Five Whys root cause, verification, and at least one prevention action with measurable end state
-  - Workaround-only changes are blocked unless risk, removal plan, and follow-up task are documented
-- Requirements documentation (when requirements/acceptance changed):
-  - updated requirements/acceptance are unambiguous and measurable
-  - verification method and trace (design/tests) exists
-  - if unsure, invoke `$requirements-documentation`
-- Smells / anti-patterns (when structural change):
-  - `$code-smells-and-antipatterns` was run
-  - It reports **0 new/worsened** findings (or all such findings were fixed)
-  - Any “not fixed” items are explicitly marked as “not introduced/worsened” and include a follow-up note
-- Readability:
-  - identify up to 3 reader-stoppers and fix with minimal diffs (with cited headings from `code-readability`)
-- Modularity:
-  - list changed units; rate cohesion/coupling by the worst level; fix or justify
-- Boundaries:
-  - core code does not depend on outer types; DIP/DTO used where needed
-- Error handling:
-  - translate errors at boundaries; no swallowed failures
-- Requirements ↔ tests:
-  - every requirement / acceptance criterion has a passing test (or a reproducible procedure)
-- Test List:
-  - if unfinished items remain, write the reason, risk, and the next item to do
+## 1) Command status (required)
+
+- Canonical commands are recorded with exact commands + key results.
+- Required depth matches routed risk:
+  - low risk: canonical minimum for changed surface
+  - normal/high risk: full chain (build / format / static analysis / tests)
+- Any skipped command includes reason + reproducible procedure.
+
+## 2) Triggered-branch evidence (required when triggered)
+
+Confirm required evidence exists for each triggered branch:
+
+- bugfix branch → Bug Report (repro/evidence/Five Whys/verification/prevention)
+- UI branch → UI Visual Verification Report + artifact paths
+- concurrency branch → concurrency verification evidence (plan/shutdown-verification/logging)
+- observability branch → logs/metrics/traces plan or implementation evidence
+- staged-lowering branch → staged plan + per-pass verification log
+- legacy branch → characterization/safety-net evidence + seam/refactor notes
+- structural scan branch → smells/anti-patterns result (new/worsened handled)
+- C++ header branch → Doxygen completeness evidence
+- ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff)
+
+## 3) Minimum exit criteria review (always)
+
+- Path-specific instructions were identified and followed.
+- Requirements/acceptance changes (if any) are reflected in docs/tests.
+- Open risks or follow-ups are explicitly documented.
+
+If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:
+- readability → `$code-readability`
+- modularity/boundaries → `$modularity`, `$architecture-boundaries`
+- error handling → `$error-handling`
+- concurrency details → `$concurrency-core`, `$thread-safety-tooling`
+- observability details → `$observability`
+
+## 4) Gate decision format (required)
+
+```markdown
+Gate decision: submit|no-submit
+
+Findings:
+- [ID] location — failed/missing criterion — required fix
+
+Checks run:
+- <command> — pass|fail|skipped (reason)
+
+Triggered branch evidence:
+- <branch> — present|missing — artifact/path
+```
+
+Rule: `submit` only when all required criteria are satisfied and findings are 0.

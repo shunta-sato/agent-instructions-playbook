@@ -1,13 +1,15 @@
 # quality-gate
 
-Final checklist before finishing a task.
+Final gate prompt for submit/no-submit decision using exit criteria.
 
 Return:
 
-- Summary of what changed
-- Risks (what could break, where)
-- Verification checklist (build / lint / tests)
-- Observability checklist (logs/metrics/traces if runtime behavior changed)
-- Documentation checklist (including C++ header Doxygen rules if applicable)
-- ExecPlan checklist (when used: plan link + WBS/Decision log/Surprises/Handoff current)
-- Remaining open questions (if any)
+- Gate decision: `submit` or `no-submit`
+- Findings list (location, failed/missing criterion, required fix)
+- Checks run (exact commands + pass/fail/skipped with reason)
+- Triggered-branch evidence status (present/missing + artifact path)
+- Explicit open risks/follow-ups (if any)
+
+Notes:
+- Keep this prompt focused on exit criteria.
+- If deep analysis is needed, route to dedicated review skills and return with updated findings.
