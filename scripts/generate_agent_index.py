@@ -35,17 +35,7 @@ DEFAULT_MAX_BYTES = 8192
 class SkillMeta:
     name: str
     short: str
-    codex_path: str  # "-" if missing
-    github_path: str  # "-" if missing
-    prompt: str  # "/name" or "-" if missing
-
-
-@dataclass(frozen=True)
-class InstructionMeta:
-    title: str
-    apply_to: str
-    path: str
-    first_rule: str
+    codex_path: str
 
 
 def _read_text(path: Path) -> str:
@@ -101,99 +91,31 @@ def _parse_skill_frontmatter(skill_md: Path) -> Tuple[str, str]:
     return name, short
 
 
-def _parse_prompt_file(prompt_md: Path) -> Tuple[str, str]:
-    """
-    Returns (name, short). Name comes from first '# ' heading.
-    Short comes from the first non-empty line after that heading.
-    """
-    lines = _read_text(prompt_md).splitlines()
-    for i, line in enumerate(lines):
-        if line.startswith("# "):
-            name = line[2:].strip()
-            short = ""
-            for j in range(i + 1, len(lines)):
-                if lines[j].strip():
-                    short = lines[j].strip()
-                    break
-            return name, short
-    raise ValueError(f"Missing '# <name>' heading: {prompt_md}")
-
-
-def _parse_instruction_file(repo_root: Path, instr_md: Path) -> InstructionMeta:
-    txt = _read_text(instr_md)
-
-    apply_to = ""
-    if txt.startswith("---"):
-        parts = txt.split("---", 2)
-        if len(parts) >= 3:
-            fm = parts[1]
-            m = re.search(r"^\s*applyTo:\s*(.+)\s*$", fm, re.M)
-            if m:
-                apply_to = _strip_quotes(m.group(1))
-
-    lines = txt.splitlines()
-    title = instr_md.stem
-    for line in lines:
-        if line.startswith("# "):
-            title = line[2:].strip()
-            break
-
-    first_rule = ""
-    if "# " in txt:
-        # Find first non-empty non-heading line after the first H1.
-        try:
-            h1_idx = next(i for i, l in enumerate(lines) if l.startswith("# "))
-            for j in range(h1_idx + 1, len(lines)):
-                if not lines[j].strip():
-                    continue
-                if lines[j].startswith("#"):
-                    continue
-                first_rule = lines[j].strip()
-                break
-        except StopIteration:
-            pass
-
-    return InstructionMeta(
-        title=_truncate(title, 40),
-        apply_to=_truncate(apply_to, 40),
-        path=str(instr_md.relative_to(repo_root).as_posix()),
-        first_rule=_truncate(first_rule, 72),
-    )
-
-
-def _collect_skills(repo_root: Path, prompts: Dict[str, str]) -> List[SkillMeta]:
+def _collect_skills(repo_root: Path) -> List[SkillMeta]:
     codex = {}
-    github = {}
 
     for p in glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md")):
         md = Path(p)
         name, short = _parse_skill_frontmatter(md)
         codex[name] = (short, str(md.relative_to(repo_root).as_posix()))
 
-    for p in glob.glob(str(repo_root / ".github" / "skills" / "*" / "SKILL.md")):
-        md = Path(p)
-        name, short = _parse_skill_frontmatter(md)
-        github[name] = (short, str(md.relative_to(repo_root).as_posix()))
-
-    names = sorted(set(codex.keys()) | set(github.keys()))
+    names = sorted(set(codex.keys()))
     out: List[SkillMeta] = []
 
     for name in names:
-        # prefer codex short if present, else github short
-        short = codex.get(name, github.get(name))[0]
+        if name.endswith("-template"):
+            continue
+
+        short = codex[name][0]
         short = _truncate(short, 72)
 
-        codex_path = codex[name][1] if name in codex else "-"
-        github_path = github[name][1] if name in github else "-"
-        prompt_name = f"/{name}" if name in prompts else "-"
+        codex_path = codex[name][1]
 
         out.append(
             SkillMeta(
                 name=name,
                 short=short,
                 codex_path=codex_path,
-                github_path=github_path,
-                prompt=prompt_name,
             )
         )
 
@@ -211,81 +133,26 @@ def _collect_source_skills(repo_root: Path) -> List[SkillMeta]:
                 name=name,
                 short=_truncate(short, 72),
                 codex_path=str(md.relative_to(repo_root).as_posix()),
-                github_path="-",
-                prompt="-",
             )
         )
     return sorted(out, key=lambda s: s.name)
-
-
-def _collect_prompts(repo_root: Path) -> Dict[str, str]:
-    prompts: Dict[str, str] = {}
-    for p in glob.glob(str(repo_root / ".github" / "prompts" / "*.prompt.md")):
-        md = Path(p)
-        name, short = _parse_prompt_file(md)
-        prompts[name] = _truncate(short, 72)
-    return prompts
 
 
 def _build_index_text(
     repo_root: Path,
     max_bytes: int,
 ) -> str:
-    prompts = _collect_prompts(repo_root)
-    skills = _collect_skills(repo_root, prompts)
-
-    # Optional mapping: prompt -> related skill (to reduce decision friction)
-    prompt_to_skill = {
-        "review-antipatterns": "code-smells-and-antipatterns",
-        "review-readability": "code-readability",
-        "review-modularity": "modularity",
-        "write-requirements": "requirements-documentation",
-        "dev-workflow": "dev-workflow",
-        "quality-gate": "quality-gate",
-        "status-update": "execution-plans",
-    }
-
-    # Prompts that do not share the same name with a skill are listed explicitly.
-    skill_names = {s.name for s in skills}
-    extra_prompt_names = sorted([p for p in prompts.keys() if p not in skill_names])
-
-    # Instructions (path-specific rules)
-    instrs: List[InstructionMeta] = []
-    for p in glob.glob(str(repo_root / ".github" / "instructions" / "*.instructions.md")):
-        instrs.append(_parse_instruction_file(repo_root, Path(p)))
-    instrs.sort(key=lambda x: x.path)
+    skills = _collect_skills(repo_root)
 
     lines: List[str] = []
     lines.append("AGENT_INDEX_V1")
-    lines.append(
-        f"meta|format=v1|max_bytes={max_bytes}|codex_invoke=$<skill>|prompt_invoke=/<prompt>"
-    )
-    lines.append(
-        "important|Prefer repo playbooks/references over pre-training for project-specific decisions."
-    )
+    lines.append(f"meta|format=v1|max_bytes={max_bytes}|codex_invoke=$<skill>")
     lines.append("defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md")
-    lines.append("path_rules|copilot=auto_apply_applyTo|codex=manual_open")
     lines.append("core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md")
 
-    lines.append("skills|name|short|codex_skill|github_skill|prompt")
+    lines.append("skills|name|short|codex_skill")
     for s in skills:
-        lines.append(
-            f"skill|{s.name}|{s.short}|{s.codex_path}|{s.github_path}|{s.prompt}"
-        )
-
-    if extra_prompt_names:
-        lines.append("prompts|name|short|path|related_skill")
-        for name in extra_prompt_names:
-            path = f".github/prompts/{name}.prompt.md"
-            related = prompt_to_skill.get(name, "-")
-            lines.append(f"prompt|{name}|{prompts[name]}|{path}|{related}")
-
-    if instrs:
-        lines.append("instructions|title|applyTo|path|first_rule")
-        for ins in instrs:
-            lines.append(
-                f"instruction|{ins.title}|{ins.apply_to}|{ins.path}|{ins.first_rule}"
-            )
+        lines.append(f"skill|{s.name}|{s.short}|{s.codex_path}")
 
     lines.append("end|AGENT_INDEX_V1")
 
