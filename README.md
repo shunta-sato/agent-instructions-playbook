@@ -95,6 +95,20 @@ CI will fail if either the AGENTS index or README skill catalog is out of date.
 `COMMANDS.md` is the single place to record how to build / format / lint / test the project.
 If you use this repo as a template, replace the `<fill>` placeholders with real commands.
 
+## Deterministic skill helpers (high-friction artifacts)
+
+To bootstrap deterministic artifacts for high-friction skills, use these helper entrypoints:
+
+- `python scripts/init_execplan.py --slug <topic>` → `plans/<slug>.md`
+- `python scripts/init_bug_report.py --slug <topic>` → `reports/bug-reports/<slug>.md`
+- `python scripts/init_concurrency_matrix.py --slug <topic>` → `reports/concurrency/<slug>.md`
+
+All helpers require `--force` to overwrite an existing non-empty file.
+
+Smoke check:
+
+- `python scripts/smoke_skill_helpers.py`
+
 ## Smells & anti-patterns triage
 
 Use the `code-smells-and-antipatterns` playbook (Codex: `$code-smells-and-antipatterns`) to detect **new or worsened** design smells in a diff and propose the smallest fix.
