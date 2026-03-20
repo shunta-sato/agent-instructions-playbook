@@ -35,14 +35,26 @@ If you want to use this repo as a template, keep the files at the root as above 
 ## Quick start
 
 ### Codex
-- Use `$dev-workflow` for any change.
+- Use `$dev-workflow` for any change (it now starts with risk routing: low / normal / high).
 - Use `$execution-plans` for complex/long-running work and keep `plans/<slug>.md` updated.
 - Finish with `$quality-gate`.
-- When runtime behavior changes, use `$observability`.
-- When UI code changes, invoke `$visual-regression-testing` and the matching platform skill (`$visual-regression-ios|android|web`) and produce a UI Visual Verification Report.
-- When introducing or changing concurrency/parallelism, invoke `$concurrency-core` and `$thread-safety-tooling` (plus `$concurrency-ros2` or `$concurrency-android` when relevant).
-- When fixing bugs/regressions/flakes/crashes/hangs, invoke `$bug-investigation-and-rca` before implementation and produce the Bug Report (RCA).
-- When implementing strict-constraint code (alignment/padding, kernels/intrinsics, DSL/codegen) or when compile/test failures repeat, invoke `$staged-lowering`.
+- Trigger required branches only when facts require them:
+  - runtime behavior changes → `$observability`
+  - UI changes → `$visual-regression-testing` + matching platform visual skill(s)
+  - concurrency changes → `$concurrency-core` + `$thread-safety-tooling` (+ `$concurrency-ros2`/`$concurrency-android` when relevant)
+  - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
+  - strict-constraint code or repeated compile/test failure loops → `$staged-lowering`
+  - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
+
+### Dev-workflow routing examples (required vs optional)
+
+| Case | Risk | Required | Optional |
+|---|---|---|---|
+| Small local change | Low | compact brief + impacted tests + canonical minimal verify + `$quality-gate` | `$test-driven-development`, `$modularity`, `$architecture-boundaries` |
+| Bugfix | Normal (or High if wide impact) | bugfix branch: `$bug-investigation-and-rca` + verification evidence + `$quality-gate` | `$observability` when runtime signal changes |
+| UI change | Normal | UI branch: `$visual-regression-testing` + platform visual skill(s) + UI report + `$quality-gate` | extra design skills if structure changes |
+| Concurrency change | High | concurrency branch: `$concurrency-core` + `$thread-safety-tooling` (+ variant skills) + full verify + `$quality-gate` | `$nfr-iso25010` when explicit perf targets exist |
+| Legacy/refactor | High | legacy branch: `$working-with-legacy-code` before refactor + safety-net tests + full verify + `$quality-gate` | `$code-smells-and-antipatterns` for additional triage |
 
 ### Copilot (VS Code)
 
@@ -121,7 +133,7 @@ Required output:
 - `concurrency-android` — Android concurrency and background work
 - `concurrency-core` — Concurrency design patterns and planning
 - `concurrency-ros2` — ROS 2 concurrency patterns
-- `dev-workflow` — End-to-end dev workflow
+- `dev-workflow` — Risk-routed dev workflow
 - `error-handling` — Boundary error handling
 - `execution-plans` — ExecPlan: plan/WBS/progress + handoff
 - `modularity` — Modularity (cohesion/coupling)
