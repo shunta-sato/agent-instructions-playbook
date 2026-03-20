@@ -169,6 +169,7 @@ Required output:
 - `concurrency-android` — Android concurrency and background work
 - `concurrency-core` — Concurrency design patterns and planning
 - `concurrency-ros2` — ROS 2 concurrency patterns
+- `data-fetching-analysis-template` — Data fetching & analysis template
 - `dev-workflow` — Risk-routed dev workflow
 - `error-handling` — Boundary error handling
 - `execution-plans` — ExecPlan: plan/WBS/progress + handoff
