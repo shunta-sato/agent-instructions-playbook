@@ -39,6 +39,17 @@ It is also a good default when you are unsure.
 
 4) If a human is present and the change is risky/irreversible, ask for approval after drafting the plan and before large edits.
 
+## Gotchas
+
+- **ありがち:** 最初に plan を作るだけで Progress (WBS) を更新しない。  
+  **代わりに:** タスク完了ごとに status を更新し、未着手/進行中/完了を常に最新化する。
+- **ありがち:** 大きな方針変更を口頭で済ませ、Decision log を残さない。  
+  **代わりに:** 変更理由・代替案・採用判断を plan の Decision log に追記する。
+- **ありがち:** セッション終了時に handoff が古く、次担当が再調査から始める。  
+  **代わりに:** 停止時点で「現在地 / 次の1手 / ブロッカー / 実行コマンド」を Handoff に必ず更新する。
+- **ありがち:** 複雑作業なのに ExecPlan を作らず ad-hoc に進める。  
+  **代わりに:** PLANS.md の trigger に1つでも該当したら `plans/<slug>.md` を作成してから着手する。
+
 ## Output expectation
 
 When this skill is used, produce:

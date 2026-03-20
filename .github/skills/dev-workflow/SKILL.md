@@ -86,6 +86,21 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 7) Before submitting, explicitly invoke `$quality-gate` and keep fixing until it reports 0 findings.
 
+## Gotchas
+
+- **ありがち:** bugfix なのに再現手順・失敗証拠を残さずに修正へ進む。  
+  **代わりに:** `$bug-investigation-and-rca` を先に実行し、再現ログ/失敗テスト/スタックトレースのどれかを記録してから実装する。
+- **ありがち:** UI 変更でスナップショット差分を確認せず、baseline をまとめて更新する。  
+  **代わりに:** `$visual-regression-testing` を実行し、意図した差分だけを確認して baseline 更新理由をレポートに明記する。
+- **ありがち:** 並行処理を触ったのに通常テストだけで完了扱いにする。  
+  **代わりに:** `$concurrency-core` と `$thread-safety-tooling` を呼び、終了条件・キャンセル経路・競合検証（TSan 等）の実行結果を残す。
+- **ありがち:** テストが弱い legacy 箇所を直接リファクタして挙動を壊す。  
+  **代わりに:** `$working-with-legacy-code` を先に適用し、characterization test/決定論化 seam を作ってから変更する。
+- **ありがち:** verify コマンドを省略して「時間がない」で終了する。  
+  **代わりに:** スキップした各コマンドに対して「なぜ今実行不能か」と「他者が再現できる実行手順」を最終出力に必ず書く。
+- **ありがち:** リスクを low で固定して必要 branch を回避する。  
+  **代わりに:** 変更が API/挙動/UI/並行性/境界に触れた時点で risk を normal/high に再判定し、必須 branch を追加実行する。
+
 ## Output expectation
 
 - Your final output must follow AGENTS.md “Required final output”.

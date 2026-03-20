@@ -30,6 +30,17 @@ Use this skill when any of these apply:
 
 For details and guidance, open `references/bug-investigation-and-rca.md`.
 
+## Gotchas
+
+- **ありがち:** いきなり修正して再現不能になり、根拠が消える。  
+  **代わりに:** まず再現手順と失敗証拠を固定し、最小再現か失敗テストを先に確保する。
+- **ありがち:** 仮説を複数同時に直して何が効いたか不明になる。  
+  **代わりに:** 先行仮説を1つ選び、観測点（ログ/テスト/メトリクス）を追加して検証してから修正する。
+- **ありがち:** Five Whys が推測だけで埋まり、予防策が曖昧になる。  
+  **代わりに:** 各 Why に evidence か assumption ラベルを付け、予防策は測定可能な完了条件を持たせる。
+- **ありがち:** workaround を恒久対応として出して追跡を作らない。  
+  **代わりに:** リスク・除去条件・追跡チケットを明記し、撤去時期を計画する。
+
 ## Output expectation (strict format; always emit)
 
 ## Bug Report (RCA)

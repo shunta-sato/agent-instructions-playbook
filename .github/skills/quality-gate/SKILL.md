@@ -45,6 +45,17 @@ Invoke this skill **before every submission**. It is mandatory.
 
 4) Fix findings and repeat until 0 findings remain.
 
+## Gotchas
+
+- **ありがち:** テストだけ通っていれば「0 findings」と宣言する。  
+  **代わりに:** build/format/static-analysis/tests の canonical チェーン完了を確認してから 0 findings を出す。
+- **ありがち:** bugfix なのに Bug Report が無いまま gate を通す。  
+  **代わりに:** 再現・証拠・Five Whys・検証・再発防止を含む報告を PR/issue/docs のいずれかに残す。
+- **ありがち:** UI 変更で artifact path を書かずに「目視確認済み」とだけ記載する。  
+  **代わりに:** UI Visual Verification Report に差分結果と生成物パスを明記する。
+- **ありがち:** 残課題があるのに finding を記録せず黙って提出する。  
+  **代わりに:** 未解決項目は location/影響/暫定対応/次アクションを finding として明示する。
+
 ## Output expectation
 
 - Output “0 findings” only when checks and checklist are fully satisfied.
