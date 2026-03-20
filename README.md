@@ -109,6 +109,28 @@ Smoke check:
 
 - `python scripts/smoke_skill_helpers.py`
 
+## Skill adoption proxy measurement
+
+You can generate a repo-local proxy measurement (artifact-based, not telemetry) with:
+
+- `python scripts/measure_skill_adoption.py --pretty`
+
+Current proxy coverage (counts artifacts, not true runtime invocation):
+
+- `execution_plans`: `plans/*.md` except `plans/README.md` and `plans/_template_execplan.md`
+- `bug-investigation-and-rca`: `reports/bug-reports/*.md`
+- `uiux-core`: `uiux/<pack>/` directories that contain all required UIUX Pack files
+  (`ui_contract.yaml`, `ui_spec.json`, `auto_review.json`, `diff_summary.md`)
+- `project-initialization`: `1` when `COMMANDS.md` has `verified by agent: yes (...)`, otherwise `0`
+
+The JSON output is machine-readable and reports `0` for missing/empty artifact locations without failing.
+
+What this **does not** measure:
+
+- Whether a skill was invoked but no artifact was committed
+- Invocation frequency in chat/IDE history
+- Artifact quality or correctness
+
 ## Smells & anti-patterns triage
 
 Use the `code-smells-and-antipatterns` playbook (Codex: `$code-smells-and-antipatterns`) to detect **new or worsened** design smells in a diff and propose the smallest fix.
