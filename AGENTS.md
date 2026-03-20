@@ -23,6 +23,7 @@ core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
 skills|name|short|codex_skill|github_skill|prompt
 skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.agents/skills/architecture-boundaries/SKILL.md|.github/skills/architecture-boundaries/SKILL.md|-
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md|.github/skills/bug-investigation-and-rca/SKILL.md|-
+skill|cicd-deployment-template|CI/CD & deployment template|.agents/skills/cicd-deployment-template/SKILL.md|.github/skills/cicd-deployment-template/SKILL.md|-
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md|.github/skills/code-readability/SKILL.md|-
 skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.agents/skills/code-smells-and-antipatterns/SKILL.md|.github/skills/code-smells-and-antipatterns/SKILL.md|-
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md|.github/skills/concurrency-android/SKILL.md|-

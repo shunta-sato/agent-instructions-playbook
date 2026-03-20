@@ -164,6 +164,7 @@ Required output:
 <!-- BEGIN README SKILL CATALOG (generated) -->
 - `architecture-boundaries` — Architecture boundaries (Clean Architecture)
 - `bug-investigation-and-rca` — Bug investigation & RCA
+- `cicd-deployment-template` — CI/CD & deployment template
 - `code-readability` — Code readability
 - `code-smells-and-antipatterns` — Smells & anti-patterns triage
 - `concurrency-android` — Android concurrency and background work
