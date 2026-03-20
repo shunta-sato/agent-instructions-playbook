@@ -30,6 +30,9 @@ Use this skill when any of these apply:
 
 For details and guidance, open `references/bug-investigation-and-rca.md`.
 
+Helper for deterministic artifact bootstrap:
+- `python scripts/init_bug_report.py --slug <ticket-or-topic>` (default output: `reports/bug-reports/<slug>.md`)
+
 ## Gotchas
 
 - **ありがち:** いきなり修正して再現不能になり、根拠が消える。  

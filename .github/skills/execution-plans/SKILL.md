@@ -30,6 +30,7 @@ It is also a good default when you are unsure.
 1) Open `PLANS.md` and `references/execution-plans.md`.
 
 2) Create or update a plan file under `plans/` using `plans/_template_execplan.md`.
+   - Quick start helper: `python scripts/init_execplan.py --slug <ticket-or-topic>`
 
 3) Keep the plan up to date while you work:
 - update **Progress (WBS)** as items complete
