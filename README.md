@@ -203,6 +203,7 @@ Required output:
 
 This repository follows Semantic Versioning (SemVer).
 Skill renames are treated as breaking changes.
+See [CHANGELOG.md](CHANGELOG.md) for consolidated release history.
 
 Generated: 2026-02-01
 
