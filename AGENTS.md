@@ -33,6 +33,7 @@ skill|data-fetching-analysis-template|Data fetching & analysis template|.agents/
 skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md|.github/skills/error-handling/SKILL.md|-
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md|.github/skills/execution-plans/SKILL.md|/execution-plans
+skill|infrastructure-operations-template|Infrastructure operations runbook template|.agents/skills/infrastructure-operations-template/SKILL.md|.github/skills/infrastructure-operations-template/SKILL.md|-
 skill|library-api-reference-template|Library/API reference template|.agents/skills/library-api-reference-template/SKILL.md|.github/skills/library-api-reference-template/SKILL.md|-
 skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
 skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.agents/skills/nfr-iso25010/SKILL.md|.github/skills/nfr-iso25010/SKILL.md|-
