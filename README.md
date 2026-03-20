@@ -97,17 +97,14 @@ If you use this repo as a template, replace the `<fill>` placeholders with real 
 
 ## Deterministic skill helpers (high-friction artifacts)
 
-To bootstrap deterministic artifacts for high-friction skills, use these helper entrypoints:
+To bootstrap deterministic artifacts for high-friction skills, use this single helper entrypoint:
 
-- `python scripts/init_execplan.py --slug <topic>` → `plans/<slug>.md`
-- `python scripts/init_bug_report.py --slug <topic>` → `reports/bug-reports/<slug>.md`
-- `python scripts/init_concurrency_matrix.py --slug <topic>` → `reports/concurrency/<slug>.md`
+- `python scripts/init_artifact.py --kind execplan --slug <topic>` → `plans/<slug>.md`
+- `python scripts/init_artifact.py --kind bug-report --slug <topic>` → `reports/bug-reports/<slug>.md`
+- `python scripts/init_artifact.py --kind concurrency-matrix --slug <topic>` → `reports/concurrency/<slug>.md`
 
 All helpers require `--force` to overwrite an existing non-empty file.
 
-Smoke check:
-
-- `python scripts/smoke_skill_helpers.py`
 
 ## Skill adoption proxy measurement
 

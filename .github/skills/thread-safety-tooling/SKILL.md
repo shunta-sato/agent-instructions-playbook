@@ -20,7 +20,7 @@ Use this skill when touching:
 
 0) Open `references/thread-safety-tooling.md`.
 1) Choose verification stack (TSan / static thread-safety analysis / stress tests).
-   - Quick start helper: `python scripts/init_concurrency_matrix.py --slug <ticket-or-topic>`
+   - Quick start helper: `python scripts/init_artifact.py --kind concurrency-matrix --slug <ticket-or-topic>`
 2) Provide reproducible commands or CI steps (placeholders if repo differs).
 3) Define a minimal stress scenario (what to load; what to assert).
 4) Record known limitations and suppression strategy (avoid blanket suppressions).
