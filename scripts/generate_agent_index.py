@@ -26,6 +26,8 @@ from typing import Dict, List, Tuple
 
 BEGIN_MARKER = "<!-- BEGIN AGENT INDEX (generated) -->"
 END_MARKER = "<!-- END AGENT INDEX (generated) -->"
+README_SKILLS_BEGIN_MARKER = "<!-- BEGIN README SKILL CATALOG (generated) -->"
+README_SKILLS_END_MARKER = "<!-- END README SKILL CATALOG (generated) -->"
 DEFAULT_MAX_BYTES = 8192
 
 
@@ -198,6 +200,24 @@ def _collect_skills(repo_root: Path, prompts: Dict[str, str]) -> List[SkillMeta]
     return out
 
 
+def _collect_source_skills(repo_root: Path) -> List[SkillMeta]:
+    """Collect skill catalog from .agents/skills only (source of truth)."""
+    out: List[SkillMeta] = []
+    for p in glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md")):
+        md = Path(p)
+        name, short = _parse_skill_frontmatter(md)
+        out.append(
+            SkillMeta(
+                name=name,
+                short=_truncate(short, 72),
+                codex_path=str(md.relative_to(repo_root).as_posix()),
+                github_path="-",
+                prompt="-",
+            )
+        )
+    return sorted(out, key=lambda s: s.name)
+
+
 def _collect_prompts(repo_root: Path) -> Dict[str, str]:
     prompts: Dict[str, str] = {}
     for p in glob.glob(str(repo_root / ".github" / "prompts" / "*.prompt.md")):
@@ -280,6 +300,14 @@ def _build_index_text(
     return index
 
 
+def _build_readme_skill_catalog_text(repo_root: Path) -> str:
+    skills = _collect_source_skills(repo_root)
+    lines: List[str] = []
+    for s in skills:
+        lines.append(f"- `{s.name}` — {s.short}")
+    return "\n".join(lines) + "\n"
+
+
 def _embed_into_agents_md(agents_text: str, index_text: str) -> str:
     if BEGIN_MARKER not in agents_text or END_MARKER not in agents_text:
         raise ValueError(
@@ -304,6 +332,27 @@ def _embed_into_agents_md(agents_text: str, index_text: str) -> str:
     return pre + block + post
 
 
+def _embed_into_readme(readme_text: str, catalog_text: str) -> str:
+    if README_SKILLS_BEGIN_MARKER not in readme_text or README_SKILLS_END_MARKER not in readme_text:
+        raise ValueError(
+            "Missing markers in README.md. Required markers:\n"
+            f"{README_SKILLS_BEGIN_MARKER}\n{README_SKILLS_END_MARKER}"
+        )
+
+    pre, rest = readme_text.split(README_SKILLS_BEGIN_MARKER, 1)
+    _, post = rest.split(README_SKILLS_END_MARKER, 1)
+
+    block = (
+        f"{README_SKILLS_BEGIN_MARKER}\n"
+        f"{catalog_text}"
+        f"{README_SKILLS_END_MARKER}"
+    )
+
+    pre = pre.rstrip() + "\n\n"
+    post = "\n\n" + post.lstrip()
+    return pre + block + post
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="Fail if AGENTS.md would change.")
@@ -315,19 +364,33 @@ def main() -> int:
     ap.add_argument(
         "--agents", type=str, default="AGENTS.md", help="Path to AGENTS.md relative to repo root."
     )
+    ap.add_argument(
+        "--readme", type=str, default="README.md", help="Path to README.md relative to repo root."
+    )
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve() if args.repo_root else Path(__file__).resolve().parent.parent
     agents_path = (repo_root / args.agents).resolve()
+    readme_path = (repo_root / args.readme).resolve()
 
-    original = _read_text(agents_path)
+    original_agents = _read_text(agents_path)
+    original_readme = _read_text(readme_path)
     index_text = _build_index_text(repo_root=repo_root, max_bytes=args.max_bytes)
-    updated = _embed_into_agents_md(original, index_text)
+    catalog_text = _build_readme_skill_catalog_text(repo_root=repo_root)
+    updated_agents = _embed_into_agents_md(original_agents, index_text)
+    updated_readme = _embed_into_readme(original_readme, catalog_text)
 
     if args.check:
-        if updated != original:
+        has_diff = False
+        if updated_agents != original_agents:
             print("AGENTS.md agent index is out of date.")
             print("Run: python scripts/generate_agent_index.py --write")
+            has_diff = True
+        if updated_readme != original_readme:
+            print("README.md skill catalog is out of date.")
+            print("Run: python scripts/generate_agent_index.py --write")
+            has_diff = True
+        if has_diff:
             return 1
         return 0
 
@@ -336,11 +399,21 @@ def main() -> int:
         args.write = True
 
     if args.write:
-        if updated != original:
-            agents_path.write_text(updated, encoding="utf-8")
+        wrote_any = False
+        if updated_agents != original_agents:
+            agents_path.write_text(updated_agents, encoding="utf-8")
             print("Updated AGENTS.md agent index.")
+            wrote_any = True
         else:
             print("AGENTS.md agent index is already up to date.")
+        if updated_readme != original_readme:
+            readme_path.write_text(updated_readme, encoding="utf-8")
+            print("Updated README.md skill catalog.")
+            wrote_any = True
+        else:
+            print("README.md skill catalog is already up to date.")
+        if not wrote_any:
+            print("Nothing to update.")
         return 0
 
     return 0
