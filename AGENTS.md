@@ -28,7 +28,7 @@ skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.agents/skills/
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md|.github/skills/concurrency-android/SKILL.md|-
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md|.github/skills/concurrency-core/SKILL.md|-
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md|.github/skills/concurrency-ros2/SKILL.md|-
-skill|dev-workflow|End-to-end dev workflow|.agents/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
+skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md|.github/skills/dev-workflow/SKILL.md|/dev-workflow
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md|.github/skills/error-handling/SKILL.md|-
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md|.github/skills/execution-plans/SKILL.md|/execution-plans
 skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md|.github/skills/modularity/SKILL.md|-
@@ -81,7 +81,7 @@ end|AGENT_INDEX_V1
 - If runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable.
 
 ## Mandatory workflow for code/test changes
-1) Apply the `dev-workflow` playbook end-to-end before editing.
+1) Apply the `dev-workflow` playbook end-to-end before editing (start with risk routing: low / normal / high, then execute trigger-based required branches only when applicable).
 2) Before finishing, apply the `quality-gate` playbook and address findings.
 
 If work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`.

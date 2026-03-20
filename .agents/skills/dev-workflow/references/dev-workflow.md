@@ -3,7 +3,50 @@
 This file is the reference template for `$dev-workflow`.
 When in doubt, come back here and **only fill the blanks**.
 
-## 0) Change Brief (one paragraph)
+## 0) Risk routing (mandatory first step)
+
+Classify the task before deep planning:
+
+- **Low risk**: tiny local change; no API/schema/boundary changes; no concurrency/UI/legacy/refactor trigger.
+- **Normal risk**: default for most feature/test/code updates.
+- **High risk**: broad refactor, cross-boundary impact, runtime-behavior shift, strict constraints, or safety/perf critical change.
+
+Record:
+- Risk level:
+- Why this level:
+- Escalation trigger (what would move it to higher risk):
+
+### Required vs optional by risk
+
+| Area | Low risk | Normal risk | High risk |
+|---|---|---|---|
+| Change brief | required (compact) | required (full) | required (full) |
+| EARS + acceptance criteria | required (minimal bullets) | required | required |
+| Test planning | required (impacted tests list) | required (3–10 Test List) | required (3–10 Test List) |
+| Full verify chain (build/format/static/tests) | optional (run canonical minimum) | required | required |
+| `$quality-gate` | required | required | required |
+| `$execution-plans` | optional | optional (required if complex) | required if complex/long-running |
+
+### Trigger-based required branches (all risk levels)
+
+These are **required only when triggered**, never always-on:
+
+- bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
+- UI change → `$visual-regression-testing` + matching platform visual skill(s)
+- concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ platform/domain variant skills)
+- legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
+- strict-constraint low-level code or repeated compile/test failure loops → `$staged-lowering`
+- C++ headers touched (`.h/.hpp/...`) → `$code-readability` Doxygen gate
+
+### Representative routing examples
+
+- Small local rename + unit test update only → **Low risk**, no bug/UI/concurrency/legacy branch unless triggered by facts.
+- Behavior bugfix with repro evidence → **Normal risk + bugfix branch required**.
+- UI layout tweak → **Normal risk + UI verification branch required**.
+- Locking/thread model change → **High risk + concurrency branch required**.
+- Legacy module refactor with weak tests → **High risk + legacy branch required**.
+
+## 1) Change Brief (one paragraph)
 
 - Purpose:
 - Inputs:
@@ -12,7 +55,7 @@ When in doubt, come back here and **only fill the blanks**.
 - Assumptions (separate unknowns explicitly):
 - Boundaries (UI/HTTP/DB/external services):
 
-## 0.25) Applicable path-specific rules (mandatory)
+## 1.25) Applicable path-specific rules (mandatory)
 
 Before editing, identify any matching `.github/instructions/*.instructions.md` files.
 
@@ -24,7 +67,7 @@ Fill in:
 - Matching instruction files:
 - Notes / conflicts:
 
-## 0.5) ExecPlan (planning/WBS/handoff) — mandatory when complex
+## 1.5) ExecPlan (planning/WBS/handoff) — mandatory when complex
 
 If this work is complex or long-running, create/update an ExecPlan **before** editing code.
 
@@ -45,7 +88,7 @@ If ExecPlan is used:
 
 - You may keep sections 1–3 short by linking to the ExecPlan, but do not leave required fields blank.
 
-## 1) Requirements (EARS + acceptance criteria)
+## 2) Requirements (EARS + acceptance criteria)
 
 ### EARS (“shall” statements)
 
@@ -60,7 +103,7 @@ If ExecPlan is used:
 - R2 success:
 - R2 failure:
 
-## 2) Constraints (5–9 bullets / MUST statements)
+## 3) Constraints (5–9 bullets / MUST statements)
 
 - MUST:
 - MUST:
@@ -68,7 +111,7 @@ If ExecPlan is used:
 
 Examples: readability / modularity / boundaries / error handling / test design / documentation.
 
-## 3) Design sketch (minimal design memo)
+## 4) Design sketch (minimal design memo)
 
 - Touched/added places (files, functions, classes):
 - Added/changed units and roles (one sentence each):
@@ -82,7 +125,7 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - If the change adds new units or moves responsibilities across boundaries, explicitly invoke `$code-smells-and-antipatterns`.
 - Record: the 0–3 findings and the chosen minimal fix (or justification if not new/worsened).
 
-## 3.2) Bugfix mode (required when task is a bug/regression/flaky/crash/hang)
+## 4.2) Bugfix mode (required when task is a bug/regression/flaky/crash/hang)
 
 - Invoke `$bug-investigation-and-rca` before implementation.
 - Do not implement the fix until all three exist:
@@ -91,7 +134,7 @@ Examples: readability / modularity / boundaries / error handling / test design /
   - a leading hypothesis plus verification plan
 - If a workaround/ops-only mitigation is proposed, include a prevention follow-up task with owner/tracking.
 
-## 3.25) Concurrency & performance check (mandatory when relevant)
+## 4.25) Concurrency & performance check (mandatory when relevant)
 
 - If concurrency/parallelism is introduced or changed: invoke `$concurrency-core` and `$thread-safety-tooling`.
 - If ROS2 code is affected: also invoke `$concurrency-ros2`.
@@ -99,12 +142,12 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - If runtime behavior changes: invoke `$observability`.
 - If performance targets are part of the goal: invoke `$nfr-iso25010`.
 
-## 3.3) Constrained / low-level synthesis check (mandatory when relevant)
+## 4.3) Constrained / low-level synthesis check (mandatory when relevant)
 
 - If strict constraints exist (alignment/padding, ABI, intrinsics, kernel pipelines, DSL/codegen), invoke `$staged-lowering`.
 - Produce: Staged Lowering Plan (IR first) + Per-pass Verification Log.
 
-## 3.5) Observability plan (mandatory when runtime behavior changes)
+## 4.5) Observability plan (mandatory when runtime behavior changes)
 
 - Operations to observe (user-facing or system-facing actions):
 - Identifiers for correlation (request_id/job_id/trace_id):
@@ -130,7 +173,7 @@ Examples: readability / modularity / boundaries / error handling / test design /
 - Constants: record meaning/unit/range (or rationale) via naming and/or comments
 - Unit tests: make the “why” and the “what” readable
 
-## 4) Test List (3–10 items)
+## 5) Test List (3–10 items)
 
 - [ ] 1)
 - [ ] 2)
@@ -139,14 +182,14 @@ Examples: readability / modularity / boundaries / error handling / test design /
 First item to implement:
 - Now:
 
-## 4.5) Legacy notes (when `$working-with-legacy-code` was used)
+## 5.5) Legacy notes (when `$working-with-legacy-code` was used)
 
 - Safety net (characterization/regression tests):
 - Seams (substitution points):
 - Extract/Sprout (choice + rationale):
 - Risk (remaining uncertainty):
 
-## 5) How to test (commands and results)
+## 6) How to test (commands and results)
 
 Run in this order (as far as possible):
 
@@ -166,7 +209,7 @@ How to decide commands:
 - Static analysis:
 - Tests:
 
-## 5.5) UI verification (mandatory when UI changed)
+## 6.5) UI verification (mandatory when UI changed)
 
 - Invoke `$visual-regression-testing`.
 - Invoke matching platform skill(s):
