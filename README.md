@@ -172,6 +172,7 @@ Required output:
 - `dev-workflow` — Risk-routed dev workflow
 - `error-handling` — Boundary error handling
 - `execution-plans` — ExecPlan: plan/WBS/progress + handoff
+- `library-api-reference-template` — Library/API reference template
 - `modularity` — Modularity (cohesion/coupling)
 - `nfr-iso25010` — ISO/IEC 25010 quality attributes template
 - `observability` — Observability plan and checklist
