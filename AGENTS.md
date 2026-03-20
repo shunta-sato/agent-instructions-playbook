@@ -75,6 +75,15 @@ end|AGENT_INDEX_V1
 - Keep changes localized (cohesion / coupling / boundaries).
 - Keep requirements verifiable after the fact (docs + tests).
 
+## Gotchas maintenance rule (for maintainers)
+
+When adding a new gotcha to any major skill, include all of the following:
+- Trigger: the concrete failure pattern an agent can detect in the current task.
+- Correction: the immediate replacement action (`do X instead of Y`) the agent can execute now.
+- Evidence: what artifact/command/output proves the correction was applied.
+
+Keep each gotcha repo-specific and action-oriented; avoid generic advice that cannot change same-turn behavior.
+
 ## Always-on principles
 - Prefer the smallest change that satisfies the requirement.
 - No large cleanups. Leave touched code slightly easier to read than before.
