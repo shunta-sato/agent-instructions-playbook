@@ -38,9 +38,9 @@ This playbook is inspired by, or aligned with, the following sources.
 - Apple Human Interface Guidelines (iOS): https://developer.apple.com/design/human-interface-guidelines/
 - WAI-ARIA Authoring Practices Guide (Web): https://www.w3.org/WAI/ARIA/apg/
 
-## Tone & Manner (トンマナ)
+## Tone & Manner (Tone & Manner)
 
-- Canva, *トンマナとは？意味や使い方を理解してデザインに統一感を* (definition including tone as atmosphere and manner as explicit rules): https://www.canva.com/ja_jp/learn/what-is-tone-manner/
+- Canva, *What is Tone & Manner? Understand the meaning and usage to create design consistency* (definition including tone as atmosphere and manner as explicit rules): https://www.canva.com/ja_jp/learn/what-is-tone-manner/
 - A List Apart, *Style Tiles and How They Work* (visual comparison artifact between mood and full comps): https://alistapart.com/article/style-tiles-and-how-they-work/
 - Design Tokens Community Group, *Design Tokens Format Module* (exchange format with `$type` / `$value`): https://www.designtokens.org/TR/2025.10/format/
 - Design Tokens Community Group: https://www.designtokens.org/

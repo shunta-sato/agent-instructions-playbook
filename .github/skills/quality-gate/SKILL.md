@@ -34,12 +34,12 @@ Invoke this skill **before every submission**. It is mandatory.
 
 ## Gotchas
 
-- **ありがち:** deep review taxonomy を quality-gate 本体に再掲して長文化する。  
-  **代わりに:** gate は exit criteria 判定に限定し、深掘りは専用 skill 参照へ委譲する。
-- **ありがち:** 必須 artifact が欠けているのに「大筋OK」で通す。  
-  **代わりに:** trigger された branch の必須証跡が揃うまで `no-submit` を維持する。
-- **ありがち:** コマンド未実行を曖昧に記録して `submit` 判定する。  
-  **代わりに:** 未実行は理由と再現手順を必ず明記し、提出可否に反映する。
+- **Common pitfall:** repeating deep-review taxonomy in quality-gate and making it verbose.  
+  **Instead:** limit gate to exit-criteria decisions and delegate deep dives to dedicated skills.
+- **Common pitfall:** approving as mostly OK while required artifacts are missing.  
+  **Instead:** keep `no-submit` until required evidence for triggered branches is complete.
+- **Common pitfall:** marking `submit` with vague records of unrun commands.  
+  **Instead:** for unrun commands, always record reason + reproduction steps and reflect that in submission decision.
 
 ## Output expectation
 

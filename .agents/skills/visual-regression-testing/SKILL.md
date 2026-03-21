@@ -24,11 +24,11 @@ Use this skill to enforce a consistent UI visual verification contract without h
 
 ## Gotchas
 
-- **ありがち:** UI が変わっているのに snapshot verify を飛ばす。  
-  **代わりに:** repo 定義の UI verify コマンドを実行し、差分の有無を必ず確認する。
-- **ありがち:** 失敗した snapshot を原因確認せず一括で record する。  
-  **代わりに:** 差分画像をレビューして「意図した変更のみ」を baseline に反映する。
-- **ありがち:** レポートに artifact path がなく、レビュアーが再確認できない。  
-  **代わりに:** compare 結果・更新有無・artifact の相対パスを出力フォーマットへ明記する。
-- **ありがち:** デザイン差異を「テスト環境差」と決めつけて放置する。  
-  **代わりに:** フォント/解像度/テーマ/ロケール差を切り分け、再現条件を記録してから判断する。
+- **Common pitfall:** skipping snapshot verification even though UI changed.  
+  **Instead:** run the repo-defined UI verification command and always check whether diffs exist.
+- **Common pitfall:** recording failed snapshots in bulk without root-cause review.  
+  **Instead:** review diff images and apply only intended changes to baseline.
+- **Common pitfall:** omitting artifact paths in reports, preventing reviewer recheck.  
+  **Instead:** explicitly include compare result, update status, and relative artifact paths in output format.
+- **Common pitfall:** assuming visual differences are environment-only and leaving them unresolved.  
+  **Instead:** separate font/resolution/theme/locale differences and record reproduction conditions before judgment.

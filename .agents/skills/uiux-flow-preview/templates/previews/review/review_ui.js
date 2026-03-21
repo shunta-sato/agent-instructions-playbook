@@ -96,9 +96,9 @@
         <button class="rv-tab is-active" type="button" data-rv-tab="add">Add</button>
         <button class="rv-tab" type="button" data-rv-tab="list">List</button>
       </div>
-      <div class="rv-storage-warning" data-rv-storage-warning hidden>localStorage が使えないためメモリ保持のみです（リロードで消えます）。</div>
+      <div class="rv-storage-warning" data-rv-storage-warning hidden>localStorage is unavailable, so data is kept in memory only (cleared on reload).</div>
       <div data-rv-pane="add">
-        <p class="rv-help" data-rv-help>Review ON にして要素をクリックすると追加できます。</p>
+        <p class="rv-help" data-rv-help>Turn Review ON and click an element to add a comment.</p>
         <label class="label" for="rv-comment">Comment</label>
         <textarea id="rv-comment" class="rv-input" rows="5"></textarea>
         <div class="rv-row">
@@ -127,7 +127,7 @@
         <ol class="rv-list" data-rv-list></ol>
       </div>
       <div class="rv-copy-fallback" data-rv-copy-fallback hidden>
-        <p class="p">Copy に失敗しました。手でコピーしてください。</p>
+        <p class="p">Copy failed. Please copy manually.</p>
         <textarea class="rv-input" rows="8" data-rv-copy-text></textarea>
       </div>`;
     document.body.appendChild(wrap);
@@ -160,12 +160,12 @@
 
     const reviewHint = document.createElement('div');
     reviewHint.className = 'rv-onboarding';
-    reviewHint.textContent = 'Review ON: 要素をクリックしてコメント追加。Esc でキャンセル。';
+    reviewHint.textContent = 'Review ON: click an element to add a comment. Esc to cancel.';
     root.appendChild(reviewHint);
 
     const fileWarn = document.createElement('span');
     fileWarn.className = 'rv-file-warning';
-    fileWarn.textContent = 'file:// ではコピーが不安定です。http://localhost で開いてください（例: python -m http.server 8000）。';
+    fileWarn.textContent = 'Copy is unstable on file://. Open via http://localhost (e.g., python -m http.server 8000).';
     if (location.protocol === 'file:') {
       const toolbarControls = document.querySelector('.toolbar-controls');
       if (toolbarControls) {
@@ -290,7 +290,7 @@
             reviewOn = true;
             syncReviewState();
             openPanel('add');
-            panel.querySelector('[data-rv-help]').textContent = 'Relink: 次にクリックした要素へ付け替えます。';
+            panel.querySelector('[data-rv-help]').textContent = 'Relink: reassign to the next clicked element.';
           });
           item.appendChild(relink);
         }
@@ -326,7 +326,7 @@
       panel.querySelector('[data-rv-status]').value = 'open';
       panel.querySelector('[data-rv-delete]').hidden = true;
       panel.querySelector('[data-rv-resolve]').hidden = true;
-      panel.querySelector('[data-rv-help]').textContent = 'Review ON にして要素をクリックすると追加できます。';
+      panel.querySelector('[data-rv-help]').textContent = 'Turn Review ON and click an element to add a comment.';
     }
 
     function openEditor(id) {
@@ -412,7 +412,7 @@
         }
       };
       openPanel('add');
-      panel.querySelector('[data-rv-help]').textContent = 'コメントを入力して Save してください。';
+      panel.querySelector('[data-rv-help]').textContent = 'Enter a comment and click Save.';
       panel.querySelector('#rv-comment').focus();
     });
 

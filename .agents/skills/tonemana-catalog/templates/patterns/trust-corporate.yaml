@@ -1,7 +1,7 @@
 pattern:
   id: "trust-corporate"
-  label: "信頼・コーポレート"
-  summary: "堅実に伝える。信頼を崩さない。"
+  label: "Trust Corporate"
+  summary: "Communicate steadily. Do not compromise trust."
   suitable_for: ["product-ui", "docs", "marketing-site"]
   tokens:
     dtcg_json: "tonemana/catalog/tokens/trust-corporate.tokens.json"
@@ -18,7 +18,7 @@ pattern:
       exclamation: "avoid"
       emoji: "avoid"
     do_dont:
-      do: "内容を確認のうえ、承認をお願いします。"
-      dont: "これでOKです！すぐ承認して！"
+      do: "Please review the content and approve."
+      dont: "This is OK! Approve right away!"
   preview:
     html: "tonemana/catalog/previews/index.html?pattern=trust-corporate"

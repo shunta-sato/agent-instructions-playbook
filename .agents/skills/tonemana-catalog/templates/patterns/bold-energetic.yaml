@@ -1,7 +1,7 @@
 pattern:
   id: "bold-energetic"
-  label: "大胆・エネルギッシュ"
-  summary: "強く目を引く。訴求を前に出す。"
+  label: "Bold Energetic"
+  summary: "Strong visual pull. Bring the message forward."
   suitable_for: ["marketing-site", "sns", "product-ui"]
   tokens:
     dtcg_json: "tonemana/catalog/tokens/bold-energetic.tokens.json"
@@ -18,7 +18,7 @@ pattern:
       exclamation: "allow"
       emoji: "limited"
     do_dont:
-      do: "今すぐチェックして、最新情報を受け取りましょう。"
-      dont: "興味があれば見てください。"
+      do: "Check now and get the latest updates."
+      dont: "Take a look if you're interested."
   preview:
     html: "tonemana/catalog/previews/index.html?pattern=bold-energetic"

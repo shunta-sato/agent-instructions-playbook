@@ -40,12 +40,12 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 ## Gotchas
 
-- **ありがち:** routing 後に optional スキル一覧を追ってしまい、必須 branch 判定がぼやける。  
-  **代わりに:** 「trigger が立った branch だけ必須」を維持し、trigger 無し branch は実行しない。
-- **ありがち:** low risk を固定して必要 branch を回避する。  
-  **代わりに:** API/挙動/UI/並行性/境界変更が見えた時点で risk を再判定し、必要 branch を追加する。
-- **ありがち:** verify 結果の良し悪し判定まで dev-workflow で抱え込む。  
-  **代わりに:** dev-workflow は「必要な verify 深度の指定」までに限定し、最終判定は `$quality-gate` に委譲する。
+- **Common pitfall:** following optional skill lists after routing and blurring required-branch decisions.  
+  **Instead:** maintain only-triggered branches as required and do not execute untriggered branches.
+- **Common pitfall:** forcing low risk and bypassing required branches.  
+  **Instead:** re-evaluate risk when API/behavior/UI/concurrency/boundary changes appear, and add required branches.
+- **Common pitfall:** trying to make pass/fail decisions in dev-workflow.  
+  **Instead:** limit dev-workflow to specifying required verification depth; delegate final judgment to `$quality-gate`.
 
 ## Output expectation
 

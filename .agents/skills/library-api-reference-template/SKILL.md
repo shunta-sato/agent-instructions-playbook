@@ -60,12 +60,12 @@ Use this skill when:
 
 ## Gotchas
 
-- **ありがち:** API 仕様ではなく古いブログ断片を参照して実装する。  
-  **代わりに:** `references/api-cli-summary.md` の version + official docs を先に確定し、そこから実装する。
-- **ありがち:** サンプルが最小 happy-path のみで、失敗時の扱いがない。  
-  **代わりに:** canonical example に失敗ケース（認証切れ/レート制限/タイムアウト等）を 1 つ含める。
-- **ありがち:** template に org 固有 URL / token 名 / secret 形式が残る。  
-  **代わりに:** placeholder 化し、`CUSTOMIZATION CHECKLIST` で置換漏れを確認する。
+- **Common pitfall:** implementing from outdated blog snippets instead of API specifications.  
+  **Instead:** first lock version + official docs in `references/api-cli-summary.md`, then implement from that.
+- **Common pitfall:** providing only a minimal happy-path sample with no failure handling.  
+  **Instead:** include one failure case in the canonical example (auth expiration/rate limit/timeout, etc.).
+- **Common pitfall:** leaving org-specific URL / token names / secret formats in templates.  
+  **Instead:** convert to placeholders and verify replacement gaps with `CUSTOMIZATION CHECKLIST`.
 
 ## Output expectation
 

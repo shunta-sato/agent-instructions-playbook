@@ -1,7 +1,7 @@
 pattern:
   id: "warm-friendly"
-  label: "あたたかい・親しみ"
-  summary: "やさしく案内する。緊張をほぐす。"
+  label: "Warm Friendly"
+  summary: "Guide gently. Reduce tension."
   suitable_for: ["product-ui", "sns", "marketing-site"]
   tokens:
     dtcg_json: "tonemana/catalog/tokens/warm-friendly.tokens.json"
@@ -18,7 +18,7 @@ pattern:
       exclamation: "limited"
       emoji: "limited"
     do_dont:
-      do: "うまく送信できませんでした。少し待ってから、もう一度お試しください。"
-      dont: "送信失敗。後で。"
+      do: "Could not submit successfully. Please wait a bit and try again."
+      dont: "Submit failed. Try later."
   preview:
     html: "tonemana/catalog/previews/index.html?pattern=warm-friendly"

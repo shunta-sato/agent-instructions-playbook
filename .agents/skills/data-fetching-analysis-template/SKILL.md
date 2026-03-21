@@ -64,12 +64,12 @@ Use this skill when:
 
 ## Gotchas
 
-- **ありがち:** 問いが曖昧なまま抽出を始め、後で指標定義が変わる。  
-  **代わりに:** 先に `analysis question + success criteria` を固定し、report template に残してから取得を開始する。
-- **ありがち:** canonical key を決めずに join して重複/欠損を見逃す。  
-  **代わりに:** 先に key 正規化規則と join cardinality を書き、各 join 後に件数検証を行う。
-- **ありがち:** ローカル検証用に secret を repo へ保存する。  
-  **代わりに:** 環境変数/secret manager の placeholder を使い、repo には一切保存しない。
+- **Common pitfall:** starting extraction with an ambiguous question, then changing metric definitions later.  
+  **Instead:** first lock `analysis question + success criteria`, record in report template, then start extraction.
+- **Common pitfall:** joining without canonical keys and missing duplicates/gaps.  
+  **Instead:** define key normalization rules and join cardinality first, then validate counts after each join.
+- **Common pitfall:** storing secrets in the repo for local validation.  
+  **Instead:** use environment-variable/secret-manager placeholders and never store secrets in the repo.
 
 ## Output expectation
 

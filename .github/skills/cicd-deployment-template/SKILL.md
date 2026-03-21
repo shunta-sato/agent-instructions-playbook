@@ -106,12 +106,12 @@ At minimum, verify and report:
 
 ## Gotchas
 
-- **ありがち:** preflight を飛ばして本番 deploy を始める。  
-  **代わりに:** 先に `references/deployment-checklist.md` の preflight を完了し、承認者と rollback runbook を report に固定する。
-- **ありがち:** canary 成功前に一気に 100% rollout する。  
-  **代わりに:** 段階 rollout + hold window を守り、phase ごとに SLI を確認してから次に進む。
-- **ありがち:** rollback 条件が曖昧で障害時に判断が遅れる。  
-  **代わりに:** しきい値・継続時間・責任者を事前定義し、違反時は自動/手動 rollback を即時実行する。
+- **Common pitfall:** starting production deploy without preflight.  
+  **Instead:** complete preflight in `references/deployment-checklist.md` first, and record approver and rollback runbook in the report.
+- **Common pitfall:** rolling out to 100% before canary success.  
+  **Instead:** follow staged rollout + hold windows, and verify SLI per phase before proceeding.
+- **Common pitfall:** keeping rollback conditions vague, delaying decisions during incidents.  
+  **Instead:** predefine thresholds, durations, and owners; execute automatic/manual rollback immediately on violation.
 
 ## Output expectation
 
