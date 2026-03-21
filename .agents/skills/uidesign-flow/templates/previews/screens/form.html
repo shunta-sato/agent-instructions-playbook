@@ -49,24 +49,24 @@
           <div class="device-viewport" data-review-root>
             <div class="container">
               <div class="card">
-                <h2 class="h1">入力</h2>
-                <p class="p">エラーの見え方と、次の行動が分かるかを見ます。</p>
+                <h2 class="h1">Input</h2>
+                <p class="p">Review how errors appear and whether the next action is clear.</p>
 
                 <div class="field" style="margin-top: var(--tm-space-4, 16px);">
-                  <label class="label" for="name">名前</label>
-                  <input class="input" id="name" placeholder="例：山田 太郎" data-review-id="form_name" />
-                  <div class="help">必須</div>
+                  <label class="label" for="name">Name</label>
+                  <input class="input" id="name" placeholder="e.g., Jane Doe" data-review-id="form_name" />
+                  <div class="help">Required</div>
                 </div>
 
                 <div class="field" style="margin-top: var(--tm-space-4, 16px);">
-                  <label class="label" for="tel">電話番号（error）</label>
+                  <label class="label" for="tel">Phone Number (error)</label>
                   <input class="input error-state" id="tel" value="123" data-review-id="form_tel" />
-                  <div class="error" data-review-id="form_tel_error">入力に誤りがあります。確認してください。</div>
+                  <div class="error" data-review-id="form_tel_error">There is an input error. Please check.</div>
                 </div>
 
                 <div class="row" style="margin-top: var(--tm-space-6, 24px); justify-content: flex-end;">
-                  <button class="btn" type="button">下書きを保存</button>
-                  <button class="btn btn-primary" type="button" data-review-id="form_submit">送信</button>
+                  <button class="btn" type="button">Save draft</button>
+                  <button class="btn btn-primary" type="button" data-review-id="form_submit">Submit</button>
                 </div>
               </div>
             </div>

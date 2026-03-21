@@ -39,14 +39,14 @@ Use this skill when:
 
 ## Gotchas
 
-- **ありがち:** `make verify` 未実行なのに `verified by agent` を yes にする。  
-  **代わりに:** verify 成功 (exit 0) を確認した時だけ日付付きで yes に更新する。
-- **ありがち:** `<fill>` が残っているのに初期化完了として扱う。  
-  **代わりに:** `rg "<fill>" COMMANDS.md` で 0 件になるまで完了宣言しない。
-- **ありがち:** コマンドを推測で埋めて実プロジェクトと乖離する。  
-  **代わりに:** lockfile/CI/package manager/scripts の証拠を先に確認し、不足点だけ質問する。
-- **ありがち:** verify 失敗時の次手順を書かずに作業を終える。  
-  **代わりに:** 失敗理由と再実行手順を `INIT_REPORT.md` または `COMMANDS.md` に具体的に残す。
+- **Common pitfall:** setting `verified by agent` to yes without running `make verify`.  
+  **Instead:** update to dated yes only when verify succeeds (exit 0).
+- **Common pitfall:** treating initialization as complete while `<fill>` remains.  
+  **Instead:** do not declare completion until `rg "<fill>" COMMANDS.md` returns 0 matches.
+- **Common pitfall:** filling commands by guesswork and diverging from the actual project.  
+  **Instead:** check lockfile/CI/package manager/scripts evidence first and ask only what is missing.
+- **Common pitfall:** ending work without next steps after verify failure.  
+  **Instead:** record specific failure reason and rerun steps in `INIT_REPORT.md` or `COMMANDS.md`.
 
 ## Completion criteria
 

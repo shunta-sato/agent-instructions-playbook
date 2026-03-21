@@ -1,27 +1,27 @@
 # AI Agent Instructions Playbook
 
-このリポジトリは、ソフトウェア開発エージェント向けの「薄い常設ルール + 必要時だけ読む詳細プレイブック」を提供するテンプレートです。
+This repository is a template that provides software-development agents with thin always-on rules plus detailed playbooks read only when needed.
 
 ## Core files
 
-- `AGENTS.md` — 常時読み込まれる中核ルールと skill index
-- `COMMANDS.md` — build / lint / test の正規コマンド
-- `PLANS.md` — ExecPlan 運用のガイド
-- `README.md` — リポジトリ概要と最小導入
-- `REFERENCES.md` — 参照ドキュメントの入口
+- `AGENTS.md` — always-loaded core rules and the skill index
+- `COMMANDS.md` — canonical build / lint / test commands
+- `PLANS.md` — guide for ExecPlan operations
+- `README.md` — repository overview and minimum onboarding
+- `REFERENCES.md` — entry point for reference documents
 
 ## Core runtime skills（short list）
 
-- `dev-workflow` — 変更リスクをルーティングし、必要分岐だけ実行
-- `quality-gate` — 提出前の最終判定
-- `execution-plans` — 複雑・長期タスクの実行計画管理
-- `requirements-to-design` — 要件を実装可能な設計入力へ変換
-- `project-initialization` — コマンド体系の初期化
+- `dev-workflow` — route change risk and execute only required branches
+- `quality-gate` — final decision before submission
+- `execution-plans` — execution planning for complex/long-running tasks
+- `requirements-to-design` — convert requirements into implementable design input
+- `project-initialization` — initialize the command system
 
-詳細な skill 一覧と運用手順は `AGENTS.md` と各 `SKILL.md` を参照してください。
+For the full skill list and usage workflow, see `AGENTS.md` and each `SKILL.md`.
 
 ## Minimal bootstrap
 
-1. `AGENTS.md` を開き、`dev-workflow` と `quality-gate` の流れを確認する。
-2. `COMMANDS.md` が未初期化（`<fill>`）なら `project-initialization` を実行する。
-3. 変更の前後で、`COMMANDS.md` に定義された正規コマンドで検証する。
+1. Open `AGENTS.md` and review the `dev-workflow` and `quality-gate` flow.
+2. If `COMMANDS.md` is uninitialized (`<fill>`), run `project-initialization`.
+3. Before and after changes, verify with canonical commands defined in `COMMANDS.md`.

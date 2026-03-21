@@ -1,7 +1,7 @@
 pattern:
   id: "modern-tech"
-  label: "モダン・テック"
-  summary: "情報を速く届ける。輪郭はシャープ。"
+  label: "Modern Tech"
+  summary: "Deliver information quickly with sharp edges."
   suitable_for: ["product-ui", "docs", "marketing-site"]
   tokens:
     dtcg_json: "tonemana/catalog/tokens/modern-tech.tokens.json"
@@ -18,7 +18,7 @@ pattern:
       exclamation: "avoid"
       emoji: "avoid"
     do_dont:
-      do: "処理に失敗しました。ログを確認して再実行してください。"
-      dont: "処理ミス！もう一回！"
+      do: "Processing failed. Check logs and run again."
+      dont: "Processing error! Try again!"
   preview:
     html: "tonemana/catalog/previews/index.html?pattern=modern-tech"

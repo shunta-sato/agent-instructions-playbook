@@ -1,7 +1,7 @@
 pattern:
   id: "neutral-minimal"
-  label: "ニュートラル・ミニマル"
-  summary: "迷わせない。読める。装飾は控える。"
+  label: "Neutral Minimal"
+  summary: "No confusion. Readable. Minimal decoration."
   suitable_for: ["product-ui", "docs", "marketing-site"]
   tokens:
     dtcg_json: "tonemana/catalog/tokens/neutral-minimal.tokens.json"
@@ -18,7 +18,7 @@ pattern:
       exclamation: "avoid"
       emoji: "avoid"
     do_dont:
-      do: "通信が不安定です。接続を確認して、もう一度お試しください。"
-      dont: "エラー！もう一回！"
+      do: "Network is unstable. Check your connection and try again."
+      dont: "Error! Try again!"
   preview:
     html: "tonemana/catalog/previews/index.html?pattern=neutral-minimal"

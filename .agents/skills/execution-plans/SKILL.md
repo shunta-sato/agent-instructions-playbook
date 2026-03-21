@@ -42,14 +42,14 @@ It is also a good default when you are unsure.
 
 ## Gotchas
 
-- **ありがち:** 最初に plan を作るだけで Progress (WBS) を更新しない。  
-  **代わりに:** タスク完了ごとに status を更新し、未着手/進行中/完了を常に最新化する。
-- **ありがち:** 大きな方針変更を口頭で済ませ、Decision log を残さない。  
-  **代わりに:** 変更理由・代替案・採用判断を plan の Decision log に追記する。
-- **ありがち:** セッション終了時に handoff が古く、次担当が再調査から始める。  
-  **代わりに:** 停止時点で「現在地 / 次の1手 / ブロッカー / 実行コマンド」を Handoff に必ず更新する。
-- **ありがち:** 複雑作業なのに ExecPlan を作らず ad-hoc に進める。  
-  **代わりに:** PLANS.md の trigger に1つでも該当したら `plans/<slug>.md` を作成してから着手する。
+- **Common pitfall:** creating the plan first but not updating Progress (WBS).  
+  **Instead:** update status for each completed task and keep todo/in-progress/done current.
+- **Common pitfall:** handling major direction changes verbally and not recording a Decision log.  
+  **Instead:** append reason, alternatives, and adoption decision to the plan Decision log.
+- **Common pitfall:** leaving stale handoff notes at session end, forcing the next person to re-investigate.  
+  **Instead:** always update Handoff with current status / next step / blocker / commands run before stopping.
+- **Common pitfall:** moving ahead ad-hoc on complex work without creating an ExecPlan.  
+  **Instead:** if any PLANS.md trigger applies, create `plans/<slug>.md` before starting.
 
 ## Output expectation
 

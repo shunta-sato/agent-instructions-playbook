@@ -115,12 +115,12 @@ Mandatory controls:
 
 ## Gotchas
 
-- **ありがち:** dry-run を省略して apply を先に実行する。  
-  **代わりに:** 先に `references/infrastructure-operations-checklist.md` の dry-run 項目を完了し、影響件数を report に固定する。
-- **ありがち:** destructive step を通常変更と同じ承認で流す。  
-  **代わりに:** destructive checkpoint ごとに明示 approval を取り、operator/approver を記録する。
-- **ありがち:** apply 後すぐ完了扱いにして遅延障害を見逃す。  
-  **代わりに:** soak period を必須化し、cleanup と監査ログ確認まで完了してから close する。
+- **Common pitfall:** running apply first and skipping dry-run.  
+  **Instead:** first complete dry-run items in `references/infrastructure-operations-checklist.md` and record impacted count in the report.
+- **Common pitfall:** processing destructive steps with normal-change approval.  
+  **Instead:** take explicit approval at each destructive checkpoint and record operator/approver.
+- **Common pitfall:** marking complete right after apply and missing delayed failures.  
+  **Instead:** make soak period required and close only after cleanup and audit-log checks finish.
 
 ## Output expectation
 

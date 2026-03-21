@@ -1,7 +1,7 @@
 pattern:
   id: "natural-organic"
-  label: "ナチュラル・オーガニック"
-  summary: "自然でやさしい。角を立てない。"
+  label: "Natural Organic"
+  summary: "Natural and gentle. Avoid harshness."
   suitable_for: ["product-ui", "marketing-site", "sns"]
   tokens:
     dtcg_json: "tonemana/catalog/tokens/natural-organic.tokens.json"
@@ -18,7 +18,7 @@ pattern:
       exclamation: "avoid"
       emoji: "limited"
     do_dont:
-      do: "読み込みに時間がかかっています。通信環境のよい場所でお試しください。"
-      dont: "遅いです。やり直してください。"
+      do: "Loading is taking longer than expected. Try again in a better network environment."
+      dont: "It's slow. Please retry."
   preview:
     html: "tonemana/catalog/previews/index.html?pattern=natural-organic"
