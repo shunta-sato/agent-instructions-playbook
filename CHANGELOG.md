@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.5.0
+
+### Changed
+- Made `.agents/skills` the single repo-local Agent Skills source for both Codex and GitHub Copilot.
+- Removed the duplicated `.github/skills` mirror and the mirror-sync script/check.
+- Updated the generated `AGENTS.md` index metadata to show Codex (`$skill`) and Copilot (`/skill`) explicit invocation forms.
+- Included `*-template` skills in the generated `AGENTS.md` index instead of hiding installed skills.
+- Moved non-standard `inputs` / `outputs` frontmatter from `tonemana-*` skills into the skill bodies.
+
+### Added
+- Added `scripts/validate_skills.py` to validate Agent Skills frontmatter, naming, uniqueness, size, and single-source layout.
+- Updated CI to validate skills and the generated agent index.
+
 ## v4.4.0
 
 ### Added

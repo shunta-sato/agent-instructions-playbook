@@ -1,19 +1,6 @@
 ---
 name: tonemana-catalog
 description: Create or update a Tone & Manner catalog (7 default patterns) with preview HTML so humans can compare visually.
-inputs:
-  required:
-    - project_name
-    - primary_touchpoints
-  optional:
-    - existing_brand_assets
-    - accessibility_target
-outputs:
-  - tonemana/catalog/catalog_index.yaml
-  - tonemana/catalog/patterns/*.yaml
-  - tonemana/catalog/tokens/*.tokens.json
-  - tonemana/catalog/tokens/*.tokens.css
-  - tonemana/catalog/previews/index.html
 ---
 
 # tonemana-catalog
@@ -21,6 +8,17 @@ outputs:
 ## Goal
 Create a reusable, comparable Tone & Manner catalog inside the project.
 Tone = atmosphere (visual impression). Manner = explicit rules. Keep terminology aligned with writing_style/copy_style/text_rules.
+
+## Inputs
+- Required: `project_name`, `primary_touchpoints`
+- Optional: `existing_brand_assets`, `accessibility_target`
+
+## Outputs
+- `tonemana/catalog/catalog_index.yaml`
+- `tonemana/catalog/patterns/*.yaml`
+- `tonemana/catalog/tokens/*.tokens.json`
+- `tonemana/catalog/tokens/*.tokens.css`
+- `tonemana/catalog/previews/index.html`
 
 ## How to run
 - Generate `tonemana/catalog/` from templates.

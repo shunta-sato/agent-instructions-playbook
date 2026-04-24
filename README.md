@@ -5,6 +5,8 @@ This repository is a template that provides software-development agents with thi
 ## Core files
 
 - `AGENTS.md` — always-loaded core rules and the skill index
+- `.agents/skills/*/SKILL.md` — single source of repo-local Agent Skills for Codex and GitHub Copilot
+- `.github/prompts/*.prompt.md` — Copilot prompt files for explicit chat workflows
 - `COMMANDS.md` — canonical build / lint / test commands
 - `PLANS.md` — guide for ExecPlan operations
 - `README.md` — repository overview and minimum onboarding
@@ -19,6 +21,19 @@ This repository is a template that provides software-development agents with thi
 - `project-initialization` — initialize the command system
 
 For the full skill list and usage workflow, see `AGENTS.md` and each `SKILL.md`.
+
+## Skill layout
+
+Project skills live only under `.agents/skills`. Do not mirror them into `.github/skills`; current Codex and GitHub Copilot both support `.agents/skills` as a project-skill location.
+
+Use `$skill-name` in Codex and `/skill-name` in GitHub Copilot CLI / agent mode when explicit invocation is needed. Keep short, always-on rules in `AGENTS.md`; move detailed procedures, examples, and templates into skills, `references/`, or `templates/`.
+
+## Validation
+
+Run these after changing skills or the agent index:
+
+- `python scripts/validate_skills.py`
+- `python scripts/generate_agent_index.py --check`
 
 ## Minimal bootstrap
 

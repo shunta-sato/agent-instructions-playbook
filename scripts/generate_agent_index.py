@@ -35,7 +35,7 @@ DEFAULT_MAX_BYTES = 8192
 class SkillMeta:
     name: str
     short: str
-    codex_path: str
+    skill_path: str
 
 
 def _read_text(path: Path) -> str:
@@ -103,19 +103,16 @@ def _collect_skills(repo_root: Path) -> List[SkillMeta]:
     out: List[SkillMeta] = []
 
     for name in names:
-        if name.endswith("-template"):
-            continue
-
         short = codex[name][0]
         short = _truncate(short, 72)
 
-        codex_path = codex[name][1]
+        skill_path = codex[name][1]
 
         out.append(
             SkillMeta(
                 name=name,
                 short=short,
-                codex_path=codex_path,
+                skill_path=skill_path,
             )
         )
 
@@ -132,7 +129,7 @@ def _collect_source_skills(repo_root: Path) -> List[SkillMeta]:
             SkillMeta(
                 name=name,
                 short=_truncate(short, 72),
-                codex_path=str(md.relative_to(repo_root).as_posix()),
+                skill_path=str(md.relative_to(repo_root).as_posix()),
             )
         )
     return sorted(out, key=lambda s: s.name)
@@ -146,13 +143,15 @@ def _build_index_text(
 
     lines: List[str] = []
     lines.append("AGENT_INDEX_V1")
-    lines.append(f"meta|format=v1|max_bytes={max_bytes}|codex_invoke=$<skill>")
+    lines.append(
+        f"meta|format=v1|max_bytes={max_bytes}|invoke=codex:$<skill>,copilot:/<skill>"
+    )
     lines.append("defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md")
     lines.append("core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md")
 
-    lines.append("skills|name|short|codex_skill")
+    lines.append("skills|name|short|skill_path")
     for s in skills:
-        lines.append(f"skill|{s.name}|{s.short}|{s.codex_path}")
+        lines.append(f"skill|{s.name}|{s.short}|{s.skill_path}")
 
     lines.append("end|AGENT_INDEX_V1")
 

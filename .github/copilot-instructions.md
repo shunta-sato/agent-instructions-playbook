@@ -1,6 +1,6 @@
 # GitHub Copilot Repository Instructions
 
-These instructions complement `AGENTS.md` and the playbooks under `.github/` and `.agents/`.
+These instructions complement `AGENTS.md`, repo skills under `.agents/skills`, and prompt files under `.github/prompts`.
 
 ## Primary goal
 
@@ -19,7 +19,7 @@ Produce changes that are easy to understand and safe to change.
 
 ## Use the on-demand prompts
 
-Use these prompt files to keep behavior consistent:
+Use these prompt files to keep behavior consistent. Repo-local agent skills live in `.agents/skills`; do not look for a `.github/skills` mirror. When an explicit skill invocation is needed in Copilot CLI / agent mode, use `/skill-name`.
 
 - `/dev-workflow` — routing workflow (risk + required trigger branches)
 - `/quality-gate` — final exit-criteria gate (submit/no-submit)

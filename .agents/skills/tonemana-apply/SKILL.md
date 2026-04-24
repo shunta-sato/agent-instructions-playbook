@@ -1,19 +1,6 @@
 ---
 name: tonemana-apply
 description: Choose a Tone & Manner pattern, produce an approved Tonemana Pack, and apply references into the UIUX Pack.
-inputs:
-  required:
-    - selected_pattern_id
-    - uiux_pack_path
-  optional:
-    - overrides
-    - touchpoints
-outputs:
-  - tonemana/YYYYMMDD-<slug>/tonemana_contract.yaml
-  - tonemana/YYYYMMDD-<slug>/tonemana_spec.json
-  - tonemana/YYYYMMDD-<slug>/auto_review.json
-  - tonemana/YYYYMMDD-<slug>/diff_summary.md
-  - updates uiux pack: ui_contract.yaml, ui_spec.json, diff_summary.md
 ---
 
 # tonemana-apply
@@ -21,6 +8,17 @@ outputs:
 ## Goal
 Freeze one Tone & Manner decision as a versioned pack and apply it to the UIUX pack via references.
 Treat tone as atmosphere and manner as explicit rules. Keep text constraints under writing_style/copy_style/text_rules.
+
+## Inputs
+- Required: `selected_pattern_id`, `uiux_pack_path`
+- Optional: `overrides`, `touchpoints`
+
+## Outputs
+- `tonemana/YYYYMMDD-<slug>/tonemana_contract.yaml`
+- `tonemana/YYYYMMDD-<slug>/tonemana_spec.json`
+- `tonemana/YYYYMMDD-<slug>/auto_review.json`
+- `tonemana/YYYYMMDD-<slug>/diff_summary.md`
+- Updates UIUX pack: `ui_contract.yaml`, `ui_spec.json`, `diff_summary.md`
 
 ## Steps
 1) Ensure catalog exists (`tonemana/catalog/`). If missing, run tonemana-catalog behavior (create from templates).

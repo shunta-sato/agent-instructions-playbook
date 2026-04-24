@@ -9,16 +9,21 @@ This playbook is inspired by, or aligned with, the following sources.
 - Anthropic, *Claude Code common workflows* (planning and iterative execution): https://docs.anthropic.com/en/docs/claude-code/common-workflows
 - AGENTS.md discovery and size cap (`project_doc_max_bytes`): https://developers.openai.com/codex/guides/agents-md/
 - Advanced config (includes `project_doc_max_bytes` and related knobs): https://developers.openai.com/codex/config-advanced/
-- Skills overview (discovery locations, explicit `$` invocation): https://developers.openai.com/codex/skills/
-- Skills format and “only load body when invoked” (progressive disclosure): https://developers.openai.com/codex/skills/create-skill
+- Codex customization layers (`AGENTS.md`, skills, MCP, subagents): https://developers.openai.com/codex/concepts/customization
+- Skills overview (discovery locations, explicit `$` invocation, `agents/openai.yaml`): https://developers.openai.com/codex/skills/
+- Agent Skills open specification: https://agentskills.io/specification
+- Agent Skills best practices: https://agentskills.io/skill-creation/best-practices
+- Agent Skills description optimization: https://agentskills.io/skill-creation/optimizing-descriptions
+- Agent Skills script design: https://agentskills.io/skill-creation/using-scripts
 
 ### GitHub Copilot / VS Code
 - Repository custom instructions (`.github/copilot-instructions.md`) and path-specific instructions (`.github/instructions/*.instructions.md`): https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
 - Prompt files (recommended location `.github/prompts/`, run via `/prompt-name` in chat): https://code.visualstudio.com/docs/copilot/customization/prompt-files
 - GitHub Docs prompt files (Customization library): https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files
-- VS Code Agent Skills (`.github/skills/*/SKILL.md`) and progressive disclosure model: https://code.visualstudio.com/docs/copilot/customization/agent-skills
 - VS Code Copilot settings reference (default search locations for instruction/prompt files): https://code.visualstudio.com/docs/copilot/reference/copilot-settings
 - GitHub “About Agent Skills” (concepts and supported products): https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
+- GitHub Copilot CLI agent skills (`.github/skills`, `.claude/skills`, or `.agents/skills`; explicit `/skill` invocation): https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills
+- GitHub Copilot custom-instruction support matrix: https://docs.github.com/en/copilot/reference/custom-instructions-support
 
 ## UI visual verification / snapshot testing
 

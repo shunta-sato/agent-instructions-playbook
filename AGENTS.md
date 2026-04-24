@@ -3,7 +3,11 @@
 This repository is a reusable playbook for software-development agents.
 
 Keep this file short. Put detailed guidance in the on-demand playbooks under:
-- `.agents/skills/<name>/SKILL.md` (Codex skills)
+- `.agents/skills/<name>/SKILL.md` (repo skills for Codex and GitHub Copilot)
+
+Explicit invocation differs by client:
+- Codex: `$<skill>`
+- GitHub Copilot CLI / agent mode: `/<skill>`
 
 ## Agent Index (generated)
 
@@ -13,20 +17,24 @@ Do not edit by hand. Update via: `python scripts/generate_agent_index.py --write
 <!-- BEGIN AGENT INDEX (generated) -->
 ```text
 AGENT_INDEX_V1
-meta|format=v1|max_bytes=8192|codex_invoke=$<skill>
+meta|format=v1|max_bytes=8192|invoke=codex:$<skill>,copilot:/<skill>
 defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
-skills|name|short|codex_skill
+skills|name|short|skill_path
 skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.agents/skills/architecture-boundaries/SKILL.md
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
+skill|cicd-deployment-template|CI/CD & deployment template|.agents/skills/cicd-deployment-template/SKILL.md
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
 skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.agents/skills/code-smells-and-antipatterns/SKILL.md
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md
+skill|data-fetching-analysis-template|Data fetching & analysis template|.agents/skills/data-fetching-analysis-template/SKILL.md
 skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
+skill|infrastructure-operations-template|Infrastructure operations runbook template|.agents/skills/infrastructure-operations-template/SKILL.md
+skill|library-api-reference-template|Library/API reference template|.agents/skills/library-api-reference-template/SKILL.md
 skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md
 skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.agents/skills/nfr-iso25010/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
