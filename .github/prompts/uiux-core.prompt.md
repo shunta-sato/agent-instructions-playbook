@@ -6,7 +6,7 @@ Use this prompt for UI/UX design and review tasks that require a deterministic U
 
 1) Identify target platform(s): Android, iOS, web (one or more).
 2) Invoke `$uiux-core`.
-3) Invoke platform adapter skill(s) as needed: `$uiux-android`, `$uiux-ios`, `$uiux-web`.
+3) Apply the matching platform section in `$uiux-core` when the target is Android, iOS, or web.
 4) Ensure the UIUX Pack exists and is updated in the chosen output directory with:
    - `ui_contract.yaml`
    - `ui_spec.json`

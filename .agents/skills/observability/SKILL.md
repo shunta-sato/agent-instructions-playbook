@@ -1,22 +1,28 @@
 ---
 name: observability
-description: "Add diagnosable runtime signals (logs/metrics/traces) with correlation IDs and safe logging practices."
+description: "Use when a runtime behavior change needs diagnosable signals: async/background jobs, external calls, user-visible operations, or incident-prone flows. Do not use for docs-only or refactor-only changes with no behavior shift."
 metadata:
   short-description: Observability plan and checklist
 ---
 
 ## Purpose
 
-Use this skill to make runtime behavior diagnosable by adding logs, metrics, and traces with clear correlation.
+Use this skill to make important runtime behavior diagnosable through logs, metrics, traces, correlation identifiers, and safe logging practices.
 
 ## When to use
 
-- Any change that affects runtime behavior or error handling.
-- Any time you are unsure which observability signals are required.
+Use this skill when a change adds or changes runtime behavior where operators or developers need evidence to diagnose outcomes, latency, or failures:
+
+- Async jobs, queues, schedulers, workers, or other background work.
+- External calls to APIs, databases, filesystems, message brokers, or third-party services.
+- User-visible operations where success, failure, or degraded behavior must be explainable.
+- Incident-prone flows such as retries, timeouts, fallbacks, rate limits, auth, payments, imports, exports, or migrations.
+
+Do not use this skill for docs-only changes, pure formatting, mechanical refactors, or tests that do not change runtime behavior.
 
 ## How to use
 
-0) Open `references/observability.md` and follow the templates.
+0) If this skill is triggered, open `references/observability.md` and follow only the relevant template sections.
 
 1) Define the operations that need to be observable (user-facing or system-facing actions).
 

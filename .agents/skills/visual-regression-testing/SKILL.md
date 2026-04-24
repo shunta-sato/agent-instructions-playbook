@@ -17,10 +17,11 @@ Use this skill to enforce a consistent UI visual verification contract without h
 ## How to use
 
 1) Open `references/visual-regression-testing.md`.
-2) Discover and run the repo’s canonical UI verify/record interface.
-3) Review produced artifacts and compare against baselines/design mocks.
-4) Update baselines only for intentional UI changes.
-5) Output the required report format exactly.
+2) For Android, iOS, or web targets, also open the matching platform reference in `references/`.
+3) Discover and run the repo’s canonical UI verify/record interface.
+4) Review produced artifacts and compare against baselines/design mocks.
+5) Update baselines only for intentional UI changes.
+6) Output the required report format exactly.
 
 ## Gotchas
 

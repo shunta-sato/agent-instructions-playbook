@@ -1,6 +1,8 @@
 ---
 name: tonemana-catalog
-description: Create or update a Tone & Manner catalog (7 default patterns) with preview HTML so humans can compare visually.
+description: "Create or update a comparable Tone & Manner catalog with 7 default patterns, tokens, and preview HTML. Use before choosing a visual/voice pattern for UIUX or UIDesign work."
+metadata:
+  short-description: Tone & Manner catalog + previews
 ---
 
 # tonemana-catalog

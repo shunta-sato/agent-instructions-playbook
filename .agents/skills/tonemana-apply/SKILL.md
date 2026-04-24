@@ -1,6 +1,8 @@
 ---
 name: tonemana-apply
-description: Choose a Tone & Manner pattern, produce an approved Tonemana Pack, and apply references into the UIUX Pack.
+description: "Apply a selected Tone & Manner pattern to an existing UIUX Pack by producing a versioned Tonemana Pack and wiring references into UIUX artifacts. Use when a human has selected, or asks to choose and apply, a tone/manner pattern for a UI project."
+metadata:
+  short-description: Apply tone/manner choice to UIUX Pack
 ---
 
 # tonemana-apply

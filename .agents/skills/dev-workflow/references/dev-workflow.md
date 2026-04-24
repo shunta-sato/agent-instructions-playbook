@@ -37,11 +37,11 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`
 - runtime behavior change → `$observability`
-- explicit performance target → `$nfr-iso25010`
+- ambiguous requirements or explicit quality/NFR target → `$requirements-engineering`
 - strict-constraint/low-level synthesis OR repeated compile/test loops → `$staged-lowering`
 - weak tests / nondeterminism / legacy refactor → `$working-with-legacy-code`
 - C++ headers touched (`.h/.hpp/...`) → `$code-readability` (Doxygen)
-- UI changes → `$visual-regression-testing` + platform visual skill(s)
+- UI changes → `$visual-regression-testing` + matching platform reference
 
 ## 2) Route summary (handoff contract)
 

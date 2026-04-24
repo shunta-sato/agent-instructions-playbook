@@ -24,13 +24,17 @@ The repository must expose one canonical interface:
 ## Required execution flow
 
 1) Detect changed UI surface and target platform(s): `ios | android | web`.
-2) Run verify command.
-3) Capture snapshot outputs/artifact paths.
-4) If verify fails on visual diff:
+2) Open the relevant platform guidance only for detected targets:
+   - Android: `visual-regression-android.md`
+   - iOS: `visual-regression-ios.md`
+   - Web: `visual-regression-web.md`
+3) Run verify command.
+4) Capture snapshot outputs/artifact paths.
+5) If verify fails on visual diff:
    - inspect diffs and compare with requested behavior and design mock(s), when provided,
    - record whether diff is expected or a defect.
-5) Only when expected: run baseline update command and re-run verify.
-6) Produce the report in the exact format below.
+6) Only when expected: run baseline update command and re-run verify.
+7) Produce the report in the exact format below.
 
 ## Exact output format (mandatory)
 

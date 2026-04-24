@@ -33,7 +33,7 @@ Confirm required evidence exists for each triggered branch:
 
 If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:
 - readability → `$code-readability`
-- modularity/boundaries → `$modularity`, `$architecture-boundaries`
+- maintainability/modularity/boundaries → `$code-smells-and-antipatterns`
 - error handling → `$error-handling`
 - concurrency details → `$concurrency-core`, `$thread-safety-tooling`
 - observability details → `$observability`

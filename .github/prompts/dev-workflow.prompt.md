@@ -16,7 +16,8 @@ Use this prompt to route a task: decide risk and required trigger branches only.
   - runtime behavior change → `$observability`
   - strict low-level constraints/repeated compile-test loops → `$staged-lowering`
   - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
-  - UI change → `/ui-verify` or `$visual-regression-testing` (+ platform skill)
+  - ambiguous requirements / explicit NFR target → `$requirements-engineering`
+  - UI change → `/ui-verify` or `$visual-regression-testing` (with platform reference)
 
 3) Route summary (handoff contract)
 - Selected risk route

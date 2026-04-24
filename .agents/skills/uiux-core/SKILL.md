@@ -1,13 +1,13 @@
 ---
 name: uiux-core
-description: "Platform-agnostic UI/UX design + review contract. Produces a deterministic UIUX Pack (ui_contract.yaml, ui_spec.json, auto_review.json, diff_summary.md). Always open references/uiux-core.md."
+description: "Platform-agnostic UI/UX design + review contract. Produces a deterministic UIUX Pack (ui_contract.yaml, ui_spec.json, auto_review.json, diff_summary.md). Always open references/uiux-core.md; also open references/uiux-platform-adapters.md when the task targets web, iOS, or Android."
 metadata:
   short-description: UI/UX core contract + deterministic review bundle
 ---
 
 ## Purpose
 
-Define a platform-agnostic UI/UX contract and review workflow that always produces a deterministic UIUX Pack.
+Define a UI/UX contract and review workflow that always produces a deterministic UIUX Pack.
 
 ## When to use
 
@@ -20,13 +20,13 @@ Define a platform-agnostic UI/UX contract and review workflow that always produc
 ## How to use
 
 1) Open `references/uiux-core.md`.
-2) Choose output folder: `uiux/YYYYMMDD-<slug>/` (or `uiux/.config` `output_dir` override when present).
-3) Copy templates into the output folder if missing.
-4) Fill `ui_contract.yaml` first (constraints + rules).
-5) Generate/update `ui_spec.json`.
-6) Compute/update `auto_review.json`.
-7) Write `diff_summary.md`.
-8) If platform-specific constraints are needed, invoke `$uiux-android`, `$uiux-ios`, and/or `$uiux-web`.
+2) If the task targets Web, iOS, or Android, open `references/uiux-platform-adapters.md` and apply only the matching platform section(s).
+3) Choose output folder: `uiux/YYYYMMDD-<slug>/` (or `uiux/.config` `output_dir` override when present).
+4) Copy templates into the output folder if missing.
+5) Fill `ui_contract.yaml` first (constraints, rules, and any `platform_overrides`).
+6) Generate/update `ui_spec.json`.
+7) Compute/update `auto_review.json`, including platform-prefixed checks when applicable.
+8) Write `diff_summary.md`.
 
 ## Output expectation
 

@@ -94,7 +94,7 @@ This separation helps you evolve metrics and computations safely.
 
 After the core grows, separate “volatile details” (SDK/DB/HTTP) from “stable policy” (core).
 
-- When in doubt, invoke `$architecture-boundaries` and decide dependency direction + DTO/IF.
+- When in doubt, invoke `$code-smells-and-antipatterns` and use its boundary review reference to decide dependency direction + DTO/IF.
 
 ## 9. Minimal checklist
 

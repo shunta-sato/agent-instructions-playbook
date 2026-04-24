@@ -21,43 +21,30 @@ meta|format=v1|max_bytes=8192|invoke=codex:$<skill>,copilot:/<skill>
 defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
 skills|name|short|skill_path
-skill|architecture-boundaries|Architecture boundaries (Clean Architecture)|.agents/skills/architecture-boundaries/SKILL.md
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
-skill|cicd-deployment-template|CI/CD & deployment template|.agents/skills/cicd-deployment-template/SKILL.md
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
-skill|code-smells-and-antipatterns|Smells & anti-patterns triage|.agents/skills/code-smells-and-antipatterns/SKILL.md
+skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/skills/code-smells-and-antipatterns/SKILL.md
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md
-skill|data-fetching-analysis-template|Data fetching & analysis template|.agents/skills/data-fetching-analysis-template/SKILL.md
 skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
-skill|infrastructure-operations-template|Infrastructure operations runbook template|.agents/skills/infrastructure-operations-template/SKILL.md
-skill|library-api-reference-template|Library/API reference template|.agents/skills/library-api-reference-template/SKILL.md
-skill|modularity|Modularity (cohesion/coupling)|.agents/skills/modularity/SKILL.md
-skill|nfr-iso25010|ISO/IEC 25010 quality attributes template|.agents/skills/nfr-iso25010/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
+skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
-skill|requirements-documentation|Requirements documentation|.agents/skills/requirements-documentation/SKILL.md
-skill|requirements-to-design|Requirements → design|.agents/skills/requirements-to-design/SKILL.md
+skill|requirements-engineering|Requirements engineering|.agents/skills/requirements-engineering/SKILL.md
 skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md
 skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md
-skill|tonemana-apply|Choose a Tone & Manner pattern, produce an approved Tonemana Pack, and …|.agents/skills/tonemana-apply/SKILL.md
-skill|tonemana-catalog|Create or update a Tone & Manner catalog (7 default patterns) with prev…|.agents/skills/tonemana-catalog/SKILL.md
+skill|tonemana-apply|Apply tone/manner choice to UIUX Pack|.agents/skills/tonemana-apply/SKILL.md
+skill|tonemana-catalog|Tone & Manner catalog + previews|.agents/skills/tonemana-catalog/SKILL.md
 skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/skills/uidesign-flow/SKILL.md
-skill|uidesign-orchestrator|uiux → tonemana → uidesign (orchestration)|.agents/skills/uidesign-orchestrator/SKILL.md
-skill|uiux-android|Android UI/UX adapter for UIUX Pack|.agents/skills/uiux-android/SKILL.md
+skill|uidesign-orchestrator|full UI evidence pipeline orchestration|.agents/skills/uidesign-orchestrator/SKILL.md
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md
 skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.agents/skills/uiux-flow-preview/SKILL.md
-skill|uiux-ios|iOS UI/UX adapter for UIUX Pack|.agents/skills/uiux-ios/SKILL.md
-skill|uiux-web|Web UI/UX adapter for UIUX Pack|.agents/skills/uiux-web/SKILL.md
-skill|visual-regression-android|Android visual regression defaults|.agents/skills/visual-regression-android/SKILL.md
-skill|visual-regression-ios|iOS visual regression defaults|.agents/skills/visual-regression-ios/SKILL.md
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md
-skill|visual-regression-web|Web visual regression defaults|.agents/skills/visual-regression-web/SKILL.md
 skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md
 end|AGENT_INDEX_V1
 ```

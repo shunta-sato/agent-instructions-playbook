@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: "Boundary error-handling handbook (exception translation, failure paths, null/None). Use when designing or reviewing error paths. Always open references/error-handling.md and cite headings."
+description: "Use when a change defines or reviews failure contracts: boundary error translation, nullability/sentinel choices, retries/fallbacks, or API/user-visible failure behavior. Do not use for ordinary validation copy edits or pure logging changes with no failure-contract change."
 metadata:
   short-description: Boundary error handling
 ---
@@ -15,13 +15,17 @@ It focuses on boundary handling: translate external errors (DB/HTTP/FS/framework
 
 Use this skill when:
 
-- You are adding or changing code that touches external boundaries (DB/HTTP/files/frameworks).
-- You are unsure how to represent failure (exceptions vs error values) and how to keep call sites readable.
-- You are reviewing code that swallows errors, returns ambiguous `null/None`, or mixes command + query behavior.
+- Adding or changing boundary behavior for DB, HTTP, filesystem, framework, queue, or third-party failures.
+- Translating low-level exceptions or error codes into domain, API, CLI, or user-visible responses.
+- Choosing between exceptions, result types, sentinel objects, `null`/`None`, or optional values.
+- Adding or changing retries, fallbacks, timeouts, partial success, or recovery behavior.
+- Reviewing swallowed errors, ambiguous failure returns, or mixed command/query behavior.
+
+Do not use this skill for ordinary validation message copy edits, pure logging changes, formatting, or refactors that do not change the failure contract.
 
 ## How to use
 
-0) Open `references/error-handling.md`. Select **1–3 relevant headings** and cite them by heading name in your reasoning.
+0) If this skill is triggered, open `references/error-handling.md`. Select **1–3 relevant headings** and cite them by heading name in your reasoning.
 
 1) Identify boundaries and list possible failures (timeouts, not found, invalid data, permission errors).
 

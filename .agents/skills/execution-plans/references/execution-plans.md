@@ -69,7 +69,7 @@ Use this format (keep bullets ≤ 3 each):
 
 ## 5) Integration points
 
-- If requirements are unclear, invoke `$requirements-to-design` before filling “Design”.
+- If requirements are unclear, invoke `$requirements-engineering` before filling “Design”.
 - If runtime behavior changes, invoke `$observability` and record the plan’s signals in the ExecPlan.
 - If concurrency is introduced/changed, invoke `$concurrency-core` (+ platform skill) and record the plan in the ExecPlan.
 - Before finishing, run `$quality-gate` and ensure the ExecPlan is updated with final outcomes.

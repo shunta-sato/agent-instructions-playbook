@@ -1,29 +1,41 @@
 ---
 name: uidesign-orchestrator
-description: "Orchestrate end-to-end UI design evidence generation: ensure UIUX Pack exists, ensure Tone & Manner is selected and wired, then generate a deterministic UIDesign Pack (tokens snapshot + HTML previews + review notes). Always open references/uidesign-orchestrator.md."
+description: "Use only as an explicit end-to-end UI evidence orchestration wrapper: create or verify the UIUX Pack, create or apply Tone & Manner, wire meta.tone_and_manner, and generate the UIDesign Pack. Do not trigger for ordinary UIUX, Tone & Manner, or UIDesign single-step work. Always open references/uidesign-orchestrator.md."
 metadata:
-  short-description: uiux → tonemana → uidesign (orchestration)
+  short-description: full UI evidence pipeline orchestration
 ---
 
 ## Purpose
 
-This is an orchestration wrapper that produces a reviewable UI styling bundle.
+This skill coordinates the full UI evidence pipeline. It is not a replacement for the individual UIUX, Tone & Manner, or UIDesign skills.
 
-It ensures:
-1) UIUX Pack exists and is fill-free
-2) Tone & Manner assets exist (catalog + project tonemana pack)
-3) UIUX Pack is wired to Tone & Manner via `meta.tone_and_manner`
-4) UIDesign Pack is generated via `uidesign-flow`
+Use it only when the work must produce or verify all three connected artifacts:
+- UIUX Pack
+- Tone & Manner catalog/project pack
+- UIDesign Pack
 
-This skill does not change information architecture (IA). IA changes belong to `uiux-core`.
+It also ensures the UIUX Pack is wired to Tone & Manner via `meta.tone_and_manner`. It does not change information architecture (IA); IA changes belong to `uiux-core`.
+
+## When to use
+
+- The user asks for the full UI evidence pipeline, end-to-end orchestration, or all UI evidence artifacts.
+- The request requires creating, verifying, and wiring together UIUX, Tone & Manner, and UIDesign outputs.
+- A review program explicitly asks for this wrapper to coordinate the individual skills.
+
+## When not to use
+
+- For UIUX structure, IA, flows, wireframes, or transition agreement only, use `uiux-core`.
+- For Tone & Manner cataloging, selection, or application only, use `tonemana-catalog` or `tonemana-apply`.
+- For visual tokens, HTML previews, styling review notes, or UIDesign output only, use `uidesign-flow`.
+- For copy tone, visual taste, or single-step design feedback that does not require the full artifact chain, use the relevant individual skill.
 
 ## Workflow (high-level)
 
-1) Preflight: locate or create a UIUX Pack
-2) Ensure catalog exists (`tonemana-catalog`)
-3) Ensure tone-and-manner pack + UIUX wiring (`tonemana-apply`)
-4) Generate/update UIDesign Pack (`uidesign-flow`)
-5) Report what changed and where humans should review
+1) Preflight: locate or create a fill-free UIUX Pack.
+2) Ensure the Tone & Manner catalog exists (`tonemana-catalog`).
+3) Ensure the project Tone & Manner pack exists and UIUX wiring is present (`tonemana-apply`).
+4) Generate or update the UIDesign Pack (`uidesign-flow`).
+5) Report changed paths and the review order.
 
 ## Required completion message
 

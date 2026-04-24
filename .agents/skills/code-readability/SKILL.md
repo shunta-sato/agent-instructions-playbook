@@ -1,23 +1,24 @@
 ---
 name: code-readability
-description: "Readability handbook for this repo (naming/comments/control flow/functions/tests). Includes mandatory C++ documentation rules (Doxygen in .hpp incl private, paragraph intent comments in .cpp, named constants instead of magic values, tests that explain why/what). Always open references/code-readability.md and cite headings."
+description: "Trigger only for requested readability review/cleanup, touched-code readability work involving comments, names, control flow, function shape, or test clarity, touched C++ headers, or dev-workflow routing to the C++ documentation gate. Do not trigger for ordinary implementation solely because code changed. Enforces mandatory C++ Doxygen and readability documentation gates."
 metadata:
   short-description: Code readability
 ---
 
 ## Purpose
 
-Use this skill to make code faster to understand for humans. It provides concrete guidance for naming, comments, control flow, function structure, and tests.
-
-In this repository, it also defines mandatory C++ documentation rules for `.hpp` and `.cpp`.
+Use this skill to review or clean up code so the next reader can understand intent, structure, and tests faster. It is a readability and C++ documentation gate, not a default implementation skill.
 
 ## When to use
 
-Use this skill when:
+Use this skill only when at least one trigger applies:
 
-- You know what to implement, but you are unsure how to present it in a readable form.
-- You are reviewing a change and need to explain *why* it is hard to read, and how to fix it with a minimal diff.
-- You want to do a small refactor focused on readability (naming, early returns, paragraphing, test clarity).
+- Readability review, readability cleanup, or touched-code readability refactoring is requested.
+- Comments, names, control flow, function shape, or test readability are explicitly in scope.
+- C++ headers are touched.
+- The development workflow routes the C++ Doxygen/documentation gate here.
+
+Do not use this skill just because code was changed.
 
 ## How to use
 
@@ -33,7 +34,8 @@ Use this skill when:
 
 4) If you touched C++:
    - `.hpp`: add Doxygen to all declarations (including private) and include units/ranges where relevant.
-   - `.cpp`: keep comments “intent-first”; remove restatements of what the code already says; replace magic values with named constants.
+   - `.cpp`: keep comments intent-first; remove restatements of what the code already says; replace magic values with named constants.
+   - Tests: make names and structure explain the behavior and why it matters.
 
 ## Output expectation
 

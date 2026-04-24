@@ -27,7 +27,7 @@ Invoke this skill **before every submission**. It is mandatory.
 
 3) Run concise exit-criteria review only.
    - Do not duplicate deep taxonomy here.
-   - If a finding needs deep analysis, route to the dedicated skill (readability/modularity/boundaries/error-handling/etc.) and return after fixes.
+   - If a finding needs deep analysis, route to the dedicated skill (readability/maintainability/error-handling/etc.) and return after fixes.
 
 4) Output `submit` or `no-submit` with findings.
    - `submit` is allowed only when checklist is fully satisfied and findings are 0.

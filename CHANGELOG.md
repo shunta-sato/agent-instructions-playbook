@@ -2,6 +2,21 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.6.0
+
+### Changed
+- Reduced the active repo-local skill set from 38 skills to 25 by merging thin adapters and overlapping template/review skills into parent skills.
+- Merged architecture/modularity guidance into `code-smells-and-antipatterns` as diff-focused maintainability references.
+- Merged requirements docs, EARS planning, and ISO 25010 NFR guidance into `requirements-engineering`.
+- Merged deployment, infrastructure, data-analysis, and library/API template skills into `playbook-template-authoring`.
+- Merged UIUX and visual-regression platform adapter skills into `uiux-core` and `visual-regression-testing`.
+- Tightened trigger descriptions for `observability`, `error-handling`, `code-readability`, and `uidesign-orchestrator`.
+
+### Added
+- Added `reports/skillset-review-20260424.md` with the 38-skill audit and consolidation rationale.
+- Added `evals/skill-triggers/core.json` with 35 trigger/near-miss eval seed cases.
+- Added `scripts/validate_skill_trigger_evals.py` and wired it into CI.
+
 ## v4.5.0
 
 ### Changed

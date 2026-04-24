@@ -1,11 +1,11 @@
 # uiux-core reference — UI design and review for AI Agent-generated/modified interfaces
 
-This document defines **core (platform-agnostic) design rules** for teams where AI Agents generate/modify UI and humans review before applying changes.  
-Differences across Android / iOS / Web are handled by separate platform adapter skills, which override `ui_contract.yaml` and `auto_review.json`.
+This document defines **core (platform-agnostic) design rules** for teams where AI Agents generate/modify UI and humans review before applying changes.
+Differences across Android / iOS / Web are handled by `references/uiux-platform-adapters.md`, which adds `platform_overrides` and platform-prefixed checks to the same UIUX Pack artifacts.
 
 ## Most important premise
 
-As AI changes more UI, **reviewability** becomes the top requirement.  
+As AI changes more UI, **reviewability** becomes the top requirement.
 Reviewability means reviewers can quickly trace: “what changed,” “why,” “scope of impact,” and “how to roll back.”
 
 Always follow these three rules:
@@ -24,18 +24,18 @@ Always follow these three rules:
 
 ## Work sequence for generate/modify tasks (default order)
 
-1) Fill `ui_contract.yaml` first  
+1) Fill `ui_contract.yaml` first
    - Lock target platforms and guardrail rules before implementation details
-2) Update `ui_spec.json`  
+2) Update `ui_spec.json`
    - Define screens, navigation, decision points, and states/errors
-3) Update `auto_review.json`  
-   - Compute and record every automatable check  
+3) Update `auto_review.json`
+   - Compute and record every automatable check
    - For checks that cannot be computed, set `unknown` and explain why
-4) Update `diff_summary.md`  
-   - Keep it short and reviewer-oriented to reduce missed issues  
+4) Update `diff_summary.md`
+   - Keep it short and reviewer-oriented to reduce missed issues
    - Capture intent, impact scope, rollback method, and open issues
-5) If platform-specific behavior exists, invoke platform adapter skill  
-   - Adapter only adds `platform_overrides` and PF-specific checks (do not add new artifact names)
+5) If platform-specific behavior exists, open `references/uiux-platform-adapters.md`
+   - Adapter guidance only adds `platform_overrides` and platform-specific checks (do not add new artifact names)
 
 ## Tone & Manner integration (when available)
 
@@ -71,7 +71,7 @@ When a project includes Tone & Manner artifacts, treat them as references for co
 Goal: reduce confusion points so “what to do next” is readable as a single clear path.
 
 Rules:
-- Do not increase top-level destinations unless unavoidable; propose consolidation first  
+- Do not increase top-level destinations unless unavoidable; propose consolidation first
   (limit is defined by `ui_contract.yaml rules.decision_points.max_top_level_destinations`)
 - Keep one primary action per screen as the default
 - If an exception is needed, document reason and alternatives in `diff_summary.md`
@@ -89,7 +89,7 @@ Human checks (examples):
 
 Goal: prevent important information from being missed under scanning behavior.
 
-Introduce only one key term here:  
+Introduce only one key term here:
 Show essentials first, then reveal details as needed → **Progressive disclosure**.
 
 Rules:
@@ -114,7 +114,7 @@ Goal: lock fragile areas early so users can still make progress when failures ha
 Rules:
 - Define required states per screen/function (at minimum: idle/loading/success/failure)
 - Preserve user input through errors and retries
-- Error content must include both “what happened” and “what users can do next”  
+- Error content must include both “what happened” and “what users can do next”
   (do not show only an error code)
 - Explicitly define recovery paths (`recovery_actions`) such as retry/draft/save/back
 
@@ -159,7 +159,7 @@ Auto checks (examples):
 
 Human checks (examples):
 - Are states (disabled/error/focus) distinguishable?
-- Does behavior remain usable with keyboard/screen reader? (detailed PF checks are delegated to adapters)
+- Does behavior remain usable with keyboard/screen reader? (detailed platform checks are in `references/uiux-platform-adapters.md`)
 
 ### 6) AI Agent-specific rules (assume UI can change proactively)
 
@@ -184,7 +184,7 @@ Human checks (examples):
 
 - Automated checks are a **filter**, not a guarantee of good UI
 - Checks that cannot be computed must be `unknown` with a non-empty reason
-- Do not collapse everything into one aggregate score  
+- Do not collapse everything into one aggregate score
   prioritize `pass/warn/fail/unknown` plus evidence
 
 Recommended review flow:
