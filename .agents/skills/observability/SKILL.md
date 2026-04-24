@@ -24,21 +24,24 @@ Do not use this skill for docs-only changes, pure formatting, mechanical refacto
 
 0) If this skill is triggered, open `references/observability.md` and follow only the relevant template sections.
 
-1) Define the operations that need to be observable (user-facing or system-facing actions).
+1) Live-discover existing instrumentation before adding examples: logging config, metric/tracing libraries, dashboards/queries, external dependency interfaces, schema/config paths, connection state, and relevant version/status output.
 
-2) Identify correlation identifiers (request_id / job_id / trace_id) and ensure they are logged consistently.
+2) Define the operations that need to be observable (user-facing or system-facing actions).
 
-3) Add the minimum log events: start / outcome / failure, with required fields.
+3) Identify correlation identifiers (request_id / job_id / trace_id) and ensure they are logged consistently.
 
-4) Add metrics for errors and latency (expand to golden signals if relevant).
+4) Add the minimum log events: start / outcome / failure, with required fields.
 
-5) Add trace spans and ensure logs and metrics are correlated via identifiers.
+5) Add metrics for errors and latency (expand to golden signals if relevant).
 
-6) Apply safety rules (no secrets/PII; follow OWASP/NIST logging guidance).
+6) Add trace spans and ensure logs and metrics are correlated via identifiers.
 
-7) Control noise (sampling, throttling, or once-only logging).
+7) Apply safety rules (no secrets/PII; follow OWASP/NIST logging guidance).
+
+8) Control noise (sampling, throttling, or once-only logging).
 
 ## Output expectation
 
 - Record decisions in the Observability Plan.
+- Include live-discovery evidence: inspected files/commands, version/status output, connection state, and log/metric/trace artifact paths or dashboard/query links.
 - Ensure the quality gate’s observability checklist passes.

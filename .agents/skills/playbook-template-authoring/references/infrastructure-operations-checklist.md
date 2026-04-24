@@ -7,6 +7,7 @@ Replace placeholders with environment-specific values.
 
 - [ ] Change scope documented (`${CHANGE_REQUEST_ID}`) and runbook name fixed (`${RUNBOOK_NAME}`).
 - [ ] Target system/environment confirmed (`${TARGET_SYSTEM}`, `${TARGET_ENVIRONMENT}`).
+- [ ] Live ops interface discovered: current command/console/API, config/state path, CLI/provider version output, auth/connection state, and audit/artifact path recorded.
 - [ ] Maintenance window and stakeholder notice confirmed (`${MAINTENANCE_WINDOW}`).
 - [ ] Rollback/restore path available (`${ROLLBACK_RUNBOOK_URL}`, `${BACKUP_SNAPSHOT_ID}`).
 - [ ] Monitoring/alerts healthy pre-change (`${DASHBOARD_URL}`, `${ALERT_STATUS}`).

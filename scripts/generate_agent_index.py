@@ -122,7 +122,7 @@ def _collect_skills(repo_root: Path) -> List[SkillMeta]:
 def _collect_source_skills(repo_root: Path) -> List[SkillMeta]:
     """Collect skill catalog from .agents/skills only (source of truth)."""
     out: List[SkillMeta] = []
-    for p in glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md")):
+    for p in sorted(glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md"))):
         md = Path(p)
         name, short = _parse_skill_frontmatter(md)
         out.append(
@@ -132,7 +132,11 @@ def _collect_source_skills(repo_root: Path) -> List[SkillMeta]:
                 skill_path=str(md.relative_to(repo_root).as_posix()),
             )
         )
-    return sorted(out, key=lambda s: s.name)
+    return sorted(out, key=lambda s: (s.name, s.skill_path))
+
+
+def _markdown_table_cell(s: str) -> str:
+    return _squash_ws(s).replace("|", r"\|")
 
 
 def _build_index_text(
@@ -168,9 +172,16 @@ def _build_index_text(
 
 def _build_readme_skill_catalog_text(repo_root: Path) -> str:
     skills = _collect_source_skills(repo_root)
-    lines: List[str] = []
+    lines: List[str] = [
+        "| Skill | Description | Source |",
+        "| --- | --- | --- |",
+    ]
     for s in skills:
-        lines.append(f"- `{s.name}` — {s.short}")
+        lines.append(
+            f"| `{_markdown_table_cell(s.name)}` | "
+            f"{_markdown_table_cell(s.short)} | "
+            f"`{_markdown_table_cell(s.skill_path)}` |"
+        )
     return "\n".join(lines) + "\n"
 
 

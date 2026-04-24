@@ -52,13 +52,24 @@ Fill this before implementation starts:
 - Required verification depth before gate:
 - Non-triggered branches explicitly skipped:
 
-## 3) Implementation + verify execution log (short)
+## 3) Live external discovery (when applicable)
+
+If the task touches external systems, repo tooling, CI, schemas/configs, or artifact-producing tools, discover current reality before trusting examples.
+
+Record:
+- Repo command/interface discovered (file, target, script, CI job, or help output):
+- Current version/status output:
+- Schema/config/connection state checked:
+- Artifact/log/output paths expected:
+
+## 4) Implementation + verify execution log (short)
 
 - Branches executed:
 - Verification commands executed:
+- Live discovery evidence captured (or `not applicable`):
 - Remaining known gaps before gate (if any):
 
-## 4) Gate handoff (mandatory)
+## 5) Gate handoff (mandatory)
 
 Always finish by invoking `$quality-gate`.
 `$dev-workflow` does not decide final submit readiness; it hands off required evidence.

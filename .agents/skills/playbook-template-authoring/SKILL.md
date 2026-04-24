@@ -36,8 +36,9 @@ Do not use this skill for normal deploy requests, normal infrastructure operatio
    - Infrastructure operations: no apply before pre-check and dry-run; destructive actions require checkpoint approval; broad scope requires phased execution and soak.
    - Data fetching/analysis: no extraction before the question, source inventory, canonical keys, join assumptions, and secret-handling model are explicit.
    - Library/API reference: no guidance from unspecified versions; include canonical setup, success verification, and at least one failure/recovery path.
-5. Add gotchas in this format: concrete failure pattern, corrective action, and evidence that proves the correction.
-6. Check the finished template is repo-neutral, copy-ready, and explicit about its expected outputs.
+5. Add live-discovery placeholders where external tools/systems appear: current command/interface source, schema/config path, connection/auth state, version/status output, artifact/log path, and evidence captured.
+6. Add gotchas in this format: concrete failure pattern, corrective action, and evidence that proves the correction.
+7. Check the finished template is repo-neutral, copy-ready, and explicit about its expected outputs.
 
 ## Output expectation
 
@@ -46,5 +47,5 @@ Return or create a reusable template package containing:
 - A concise `SKILL.md` with narrow trigger wording and mode-specific workflow.
 - Preserved or customized references, templates, and examples under `references/`, `templates/`, and `examples/`.
 - A placeholder list or customization checklist.
-- Explicit expected outputs, evidence links/placeholders, approvals, and verification artifacts for the selected mode.
+- Explicit expected outputs, live-discovery evidence placeholders, approvals, and verification artifacts for the selected mode.
 - Gotchas that prevent the common unsafe or non-reproducible failure modes for that mode.

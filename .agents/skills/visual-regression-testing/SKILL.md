@@ -18,18 +18,20 @@ Use this skill to enforce a consistent UI visual verification contract without h
 
 1) Open `references/visual-regression-testing.md`.
 2) For Android, iOS, or web targets, also open the matching platform reference in `references/`.
-3) Discover and run the repo’s canonical UI verify/record interface.
+3) Discover the live UI verify/record interface from repo commands, CI config, tool help, and snapshot config before trusting examples.
 4) Review produced artifacts and compare against baselines/design mocks.
 5) Update baselines only for intentional UI changes.
 6) Output the required report format exactly.
 
 ## Gotchas
 
-- **Common pitfall:** skipping snapshot verification even though UI changed.  
+- **Common pitfall:** skipping snapshot verification even though UI changed.
   **Instead:** run the repo-defined UI verification command and always check whether diffs exist.
-- **Common pitfall:** recording failed snapshots in bulk without root-cause review.  
+- **Common pitfall:** recording failed snapshots in bulk without root-cause review.
   **Instead:** review diff images and apply only intended changes to baseline.
-- **Common pitfall:** omitting artifact paths in reports, preventing reviewer recheck.  
+- **Common pitfall:** omitting artifact paths in reports, preventing reviewer recheck.
   **Instead:** explicitly include compare result, update status, and relative artifact paths in output format.
-- **Common pitfall:** assuming visual differences are environment-only and leaving them unresolved.  
+- **Common pitfall:** assuming visual differences are environment-only and leaving them unresolved.
   **Instead:** separate font/resolution/theme/locale differences and record reproduction conditions before judgment.
+- **Common pitfall:** trusting stale snapshot commands or artifact paths.
+  **Instead:** capture the command source, tool versions, device/browser connection state, config/baseline paths, and produced artifact paths.

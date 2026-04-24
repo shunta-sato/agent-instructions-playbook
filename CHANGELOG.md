@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.7.0
+
+### Added
+- Added a README skill quality bar for future skill additions and rewrites.
+- Added a generated README skill catalog that is refreshed by `scripts/generate_agent_index.py`.
+- Added behavior-level eval expectations (`expected_artifacts`, `expected_decisions`, `expected_evidence`, `expected_output_contains`) to skill trigger eval seeds.
+- Added `scripts/report_skill_inventory.py` for deterministic skill inventory, eval coverage, and broad-trigger risk reporting.
+
+### Changed
+- Expanded README onboarding with a quick start and human-readable skill map grouped by workflow role.
+- Added live external-tool discovery requirements to relevant workflows before static examples are trusted.
+- Updated CI to validate trigger evals, skill inventory, and generated indexes together.
+
 ## v4.6.0
 
 ### Changed

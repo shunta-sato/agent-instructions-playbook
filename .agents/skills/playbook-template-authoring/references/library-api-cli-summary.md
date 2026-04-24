@@ -8,6 +8,7 @@
 - Covered dependency: `{{LIBRARY_OR_API_NAME}}`
 - Supported version range: `{{VERSION_RANGE}}`
 - Official docs: `{{OFFICIAL_DOC_URL}}`
+- Live discovery required before use: current installed/remote version output, CLI/API help or schema path, auth/connection state, and artifact/log path.
 - Non-goals (out of scope):
   - {{OUT_OF_SCOPE_1}}
   - {{OUT_OF_SCOPE_2}}

@@ -22,5 +22,8 @@ jobs:
       - name: Validate skill trigger eval seeds
         run: python scripts/validate_skill_trigger_evals.py
 
+      - name: Check skill inventory
+        run: python scripts/report_skill_inventory.py --check --format text
+
       - name: Check AGENTS.md index is up to date
         run: python scripts/generate_agent_index.py --check

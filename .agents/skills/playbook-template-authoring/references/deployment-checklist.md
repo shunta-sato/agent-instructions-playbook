@@ -7,6 +7,7 @@ Replace placeholders with environment-specific values.
 
 - [ ] Change scope documented (`${CHANGE_REQUEST_ID}`) and release notes linked.
 - [ ] Target environment confirmed (`${ENVIRONMENT}`) and freeze-window policy checked.
+- [ ] Live deploy interface discovered: current CI job/command, config path, CLI/tool version output, auth/connection state, and artifact/log path recorded.
 - [ ] On-call / incident channel staffed (`${ONCALL_PRIMARY}`, `${INCIDENT_CHANNEL}`).
 - [ ] Rollback runbook exists and verified (`${ROLLBACK_RUNBOOK_URL}`).
 - [ ] Last known good artifact identified (`${LAST_KNOWN_GOOD_ARTIFACT}`).

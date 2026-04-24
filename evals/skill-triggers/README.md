@@ -14,7 +14,13 @@ Each `*.json` file uses:
 - `prompt`: realistic user request or task fragment
 - `should_trigger`: skill names expected to be relevant
 - `should_not_trigger`: skill names expected to stay inactive
+- `expected_artifacts`: optional list of concrete files, reports, packs, or other durable outputs the triggered behavior should create, update, or explicitly verify
+- `expected_decisions`: optional list of explicit choices, gates, classifications, or scope decisions the agent should make and record
+- `expected_evidence`: optional list of evidence the agent should collect, cite, or preserve before completing the task
+- `expected_output_contains`: optional list of required final-response or artifact content markers for future harnesses or human reviewers
 - `notes`: optional rationale
+
+All optional behavior expectation fields must be lists of non-empty strings when present.
 
 ## Validation
 

@@ -11,6 +11,12 @@ from typing import Any
 
 
 NAME_RE = re.compile(r"^\s*name:\s*(.+)\s*$", re.M)
+OPTIONAL_BEHAVIOR_FIELDS = (
+    "expected_artifacts",
+    "expected_decisions",
+    "expected_evidence",
+    "expected_output_contains",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -79,6 +85,24 @@ def require_name_list(
     return value
 
 
+def require_optional_non_empty_str_list(
+    case: dict[str, Any],
+    key: str,
+    context: str,
+    errors: list[str],
+) -> None:
+    if key not in case:
+        return
+
+    value = case[key]
+    if (
+        not isinstance(value, list)
+        or not value
+        or not all(isinstance(item, str) and item.strip() for item in value)
+    ):
+        errors.append(f"{context}: {key} must be a non-empty list of non-empty strings")
+
+
 def validate_file(path: Path, skill_names: set[str]) -> tuple[int, list[str]]:
     errors: list[str] = []
     try:
@@ -111,6 +135,8 @@ def validate_file(path: Path, skill_names: set[str]) -> tuple[int, list[str]]:
         should_not_trigger = require_name_list(
             case, "should_not_trigger", context, skill_names, errors
         )
+        for key in OPTIONAL_BEHAVIOR_FIELDS:
+            require_optional_non_empty_str_list(case, key, context, errors)
 
         if case_id in seen_ids:
             errors.append(f"{context}: duplicate case id: {case_id}")

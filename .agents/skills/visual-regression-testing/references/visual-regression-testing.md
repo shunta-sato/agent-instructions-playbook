@@ -17,9 +17,12 @@ The repository must expose one canonical interface:
 
 ## Discovery order
 
-1) Prefer Make targets when available.
-2) Otherwise use `./tools/ui/verify.sh` and `./tools/ui/record.sh`.
-3) If neither exists, fail fast with a clear remediation note for maintainers.
+1) Inspect repo sources for the current interface: Make targets, package scripts, Gradle/Xcode lanes, CI jobs, and tool help output.
+2) Prefer Make targets when available.
+3) Otherwise use `./tools/ui/verify.sh` and `./tools/ui/record.sh`.
+4) Discover snapshot config, baseline path, artifact path, and simulator/device/browser connection state.
+5) Capture OS and relevant tool version output before running comparisons.
+6) If no interface exists, fail fast with a clear remediation note for maintainers.
 
 ## Required execution flow
 
@@ -42,6 +45,7 @@ The repository must expose one canonical interface:
 ## UI Visual Verification Report
 - Platform: ios|android|web
 - Environment: OS + key tool versions
+- Live discovery evidence: command source + config/baseline path + device/browser/CI state
 - Command(s) executed:
 - Snapshot output path(s):
 - Baseline updated?: yes|no

@@ -6,6 +6,7 @@ Focus on final decision criteria, not broad re-review taxonomy.
 ## 1) Command status (required)
 
 - Canonical commands are recorded with exact commands + key results.
+- If external systems/tools were involved, live-discovery evidence is recorded before static examples were trusted: command/interface source, version or status output, schema/config path, connection state, and artifact/log path.
 - Required depth matches routed risk:
   - low risk: canonical minimum for changed surface
   - normal/high risk: full chain (build / format / static analysis / tests)
@@ -48,6 +49,9 @@ Findings:
 
 Checks run:
 - <command> — pass|fail|skipped (reason)
+
+Live discovery:
+- <external/tool surface> — source/version/status/config/artifact evidence or not applicable
 
 Triggered branch evidence:
 - <branch> — present|missing — artifact/path

@@ -17,6 +17,7 @@ For each source, record:
 - Freshness/SLA:
 - Retention window:
 - Known quality caveats:
+- Live discovery evidence: connection/auth state, client/tool version output, schema/config path, and sample row-count/query artifact path:
 
 ## 3) Canonical keys and schemas
 

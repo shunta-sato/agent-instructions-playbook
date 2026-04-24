@@ -2,6 +2,15 @@
 
 Use this template to decide what signals are required and how they correlate.
 
+## 0) Live discovery evidence
+
+Before copying static examples, inspect current repo/runtime reality:
+
+- Instrumentation config/schema paths:
+- Logging/metrics/tracing library and version/status output:
+- External dependency interface and connection state:
+- Existing dashboard/query/log artifact paths:
+
 ## 1) Operations to observe
 
 - Operation name:
