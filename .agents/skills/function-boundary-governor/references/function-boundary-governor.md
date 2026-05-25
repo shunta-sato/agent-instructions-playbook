@@ -38,11 +38,14 @@ Merge only if all are true:
 - boundary crossing risk == 0
 - parameterization pressure == 0
 
-Replace when one or more are true:
-- current abstraction owns wrong responsibility or side effects
-- sibling/helper accumulation exists
-- reuse requires flags/options
-- all call sites can migrate now or staged adapter is explicitly ledgered
+Replace when:
+- one or more replacement reasons are true:
+  - current abstraction owns wrong responsibility or side effects
+  - sibling/helper accumulation exists
+  - reuse requires flags/options
+- and migration feasibility is true:
+  - all call sites can migrate now, or
+  - staged adapter is explicitly ledgered with removal condition
 
 Keep parallel when one or more are true:
 - error behavior differs
@@ -72,3 +75,18 @@ For each affected function capture:
 - caller set and neighbor classification
 - chosen action and rejected alternatives
 - action taken and touched files
+
+
+## Action guidance for keep/rename/split/inline
+
+Keep when:
+- concept, invariant, side-effect profile, and call sites are already coherent.
+
+Rename when:
+- responsibility is right but name hides the domain concept or invariant.
+
+Split when:
+- one function owns multiple reasons to change or mixes pure logic with effects.
+
+Inline when:
+- abstraction cost exceeds value and call sites become clearer without it.
