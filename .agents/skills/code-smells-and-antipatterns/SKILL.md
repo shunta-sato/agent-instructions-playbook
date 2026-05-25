@@ -24,6 +24,15 @@ Agents MUST use this skill when any of the following applies:
 
 If none applies, do not force it.
 
+
+## Boundary with function-design skills
+
+This skill is **not** the primary function-boundary design mechanism.
+
+- If findings require deciding keep/rename/split/merge/replace/inline/no-op for functions, route to `$function-boundary-governor`.
+- If replacing a flawed abstraction requires temporary red-state migration, route to `$destructive-refactor`.
+- Keep this skill focused on diff-level maintainability/boundary/coupling findings.
+
 ## References
 
 Open only the reference material that matches the diff:
@@ -45,7 +54,7 @@ Open only the reference material that matches the diff:
    - label (smell, anti-pattern, boundary issue, or modularity/coupling issue)
    - why this looks like it (evidence from the diff)
    - risk if left as-is
-   - smallest fix (prefer minimal diff)
+   - smallest coherent fix (or explicit route to function-design skills)
    - fix lens/reference or existing narrower skill to apply
 5) If you choose NOT to fix now, state:
    - why it is not new/worsened, or

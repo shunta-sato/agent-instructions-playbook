@@ -41,6 +41,8 @@ The goal is a small, curated software-development operating system: clear entry 
 
 ### Design, quality, and reliability
 
+- `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
+- `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
 - `code-smells-and-antipatterns` — diff-focused maintainability and boundary review
 - `code-readability` — requested readability cleanup and C++ documentation gates
 - `error-handling` — failure contracts at boundaries, retries, fallbacks, and user-visible errors
@@ -82,9 +84,11 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `concurrency-android` | Android concurrency and background work | `.agents/skills/concurrency-android/SKILL.md` |
 | `concurrency-core` | Concurrency design patterns and planning | `.agents/skills/concurrency-core/SKILL.md` |
 | `concurrency-ros2` | ROS 2 concurrency patterns | `.agents/skills/concurrency-ros2/SKILL.md` |
+| `destructive-refactor` | Replace flawed abstraction safely | `.agents/skills/destructive-refactor/SKILL.md` |
 | `dev-workflow` | Risk-routed dev workflow | `.agents/skills/dev-workflow/SKILL.md` |
 | `error-handling` | Boundary error handling | `.agents/skills/error-handling/SKILL.md` |
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
+| `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
 | `project-initialization` | Initialize canonical verify commands | `.agents/skills/project-initialization/SKILL.md` |

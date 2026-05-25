@@ -4,8 +4,13 @@
     {
       "id": "dev-workflow-code-change",
       "prompt": "Change the parser to accept quoted keys and add/update tests for the new behavior.",
-      "should_trigger": ["dev-workflow"],
-      "should_not_trigger": ["project-initialization", "uiux-core"],
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "project-initialization",
+        "uiux-core"
+      ],
       "expected_decisions": [
         "Implementation scope is limited to quoted-key parser behavior and matching tests",
         "Validation commands are selected from repository conventions"
@@ -19,8 +24,12 @@
     {
       "id": "quality-gate-before-submit",
       "prompt": "Before I submit this patch, check whether all required evidence and validation are complete.",
-      "should_trigger": ["quality-gate"],
-      "should_not_trigger": ["dev-workflow"],
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "dev-workflow"
+      ],
       "expected_decisions": [
         "Gate decision is explicitly submit or no-submit",
         "Missing required evidence blocks submission rather than being downgraded to a warning"
@@ -29,15 +38,24 @@
         "Results of required validation commands or explicit unrun reasons with reproduction steps",
         "Presence or absence of required branch artifacts for triggered skills"
       ],
-      "expected_output_contains": ["Gate decision:", "Findings:"],
+      "expected_output_contains": [
+        "Gate decision:",
+        "Findings:"
+      ],
       "notes": "Final readiness is the quality gate, not the route planner."
     },
     {
       "id": "execplan-long-running",
       "prompt": "This will touch several skills, generated indexes, and docs over multiple steps. Keep a living plan and handoff.",
-      "should_trigger": ["execution-plans"],
-      "should_not_trigger": ["test-driven-development"],
-      "expected_artifacts": ["plans/<slug>.md ExecPlan"],
+      "should_trigger": [
+        "execution-plans"
+      ],
+      "should_not_trigger": [
+        "test-driven-development"
+      ],
+      "expected_artifacts": [
+        "plans/<slug>.md ExecPlan"
+      ],
       "expected_decisions": [
         "Work breakdown and progress are kept current",
         "Decision log records reasons, alternatives, and adopted choice"
@@ -46,14 +64,21 @@
         "PLANS.md and references/execution-plans.md were consulted",
         "Handoff captures current state, blockers, and next steps"
       ],
-      "expected_output_contains": ["ExecPlan", "Handoff"],
+      "expected_output_contains": [
+        "ExecPlan",
+        "Handoff"
+      ],
       "notes": "Complex multi-step work needs an ExecPlan."
     },
     {
       "id": "project-init-fill",
       "prompt": "COMMANDS.md still contains <fill>; initialize canonical build, lint, and test commands.",
-      "should_trigger": ["project-initialization"],
-      "should_not_trigger": ["quality-gate"],
+      "should_trigger": [
+        "project-initialization"
+      ],
+      "should_not_trigger": [
+        "quality-gate"
+      ],
       "expected_artifacts": [
         "Makefile wrapper with canonical verify target",
         "COMMANDS.md with build, lint, and test commands and no unresolved <fill> after verification"
@@ -66,15 +91,23 @@
         "Lockfiles, CI config, package scripts, or existing tooling used to infer commands",
         "`make verify` output or explicit blocker"
       ],
-      "expected_output_contains": ["make verify"],
+      "expected_output_contains": [
+        "make verify"
+      ],
       "notes": "Initialization is a setup workflow, not a final gate."
     },
     {
       "id": "bug-rca-regression",
       "prompt": "A release introduced a crash when opening the settings page. Reproduce it, find the root cause, and prevent recurrence.",
-      "should_trigger": ["bug-investigation-and-rca"],
-      "should_not_trigger": ["requirements-engineering"],
-      "expected_artifacts": ["reports/bug-reports/<slug>.md Bug Report or equivalent bug report artifact"],
+      "should_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
+      "expected_artifacts": [
+        "reports/bug-reports/<slug>.md Bug Report or equivalent bug report artifact"
+      ],
       "expected_decisions": [
         "Root cause is separated from symptoms and assumptions",
         "Prevention action is defined before closure"
@@ -83,14 +116,21 @@
         "Reproduction steps and observed failure output",
         "Minimal repro, failing test, logs, metrics, traces, or stack trace backing each Why"
       ],
-      "expected_output_contains": ["Root cause", "Prevention"],
+      "expected_output_contains": [
+        "Root cause",
+        "Prevention"
+      ],
       "notes": "Crash/regression work needs evidence-first RCA."
     },
     {
       "id": "legacy-no-tests-time",
       "prompt": "Modify this old billing module. It has no reliable tests and depends directly on wall-clock time and random IDs.",
-      "should_trigger": ["working-with-legacy-code"],
-      "should_not_trigger": ["staged-lowering"],
+      "should_trigger": [
+        "working-with-legacy-code"
+      ],
+      "should_not_trigger": [
+        "staged-lowering"
+      ],
       "expected_decisions": [
         "Characterization or approval tests are considered before risky refactoring",
         "Wall-clock time and random ID seams are isolated or controlled for deterministic behavior"
@@ -104,9 +144,15 @@
     {
       "id": "staged-lowering-simd",
       "prompt": "Implement a SIMD parser with alignment constraints; the direct implementation keeps failing to compile.",
-      "should_trigger": ["staged-lowering"],
-      "should_not_trigger": ["uiux-core"],
-      "expected_artifacts": ["Staged lowering log or equivalent compile/progress notes"],
+      "should_trigger": [
+        "staged-lowering"
+      ],
+      "should_not_trigger": [
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "Staged lowering log or equivalent compile/progress notes"
+      ],
       "expected_decisions": [
         "Implementation is decomposed into smaller compilable stages",
         "Alignment and safety constraints are made explicit before optimization"
@@ -120,9 +166,15 @@
     {
       "id": "tdd-explicit",
       "prompt": "Use TDD for a new URL normalizer: make a test list, then red-green-refactor.",
-      "should_trigger": ["test-driven-development"],
-      "should_not_trigger": ["bug-investigation-and-rca"],
-      "expected_artifacts": ["Test list for URL normalizer behavior"],
+      "should_trigger": [
+        "test-driven-development"
+      ],
+      "should_not_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "expected_artifacts": [
+        "Test list for URL normalizer behavior"
+      ],
       "expected_decisions": [
         "Next test is selected before implementation",
         "Refactor happens only after a green test state"
@@ -136,8 +188,13 @@
     {
       "id": "concurrency-core-queue",
       "prompt": "Parallelize image processing with worker threads, a bounded queue, cancellation, and graceful shutdown.",
-      "should_trigger": ["concurrency-core"],
-      "should_not_trigger": ["concurrency-android", "concurrency-ros2"],
+      "should_trigger": [
+        "concurrency-core"
+      ],
+      "should_not_trigger": [
+        "concurrency-android",
+        "concurrency-ros2"
+      ],
       "expected_decisions": [
         "Ownership and shared mutable state boundaries are identified",
         "Cancellation, shutdown, backpressure, and error propagation behavior are specified"
@@ -146,15 +203,25 @@
         "Concurrency model covers worker lifecycle, queue bounds, and graceful shutdown path",
         "Verification plan includes stress, race, or deadlock-oriented checks"
       ],
-      "expected_output_contains": ["cancellation", "shutdown"],
+      "expected_output_contains": [
+        "cancellation",
+        "shutdown"
+      ],
       "notes": "General concurrency should trigger core guidance only."
     },
     {
       "id": "thread-safety-cpp",
       "prompt": "This C++ change introduces mutexes and atomics; verify race/deadlock risk with tooling guidance.",
-      "should_trigger": ["concurrency-core", "thread-safety-tooling"],
-      "should_not_trigger": ["concurrency-android"],
-      "expected_artifacts": ["Concurrency matrix or equivalent thread-safety verification notes"],
+      "should_trigger": [
+        "concurrency-core",
+        "thread-safety-tooling"
+      ],
+      "should_not_trigger": [
+        "concurrency-android"
+      ],
+      "expected_artifacts": [
+        "Concurrency matrix or equivalent thread-safety verification notes"
+      ],
       "expected_decisions": [
         "TSan and compile-time thread-safety analysis applicability are explicitly decided",
         "Mutex, atomic, ownership, and lock ordering assumptions are recorded"
@@ -163,14 +230,22 @@
         "Tool commands and outputs for ThreadSanitizer or compiler thread-safety analysis when available",
         "Reasoned fallback when tooling cannot run"
       ],
-      "expected_output_contains": ["TSan", "lock"],
+      "expected_output_contains": [
+        "TSan",
+        "lock"
+      ],
       "notes": "C++ threading needs both design and verification tooling."
     },
     {
       "id": "android-background-work",
       "prompt": "Change Android background sync from a service to WorkManager and ensure cancellation is correct.",
-      "should_trigger": ["concurrency-core", "concurrency-android"],
-      "should_not_trigger": ["concurrency-ros2"],
+      "should_trigger": [
+        "concurrency-core",
+        "concurrency-android"
+      ],
+      "should_not_trigger": [
+        "concurrency-ros2"
+      ],
       "expected_decisions": [
         "WorkManager constraints, retry policy, and cancellation semantics are explicit",
         "Lifecycle and app background behavior are handled as Android-specific concerns"
@@ -184,8 +259,13 @@
     {
       "id": "ros2-callback-deadlock",
       "prompt": "A ROS 2 node deadlocks when a timer callback calls a service; review executor and callback group design.",
-      "should_trigger": ["concurrency-core", "concurrency-ros2"],
-      "should_not_trigger": ["concurrency-android"],
+      "should_trigger": [
+        "concurrency-core",
+        "concurrency-ros2"
+      ],
+      "should_not_trigger": [
+        "concurrency-android"
+      ],
       "expected_decisions": [
         "Executor model and callback group type are explicitly reviewed",
         "Service call pattern is redesigned or justified to avoid callback starvation"
@@ -199,8 +279,12 @@
     {
       "id": "requirements-ambiguous-feature",
       "prompt": "Turn this vague request into requirements, acceptance criteria, quality scenarios, and a test seed before implementation.",
-      "should_trigger": ["requirements-engineering"],
-      "should_not_trigger": ["project-initialization"],
+      "should_trigger": [
+        "requirements-engineering"
+      ],
+      "should_not_trigger": [
+        "project-initialization"
+      ],
       "expected_artifacts": [
         "Requirements brief or spec with acceptance criteria",
         "Traceability seed linking requirements to tests, monitoring, or design decisions"
@@ -213,14 +297,21 @@
         "Source prompt fragments mapped to requirements",
         "Measurable ISO/IEC 25010 quality scenarios with thresholds or measurement approach"
       ],
-      "expected_output_contains": ["Acceptance criteria", "Quality scenarios"],
+      "expected_output_contains": [
+        "Acceptance criteria",
+        "Quality scenarios"
+      ],
       "notes": "Ambiguous/non-trivial feature planning belongs in requirements engineering."
     },
     {
       "id": "template-authoring-deploy",
       "prompt": "Create a reusable deployment playbook template with preflight checks, staged rollout, rollback triggers, and a report template.",
-      "should_trigger": ["playbook-template-authoring"],
-      "should_not_trigger": ["quality-gate"],
+      "should_trigger": [
+        "playbook-template-authoring"
+      ],
+      "should_not_trigger": [
+        "quality-gate"
+      ],
       "expected_artifacts": [
         "Reusable repo-neutral playbook or template package",
         "Deployment report template or checklist for the selected mode"
@@ -233,14 +324,21 @@
         "Preserved deployment reference or template source used as starting point",
         "Expected outputs, approvals, verification evidence, and gotchas are included"
       ],
-      "expected_output_contains": ["Expected outputs", "Verification"],
+      "expected_output_contains": [
+        "Expected outputs",
+        "Verification"
+      ],
       "notes": "This is template authoring, not executing a deployment."
     },
     {
       "id": "maintainability-boundary-diff",
       "prompt": "Review this diff for new code smells, poor modularity, and Clean Architecture boundary violations.",
-      "should_trigger": ["code-smells-and-antipatterns"],
-      "should_not_trigger": ["requirements-engineering"],
+      "should_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
       "expected_decisions": [
         "Findings are limited to new or worsened maintainability/design issues in the current diff",
         "Structural smell, boundary leak, cohesion, and coupling concerns are classified separately"
@@ -249,14 +347,20 @@
         "Each finding cites concrete diff evidence and why it matches the smell",
         "False positives or non-issues are omitted"
       ],
-      "expected_output_contains": ["Findings"],
+      "expected_output_contains": [
+        "Findings"
+      ],
       "notes": "The consolidated maintainability review should handle smells, modularity, and boundaries."
     },
     {
       "id": "readability-cpp-header",
       "prompt": "Review touched C++ headers for missing Doxygen comments, magic constants, and unclear names.",
-      "should_trigger": ["code-readability"],
-      "should_not_trigger": ["code-smells-and-antipatterns"],
+      "should_trigger": [
+        "code-readability"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
       "expected_decisions": [
         "C++ Doxygen requirements, names, magic constants, and comments are reviewed separately from design-smell triage"
       ],
@@ -264,14 +368,20 @@
         "Touched headers and changed declarations are checked",
         "Findings cite exact names, comments, constants, or declarations"
       ],
-      "expected_output_contains": ["Readability"],
+      "expected_output_contains": [
+        "Readability"
+      ],
       "notes": "C++ documentation/readability gate stays separate from structural smell triage."
     },
     {
       "id": "error-boundary",
       "prompt": "Design error translation at the API boundary, including null inputs, retries, and user-visible failure messages.",
-      "should_trigger": ["error-handling"],
-      "should_not_trigger": ["visual-regression-testing"],
+      "should_trigger": [
+        "error-handling"
+      ],
+      "should_not_trigger": [
+        "visual-regression-testing"
+      ],
       "expected_decisions": [
         "Boundary failures are translated into domain, API, or user-visible outcomes",
         "Retry, fallback, and nullability choices are explicit and do not leak low-level errors inward"
@@ -280,15 +390,24 @@
         "Relevant headings from references/error-handling.md are cited",
         "Failure cases include null inputs, retryable failures, and user-visible messaging"
       ],
-      "expected_output_contains": ["Boundary", "Failure cases"],
+      "expected_output_contains": [
+        "Boundary",
+        "Failure cases"
+      ],
       "notes": "Boundary failure behavior should trigger error handling."
     },
     {
       "id": "observability-runtime-change",
       "prompt": "This change alters job execution behavior; add logs, metrics, traces, correlation IDs, and safe logging checks.",
-      "should_trigger": ["observability"],
-      "should_not_trigger": ["requirements-engineering"],
-      "expected_artifacts": ["Observability Plan or equivalent implementation notes for logs, metrics, traces, and correlation IDs"],
+      "should_trigger": [
+        "observability"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
+      "expected_artifacts": [
+        "Observability Plan or equivalent implementation notes for logs, metrics, traces, and correlation IDs"
+      ],
       "expected_decisions": [
         "Signal scope is tied to changed job behavior and avoids unsafe logging",
         "Correlation and cardinality choices are explicit"
@@ -297,14 +416,21 @@
         "Relevant sections from references/observability.md are applied",
         "Validation confirms emitted logs, metrics, or traces, or documents unavailable checks"
       ],
-      "expected_output_contains": ["Observability Plan", "correlation"],
+      "expected_output_contains": [
+        "Observability Plan",
+        "correlation"
+      ],
       "notes": "Runtime behavior changes need diagnosable signals."
     },
     {
       "id": "uiux-core-new-flow",
       "prompt": "Design a web onboarding flow and produce UIUX Pack artifacts for states, errors, navigation, and accessibility.",
-      "should_trigger": ["uiux-core"],
-      "should_not_trigger": ["visual-regression-testing"],
+      "should_trigger": [
+        "uiux-core"
+      ],
+      "should_not_trigger": [
+        "visual-regression-testing"
+      ],
       "expected_artifacts": [
         "UIUX Pack with ui_contract.yaml",
         "UIUX Pack with ui_spec.json, auto_review.json, and diff_summary.md"
@@ -317,14 +443,20 @@
         "references/uiux-core.md is consulted",
         "Platform adapter reference is consulted when web, iOS, or Android scope is present"
       ],
-      "expected_output_contains": ["UIUX Pack"],
+      "expected_output_contains": [
+        "UIUX Pack"
+      ],
       "notes": "Design artifact generation belongs to UIUX core, not screenshot verification."
     },
     {
       "id": "uiux-flow-preview",
       "prompt": "Generate a transition review preview flow-map.html from ui_spec.json with pan, zoom, minimap, and focus traversal.",
-      "should_trigger": ["uiux-flow-preview"],
-      "should_not_trigger": ["uiux-core"],
+      "should_trigger": [
+        "uiux-flow-preview"
+      ],
+      "should_not_trigger": [
+        "uiux-core"
+      ],
       "expected_artifacts": [
         "uiux/<pack>/previews/flow-map.html",
         "Local Review Mode assets under uiux/<pack>/previews/review/"
@@ -337,14 +469,20 @@
         "references/uiux-flow-preview.md is consulted",
         "Pan, zoom, minimap, and focus traversal behavior are verified"
       ],
-      "expected_output_contains": ["flow-map.html"],
+      "expected_output_contains": [
+        "flow-map.html"
+      ],
       "notes": "The preview generator has a specific artifact."
     },
     {
       "id": "tonemana-catalog",
       "prompt": "Create a Tone and Manner catalog with seven comparable patterns and preview HTML for reviewers.",
-      "should_trigger": ["tonemana-catalog"],
-      "should_not_trigger": ["tonemana-apply"],
+      "should_trigger": [
+        "tonemana-catalog"
+      ],
+      "should_not_trigger": [
+        "tonemana-apply"
+      ],
       "expected_artifacts": [
         "tonemana/catalog/catalog_index.yaml",
         "tonemana/catalog/patterns/*.yaml",
@@ -359,14 +497,21 @@
         "Templates or existing catalog are used",
         "Preview HTML covers comparable patterns"
       ],
-      "expected_output_contains": ["catalog", "preview"],
+      "expected_output_contains": [
+        "catalog",
+        "preview"
+      ],
       "notes": "Catalog creation precedes choosing/applying a pattern."
     },
     {
       "id": "tonemana-apply",
       "prompt": "Apply the selected tone/manner pattern to the existing UIUX Pack and create the versioned Tonemana Pack.",
-      "should_trigger": ["tonemana-apply"],
-      "should_not_trigger": ["tonemana-catalog"],
+      "should_trigger": [
+        "tonemana-apply"
+      ],
+      "should_not_trigger": [
+        "tonemana-catalog"
+      ],
       "expected_artifacts": [
         "tonemana/YYYYMMDD-<slug>/tonemana_contract.yaml",
         "tonemana/YYYYMMDD-<slug>/tonemana_spec.json",
@@ -381,14 +526,20 @@
         "Catalog exists or is generated first",
         "UIUX files include references to the chosen pack"
       ],
-      "expected_output_contains": ["Tonemana Pack"],
+      "expected_output_contains": [
+        "Tonemana Pack"
+      ],
       "notes": "Applying an existing choice differs from catalog creation."
     },
     {
       "id": "uidesign-flow",
       "prompt": "Turn the approved tone-and-manner decision into design tokens, component previews, screen previews, and UIDesign Pack files.",
-      "should_trigger": ["uidesign-flow"],
-      "should_not_trigger": ["uiux-flow-preview"],
+      "should_trigger": [
+        "uidesign-flow"
+      ],
+      "should_not_trigger": [
+        "uiux-flow-preview"
+      ],
       "expected_artifacts": [
         "UIDesign Pack with uidesign_contract.yaml and uidesign_spec.json",
         "UIDesign Pack with tokens, previews, auto_review.json, diff_summary.md, and review_notes.md"
@@ -401,14 +552,20 @@
         "references/uidesign-flow.md is consulted",
         "Component and screen previews are review-ready without extra tooling"
       ],
-      "expected_output_contains": ["UIDesign Pack"],
+      "expected_output_contains": [
+        "UIDesign Pack"
+      ],
       "notes": "UIDesign creates styling artifacts, not navigation preview only."
     },
     {
       "id": "uidesign-orchestrator",
       "prompt": "Run the full UI evidence pipeline: ensure UIUX Pack, choose/apply Tone and Manner, then create UIDesign Pack.",
-      "should_trigger": ["uidesign-orchestrator"],
-      "should_not_trigger": ["visual-regression-testing"],
+      "should_trigger": [
+        "uidesign-orchestrator"
+      ],
+      "should_not_trigger": [
+        "visual-regression-testing"
+      ],
       "expected_artifacts": [
         "UIUX Pack",
         "Project Tone and Manner pack wired through meta.tone_and_manner",
@@ -422,14 +579,21 @@
         "references/uidesign-orchestrator.md is consulted",
         "Flow preview and visual styling preview paths are reported"
       ],
-      "expected_output_contains": ["UI evidence pipeline"],
+      "expected_output_contains": [
+        "UI evidence pipeline"
+      ],
       "notes": "The orchestrator sequences neighboring UI design skills."
     },
     {
       "id": "uidesign-single-step-not-orchestrator",
       "prompt": "Only generate component preview HTML and design tokens from the already approved tone-and-manner pack.",
-      "should_trigger": ["uidesign-flow"],
-      "should_not_trigger": ["uidesign-orchestrator", "uiux-core"],
+      "should_trigger": [
+        "uidesign-flow"
+      ],
+      "should_not_trigger": [
+        "uidesign-orchestrator",
+        "uiux-core"
+      ],
       "expected_artifacts": [
         "UIDesign Pack tokens",
         "UIDesign component preview HTML"
@@ -447,8 +611,13 @@
     {
       "id": "uiux-single-step-not-orchestrator",
       "prompt": "Create a UIUX Pack for a new settings screen; tone and UIDesign previews are out of scope.",
-      "should_trigger": ["uiux-core"],
-      "should_not_trigger": ["uidesign-orchestrator", "uidesign-flow"],
+      "should_trigger": [
+        "uiux-core"
+      ],
+      "should_not_trigger": [
+        "uidesign-orchestrator",
+        "uidesign-flow"
+      ],
       "expected_artifacts": [
         "UIUX Pack with ui_contract.yaml",
         "UIUX Pack with ui_spec.json, auto_review.json, and diff_summary.md"
@@ -467,7 +636,11 @@
       "id": "observability-docs-only-negative",
       "prompt": "Update the README to describe existing job logging fields without changing runtime behavior.",
       "should_trigger": [],
-      "should_not_trigger": ["observability", "error-handling", "dev-workflow"],
+      "should_not_trigger": [
+        "observability",
+        "error-handling",
+        "dev-workflow"
+      ],
       "expected_decisions": [
         "Task is classified as docs-only with no runtime behavior change",
         "No Observability Plan or failure-contract design is required"
@@ -480,9 +653,15 @@
     {
       "id": "observability-background-job-positive",
       "prompt": "Add a background export job that calls an external API; include job_id correlation, outcome logs, latency metrics, and failure traces.",
-      "should_trigger": ["observability"],
-      "should_not_trigger": ["uiux-core"],
-      "expected_artifacts": ["Observability Plan or equivalent notes for the background export job"],
+      "should_trigger": [
+        "observability"
+      ],
+      "should_not_trigger": [
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "Observability Plan or equivalent notes for the background export job"
+      ],
       "expected_decisions": [
         "Correlation, outcome logging, latency metric, and trace boundaries are explicit",
         "External API failures are observable without leaking secrets or PII"
@@ -491,14 +670,22 @@
         "Inspected files, commands, versions, or connection state used for live discovery",
         "Log, metric, trace, artifact path, dashboard link, or query evidence is captured"
       ],
-      "expected_output_contains": ["job_id", "latency"],
+      "expected_output_contains": [
+        "job_id",
+        "latency"
+      ],
       "notes": "New background work with external calls needs diagnosable signals."
     },
     {
       "id": "error-handling-copy-negative",
       "prompt": "Change the text of an existing validation error message from 'invalid' to 'unsupported format' without changing behavior.",
-      "should_trigger": ["dev-workflow"],
-      "should_not_trigger": ["error-handling", "requirements-engineering"],
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "error-handling",
+        "requirements-engineering"
+      ],
       "expected_decisions": [
         "Scope is limited to copy on an existing failure path",
         "No boundary translation, retry/fallback, or nullability contract changed"
@@ -511,8 +698,12 @@
     {
       "id": "error-handling-retry-fallback-positive",
       "prompt": "At the payment provider boundary, translate timeout and permission failures into domain errors and define retry/fallback behavior.",
-      "should_trigger": ["error-handling"],
-      "should_not_trigger": ["visual-regression-testing"],
+      "should_trigger": [
+        "error-handling"
+      ],
+      "should_not_trigger": [
+        "visual-regression-testing"
+      ],
       "expected_decisions": [
         "Timeout and permission failures map to explicit domain errors",
         "Recoverable failures define safe retry or fallback behavior and unrecoverable failures stop clearly"
@@ -521,14 +712,22 @@
         "Relevant headings from references/error-handling.md are cited",
         "Caller-visible behavior is shown for each payment provider failure"
       ],
-      "expected_output_contains": ["translation rule", "caller"],
+      "expected_output_contains": [
+        "translation rule",
+        "caller"
+      ],
       "notes": "Boundary translation plus retry/fallback is the error-handling trigger."
     },
     {
       "id": "readability-ordinary-code-change-negative",
       "prompt": "Change one well-named constant from 30 to 60 and update the matching unit test.",
-      "should_trigger": ["dev-workflow"],
-      "should_not_trigger": ["code-readability", "code-smells-and-antipatterns"],
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "code-readability",
+        "code-smells-and-antipatterns"
+      ],
       "expected_decisions": [
         "Scope remains an ordinary dev-workflow change without readability review solely because code changed"
       ],
@@ -541,8 +740,12 @@
     {
       "id": "readability-test-intent-positive",
       "prompt": "Review the changed tests for unclear names, missing intent, and comments that restate implementation details.",
-      "should_trigger": ["code-readability"],
-      "should_not_trigger": ["requirements-engineering"],
+      "should_trigger": [
+        "code-readability"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
       "expected_decisions": [
         "Test names, intent comments, and implementation-restating comments are reviewed for clarity"
       ],
@@ -550,14 +753,21 @@
         "Findings cite changed test lines and the clarity problem",
         "Suggested improvements preserve test behavior"
       ],
-      "expected_output_contains": ["Readability"],
+      "expected_output_contains": [
+        "Readability"
+      ],
       "notes": "Explicit readability review of tests should trigger code-readability."
     },
     {
       "id": "requirements-small-clear-negative",
       "prompt": "Rename the 'Save' button to 'Save changes' in one already specified dialog.",
-      "should_trigger": ["dev-workflow"],
-      "should_not_trigger": ["requirements-engineering", "uiux-core"],
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "uiux-core"
+      ],
       "expected_decisions": [
         "Task is classified as a tiny unambiguous copy change with no requirements brief needed"
       ],
@@ -569,8 +779,12 @@
     {
       "id": "template-execution-negative",
       "prompt": "Deploy the service to staging using the existing deployment runbook and report whether smoke tests passed.",
-      "should_trigger": ["dev-workflow"],
-      "should_not_trigger": ["playbook-template-authoring"],
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "playbook-template-authoring"
+      ],
       "expected_decisions": [
         "Task executes an existing runbook and does not author a reusable template"
       ],
@@ -578,14 +792,20 @@
         "Existing deployment runbook is referenced",
         "Smoke test pass/fail result is reported"
       ],
-      "expected_output_contains": ["smoke tests"],
+      "expected_output_contains": [
+        "smoke tests"
+      ],
       "notes": "Executing an existing runbook is not reusable template authoring."
     },
     {
       "id": "visual-regression-ui-change",
       "prompt": "Run repository-defined UI screenshot verification for the web app and review any visual diffs before updating baselines.",
-      "should_trigger": ["visual-regression-testing"],
-      "should_not_trigger": ["uiux-core"],
+      "should_trigger": [
+        "visual-regression-testing"
+      ],
+      "should_not_trigger": [
+        "uiux-core"
+      ],
       "expected_artifacts": [
         "UI Visual Verification Report",
         "Screenshot or diff artifact paths, or baseline update record"
@@ -598,8 +818,207 @@
         "Repository-defined screenshot command source and output",
         "Reviewed visual diffs against baselines or mocks"
       ],
-      "expected_output_contains": ["UI Visual Verification Report", "Compare result"],
+      "expected_output_contains": [
+        "UI Visual Verification Report",
+        "Compare result"
+      ],
       "notes": "Visual verification is separate from UI design generation."
+    },
+    {
+      "id": "function-boundary-helper-similar",
+      "prompt": "I added a helper that looks very similar to an existing function; decide whether to keep, merge, or replace cleanly.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Agent makes autonomous boundary decision and records rationale"
+      ],
+      "expected_evidence": [
+        "Verification evidence matches selected action"
+      ],
+      "notes": "Function-design routing coverage."
+    },
+    {
+      "id": "destructive-refactor-wrong-side-effects",
+      "prompt": "This existing function almost fits but has the wrong side effects; replace the abstraction and migrate call sites.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Agent makes autonomous boundary decision and records rationale"
+      ],
+      "expected_evidence": [
+        "Verification evidence matches selected action"
+      ],
+      "notes": "Function-design routing coverage."
+    },
+    {
+      "id": "function-boundary-boolean-flag",
+      "prompt": "This function now needs a boolean flag to support another use case; refactor to a coherent boundary.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Agent makes autonomous boundary decision and records rationale"
+      ],
+      "expected_evidence": [
+        "Verification evidence matches selected action"
+      ],
+      "notes": "Function-design routing coverage."
+    },
+    {
+      "id": "function-boundary-intentional-parallel",
+      "prompt": "We have intentionally parallel functions with different error behavior; review whether they should stay separate.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Agent makes autonomous boundary decision and records rationale"
+      ],
+      "expected_evidence": [
+        "Verification evidence matches selected action"
+      ],
+      "notes": "Function-design routing coverage."
+    },
+    {
+      "id": "function-boundary-readability-only",
+      "prompt": "Only rename a local variable and tweak sentence wording in comments.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "No function-boundary decision is required",
+        "No destructive refactor is required"
+      ],
+      "expected_evidence": [
+        "No function-boundary artifact is required for readability-only edits"
+      ],
+      "notes": "Function-design routing coverage."
+    },
+    {
+      "id": "function-boundary-sibling-helpers-accumulated",
+      "prompt": "After several agent edits, we now have saveOrder, saveOrder2, and saveOrderHelper; redesign boundaries and remove obsolete abstractions.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Obsolete abstraction replacement vs keep-parallel is decided autonomously"
+      ],
+      "expected_evidence": [
+        "Call-site migration and obsolete-name cleanup evidence is recorded"
+      ],
+      "notes": "Positive case for helper accumulation."
+    },
+    {
+      "id": "function-boundary-move-side-effects",
+      "prompt": "Move persistence side effects out of normalizeUserData and migrate all call sites.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Side-effect boundary is redesigned and migration plan chosen"
+      ],
+      "expected_evidence": [
+        "All call sites migrated or staged adapter ledgered"
+      ],
+      "notes": "Positive case for side-effect relocation."
+    },
+    {
+      "id": "function-boundary-staged-public-adapter",
+      "prompt": "We must replace a public API helper, but keep a temporary adapter for one release with explicit removal conditions.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Staged adapter is explicitly chosen and bounded"
+      ],
+      "expected_evidence": [
+        "Ledger contains adapter removal condition"
+      ],
+      "notes": "Positive staged migration case."
+    },
+    {
+      "id": "function-boundary-generated-code",
+      "prompt": "This is generated client code; do not redesign helper boundaries manually.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Function-boundary redesign is skipped for generated code"
+      ],
+      "expected_evidence": [
+        "Reason for skip is recorded"
+      ],
+      "notes": "Negative near-miss."
+    },
+    {
+      "id": "function-boundary-fixture-duplication",
+      "prompt": "Two test fixtures look duplicated; keep them separate because error payloads differ.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Intentional parallelism is kept"
+      ],
+      "expected_evidence": [
+        "Different error behavior rationale is recorded"
+      ],
+      "notes": "Negative for forced merge."
+    },
+    {
+      "id": "function-boundary-formatting-only",
+      "prompt": "Apply formatting-only changes to this file.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "No function-boundary or destructive-refactor decision required"
+      ],
+      "expected_evidence": [
+        "Formatting-only scope is preserved"
+      ],
+      "notes": "Negative near-miss."
     }
   ]
 }
