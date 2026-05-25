@@ -905,12 +905,120 @@
         "destructive-refactor"
       ],
       "expected_decisions": [
-        "Agent makes autonomous boundary decision and records rationale"
+        "No function-boundary decision is required",
+        "No destructive refactor is required"
       ],
       "expected_evidence": [
-        "Verification evidence matches selected action"
+        "No function-boundary artifact is required for readability-only edits"
       ],
       "notes": "Function-design routing coverage."
+    },
+    {
+      "id": "function-boundary-sibling-helpers-accumulated",
+      "prompt": "After several agent edits, we now have saveOrder, saveOrder2, and saveOrderHelper; redesign boundaries and remove obsolete abstractions.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Obsolete abstraction replacement vs keep-parallel is decided autonomously"
+      ],
+      "expected_evidence": [
+        "Call-site migration and obsolete-name cleanup evidence is recorded"
+      ],
+      "notes": "Positive case for helper accumulation."
+    },
+    {
+      "id": "function-boundary-move-side-effects",
+      "prompt": "Move persistence side effects out of normalizeUserData and migrate all call sites.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Side-effect boundary is redesigned and migration plan chosen"
+      ],
+      "expected_evidence": [
+        "All call sites migrated or staged adapter ledgered"
+      ],
+      "notes": "Positive case for side-effect relocation."
+    },
+    {
+      "id": "function-boundary-staged-public-adapter",
+      "prompt": "We must replace a public API helper, but keep a temporary adapter for one release with explicit removal conditions.",
+      "should_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Staged adapter is explicitly chosen and bounded"
+      ],
+      "expected_evidence": [
+        "Ledger contains adapter removal condition"
+      ],
+      "notes": "Positive staged migration case."
+    },
+    {
+      "id": "function-boundary-generated-code",
+      "prompt": "This is generated client code; do not redesign helper boundaries manually.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Function-boundary redesign is skipped for generated code"
+      ],
+      "expected_evidence": [
+        "Reason for skip is recorded"
+      ],
+      "notes": "Negative near-miss."
+    },
+    {
+      "id": "function-boundary-fixture-duplication",
+      "prompt": "Two test fixtures look duplicated; keep them separate because error payloads differ.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Intentional parallelism is kept"
+      ],
+      "expected_evidence": [
+        "Different error behavior rationale is recorded"
+      ],
+      "notes": "Negative for forced merge."
+    },
+    {
+      "id": "function-boundary-formatting-only",
+      "prompt": "Apply formatting-only changes to this file.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "No function-boundary or destructive-refactor decision required"
+      ],
+      "expected_evidence": [
+        "Formatting-only scope is preserved"
+      ],
+      "notes": "Negative near-miss."
     }
   ]
 }

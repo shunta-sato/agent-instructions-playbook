@@ -1,52 +1,74 @@
 # Function Boundary Governor
 
-## Decision rubric (score each 0-2)
+## Required discovery
 
-- Concept clarity
-- Single reason to change
-- Invariant ownership
-- Call-site readability
-- Side-effect profile control
-- Error behavior clarity
-- Abstraction cost vs benefit
-- Duplication risk (accidental)
-- Future divergence likelihood
-- Boundary crossing risk
-- Test protection
+Before deciding, build a boundary inventory:
 
-Interpretation:
-- 18-22: keep/rename/split/inline candidate
-- 12-17: merge/replace needs caution
-- <=11: replace or no-op unless test evidence is weak
+- List new/edited/deleted functions.
+- For each changed function, list direct callers when feasible.
+- Search semantic neighbors: similarly named functions, similar bodies, same domain noun/verb, helpers in common/shared/util modules, and tests encoding the same concept.
+- Classify each neighbor: `same concept | parallel concept | obsolete abstraction | uncertain`.
+
+## Scoring model (separate polarity)
+
+Positive evidence (score 0-2 each):
+- concept clarity
+- single reason to change
+- invariant ownership
+- call-site readability gain
+- side-effect control
+- error behavior clarity
+- test protection
+
+Risk evidence (score 0-2 each):
+- abstraction cost
+- duplication risk
+- future divergence likelihood
+- boundary crossing risk
+- public API churn
+- parameterization pressure
+
+## Decision rules
+
+Merge only if all are true:
+- concept clarity >= 2
+- invariant ownership >= 2
+- side effects and error behavior match
+- call-site readability gain > 0
+- boundary crossing risk == 0
+- parameterization pressure == 0
+
+Replace when one or more are true:
+- current abstraction owns wrong responsibility or side effects
+- sibling/helper accumulation exists
+- reuse requires flags/options
+- all call sites can migrate now or staged adapter is explicitly ledgered
+
+Keep parallel when one or more are true:
+- error behavior differs
+- side effects differ
+- future divergence likelihood >= 2
+- concepts are only textually similar
+
+No-op when one or more are true:
+- improvement is speculative
+- tests/characterization are insufficient
+- duplication is small and likely to diverge
 
 ## Mandatory reject signals
 
-Reject (or choose no-op) when:
+Reject refactor (or choose no-op) when:
 - similarity is textual only
 - abstraction needs vague names
-- abstraction requires flags/options to represent different semantics
-- side effects differ materially
-- error behavior differs materially
+- abstraction requires flags/options for semantic switching
 - call sites become harder to read
-- tests/characterization coverage is insufficient
-
-## Action guidance
-
-- keep: function already has clear concept + owned invariants.
-- rename: concept is right, name is wrong.
-- split: one function owns multiple reasons to change.
-- merge: only when concepts/invariants/error+side-effects align.
-- replace: current abstraction is fundamentally wrong.
-- inline: abstraction cost exceeds value.
-- no-op: avoid speculative cleanup.
+- tests are insufficient for safe migration
 
 ## Required evidence log
 
-For each affected function, capture:
-- concept it represents
-- reason to change axis
-- owned invariants
-- side effects
-- error contract
-- call-site readability notes
-- chosen action and why alternatives were rejected
+For each affected function capture:
+- concept, reason-to-change axis, owned invariants
+- side effects and error contract
+- caller set and neighbor classification
+- chosen action and rejected alternatives
+- action taken and touched files

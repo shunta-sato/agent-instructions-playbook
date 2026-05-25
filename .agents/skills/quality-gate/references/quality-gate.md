@@ -61,3 +61,6 @@ Triggered branch evidence:
 ```
 
 Rule: `submit` only when all required criteria are satisfied and findings are 0.
+
+
+- Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.

@@ -38,7 +38,7 @@ Function-design evidence requirements when triggered:
 - function-boundary-governor → function decision record (`keep|rename|split|merge|replace|inline|no-op`) + rationale
 - destructive-refactor → convergence record (`replaced|no-op|rollback`), call-site migration evidence, and red-state usage record
 - when no-op or rollback is chosen → explicit reasoning
-- ledger-required cases (replaced abstractions, intentional duplication, staged adapters) → ledger update present
+- ledger-required cases (replaced abstractions, intentional duplication, staged adapters) → ledger entry present at `.agents/design-ledger/function-boundaries.md`
 
 ## Gotchas
 
@@ -54,3 +54,6 @@ Function-design evidence requirements when triggered:
 - Start with: `Gate decision: submit` or `Gate decision: no-submit`.
 - If `no-submit`, list each finding with: location, missing/failed criterion, required fix.
 - Only output `0 findings` when all exit criteria are satisfied.
+
+
+- Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.

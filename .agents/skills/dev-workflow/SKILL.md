@@ -34,11 +34,16 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
    - C++ headers touched → `$code-readability` (Doxygen gate)
 
-3) Execute implementation with the selected route + required branches.
+3) Apply routing priority to avoid overlap:
+   - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
+   - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 
-4) Run canonical verification at the depth required by the selected risk route.
+4) Execute implementation with the selected route + required branches.
 
-5) Hand off to `$quality-gate` for final submission readiness.
+5) Run canonical verification at the depth required by the selected risk route.
+
+6) Hand off to `$quality-gate` for final submission readiness.
+
 
 ## Gotchas
 

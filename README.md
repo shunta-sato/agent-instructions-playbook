@@ -41,6 +41,8 @@ The goal is a small, curated software-development operating system: clear entry 
 
 ### Design, quality, and reliability
 
+- `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
+- `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
 - `code-smells-and-antipatterns` — diff-focused maintainability and boundary review
 - `code-readability` — requested readability cleanup and C++ documentation gates
 - `error-handling` — failure contracts at boundaries, retries, fallbacks, and user-visible errors

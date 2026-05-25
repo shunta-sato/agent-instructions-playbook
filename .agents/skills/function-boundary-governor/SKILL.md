@@ -23,12 +23,13 @@ Use when a change:
 ## How to use
 
 1) Open `references/function-boundary-governor.md`.
-2) For each affected function, decide one action: `keep | rename | split | merge | replace | inline | no-op`.
-3) Use the rubric to score design quality and reject low-coherence refactors.
-4) If replacement requires temporary red-state migration, route to `$destructive-refactor`.
-5) Apply only scoped edits needed for coherent final design.
-6) Verify with required command depth from `$dev-workflow`.
-7) Update design ledger using `templates/function-design-ledger-entry.md` when decisions are likely to recur.
+2) Run required discovery from the reference: changed-function inventory, semantic-neighbor search, and call-site discovery.
+3) For each affected function, decide one action: `keep | rename | split | merge | replace | inline | no-op`.
+4) Use separated positive/risk rubric + decision rules to reject low-coherence refactors.
+5) If replacement requires temporary red-state migration, route to `$destructive-refactor`.
+6) Apply only scoped edits needed for coherent final design.
+7) Verify with required command depth from `$dev-workflow`.
+8) Update canonical design ledger path `.agents/design-ledger/function-boundaries.md` using `templates/function-design-ledger-entry.md` when required.
 
 ## Hard rules
 
@@ -43,7 +44,11 @@ Use when a change:
 ## Output expectation
 
 Return:
-- Decision table of affected functions with chosen action and rationale.
+- Changed functions inventory and semantic neighbors considered.
+- Decision per function with action and rationale.
+- Action taken: `changed | no-op | delegated-to-destructive-refactor | rollback`.
+- Files edited and call sites migrated (if any).
+- Old names searched and cleanup result.
 - Whether `$destructive-refactor` was invoked.
 - Verification commands/results.
-- Ledger updates (or explicit no-update reason).
+- Ledger update path (`.agents/design-ledger/function-boundaries.md`) or explicit no-update reason.

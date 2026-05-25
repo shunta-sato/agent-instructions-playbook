@@ -35,3 +35,31 @@ Forbidden:
 - no `newX`, `legacyX`, `x2`, `commonX`, `helper`, `util` leftovers
 - no boolean-flag API hiding semantic differences
 - design ledger updated
+
+
+## Break-window declaration (required)
+
+Before entering red-state, record:
+- target abstraction
+- files allowed to edit
+- call sites to migrate
+- old names to remove
+- forbidden fallback patterns
+- planned verification commands
+- rollback command/procedure
+
+## Red-state execution rules
+
+- Failures inside declared migration scope are expected during red-state.
+- Do not add compatibility wrappers to make intermediate state green.
+- Do not fix new smells unless they block convergence.
+- Finish planned call-site migration before local failure repair.
+
+## Rollback definition
+
+Rollback means:
+- revert only edits made by this skill
+- remove temporary wrappers/functions/tests introduced by this skill
+- restore old abstraction and call sites
+- record rollback reason
+- do not leave partial migration artifacts

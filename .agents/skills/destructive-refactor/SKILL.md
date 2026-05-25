@@ -33,12 +33,14 @@ Use when:
 - define call-site contract
 - declare old function/behavior slated for deletion
 
-3) Break window (explicit temporary red state allowed)
+3) Break window declaration (required artifact; explicit temporary red state allowed)
+- declare: target abstraction, files allowed to edit, call sites to migrate, old names to remove, forbidden fallback patterns, planned verification commands, rollback procedure
 - allow temporary typecheck/build/test failure
 - forbid unrelated repairs
-- forbid compatibility shims unless staged migration is explicitly required
+- forbid compatibility shims unless staged migration is explicitly required and ledgered
 - forbid scope widening beyond chosen abstraction
-- do not chase one-by-one failures before planned migration pass completes
+- during red state, do not fix newly discovered smells unless they block convergence
+- complete planned migration pass before one-by-one failure repair
 
 4) Migration
 - update all call sites
@@ -48,7 +50,8 @@ Use when:
 
 5) Convergence
 - run required verification depth
-- if same failure recurs twice, rollback this skill's edits
+- if same failure recurs twice, rollback this skill's edits using the declared rollback procedure
+- rollback means: revert only this skill's edits, remove temporary wrappers/functions/tests from this skill, restore old abstraction and call sites, leave no partial migration artifacts, and record rollback reason
 - delete obsolete wrappers/functions
 - search for old and temporary names
 
@@ -56,6 +59,7 @@ Use when:
 - record replaced abstractions
 - record intentional duplication
 - record staged adapters + removal condition
+- write to canonical ledger path `.agents/design-ledger/function-boundaries.md`
 
 ## Output expectation
 
