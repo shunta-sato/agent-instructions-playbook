@@ -32,7 +32,9 @@ Record:
 Mark each line as `triggered` or `not triggered` with one-line evidence.
 
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
-- structural boundary/refactor change → `$code-smells-and-antipatterns`
+- generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
+- function/helper/API/call-site design change → `$function-boundary-governor`
+- replace flawed abstraction requiring temporary red-state migration → `$destructive-refactor`
 - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`

@@ -24,7 +24,9 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 2) Apply **required trigger-based branches** only when facts trigger them.
    - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
-   - structural boundary/refactor change → `$code-smells-and-antipatterns`
+   - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
+   - function/helper/API/call-site boundary design change → `$function-boundary-governor`
+   - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
    - runtime behavior change → `$observability`
    - strict-constraint low-level code or repeated compile/test loops → `$staged-lowering`

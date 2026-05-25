@@ -27,9 +27,11 @@ skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/s
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md
+skill|destructive-refactor|Replace flawed abstraction safely|.agents/skills/destructive-refactor/SKILL.md
 skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
+skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
@@ -51,8 +53,10 @@ end|AGENT_INDEX_V1
 <!-- END AGENT INDEX (generated) -->
 
 ## Always-on principles
-- Prefer the smallest change that satisfies the requirement.
-- No large cleanups. Leave touched code slightly easier to read than before.
+- Prefer the smallest safe change that satisfies the requirement.
+- Exception: when `function-boundary-governor` or `destructive-refactor` is triggered, prefer the smallest coherent final design, not the smallest edit.
+- No broad cleanups. Leave touched code slightly easier to read than before.
+- Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol; permanent shims/sibling abstractions require explicit staged-migration ledger records.
 - If runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable.
 
 ## Mandatory workflow for code/test changes
