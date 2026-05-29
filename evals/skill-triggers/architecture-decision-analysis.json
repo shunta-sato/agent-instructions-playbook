@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "architecture-db-option-comparison",
+      "prompt": "Decide whether this product should stay on SQLite or move to PostgreSQL. Compare availability, migration risk, operations burden, and verification tasks before implementation.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "code-smells-and-antipatterns",
+        "observability",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Architecture Decision Analysis Record"
+      ],
+      "expected_decisions": [
+        "Chosen direction or no-decision is recorded",
+        "Quality drivers and tradeoffs are compared before implementation"
+      ],
+      "expected_evidence": [
+        "Candidate options",
+        "Quality drivers with metrics or thresholds",
+        "Verification tasks"
+      ],
+      "expected_output_contains": [
+        "Architecture Decision Analysis",
+        "Quality drivers",
+        "Risk / tradeoff analysis",
+        "Verification tasks"
+      ],
+      "notes": "DB migration is an architecture decision, not just requirements drafting or diff review."
+    },
+    {
+      "id": "architecture-queue-vs-sync",
+      "prompt": "We need to decide whether invoice generation should remain synchronous or move to a queue. Compare p95 latency, duplicate processing risk, failure recovery, observability, and rollback.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "code-smells-and-antipatterns",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Architecture Decision Analysis Record"
+      ],
+      "expected_decisions": [
+        "Synchronous and queued options are compared",
+        "Verification tasks include tests or monitoring relevant to async failure modes"
+      ],
+      "expected_evidence": [
+        "Latency driver",
+        "Failure recovery risk",
+        "Rollback or fallback consideration"
+      ],
+      "expected_output_contains": [
+        "Decision question",
+        "Candidate options",
+        "Sensitivity points"
+      ],
+      "notes": "Queue introduction affects runtime architecture and quality tradeoffs."
+    },
+    {
+      "id": "architecture-negative-ambiguous-search-requirements",
+      "prompt": "The search feature request is vague. Clarify the user scenarios, acceptance criteria, error cases, and measurable quality requirements before we build it.",
+      "should_trigger": [
+        "requirements-engineering"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "code-smells-and-antipatterns",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Requirements Brief or Spec-before-build checklist"
+      ],
+      "expected_decisions": [
+        "Implementation proceeds only if blocker requirements are resolved"
+      ],
+      "expected_evidence": [
+        "User scenario",
+        "Acceptance criteria",
+        "Open questions split into blockers and non-blockers"
+      ],
+      "notes": "Ambiguous requirements should not trigger architecture option comparison."
+    },
+    {
+      "id": "architecture-negative-diff-boundary-leak",
+      "prompt": "Review this PR diff. It adds an HTTP adapter and I suspect SDK types are leaking into the domain layer.",
+      "should_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Smells & Anti-patterns Review"
+      ],
+      "expected_decisions": [
+        "Findings are limited to new or worsened issues in the current diff"
+      ],
+      "expected_evidence": [
+        "Diff-level evidence of boundary leakage or no finding after checking changed units"
+      ],
+      "notes": "Diff-focused boundary review is not architecture option selection."
+    },
+    {
+      "id": "architecture-negative-observability-detail",
+      "prompt": "Add logs, metrics, and traces for this new payment retry flow so operators can diagnose failures.",
+      "should_trigger": [
+        "observability"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Observability Plan"
+      ],
+      "expected_decisions": [
+        "Signals include purpose and actionability"
+      ],
+      "expected_evidence": [
+        "Inspected instrumentation paths or existing logging/metrics/tracing setup"
+      ],
+      "notes": "Instrumentation detail belongs to observability, not architecture decision analysis."
+    },
+    {
+      "id": "architecture-negative-final-gate",
+      "prompt": "Before submission, check whether all required evidence is present and decide submit or no-submit.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering",
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Gate decision is submit or no-submit",
+        "Missing required architecture or observability artifacts block submission"
+      ],
+      "expected_output_contains": [
+        "Gate decision:",
+        "Findings:"
+      ],
+      "notes": "Final readiness belongs to quality-gate."
+    },
+    {
+      "id": "dev-workflow-routes-architecture-decision",
+      "prompt": "Implement invoice generation, but first decide whether it should remain synchronous or move to a queue. Compare p95 latency, duplicate processing risk, failure recovery, observability, and rollback before coding.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Architecture Decision Analysis Record"
+      ],
+      "expected_decisions": [
+        "Architecture decision is made or deferred before implementation"
+      ],
+      "expected_evidence": [
+        "Quality drivers",
+        "Candidate options",
+        "Verification tasks"
+      ],
+      "notes": "dev-workflow should route implementation tasks with cross-boundary architecture option choices to architecture-decision-analysis before coding."
+    }
+  ]
+}

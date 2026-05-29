@@ -4,6 +4,50 @@ This file is the reference for requirements briefs, specs, requirement IDs, veri
 
 ---
 
+## 0) Problem Frame and spec-before-build preflight
+
+Use this only when the request is ambiguous, solution-first, user-facing, risky, or missing acceptance conditions.
+
+### Problem Frame
+
+Keep this to at most 6 lines.
+
+```markdown
+## Problem Frame
+
+- Problem owner:
+- Current pain / evidence:
+- Desired outcome:
+- Solution-first risk:
+- Non-goals:
+- Proceed to requirements/spec?: yes | no
+```
+
+### Spec-before-build checklist
+
+Use this only for unresolved items that affect implementation structure, acceptance criteria, UI/workflow state, failure behavior, or quality verification.
+
+```markdown
+## Spec-before-build Checklist
+
+- User scenario:
+- Screen / state sketch: only when UI or workflow changes
+- Error and edge cases:
+- Unresolved issues:
+  - Blockers:
+  - Non-blockers:
+- Proceed to implementation?: yes | no
+- Reason:
+```
+
+Rules:
+
+- Do not block implementation for wording polish or non-structural details.
+- Mark an unresolved issue as a blocker only when it changes implementation structure, failure behavior, acceptance criteria, or quality verification.
+- If architecture options must be compared, route to `architecture-decision-analysis`.
+
+---
+
 ## 1) Document granularity (start small)
 
 ### Requirements Brief (for small changes)

@@ -9,7 +9,7 @@ metadata:
 
 Use this skill to change legacy code safely: code with weak tests, no tests, or behavior that is hard to make deterministic.
 
-The goal is not to “make it perfect” immediately. The goal is to **create safety**, then change behavior in small steps.
+The goal is not to “make it perfect” immediately. The goal is to **create safety**, then change behavior in small steps. Rewrite is a last resort after characterization, seams, and small refactors are insufficient.
 
 ## When to use
 
@@ -35,9 +35,23 @@ Invoke this skill **before refactoring** if any of the following is true:
    - Extract small functions, isolate boundaries, and refactor in small diffs.
    - Keep `build / format / static analysis / tests` green at every step.
 
-3) If you cannot add a safety net, stop and explain why. Provide a reproducible manual procedure and the risk.
+3) Treat rewrite as a last resort. If proposed, record why characterization + seams + small refactors are insufficient, which accumulated behaviors stay protected, and the rollback path.
+
+4) If you cannot add a safety net, stop and explain why. Provide a reproducible manual procedure and the risk.
 
 ## Output expectation
 
-- Explicitly list: safety-net test(s), introduced seam(s), and the refactor sequence.
-- State what is guaranteed not to change (protected by characterization tests) and what is intended to change.
+```markdown
+## Legacy Change Safety Record
+
+- Touched behavior:
+- Existing coverage:
+- Safety-net test(s):
+- Characterized current behavior:
+- Preserved behavior / accumulated edge cases:
+- Introduced seam(s):
+- Refactor sequence:
+- Intended behavior change:
+- Rewrite avoided or justified:
+- Verification commands/results:
+```

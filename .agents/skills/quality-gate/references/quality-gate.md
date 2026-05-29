@@ -19,7 +19,8 @@ Confirm required evidence exists for each triggered branch:
 - bugfix branch → Bug Report (repro/evidence/Five Whys/verification/prevention)
 - UI branch → UI Visual Verification Report + artifact paths
 - concurrency branch → concurrency verification evidence (plan/shutdown-verification/logging)
-- observability branch → logs/metrics/traces plan or implementation evidence
+- architecture-decision-analysis branch → Architecture Decision Analysis Record with decision/no-decision, quality drivers, option tradeoffs, verification tasks, and handoffs
+- observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
 - staged-lowering branch → staged plan + per-pass verification log
 - legacy branch → characterization/safety-net evidence + seam/refactor notes
 - structural scan branch → smells/anti-patterns result (new/worsened handled)
