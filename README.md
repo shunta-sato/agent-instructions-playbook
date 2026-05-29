@@ -43,6 +43,7 @@ The goal is a small, curated software-development operating system: clear entry 
 
 - `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
 - `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
+- `architecture-decision-analysis` — compare architecture options against quality drivers, risks, tradeoffs, and verification tasks
 - `code-smells-and-antipatterns` — diff-focused maintainability and boundary review
 - `code-readability` — requested readability cleanup and C++ documentation gates
 - `error-handling` — failure contracts at boundaries, retries, fallbacks, and user-visible errors
@@ -78,6 +79,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 <!-- BEGIN README SKILL CATALOG (generated) -->
 | Skill | Description | Source |
 | --- | --- | --- |
+| `architecture-decision-analysis` | Architecture decision analysis | `.agents/skills/architecture-decision-analysis/SKILL.md` |
 | `bug-investigation-and-rca` | Bug investigation & RCA | `.agents/skills/bug-investigation-and-rca/SKILL.md` |
 | `code-readability` | Code readability | `.agents/skills/code-readability/SKILL.md` |
 | `code-smells-and-antipatterns` | Diff-focused maintainability review | `.agents/skills/code-smells-and-antipatterns/SKILL.md` |
@@ -125,6 +127,34 @@ Each retained skill should have:
 - a concrete output artifact, decision, or verification record
 - clear relationships to neighboring skills so trigger overlap stays intentional
 - trigger eval seeds for both positive prompts and near-miss negative prompts when the skill is core or broad
+
+## Skill Delta Gate
+
+Before adding a new skill or broadening an existing one, the change must pass all criteria:
+
+1. Runtime decision delta:
+
+   - The change alters agent behavior such as proceed/no-proceed, no-decision, route-to-skill, submit/no-submit, or rewrite/no-rewrite.
+
+2. Existing-skill absorption test:
+
+   - If description, trigger, anti-trigger, output contract, reference, or trigger eval updates are enough, do not add a new skill.
+
+3. Trigger boundary test:
+
+   - At least two positive cases and three near-miss negative cases exist for broad or core skills.
+
+4. Output contract test:
+
+   - The skill produces a concrete artifact, decision, verification record, or explicit no-op/no-decision.
+
+5. Complexity cap:
+
+   - Keep `SKILL.md` workflow-focused.
+   - Move heavy material to `references/`.
+   - Do not put deep taxonomy into `quality-gate`.
+
+If any criterion fails, do not add the skill.
 
 ## Validation
 

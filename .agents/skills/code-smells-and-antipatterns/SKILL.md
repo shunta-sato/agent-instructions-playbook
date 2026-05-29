@@ -9,7 +9,7 @@ metadata:
 
 This is the parent skill for diff-focused maintainability review. It finds only issues introduced or worsened by the current diff: code smells, design anti-patterns, architecture boundary leaks, and modularity/coupling regressions.
 
-Do not turn this into a full-codebase audit. Read unchanged code only as needed to understand whether the diff made the design worse.
+Do not turn this into a full-codebase audit. Read unchanged code only as needed to understand whether the diff made the design worse. Root cause / design pressure must be inferred only from the current diff and the minimal unchanged context needed to judge whether the diff worsened the design. Do not expand into history research or full-codebase analysis.
 
 ## When to use (trigger conditions)
 
@@ -53,6 +53,8 @@ Open only the reference material that matches the diff:
 4) Produce **up to 3 findings**, each with:
    - label (smell, anti-pattern, boundary issue, or modularity/coupling issue)
    - why this looks like it (evidence from the diff)
+   - design pressure / likely root cause in this diff
+   - scale: local | module | cross-boundary
    - risk if left as-is
    - smallest coherent fix (or explicit route to function-design skills)
    - fix lens/reference or existing narrower skill to apply
@@ -65,18 +67,21 @@ Open only the reference material that matches the diff:
 
 Require the output to include:
 
+```markdown
 ## Smells & Anti-patterns Review
 - Scope: (changed units)
 - Findings: (0–3 items)
 
-For each finding:
-### Finding N: <label> (type: smell|design anti-pattern|architecture boundary issue|modularity/coupling issue; impact: blocker|important|nice-to-have)
+### Finding N: (type: smell|design anti-pattern|architecture boundary issue|modularity/coupling issue; impact: blocker|important|nice-to-have)
 - Introduced/Worsened by this diff?: yes|no
 - Evidence (diff-level):
+- Design pressure / likely root cause in this diff:
+- Scale: local | module | cross-boundary
 - Why it matters here:
 - Smallest fix:
 - Fix lens/reference:
 - If not fixing now (only allowed if not introduced/worsened): justification + follow-up note
+```
 
 If there are 0 findings:
 - State: "No new/worsened maintainability issues found" and list what you checked.

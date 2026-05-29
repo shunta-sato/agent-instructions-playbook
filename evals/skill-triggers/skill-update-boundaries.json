@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "requirements-problem-frame-solution-first",
+      "prompt": "I want to add a dashboard export button, but first check what problem this solves, who has the problem, and which unresolved issues block implementation.",
+      "should_trigger": [
+        "requirements-engineering"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "code-smells-and-antipatterns"
+      ],
+      "expected_artifacts": [
+        "Problem Frame",
+        "Spec-before-build checklist if unresolved issues affect implementation"
+      ],
+      "expected_decisions": [
+        "Proceed to implementation is yes or no with reason",
+        "Unresolved issues are split into blockers and non-blockers"
+      ],
+      "expected_output_contains": [
+        "Problem Frame",
+        "Proceed to implementation?"
+      ],
+      "notes": "Problem framing is integrated into requirements-engineering, not a separate skill."
+    },
+    {
+      "id": "requirements-negative-clear-small-task",
+      "prompt": "The API contract and acceptance tests are already defined. Add the missing field mapping exactly as specified.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "No requirements artifact is required for a tiny unambiguous implementation task"
+      ],
+      "notes": "Avoid forcing requirements-engineering when implementation is already clear."
+    },
+    {
+      "id": "smells-current-diff-design-pressure",
+      "prompt": "Review this diff for new maintainability issues. It adds a service hub, several flags, and moves domain logic into the adapter.",
+      "should_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering"
+      ],
+      "expected_artifacts": [
+        "Smells & Anti-patterns Review"
+      ],
+      "expected_decisions": [
+        "Findings include diff-level design pressure and scale",
+        "Findings are capped at 0–3 items"
+      ],
+      "expected_output_contains": [
+        "Design pressure / likely root cause in this diff",
+        "Scale: local | module | cross-boundary"
+      ],
+      "notes": "Root pressure is useful only when kept current-diff focused."
+    },
+    {
+      "id": "smells-negative-full-codebase-audit",
+      "prompt": "Audit the entire repository and list every historical anti-pattern and root cause.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Do not convert diff-focused smell review into a full-codebase audit"
+      ],
+      "notes": "This request is outside the scoped skill update."
+    },
+    {
+      "id": "legacy-protect-edge-cases",
+      "prompt": "Modify this old billing module. It has no reliable tests and probably contains many accumulated edge cases. Avoid a rewrite unless justified.",
+      "should_trigger": [
+        "working-with-legacy-code"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns",
+        "architecture-decision-analysis"
+      ],
+      "expected_artifacts": [
+        "Legacy Change Safety Record"
+      ],
+      "expected_decisions": [
+        "Rewrite is avoided or explicitly justified",
+        "Preserved behavior is protected by characterization tests"
+      ],
+      "expected_evidence": [
+        "Safety-net tests",
+        "Introduced seams",
+        "Verification commands/results"
+      ],
+      "expected_output_contains": [
+        "Preserved behavior / accumulated edge cases",
+        "Rewrite avoided or justified"
+      ],
+      "notes": "Legacy work starts with safety, not redesign."
+    },
+    {
+      "id": "observability-signal-purpose",
+      "prompt": "This change adds an external API retry path. Add enough observability so operators know whether failures are provider timeouts, auth failures, or local retry exhaustion.",
+      "should_trigger": [
+        "observability"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering"
+      ],
+      "expected_artifacts": [
+        "Observability Plan"
+      ],
+      "expected_decisions": [
+        "Signals support explicit diagnostic decisions",
+        "Counter-metric or misleading interpretation risk is recorded where relevant"
+      ],
+      "expected_output_contains": [
+        "Measurement Purpose and Feedback",
+        "Decision supported",
+        "Expected action when degraded"
+      ],
+      "notes": "Signals must be actionable rather than emitted because they are easy to add."
+    },
+    {
+      "id": "quality-gate-missing-observability-plan",
+      "prompt": "Run the final submission gate. This runtime change triggered observability, but there is no Observability Plan artifact.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "observability",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Gate decision is no-submit when required triggered-branch evidence is missing"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        "missing"
+      ],
+      "notes": "Quality-gate checks artifact presence and readiness; it does not perform the deep observability design itself."
+    },
+    {
+      "id": "quality-gate-missing-architecture-record",
+      "prompt": "Run the final submission gate. The work selected a queue-based design after architecture analysis, but no decision record or verification tasks are present.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering"
+      ],
+      "expected_decisions": [
+        "Gate decision is no-submit when Architecture Decision Analysis Record is missing"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        "Architecture Decision Analysis"
+      ],
+      "notes": "Final gate validates evidence from triggered branches."
+    }
+  ]
+}

@@ -69,3 +69,26 @@ Optional (golden signals when relevant):
 
 - Throttle or sample high-frequency logs.
 - Prefer boundary logging (once per operation).
+
+## 9) Measurement purpose and feedback
+
+For each signal, record why it exists and what action it enables.
+
+```markdown
+## Measurement Purpose and Feedback
+
+- Signal:
+- Decision supported:
+- Action owner:
+- Expected action when degraded:
+- Counter-metric:
+- Failure mode / misleading interpretation:
+- Artifact path or dashboard/query:
+```
+
+Rules:
+
+- Do not add metrics merely because they are easy to emit.
+- Prefer signals that support a decision or failure diagnosis.
+- Add a counter-metric when one metric can improve while user or operational outcomes degrade.
+- Keep this practical. Do not add measurement philosophy.

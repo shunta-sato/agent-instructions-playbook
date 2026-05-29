@@ -14,6 +14,21 @@ Before changing behavior, ensure at least:
 
 Note: do not start with a big rewrite. First, create the smallest automated route, then proceed.
 
+## Rewrite is last resort
+
+Do not rewrite legacy code just because it is difficult to understand.
+
+First protect accumulated behavior and edge cases with characterization tests. Then introduce seams, extract, or sprout in small steps.
+
+If rewrite is proposed, record:
+
+- why characterization + seam + small refactor is insufficient
+- which preserved behaviors are protected
+- what rollback path exists
+- what verification proves intended behavior changed and accumulated behavior remained protected
+
+Do not turn this skill into an anti-pattern analysis workflow. If a design smell remains after safety is established, route the review to `code-smells-and-antipatterns`.
+
 ## 2. Rough safety-net tests (characterization)
 
 If unit tests are hard to write right now, first lock the current behavior at a coarse, entrypoint-near granularity.

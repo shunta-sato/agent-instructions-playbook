@@ -36,12 +36,15 @@ Do not use this skill for docs-only changes, pure formatting, mechanical refacto
 
 6) Add trace spans and ensure logs and metrics are correlated via identifiers.
 
-7) Apply safety rules (no secrets/PII; follow OWASP/NIST logging guidance).
+7) For each signal, record the decision it supports, the owner/action when degraded, a counter-metric when relevant, and any misleading interpretation risk.
 
-8) Control noise (sampling, throttling, or once-only logging).
+8) Apply safety rules (no secrets/PII; follow OWASP/NIST logging guidance).
+
+9) Control noise (sampling, throttling, or once-only logging).
 
 ## Output expectation
 
 - Record decisions in the Observability Plan.
+- Include measurement purpose and feedback for each signal: decision supported, action owner, expected action when degraded, counter-metric where relevant, misleading interpretation risk, and artifact path or dashboard/query.
 - Include live-discovery evidence: inspected files/commands, version/status output, connection state, and log/metric/trace artifact paths or dashboard/query links.
 - Ensure the quality gate’s observability checklist passes.
