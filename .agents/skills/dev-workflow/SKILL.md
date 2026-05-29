@@ -24,6 +24,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 2) Apply **required trigger-based branches** only when facts trigger them.
    - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
+   - cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
    - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
    - function/helper/API/call-site boundary design change → `$function-boundary-governor`
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
@@ -35,6 +36,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - C++ headers touched → `$code-readability` (Doxygen gate)
 
 3) Apply routing priority to avoid overlap:
+   - If the task requires choosing among cross-boundary architecture or technology options with measurable quality drivers, run `$architecture-decision-analysis` before implementation. Route to `$requirements-engineering` first if the quality drivers or requirements are too vague to measure.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 

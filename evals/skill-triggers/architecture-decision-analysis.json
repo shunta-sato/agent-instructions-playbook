@@ -151,6 +151,29 @@
         "Findings:"
       ],
       "notes": "Final readiness belongs to quality-gate."
+    },
+    {
+      "id": "dev-workflow-routes-architecture-decision",
+      "prompt": "Implement invoice generation, but first decide whether it should remain synchronous or move to a queue. Compare p95 latency, duplicate processing risk, failure recovery, observability, and rollback before coding.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Architecture Decision Analysis Record"
+      ],
+      "expected_decisions": [
+        "Architecture decision is made or deferred before implementation"
+      ],
+      "expected_evidence": [
+        "Quality drivers",
+        "Candidate options",
+        "Verification tasks"
+      ],
+      "notes": "dev-workflow should route implementation tasks with cross-boundary architecture option choices to architecture-decision-analysis before coding."
     }
   ]
 }

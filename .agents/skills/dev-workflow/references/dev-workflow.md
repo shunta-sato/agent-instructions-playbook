@@ -32,6 +32,7 @@ Record:
 Mark each line as `triggered` or `not triggered` with one-line evidence.
 
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
+- cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
 - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
 - function/helper/API/call-site design change → `$function-boundary-governor`
 - replace flawed abstraction requiring temporary red-state migration → `$destructive-refactor`
