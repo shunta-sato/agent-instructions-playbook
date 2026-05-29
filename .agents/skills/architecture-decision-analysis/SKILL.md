@@ -17,11 +17,16 @@ It is intentionally narrower than general design advice.
 
 ## When to use
 
-Use this skill when all or most of these apply:
+Use this skill only when all required conditions apply:
+
+Required:
 
 - There are multiple viable architecture or technology options.
 - The decision changes cross-boundary structure: database, persistence model, queue, cache, service split, external dependency, synchronization model, communication boundary, data ownership, availability strategy, or deployment/rollback shape.
 - The choice affects measurable quality drivers such as latency, throughput, reliability, availability, security, operability, maintainability, or migration risk.
+
+Use additionally when one or more of these applies:
+
 - Implementation should not proceed until risks, tradeoffs, verification tasks, and rollback or fallback considerations are recorded.
 - The user asks for an ADR, architecture option comparison, technical selection, or design decision.
 
