@@ -2,48 +2,54 @@
 
 .DEFAULT_GOAL := help
 
-define require_initialized
-	@printf "[uninitialized] target '%s' is not configured yet.\n" "$(1)"
-	@printf '%s\n' "Run the project initialization wizard (project-initialization or /initialize),"
-	@printf '%s\n' "then rerun 'make verify'."
-	@exit 2
-endef
+PYTHON ?= python3
 
 help:
-	@echo "Project command wrapper (initialization required)"
+	@echo "Project command wrapper"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  make build-debug"
-	@echo "  make build-release"
-	@echo "  make format"
-	@echo "  make lint"
-	@echo "  make analysis"
-	@echo "  make test-unit"
-	@echo "  make test-integration"
-	@echo "  make verify"
-	@echo ""
-	@echo "Status: uninitialized template. Run project-initialization or /initialize."
+	@echo "  make build-debug       # compile repository Python scripts"
+	@echo "  make build-release     # compile repository Python scripts"
+	@echo "  make format            # verify generated indexes are current"
+	@echo "  make lint              # validate skill metadata and trigger evals"
+	@echo "  make analysis          # validate skill inventory report"
+	@echo "  make test-unit         # smoke-test the generic study-note checker"
+	@echo "  make test-integration  # run repository skill/index validation chain"
+	@echo "  make verify            # run the canonical verification chain"
 
 build-debug:
-	$(call require_initialized,build-debug)
+	$(PYTHON) -m py_compile scripts/*.py .agents/skills/textbook-quality-gate/scripts/check_study_notes.py
 
 build-release:
-	$(call require_initialized,build-release)
+	$(PYTHON) -m py_compile scripts/*.py .agents/skills/textbook-quality-gate/scripts/check_study_notes.py
 
 format:
-	$(call require_initialized,format)
+	$(PYTHON) scripts/generate_agent_index.py --check
+
+git-diff-check:
+	git diff --check
 
 lint:
-	$(call require_initialized,lint)
+	$(PYTHON) scripts/validate_skills.py
+	$(PYTHON) scripts/validate_skill_trigger_evals.py
 
 analysis:
-	$(call require_initialized,analysis)
+	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 
 test-unit:
-	$(call require_initialized,test-unit)
+	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --help >/dev/null
+	@tmpdir=$$(mktemp -d); \
+	printf '%s\n' '---' 'tags: [study]' '---' '# Generic Index' '' 'See [[method-note]].' > $$tmpdir/index.md; \
+	printf '%s\n' '# Method Note' '' 'A generic synthetic method note for checker smoke testing.' > $$tmpdir/method-note.md; \
+	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode shared-mechanical-only $$tmpdir; \
+	status=$$?; rm -rf $$tmpdir; exit $$status
 
 test-integration:
-	$(call require_initialized,test-integration)
+	$(PYTHON) scripts/validate_skills.py
+	$(PYTHON) scripts/validate_skill_trigger_evals.py
+	$(PYTHON) scripts/report_skill_inventory.py --check --format text
+	$(PYTHON) scripts/generate_agent_index.py --check
+	git diff --check
 
-verify: build-debug lint analysis test-unit
+verify: build-debug lint analysis test-unit test-integration
 	@echo "Verification completed."

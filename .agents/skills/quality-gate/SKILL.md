@@ -26,6 +26,9 @@ Invoke this skill **before every submission**. It is mandatory.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.
    - If `architecture-decision-analysis` was triggered, verify an Architecture Decision Analysis Record exists and includes decision, quality drivers, tradeoffs, and verification tasks.
    - If `observability` was triggered, verify the Observability Plan includes signal purpose, actionability, counter-metric where relevant, and artifact paths.
+   - If any study-note workflow was triggered, verify the relevant Study Pack Report exists.
+   - If publish/sync readiness was required, verify `textbook-quality-gate` produced a gate decision.
+   - If narrative or technical essay workflow was used, verify its semantic review report exists before accepting shared-mechanical-only checks.
 
 3) Run concise exit-criteria review only.
    - Do not duplicate deep taxonomy here.
