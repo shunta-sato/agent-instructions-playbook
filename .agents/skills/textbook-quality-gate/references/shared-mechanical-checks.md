@@ -13,7 +13,8 @@ Use these checks for publication or sync safety across textbook, narrative/probl
 
 - Markdown files are discoverable under the provided roots.
 - Frontmatter is either absent or has a detectable closing delimiter.
-- Tags/frontmatter follow the pack convention when that convention is present.
+- Tags/frontmatter are syntactically sane; frontmatter alone does not imply tags are required.
+- Tags are required only when the pack explicitly requests that convention, such as by running the checker with `--require-tags`.
 - Wikilink syntax is balanced and parseable.
 - Local wikilink targets resolve when the target can be inferred from files under the provided roots.
 - Unicode replacement-character corruption and multilingual text encoding issues are absent.

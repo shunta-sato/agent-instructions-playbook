@@ -11,6 +11,8 @@ Decide whether a structured study-note pack is ready for publication or sync. Th
 
 The pack must remain a paraphrased learning artifact, not a transcript. Do not copy long passages from the source. Prefer paraphrased explanation, compact references, and original learning structure. Use short quotations only when necessary and only within applicable copyright limits.
 
+The deterministic checker should catch mechanical and easily detectable structural issues. It must not replace semantic learning review. When a textbook semantic issue cannot be detected mechanically without false positives, record it as requiring `textbook-learning-content-review` rather than failing solely from the checker.
+
 ## Gate mode
 
 Choose exactly one mode:

@@ -39,9 +39,22 @@ analysis:
 test-unit:
 	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --help >/dev/null
 	@tmpdir=$$(mktemp -d); \
-	printf '%s\n' '---' 'tags: [study]' '---' '# Generic Index' '' 'See [[method-note]].' > $$tmpdir/index.md; \
+	printf '%s\n' '# Generic Index' '' 'See [[method-note]].' > $$tmpdir/index.md; \
 	printf '%s\n' '# Method Note' '' 'A generic synthetic method note for checker smoke testing.' > $$tmpdir/method-note.md; \
 	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode shared-mechanical-only $$tmpdir; \
+	status=$$?; rm -rf $$tmpdir; exit $$status
+	@tmpdir=$$(mktemp -d); \
+	printf '%s\n' '---' 'title: Generic Case Note' 'note_type: case' '---' '# Generic Case Note' '' 'Synthetic frontmatter-only note without a tag convention.' > $$tmpdir/frontmatter-only.md; \
+	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode shared-mechanical-only $$tmpdir; \
+	status=$$?; rm -rf $$tmpdir; exit $$status
+	@tmpdir=$$(mktemp -d); mkdir -p $$tmpdir/patterns; \
+	printf '%s\n' '# Generic Index' '' 'See [[patterns/example-note]].' > $$tmpdir/index.md; \
+	printf '%s\n' '# Example Note' '' 'Synthetic target note.' > $$tmpdir/patterns/example-note.md; \
+	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode shared-mechanical-only $$tmpdir; \
+	status=$$?; rm -rf $$tmpdir; exit $$status
+	@tmpdir=$$(mktemp -d); \
+	printf '%s\n' '# 多言語の概念ノート' '' 'Generic synthetic concept note paragraph one describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph two describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph three describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph four describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph five describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' > $$tmpdir/textbook.md; \
+	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode textbook-full-gate $$tmpdir; \
 	status=$$?; rm -rf $$tmpdir; exit $$status
 
 test-integration:
