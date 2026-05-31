@@ -109,15 +109,21 @@ def target_candidates(raw: str) -> list[str]:
     if not target:
         return []
 
-    lowered = target.casefold()
-    candidates = [lowered]
+    lowered = target.replace("\\", "/").casefold()
+    has_path = "/" in lowered
     if lowered.endswith(".md"):
-        candidates.append(lowered[:-3])
+        path_candidates = [lowered, lowered[:-3]]
     else:
-        candidates.append(f"{lowered}.md")
-    candidates.append(Path(lowered).name)
-    if not Path(lowered).name.endswith(".md"):
-        candidates.append(f"{Path(lowered).name}.md")
+        path_candidates = [lowered, f"{lowered}.md"]
+
+    if has_path:
+        return path_candidates
+
+    basename = Path(lowered).name
+    candidates = list(path_candidates)
+    candidates.append(basename)
+    if not basename.endswith(".md"):
+        candidates.append(f"{basename}.md")
     return candidates
 
 
@@ -193,7 +199,10 @@ def scan_file(
 
     if mode == "textbook-full-gate":
         if is_too_thin(text):
-            problems.append(f"{display}: note appears too thin for textbook learning use")
+            warnings.append(
+                f"{display}: note appears too thin for textbook learning use; "
+                "confirm semantic coverage with textbook-learning-content-review"
+            )
         if detectable_textbook_sections(text) < 4:
             warnings.append(
                 f"{display}: textbook learning sections were not mechanically detected; "

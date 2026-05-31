@@ -52,8 +52,19 @@ test-unit:
 	printf '%s\n' '# Example Note' '' 'Synthetic target note.' > $$tmpdir/patterns/example-note.md; \
 	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode shared-mechanical-only $$tmpdir; \
 	status=$$?; rm -rf $$tmpdir; exit $$status
+	@tmpdir=$$(mktemp -d); mkdir -p $$tmpdir/a; \
+	printf '%s\n' '# Generic Index' '' 'See [[missing/b]].' > $$tmpdir/index.md; \
+	printf '%s\n' '# B' > $$tmpdir/a/b.md; \
+	! $(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode shared-mechanical-only $$tmpdir; \
+	status=$$?; rm -rf $$tmpdir; exit $$status
 	@tmpdir=$$(mktemp -d); \
 	printf '%s\n' '# 多言語の概念ノート' '' 'Generic synthetic concept note paragraph one describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph two describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph three describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph four describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' '' 'Generic synthetic concept note paragraph five describes a durable idea, practitioner context, relevant conditions, observable signals, decision support, misuse risk, transfer practice, review prompt, relation mapping, and application boundary without relying on fixed English section labels.' > $$tmpdir/textbook.md; \
+	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode textbook-full-gate $$tmpdir; \
+	status=$$?; rm -rf $$tmpdir; exit $$status
+	@tmpdir=$$(mktemp -d); \
+	printf '%s\n' '# Index' '' '- [[concept-a]]' '- [[method-b]]' > $$tmpdir/index.md; \
+	printf '%s\n' '# Concept A' > $$tmpdir/concept-a.md; \
+	printf '%s\n' '# Method B' > $$tmpdir/method-b.md; \
 	$(PYTHON) .agents/skills/textbook-quality-gate/scripts/check_study_notes.py --mode textbook-full-gate $$tmpdir; \
 	status=$$?; rm -rf $$tmpdir; exit $$status
 
