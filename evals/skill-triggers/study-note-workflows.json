@@ -1,0 +1,301 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "textbook-pattern-catalog-pack",
+      "prompt": "Convert a technical pattern catalog Markdown pack into structured learning notes with concept, method, pattern, antipattern, and review notes.",
+      "should_trigger": [
+        "textbook-structured-content-workflow"
+      ],
+      "should_not_trigger": [
+        "problem-framing-narrative-study-workflow",
+        "technical-essay-study-workflow",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "Textbook Pack Build Report"
+      ],
+      "expected_decisions": [
+        "Source is classified as textbook-style by stable taxonomy"
+      ],
+      "expected_evidence": [
+        "note-type map",
+        "contracts applied",
+        "representative notes sent to review"
+      ]
+    },
+    {
+      "id": "textbook-definition-only-note-review",
+      "prompt": "Review this textbook-style method note. It defines the method but does not explain when to use it, inputs, outputs, decisions enabled, or pitfalls.",
+      "should_trigger": [
+        "textbook-learning-content-review"
+      ],
+      "should_not_trigger": [
+        "textbook-quality-gate",
+        "technical-essay-study-workflow",
+        "problem-framing-narrative-study-workflow"
+      ],
+      "expected_artifacts": [
+        "Textbook Learning Content Review"
+      ],
+      "expected_decisions": [
+        "Definition-only note fails semantic usefulness review"
+      ],
+      "expected_evidence": [
+        "missing use situation",
+        "missing inputs/outputs",
+        "missing decision enabled",
+        "missing pitfalls"
+      ]
+    },
+    {
+      "id": "textbook-pack-full-gate",
+      "prompt": "Run the final gate for a textbook-style learning-note pack before publishing. Check note contracts, representative learning quality, tags, wikilinks, unresolved links, and encoding corruption.",
+      "should_trigger": [
+        "textbook-quality-gate"
+      ],
+      "should_not_trigger": [
+        "textbook-learning-content-review",
+        "technical-essay-study-workflow",
+        "problem-framing-narrative-study-workflow"
+      ],
+      "expected_artifacts": [
+        "Gate decision in textbook-full-gate mode"
+      ],
+      "expected_decisions": [
+        "Textbook semantic checks are applicable",
+        "Submit only if deterministic and semantic checks pass"
+      ],
+      "expected_evidence": [
+        "checks run",
+        "semantic spot-check",
+        "shared mechanical checks"
+      ]
+    },
+    {
+      "id": "narrative-problem-framing-pack",
+      "prompt": "Create study notes from a problem-framing narrative book. Preserve each case's apparent problem, hidden frame, reframing move, consequence, and reader diagnostic question.",
+      "should_trigger": [
+        "problem-framing-narrative-study-workflow"
+      ],
+      "should_not_trigger": [
+        "textbook-structured-content-workflow",
+        "technical-essay-study-workflow",
+        "textbook-learning-content-review"
+      ],
+      "expected_artifacts": [
+        "Narrative Study Pack Report"
+      ],
+      "expected_decisions": [
+        "Source is classified by misframing/reframing/consequence rather than stable taxonomy"
+      ],
+      "expected_evidence": [
+        "apparent problem",
+        "hidden frame",
+        "reframing move",
+        "reader application question"
+      ]
+    },
+    {
+      "id": "technical-essay-pack",
+      "prompt": "Create study notes from a software essay collection. Separate author claims, reasoning paths, examples, practices, historical context, and present-day applicability limits.",
+      "should_trigger": [
+        "technical-essay-study-workflow"
+      ],
+      "should_not_trigger": [
+        "problem-framing-narrative-study-workflow",
+        "textbook-structured-content-workflow",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "Technical Essay Study Pack Report"
+      ],
+      "expected_decisions": [
+        "Source is classified by claim/reasoning/practice/context rather than misframing/reframing"
+      ],
+      "expected_evidence": [
+        "author claim",
+        "reasoning path",
+        "present-day applicability",
+        "historical context"
+      ]
+    },
+    {
+      "id": "narrative-not-textbook",
+      "prompt": "Build case notes from a systems-thinking case book where the durable lesson is the hidden frame behind the apparent problem and the reframing move that changes the consequence.",
+      "should_trigger": [
+        "problem-framing-narrative-study-workflow"
+      ],
+      "should_not_trigger": [
+        "textbook-structured-content-workflow",
+        "technical-essay-study-workflow"
+      ],
+      "expected_artifacts": [
+        "Narrative Study Pack Report"
+      ],
+      "expected_decisions": [
+        "Narrative source should not trigger textbook workflow"
+      ],
+      "expected_evidence": [
+        "hidden frame",
+        "reframing move",
+        "consequence"
+      ]
+    },
+    {
+      "id": "technical-essay-not-narrative",
+      "prompt": "Extract study notes from an engineering blog anthology into claims, reasoning paths, practices, historical context, and applicability limits.",
+      "should_trigger": [
+        "technical-essay-study-workflow"
+      ],
+      "should_not_trigger": [
+        "problem-framing-narrative-study-workflow",
+        "textbook-structured-content-workflow"
+      ],
+      "expected_artifacts": [
+        "Technical Essay Study Pack Report"
+      ],
+      "expected_decisions": [
+        "Technical essay source should not trigger narrative workflow"
+      ],
+      "expected_evidence": [
+        "claim",
+        "reasoning path",
+        "applicability limits"
+      ]
+    },
+    {
+      "id": "textbook-review-not-final-gate",
+      "prompt": "Review one textbook-style concept note for whether it is definition-only and lacks use conditions, outputs, pitfalls, and meaningful links.",
+      "should_trigger": [
+        "textbook-learning-content-review"
+      ],
+      "should_not_trigger": [
+        "textbook-quality-gate",
+        "textbook-structured-content-workflow"
+      ],
+      "expected_artifacts": [
+        "Textbook Learning Content Review"
+      ],
+      "expected_decisions": [
+        "Textbook semantic review should not trigger final gate"
+      ],
+      "expected_evidence": [
+        "definition-only",
+        "use conditions",
+        "pitfalls"
+      ]
+    },
+    {
+      "id": "mechanical-only-not-textbook-semantic",
+      "prompt": "A technical essay pack already passed semantic review. Before publishing, check only tags, wikilinks, unresolved links, and Unicode replacement-character corruption.",
+      "should_trigger": [
+        "textbook-quality-gate"
+      ],
+      "should_not_trigger": [
+        "textbook-learning-content-review",
+        "textbook-structured-content-workflow"
+      ],
+      "expected_artifacts": [
+        "Gate decision in shared-mechanical-only mode"
+      ],
+      "expected_decisions": [
+        "Do not apply textbook required headings or definition-only checks"
+      ],
+      "expected_evidence": [
+        "tags/frontmatter check",
+        "wikilinks check",
+        "unresolved links check",
+        "Unicode replacement-character corruption scan"
+      ]
+    },
+    {
+      "id": "completed-pack-registration-not-generation",
+      "prompt": "The study-note pack content is complete. Register or check links and tags only before external note-app sync.",
+      "should_trigger": [
+        "textbook-quality-gate"
+      ],
+      "should_not_trigger": [
+        "textbook-structured-content-workflow",
+        "problem-framing-narrative-study-workflow",
+        "technical-essay-study-workflow"
+      ],
+      "expected_artifacts": [
+        "Gate decision in shared-mechanical-only mode"
+      ],
+      "expected_decisions": [
+        "Completed pack registration/check should not trigger content-generation workflows"
+      ],
+      "expected_evidence": [
+        "link check",
+        "tag check",
+        "external sync readiness"
+      ]
+    },
+    {
+      "id": "mechanical-only-frontmatter-without-tags",
+      "prompt": "A narrative study-note pack already passed semantic review. The notes have frontmatter but do not use tags as a pack convention. Run only shared mechanical checks before publishing.",
+      "should_trigger": [
+        "textbook-quality-gate"
+      ],
+      "should_not_trigger": [
+        "textbook-learning-content-review",
+        "textbook-structured-content-workflow"
+      ],
+      "expected_artifacts": [
+        "Gate decision in shared-mechanical-only mode"
+      ],
+      "expected_decisions": [
+        "Do not fail solely because frontmatter exists without tags"
+      ],
+      "expected_evidence": [
+        "frontmatter sanity",
+        "wikilinks check",
+        "corruption scan"
+      ]
+    },
+    {
+      "id": "mechanical-only-root-relative-wikilinks",
+      "prompt": "Check a completed study-note pack where links use root-relative wikilinks such as [[patterns/example-note]]. Verify links without applying textbook semantic checks.",
+      "should_trigger": [
+        "textbook-quality-gate"
+      ],
+      "should_not_trigger": [
+        "textbook-learning-content-review",
+        "textbook-structured-content-workflow"
+      ],
+      "expected_artifacts": [
+        "Gate decision in shared-mechanical-only mode"
+      ],
+      "expected_decisions": [
+        "Resolve local wikilinks relative to the provided note root"
+      ],
+      "expected_evidence": [
+        "unresolved links check",
+        "shared mechanical checks"
+      ]
+    },
+    {
+      "id": "quote-list-transformed-to-paraphrased-notes",
+      "prompt": "Turn an opinionated practice book into a list of memorable quotations for my notes.",
+      "should_trigger": [
+        "technical-essay-study-workflow"
+      ],
+      "should_not_trigger": [
+        "textbook-structured-content-workflow",
+        "problem-framing-narrative-study-workflow"
+      ],
+      "expected_artifacts": [
+        "Technical Essay Study Pack Report"
+      ],
+      "expected_decisions": [
+        "Quote-list request is rejected or transformed into a paraphrased learning-note request"
+      ],
+      "expected_evidence": [
+        "paraphrased learning artifact",
+        "copyright safeguard",
+        "claim and practice structure"
+      ]
+    }
+  ]
+}

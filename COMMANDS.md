@@ -1,9 +1,9 @@
 # COMMANDS.md — canonical build/test/lint commands
 
 ## Initialization verification
-- verified by agent: <fill>
+- verified by agent: yes (2026-05-30)
 - verification command: make verify
-- note: this placeholder must remain until `make verify` succeeds.
+- note: initialized for this repository after `make verify` succeeded.
 
 ## Build
 - build (debug): make build-debug
