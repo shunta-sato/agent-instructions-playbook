@@ -1,0 +1,42 @@
+feature: "<feature>"
+target_profile: "<target>"
+status: calibrated|provisional|unknown
+
+budgets:
+  steady_state_cpu_percent_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  default_polling_interval_ms_min:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  wakeups_per_second_added_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  continuous_disk_write_bytes_per_second_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+rules:
+  no_production_budget_without_provenance: true
+  no_measurement_no_claim: true
+  host_fallback_is_not_target_proof: true
+  placeholder_unknown_blocks_production_claims: true

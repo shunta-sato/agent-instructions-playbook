@@ -31,11 +31,14 @@ skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros
 skill|destructive-refactor|Replace flawed abstraction safely|.agents/skills/destructive-refactor/SKILL.md
 skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md
 skill|embedded-hot-path-review|Embedded hot-path review|.agents/skills/embedded-hot-path-review/SKILL.md
+skill|embedded-nfr-calibration|Embedded NFR calibration|.agents/skills/embedded-nfr-calibration/SKILL.md
 skill|embedded-nfr-design|Embedded physical NFR design|.agents/skills/embedded-nfr-design/SKILL.md
 skill|embedded-nfr-gate|Embedded NFR submit gate|.agents/skills/embedded-nfr-gate/SKILL.md
 skill|embedded-nfr-harness-design|Embedded NFR harness design|.agents/skills/embedded-nfr-harness-design/SKILL.md
 skill|embedded-observer-effect-review|Embedded observer-effect review|.agents/skills/embedded-observer-effect-review/SKILL.md
+skill|embedded-operating-envelope-discovery|Embedded operating envelope discovery|.agents/skills/embedded-operating-envelope-discovery/SKILL.md
 skill|embedded-project-constitution|Embedded project constitution|.agents/skills/embedded-project-constitution/SKILL.md
+skill|embedded-target-characterization|Embedded target characterization|.agents/skills/embedded-target-characterization/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md

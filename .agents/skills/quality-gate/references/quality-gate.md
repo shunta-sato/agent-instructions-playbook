@@ -22,6 +22,9 @@ Confirm required evidence exists for each triggered branch:
 - architecture-decision-analysis branch → Architecture Decision Analysis Record with decision/no-decision, quality drivers, option tradeoffs, verification tasks, and handoffs
 - observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
 - feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits
+- embedded target characterization branch → `docs/targets/<target>/target-characterization.md`, `target_profiles/<target>.yaml`, baseline paths, and characterization report when production claims depend on target behavior
+- embedded operating envelope branch → `docs/targets/<target>/operating-envelope.md` and scenario reports for normal, degraded, boundary, observer, recovery, or blackout behavior
+- embedded NFR calibration branch → `reports/nfr-calibration/<feature>.md` plus budget provenance when numeric production budgets are claimed
 - constitution-only embedded branch → constitution artifacts such as project principles, resource discipline, physical budgets, target profiles, resource harness skeleton, and PR-template section. Do not require a feature-level NFR gate report unless runtime changes or production-readiness claims are introduced.
 - staged-lowering branch → staged plan + per-pass verification log
 - legacy branch → characterization/safety-net evidence + seam/refactor notes
@@ -38,6 +41,8 @@ Confirm required evidence exists for each triggered branch:
 - Path-specific instructions were identified and followed.
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
+- If embedded NFR claims depend on target behavior, target characterization exists or the claim is explicitly provisional.
+- If numeric production budgets are claimed, budget provenance exists and calibration artifacts are referenced.
 - If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
 - Open risks or follow-ups are explicitly documented.
 

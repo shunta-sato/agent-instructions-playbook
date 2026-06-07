@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Embedded target characterization report",
+  "type": "object",
+  "required": [
+    "target",
+    "target_class",
+    "measurement_surfaces",
+    "workloads",
+    "baselines",
+    "constraints",
+    "confidence"
+  ],
+  "properties": {
+    "target": { "type": "string" },
+    "target_class": { "type": "string" },
+    "hardware": { "type": "string" },
+    "os_or_runtime": { "type": "string" },
+    "power_source": { "type": "string" },
+    "storage": { "type": "string" },
+    "measurement_surfaces": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["available"],
+        "properties": {
+          "available": { "type": "boolean" },
+          "tool_or_path": { "type": "string" },
+          "privilege": { "type": "string" },
+          "limit": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "workloads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "command": { "type": "string" },
+          "risk": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "baselines": {
+      "type": "object",
+      "properties": {
+        "idle": { "type": "string" },
+        "nominal_workload": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "do_not_probe": { "type": "array", "items": { "type": "string" } },
+        "safety_constraints": { "type": "array", "items": { "type": "string" } },
+        "missing_signals": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "confidence": { "enum": ["high", "medium", "low", "unknown"] }
+  },
+  "additionalProperties": true
+}

@@ -1,5 +1,6 @@
 project: "<project>"
 status: draft
+budget_status: provisional
 
 rules:
   no_measurement_no_claim: true
@@ -32,3 +33,10 @@ degraded_modes:
   thermal_pressure: "<policy>"
   storage_pressure: "<policy>"
   measurement_unavailable: "mark feature experimental or remove production claims"
+
+budget_provenance_defaults:
+  source: placeholder_unknown
+  confidence: unknown
+  evidence: []
+  production_claim_allowed: false
+  next_step: "Run embedded-target-characterization before finalizing production budgets."

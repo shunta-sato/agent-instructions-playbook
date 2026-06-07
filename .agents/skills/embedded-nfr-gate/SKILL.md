@@ -37,6 +37,8 @@ Do not use this skill for non-embedded final readiness; use `quality-gate`.
    - target profile or explicit missing-target reason
    - resource harness plan or explicit no-measurement reason
    - resource report when measurement is claimed
+   - target characterization when production claims depend on target behavior
+   - calibration report when numeric production budgets are claimed
    - hot-path report when loop/polling/sampling risk exists
    - observer-effect report when instrumentation can perturb workload
 2. Compare measurements against budgets.
@@ -51,6 +53,9 @@ Do not use this skill for non-embedded final readiness; use `quality-gate`.
    - unbounded wakeups block submit
    - continuous default disk writes need budget and flash-wear evidence
    - high-frequency default polling needs budget, measurement, and justification
+   - production budget source `placeholder_unknown` blocks submit unless feature is experimental-only
+   - missing target characterization with production-ready claims blocks submit
+   - host-only evidence for target battery-safe claims blocks submit
 5. Decide:
    - `submit`: budgets pass and claims are measured or limited
    - `no-submit`: budget exceeded, artifact missing, or unsupported claim remains
@@ -63,6 +68,19 @@ Do not use this skill for non-embedded final readiness; use `quality-gate`.
 Produce:
 
 - `reports/resource/nfr-gate-report.md`
+
+## Budget Provenance
+
+Check calibrated budget sources when numeric production budgets are claimed:
+
+- `measured`
+- `calibrated_from_target_baseline`
+- `inferred_from_operating_envelope`
+- `user_mandated`
+- `standard_or_platform_guidance`
+- `placeholder_unknown`
+
+Treat `placeholder_unknown` as `no-submit` or `experimental-only`.
 
 ## Gotchas
 

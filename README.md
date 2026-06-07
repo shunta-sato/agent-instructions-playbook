@@ -51,6 +51,9 @@ The goal is a small, curated software-development operating system: clear entry 
 
 ### Embedded NFR and resource discipline
 
+- `embedded-target-characterization` — learn target facts, measurement surfaces, baselines, and constraints before budgeting
+- `embedded-operating-envelope-discovery` — discover normal, degraded, boundary, recovery, and telemetry blackout behavior
+- `embedded-nfr-calibration` — derive embedded NFR budgets from target evidence with provenance and revisit conditions
 - `embedded-nfr-design` — define physical-footprint budgets and no-claim rules before embedded implementation
 - `embedded-nfr-harness-design` — turn embedded budgets into target profiles, scenarios, reports, and smoke commands
 - `embedded-nfr-gate` — decide submit/no-submit from embedded budgets, measurements, unknowns, and claims
@@ -106,11 +109,14 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `destructive-refactor` | Replace flawed abstraction safely | `.agents/skills/destructive-refactor/SKILL.md` |
 | `dev-workflow` | Risk-routed dev workflow | `.agents/skills/dev-workflow/SKILL.md` |
 | `embedded-hot-path-review` | Embedded hot-path review | `.agents/skills/embedded-hot-path-review/SKILL.md` |
+| `embedded-nfr-calibration` | Embedded NFR calibration | `.agents/skills/embedded-nfr-calibration/SKILL.md` |
 | `embedded-nfr-design` | Embedded physical NFR design | `.agents/skills/embedded-nfr-design/SKILL.md` |
 | `embedded-nfr-gate` | Embedded NFR submit gate | `.agents/skills/embedded-nfr-gate/SKILL.md` |
 | `embedded-nfr-harness-design` | Embedded NFR harness design | `.agents/skills/embedded-nfr-harness-design/SKILL.md` |
 | `embedded-observer-effect-review` | Embedded observer-effect review | `.agents/skills/embedded-observer-effect-review/SKILL.md` |
+| `embedded-operating-envelope-discovery` | Embedded operating envelope discovery | `.agents/skills/embedded-operating-envelope-discovery/SKILL.md` |
 | `embedded-project-constitution` | Embedded project constitution | `.agents/skills/embedded-project-constitution/SKILL.md` |
+| `embedded-target-characterization` | Embedded target characterization | `.agents/skills/embedded-target-characterization/SKILL.md` |
 | `error-handling` | Boundary error handling | `.agents/skills/error-handling/SKILL.md` |
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |

@@ -51,3 +51,23 @@ measurement:
   baseline_path: "baselines/resource/<feature>.json"
   report_path: "reports/resource/<feature>.json"
   missing_evidence: []
+
+budget_provenance:
+  steady_state_cpu_percent_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  default_polling_interval_ms_min:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  wakeups_per_second_added_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []

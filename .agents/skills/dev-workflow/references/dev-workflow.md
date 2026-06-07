@@ -47,6 +47,9 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`
 - runtime behavior change → `$observability`
+- embedded/edge/target-local work with missing target profile, unknown normal workload, unknown measurement surfaces, unknown resource headroom, or guessed physical budget → `$embedded-target-characterization`
+- embedded work where normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown → `$embedded-operating-envelope-discovery`
+- embedded work where physical budget values are being set or revised from target evidence → `$embedded-nfr-calibration`
 - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → `$embedded-nfr-design`
 - target-local loop/polling/sampling/collector/recorder hot path, sub-100ms cadence, per-iteration I/O, repeated serialization, or hot-path allocation → `$embedded-hot-path-review`
 - target-local logging/recording/collection/tracing/profiling/measurement that can perturb scheduler, power, thermal, I/O, memory, wakeups, or workload → `$embedded-observer-effect-review`
@@ -75,6 +78,9 @@ Use this table to avoid opening all embedded NFR skills by default.
 | Skill | Trigger |
 | --- | --- |
 | `$embedded-nfr-design` | Always for embedded physical-footprint work. |
+| `$embedded-target-characterization` | If target profile, normal workload, measurement surface, resource headroom, or physical budget provenance is missing. |
+| `$embedded-operating-envelope-discovery` | If normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown. |
+| `$embedded-nfr-calibration` | If budget values are being set or revised from target characterization, baselines, or operating envelope evidence. |
 | `$embedded-hot-path-review` | Only if loop, polling, sampling, collector, recorder, or hot-path behavior exists. |
 | `$embedded-observer-effect-review` | Only if instrumentation or measurement can perturb workload. |
 | `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |

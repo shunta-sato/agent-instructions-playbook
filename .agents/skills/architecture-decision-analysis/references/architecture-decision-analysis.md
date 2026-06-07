@@ -111,6 +111,7 @@ Good:
 Use handoffs only when needed:
 
 - `requirements-engineering`: vague requirement, unclear quality driver, missing acceptance criteria.
+- `embedded-target-characterization`: embedded physical quality drivers depend on target baselines or measurement surfaces that are missing.
 - `embedded-nfr-design`: embedded CPU, memory, wakeup, battery, flash wear, thermal, latency/jitter, or observer-effect budget needed.
 - `observability`: selected design needs logs, metrics, traces, correlation identifiers, or dashboards.
 - `error-handling`: boundary failure contract, retries, fallbacks, user-visible errors.
