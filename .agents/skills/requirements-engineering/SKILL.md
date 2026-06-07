@@ -40,8 +40,9 @@ Do not use it for small, already-clear implementation tasks unless the user asks
    - `references/iso25010-quality-scenarios.md` for measurable quality attributes and NFRs
 4. Write 1-5 requirements first unless the task genuinely needs more.
 5. For each requirement, include acceptance criteria and a verification method.
-6. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
-7. Add assumptions, open questions, and traceability only where they reduce ambiguity.
+6. If an embedded NFR requirement depends on target behavior, do not finalize numeric acceptance criteria until `embedded-target-characterization` exists or the requirement is explicitly unknown/provisional.
+7. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
+8. Add assumptions, open questions, and traceability only where they reduce ambiguity.
 
 ## Outputs
 

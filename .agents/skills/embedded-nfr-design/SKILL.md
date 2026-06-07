@@ -28,32 +28,41 @@ Do not use it for generic backend APIs, web UI, schema-only work, pure docs, or 
 
 0) Open `references/embedded-nfr-taxonomy.md` and only the templates needed for the feature.
 
-1. Define target-class assumptions:
+1. Check target context before production budgets:
+   - target characterization exists and is current, or
+   - budgets are explicitly provisional or unknown.
+   If target profile, normal workload, measurement surfaces, or baseline are missing, route to `embedded-target-characterization`.
+
+2. Define target-class assumptions:
    - target class and operating mode
    - power source assumptions
    - default, burst, and degraded modes
    - unavailable measurement surfaces
 
-2. Create an Embedded NFR Matrix using `templates/nfr-matrix.md`.
+3. Create an Embedded NFR Matrix using `templates/nfr-matrix.md`.
    Include CPU, wakeups, memory, hot-path allocation, storage writes, flash wear, battery, network/radio, thermal, latency/jitter, degradation, and observer overhead when relevant.
 
-3. Create or update physical budgets using `templates/physical-budgets.yaml`.
+4. Create or update physical budgets using `templates/physical-budgets.yaml`.
    Use explicit unknown or experimental values when a budget cannot be measured yet.
    Include sampling/polling cadence budgets so high-frequency default behavior is machine-readable.
+   No production budget is final without provenance.
 
-4. Separate steady-state from burst behavior.
+5. Separate steady-state from burst behavior.
    Default mode must be conservative; high-frequency behavior needs a bounded burst or experimental-only status.
 
-5. Define the degraded-mode policy.
+6. Define the degraded-mode policy.
    Include battery_low, memory_pressure, thermal_pressure, storage_pressure, and measurement_unavailable decisions where relevant.
 
-6. Define the measurement plan.
+7. Define the measurement plan.
    Route to `embedded-nfr-harness-design` when budgets need a harness or target smoke command.
 
-7. Record the no-measurement-no-claim list.
+8. Record the no-measurement-no-claim list.
    Claims such as "low overhead" or "battery safe" require measurement evidence or must be removed/limited.
 
-8. Record handoffs:
+9. Record handoffs:
+   - `embedded-target-characterization` when target profile, normal workload, measurement surfaces, or baseline are missing
+   - `embedded-operating-envelope-discovery` when normal/degraded/failure boundary is unknown
+   - `embedded-nfr-calibration` when budgets need to be derived from measured target behavior
    - `embedded-hot-path-review` for loops, samplers, polling, collectors, recorders, or high-frequency paths
    - `embedded-observer-effect-review` for target-local logging, recording, tracing, or profiling
    - `architecture-decision-analysis` when multiple structure options trade off physical NFRs
@@ -66,6 +75,12 @@ Produce or update:
 
 - `docs/nfr/<feature>.md` with Embedded NFR Matrix, assumptions, degraded-mode policy, measurement plan, and no-claim list
 - `requirements/nfr/<feature>.yaml` or equivalent physical budget file
+
+## Rules
+
+- No production budget without target context or explicit unknown/provisional status.
+- No production budget without provenance.
+- `placeholder_unknown` budget sources block production-ready claims.
 
 ## Gotchas
 

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Embedded target characterization report",
+  "type": "object",
+  "required": [
+    "target",
+    "characterized_at",
+    "target_profile_version",
+    "target_class",
+    "workload_fingerprint",
+    "measurement_method",
+    "measurement_duration_seconds",
+    "observer_state",
+    "environment",
+    "measurement_surfaces",
+    "workloads",
+    "baselines",
+    "constraints",
+    "confidence",
+    "confidence_per_surface",
+    "staleness",
+    "revisit_when"
+  ],
+  "properties": {
+    "target": { "type": "string" },
+    "characterized_at": { "type": "string" },
+    "target_profile_version": { "type": "string" },
+    "target_class": { "type": "string" },
+    "hardware": { "type": "string" },
+    "os_or_runtime": { "type": "string" },
+    "power_source": { "type": "string" },
+    "storage": { "type": "string" },
+    "workload_fingerprint": { "type": "string" },
+    "measurement_method": { "type": "string" },
+    "measurement_duration_seconds": { "type": ["number", "null"] },
+    "observer_state": { "enum": ["observer_off", "observer_on", "unknown"] },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "ambient_temp": { "type": ["number", "string", "null"] },
+        "power_mode": { "type": "string" },
+        "battery_state": { "type": "string" },
+        "governor": { "type": "string" },
+        "thermal_state": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "measurement_surfaces": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["available"],
+        "properties": {
+          "available": { "type": "boolean" },
+          "tool_or_path": { "type": "string" },
+          "privilege": { "type": "string" },
+          "limit": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "workloads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "command": { "type": "string" },
+          "risk": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "baselines": {
+      "type": "object",
+      "properties": {
+        "idle": { "type": "string" },
+        "nominal_workload": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "do_not_probe": { "type": "array", "items": { "type": "string" } },
+        "safety_constraints": { "type": "array", "items": { "type": "string" } },
+        "missing_signals": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "confidence": { "enum": ["high", "medium", "low", "unknown"] },
+    "confidence_per_surface": {
+      "type": "object",
+      "additionalProperties": { "enum": ["high", "medium", "low", "unknown"] }
+    },
+    "staleness": { "type": "string" },
+    "revisit_when": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

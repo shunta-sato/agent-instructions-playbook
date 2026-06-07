@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "embedded-target-missing-profile",
+      "prompt": "We need to add a low-overhead recorder to a new battery-powered Linux sensor target, but we do not yet know CPU headroom, battery visibility, or measurement surfaces.",
+      "should_trigger": [
+        "dev-workflow",
+        "embedded-project-constitution",
+        "embedded-target-characterization",
+        "embedded-nfr-design"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/target-characterization.md",
+        "target_profiles/<target>.yaml",
+        "baselines/resource/<target>/idle.json",
+        "baselines/resource/<target>/nominal_workload.json"
+      ],
+      "expected_decisions": [
+        "Target characterization happens before embedded-nfr-design finalizes production budgets",
+        "Unknown battery visibility and measurement surfaces keep budgets provisional or unknown"
+      ],
+      "expected_evidence": [
+        "Measurement surface inventory",
+        "Target safety constraints and do-not-probe list",
+        "Idle and nominal workload baseline paths or explicit missing evidence"
+      ],
+      "notes": "Missing target profile and measurement surfaces should trigger target characterization."
+    },
+    {
+      "id": "embedded-envelope-unknown",
+      "prompt": "The target starts dropping camera frames after sustained load. We need to understand where normal operation becomes degraded before setting recorder budgets.",
+      "should_trigger": [
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/operating-envelope.md",
+        "reports/operating-envelope/<target>/<scenario>.json",
+        "reports/nfr-calibration/<feature>.md"
+      ],
+      "expected_decisions": [
+        "Normal, near-boundary, degraded, and recovery scenarios are identified before budget calibration",
+        "Safe experimental limits are recorded before probing sustained load"
+      ],
+      "expected_evidence": [
+        "Early warning trends before degradation",
+        "No-go boundary and telemetry behavior"
+      ],
+      "notes": "Unknown degradation boundary should trigger envelope discovery and calibration."
+    },
+    {
+      "id": "embedded-budget-calibration",
+      "prompt": "We measured idle and nominal workload on Pi5. Now calibrate the default recorder CPU and wakeup budgets from those reports.",
+      "should_trigger": [
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "embedded-operating-envelope-discovery"
+      ],
+      "expected_artifacts": [
+        "reports/nfr-calibration/<feature>.md",
+        "requirements/nfr/<feature>.yaml",
+        "docs/nfr/<feature>.md"
+      ],
+      "expected_decisions": [
+        "Budget sources are calibrated_from_target_baseline or measured, not placeholder_unknown",
+        "Budgets include evidence paths, confidence, rationale, and revisit conditions"
+      ],
+      "expected_evidence": [
+        "Idle and nominal workload report paths",
+        "Calibrated CPU and wakeup budgets"
+      ],
+      "notes": "Measured baselines should trigger budget calibration."
+    },
+    {
+      "id": "existing-logger-blackout-boundary",
+      "prompt": "The app logger stops emitting right before the incident. Determine whether this is a missing-evidence blackout boundary and what NFR budget should govern the observer.",
+      "should_trigger": [
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-observer-effect-review",
+        "embedded-nfr-calibration"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "concurrency-android"
+      ],
+      "expected_artifacts": [
+        "reports/resource/observer-effect-review.md",
+        "docs/targets/<target>/operating-envelope.md",
+        "reports/nfr-calibration/<feature>.md"
+      ],
+      "expected_decisions": [
+        "Telemetry blackout is treated as a boundary finding rather than absence of failure",
+        "Observer budget is calibrated from target and envelope evidence"
+      ],
+      "expected_evidence": [
+        "Observer-on vs observer-off comparison",
+        "Blackout or telemetry-loss scenario report"
+      ],
+      "notes": "Logger blackout near an incident should trigger envelope discovery and observer-effect review."
+    },
+    {
+      "id": "embedded-template-budget-production-claim",
+      "prompt": "We copied physical_budgets.yaml from the template and now want to claim the recorder is production-ready and battery-safe on our sensor target.",
+      "should_trigger": [
+        "embedded-target-characterization",
+        "embedded-nfr-calibration",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/target-characterization.md",
+        "reports/nfr-calibration/<feature>.md",
+        "reports/resource/nfr-gate-report.md"
+      ],
+      "expected_decisions": [
+        "Template budgets are provisional and cannot support production-ready or battery-safe claims without target evidence",
+        "placeholder_unknown budget provenance blocks production-ready claims unless the feature is experimental-only"
+      ],
+      "expected_evidence": [
+        "Target characterization evidence for the sensor target",
+        "Calibrated battery and recorder resource budgets",
+        "NFR gate claim review"
+      ],
+      "notes": "Template budget values must not be promoted into production-ready resource-safety claims."
+    },
+    {
+      "id": "embedded-target-characterization-negative-schema-only",
+      "prompt": "Add a JSON schema for a server API response.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design"
+      ],
+      "expected_decisions": [
+        "No embedded target-learning skill is required for generic server schema work"
+      ],
+      "notes": "Generic schema-only work is a near-miss negative."
+    },
+    {
+      "id": "embedded-target-characterization-negative-doc-only",
+      "prompt": "Update a doc paragraph in a project that already has current target characterization and no runtime behavior changes.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration"
+      ],
+      "expected_decisions": [
+        "Current target characterization and no runtime behavior change means no target-learning route is required"
+      ],
+      "notes": "Known target plus doc-only work should not retrigger characterization."
+    },
+    {
+      "id": "embedded-target-characterization-negative-backend-performance",
+      "prompt": "Optimize a web API endpoint p95 latency.",
+      "should_trigger": [
+        "requirements-engineering"
+      ],
+      "should_not_trigger": [
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration"
+      ],
+      "expected_decisions": [
+        "Generic backend performance may need requirements or architecture analysis, but not embedded target characterization"
+      ],
+      "notes": "Generic backend performance is outside embedded target-learning scope."
+    }
+  ]
+}

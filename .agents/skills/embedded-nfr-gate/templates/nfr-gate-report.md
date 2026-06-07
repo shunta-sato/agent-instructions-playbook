@@ -29,6 +29,11 @@ Gate decision: submit|no-submit|experimental-only|constitution-only
 
 ## Artifact Check
 
+- Target characterization:
+- Target characterization freshness:
+- Operating envelope:
+- NFR calibration:
+- Calibration revisit condition status:
 - NFR matrix:
 - Physical budget file:
 - Target profile:

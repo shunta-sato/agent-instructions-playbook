@@ -27,22 +27,26 @@ Do not use it for generic benchmark planning, web performance tests, or code pat
 ## How to use
 
 1. Read the physical budgets from `docs/nfr/<feature>.md`, `requirements/nfr/<feature>.yaml`, or the equivalent artifact.
-2. Define target profiles using `templates/target-profile.yaml`.
-3. Define measurement scenarios using `templates/resource-harness-plan.md`:
+2. Classify the harness:
+   - `discovery_harness`: used to understand target behavior and operating envelope
+   - `gate_harness`: used to prove implementation satisfies budgets
+3. Define target profiles using `templates/target-profile.yaml`.
+4. Define measurement scenarios using `templates/resource-harness-plan.md`:
    - idle baseline
    - default steady state
    - bounded burst
    - degraded mode
    - observer-on vs observer-off when relevant
-4. Define the report shape using `templates/resource-report.schema.json`.
+5. Define the report shape using `templates/resource-report.schema.json`.
    Include `budget_results` entries that pair each NFR budget with its measurement, unit, result, evidence path, and fail/unknown reason.
-5. Add commands or command skeletons:
+6. Add commands or command skeletons:
    - target smoke command
    - host fallback command
    - baseline capture command
    - report generation path
-6. State what the harness cannot prove.
-7. Route to `embedded-nfr-gate` once reports or explicit unknowns exist.
+7. State what the harness cannot prove.
+8. Route discovery work to `embedded-target-characterization` or `embedded-operating-envelope-discovery` when target envelope is unknown.
+9. Route to `embedded-nfr-gate` once reports or explicit unknowns exist.
 
 ## Outputs
 
@@ -54,6 +58,11 @@ Produce or update:
 - `scripts/resource/run-resource-smoke.sh` or a project-equivalent command
 - `reports/resource/<feature>.json` schema or sample location
 - resource report `budget_results` that `embedded-nfr-gate` can compare directly
+
+## Rules
+
+- Do not use a gate harness as a substitute for target characterization when the target envelope is unknown.
+- Discovery harness results can calibrate budgets; gate harness results prove budgets for a submitted implementation.
 
 ## Gotchas
 
