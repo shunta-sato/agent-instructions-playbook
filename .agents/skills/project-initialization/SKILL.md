@@ -18,6 +18,8 @@ Use this skill when:
 - The project has just been copied from this template.
 - Canonical build/lint/analysis/test commands are not yet wired.
 
+If project evidence points to embedded, edge, target-local, daemon, logger, recorder, collector, sampler, sensor, robot, battery, flash, wakeup, or thermal constraints, recommend `embedded-project-constitution` after the command system is initialized. Do not block command initialization on that constitution work.
+
 ## Workflow
 
 1. Check `COMMANDS.md` for `<fill>`.
@@ -30,6 +32,7 @@ Use this skill when:
 6. Gate behavior:
    - **Success (exit 0):** replace `verified by agent: <fill>` with `yes (YYYY-MM-DD)`.
    - **Failure (non-zero):** keep `<fill>` and document failure reason + exact next steps to retry (in `INIT_REPORT.md` or appended notes in `COMMANDS.md`).
+7. If embedded/edge physical constraints were detected, hand off to `embedded-project-constitution` for repo-level physical budgets, target profiles, and resource harness skeletons.
 
 ## Sudo / install policy
 

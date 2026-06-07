@@ -25,9 +25,10 @@ Use this skill when:
 - a request is ambiguous, cross-component, user-facing, or risky enough to need requirements first
 - you are creating or updating a requirements brief/spec
 - vague qualities such as "fast", "reliable", "secure", or "usable" need measurable targets
+- embedded physical-footprint qualities such as CPU, RAM, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect need high-level requirement wording before NFR design
 - requirements must be traceable to design decisions, tests, or monitoring
 
-Do not use it for small, already-clear implementation tasks unless the user asks for requirements documentation. If architecture options must be compared, route to `architecture-decision-analysis`.
+Do not use it for small, already-clear implementation tasks unless the user asks for requirements documentation. If architecture options must be compared, route to `architecture-decision-analysis`. If NFRs involve embedded physical footprint, route to `embedded-nfr-design` after drafting the smallest useful high-level requirement.
 
 ## How to use
 
@@ -39,7 +40,8 @@ Do not use it for small, already-clear implementation tasks unless the user asks
    - `references/iso25010-quality-scenarios.md` for measurable quality attributes and NFRs
 4. Write 1-5 requirements first unless the task genuinely needs more.
 5. For each requirement, include acceptance criteria and a verification method.
-6. Add assumptions, open questions, and traceability only where they reduce ambiguity.
+6. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
+7. Add assumptions, open questions, and traceability only where they reduce ambiguity.
 
 ## Outputs
 

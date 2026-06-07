@@ -11,6 +11,8 @@ Before copying static examples, inspect current repo/runtime reality:
 - External dependency interface and connection state:
 - Existing dashboard/query/log artifact paths:
 
+For embedded, edge, target-local, high-frequency, or always-on instrumentation, route to `embedded-nfr-design` and `embedded-observer-effect-review` before treating the signal as safe to enable by default.
+
 ## 1) Operations to observe
 
 - Operation name:
@@ -69,6 +71,7 @@ Optional (golden signals when relevant):
 
 - Throttle or sample high-frequency logs.
 - Prefer boundary logging (once per operation).
+- On embedded targets, account for observer overhead before adding target-local default logs, traces, or profiling.
 
 ## 9) Measurement purpose and feedback
 

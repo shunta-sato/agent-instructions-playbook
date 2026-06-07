@@ -21,6 +21,7 @@ Confirm required evidence exists for each triggered branch:
 - concurrency branch → concurrency verification evidence (plan/shutdown-verification/logging)
 - architecture-decision-analysis branch → Architecture Decision Analysis Record with decision/no-decision, quality drivers, option tradeoffs, verification tasks, and handoffs
 - observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
+- embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, artifact check, budget results, claims review, and unknowns/limits
 - staged-lowering branch → staged plan + per-pass verification log
 - legacy branch → characterization/safety-net evidence + seam/refactor notes
 - structural scan branch → smells/anti-patterns result (new/worsened handled)
@@ -35,6 +36,7 @@ Confirm required evidence exists for each triggered branch:
 
 - Path-specific instructions were identified and followed.
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
+- If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
 - Open risks or follow-ups are explicitly documented.
 
 If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:
@@ -66,3 +68,4 @@ Rule: `submit` only when all required criteria are satisfied and findings are 0.
 
 
 - Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.
+- Verify embedded NFR evidence by checking `reports/resource/nfr-gate-report.md`, not only final-response text.

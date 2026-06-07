@@ -17,12 +17,15 @@ Use this skill when a change adds or changes runtime behavior where operators or
 - External calls to APIs, databases, filesystems, message brokers, or third-party services.
 - User-visible operations where success, failure, or degraded behavior must be explainable.
 - Incident-prone flows such as retries, timeouts, fallbacks, rate limits, auth, payments, imports, exports, or migrations.
+- Target-local instrumentation for embedded/edge systems, only after routing physical-footprint risk through the embedded NFR skills below.
 
 Do not use this skill for docs-only changes, pure formatting, mechanical refactors, or tests that do not change runtime behavior.
 
 ## How to use
 
 0) If this skill is triggered, open `references/observability.md` and follow only the relevant template sections.
+
+0a) If instrumentation is embedded, edge, target-local, high-frequency, or always-on, route first to `embedded-nfr-design` and `embedded-observer-effect-review`. Observability signals can change scheduler, power, wakeups, thermal, I/O, and memory behavior on targets.
 
 1) Live-discover existing instrumentation before adding examples: logging config, metric/tracing libraries, dashboards/queries, external dependency interfaces, schema/config paths, connection state, and relevant version/status output.
 

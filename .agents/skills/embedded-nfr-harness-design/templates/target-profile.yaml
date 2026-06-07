@@ -1,0 +1,26 @@
+target_class: "<target-class>"
+profile_name: "<profile-name>"
+os_or_runtime: "<os/runtime>"
+cpu: "<cpu/model or unknown>"
+memory_mb: null
+storage_type: "<flash/emmc/sd/ssd/unknown>"
+power_source: "<ac/battery/vehicle/unknown>"
+
+measurement_surfaces:
+  procfs: false
+  perf: false
+  powertop: false
+  power_supply: false
+  thermal_zones: false
+  external_power_meter: false
+  custom_runtime_counters: false
+
+default_budgets:
+  steady_state_cpu_percent_max: null
+  wakeups_per_second_added_max: null
+  rss_mb_max: null
+  continuous_disk_write_bytes_per_second_max: 0
+  thermal_rise_celsius_max: null
+
+notes:
+  - "battery_unknown_is_not_ac"

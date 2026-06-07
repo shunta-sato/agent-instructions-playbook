@@ -1,0 +1,24 @@
+project: "<project>"
+status: draft
+
+rules:
+  no_measurement_no_claim: true
+  battery_unknown_is_not_ac: true
+  production_ready_requires_physical_evidence: true
+
+target_classes:
+  - name: "<target-class>"
+    profile: "target_profiles/<target-class>.yaml"
+    default_budgets:
+      steady_state_cpu_percent_max: null
+      wakeups_per_second_added_max: null
+      rss_mb_max: null
+      continuous_disk_write_bytes_per_second_max: 0
+      thermal_rise_celsius_max: null
+
+degraded_modes:
+  battery_low: "<policy>"
+  memory_pressure: "<policy>"
+  thermal_pressure: "<policy>"
+  storage_pressure: "<policy>"
+  measurement_unavailable: "mark feature experimental or remove production claims"

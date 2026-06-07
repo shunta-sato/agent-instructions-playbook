@@ -30,6 +30,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
    - runtime behavior change → `$observability`
+   - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → `$embedded-nfr-design` (+ `$embedded-hot-path-review`, `$embedded-observer-effect-review`, `$embedded-nfr-harness-design`, `$embedded-nfr-gate` when their trigger evidence applies)
    - strict-constraint low-level code or repeated compile/test loops → `$staged-lowering`
    - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
@@ -37,6 +38,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 3) Apply routing priority to avoid overlap:
    - If the task requires choosing among cross-boundary architecture or technology options with measurable quality drivers, run `$architecture-decision-analysis` before implementation. Route to `$requirements-engineering` first if the quality drivers or requirements are too vague to measure.
+   - If embedded physical-footprint NFRs are present, run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 
