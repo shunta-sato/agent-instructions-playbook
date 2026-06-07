@@ -25,6 +25,8 @@ Use this skill when:
 
 Do not use it for pure docs/schema work, generic cloud/backend NFRs, or target work whose current characterization and baselines already exist.
 
+For broader target-learning efforts that also need hardware capability mapping, workload mapping, bottleneck/margin analysis, and architecture constraints, use `embedded-system-familiarization` first.
+
 ## How to use
 
 1. Identify the target and safe discovery boundary.

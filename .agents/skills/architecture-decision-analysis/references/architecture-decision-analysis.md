@@ -42,6 +42,7 @@ Template:
 
 If the metric cannot be written, route to `requirements-engineering`.
 If the metric is an embedded physical-footprint budget, route to `embedded-nfr-design`.
+If architecture choices depend on not-yet-understood target hardware capability, workload envelope, bottleneck/margin data, or physical NFR provenance, route to `embedded-system-familiarization` before final decision.
 
 ## 3. Option comparison
 
@@ -111,6 +112,7 @@ Good:
 Use handoffs only when needed:
 
 - `requirements-engineering`: vague requirement, unclear quality driver, missing acceptance criteria.
+- `embedded-system-familiarization`: embedded architecture choices depend on unknown hardware capability, workload envelope, bottleneck/margin map, architecture constraints, or NFR provenance.
 - `embedded-target-characterization`: embedded physical quality drivers depend on target baselines or measurement surfaces that are missing.
 - `embedded-nfr-design`: embedded CPU, memory, wakeup, battery, flash wear, thermal, latency/jitter, or observer-effect budget needed.
 - `observability`: selected design needs logs, metrics, traces, correlation identifiers, or dashboards.

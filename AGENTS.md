@@ -38,6 +38,7 @@ skill|embedded-nfr-harness-design|Embedded NFR harness design|.agents/skills/emb
 skill|embedded-observer-effect-review|Embedded observer-effect review|.agents/skills/embedded-observer-effect-review/SKILL.md
 skill|embedded-operating-envelope-discovery|Embedded operating envelope discovery|.agents/skills/embedded-operating-envelope-discovery/SKILL.md
 skill|embedded-project-constitution|Embedded project constitution|.agents/skills/embedded-project-constitution/SKILL.md
+skill|embedded-system-familiarization|Principal embedded system familiarization|.agents/skills/embedded-system-familiarization/SKILL.md
 skill|embedded-target-characterization|Embedded target characterization|.agents/skills/embedded-target-characterization/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md

@@ -47,6 +47,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`
 - runtime behavior change → `$observability`
+- embedded/edge/target-local work where target behavior, hardware capability, operating envelope, bottlenecks, or NFR provenance are not understood → `$embedded-system-familiarization`
 - embedded/edge/target-local work with missing target profile, unknown normal workload, unknown measurement surfaces, unknown resource headroom, or guessed physical budget → `$embedded-target-characterization`
 - embedded work where normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown → `$embedded-operating-envelope-discovery`
 - embedded work where physical budget values are being set or revised from target evidence → `$embedded-nfr-calibration`
@@ -77,6 +78,7 @@ Use this table to avoid opening all embedded NFR skills by default.
 
 | Skill | Trigger |
 | --- | --- |
+| `$embedded-system-familiarization` | Broad target-learning, optimization, or architecture-shaping work where target behavior, hardware capability, workload envelope, bottlenecks, margins, or NFR provenance are not understood. |
 | `$embedded-target-characterization` | If target profile, normal workload, measurement surface, resource headroom, or physical budget provenance is missing. |
 | `$embedded-operating-envelope-discovery` | If normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown. |
 | `$embedded-nfr-calibration` | If budget values are being set or revised from target characterization, baselines, or operating envelope evidence. |
@@ -86,6 +88,8 @@ Use this table to avoid opening all embedded NFR skills by default.
 | `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |
 | `$embedded-nfr-gate` | Before final submit if feature-level embedded NFR work was triggered. |
 | `$embedded-project-constitution` | Only for project bootstrap or a new embedded runtime class. |
+
+Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
 
 ## 3) Live external discovery (when applicable)
 
