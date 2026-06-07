@@ -77,10 +77,10 @@ Use this table to avoid opening all embedded NFR skills by default.
 
 | Skill | Trigger |
 | --- | --- |
-| `$embedded-nfr-design` | Always for embedded physical-footprint work. |
 | `$embedded-target-characterization` | If target profile, normal workload, measurement surface, resource headroom, or physical budget provenance is missing. |
 | `$embedded-operating-envelope-discovery` | If normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown. |
 | `$embedded-nfr-calibration` | If budget values are being set or revised from target characterization, baselines, or operating envelope evidence. |
+| `$embedded-nfr-design` | Always for embedded physical-footprint work after missing target context has been routed to characterization or explicitly marked unknown/provisional. |
 | `$embedded-hot-path-review` | Only if loop, polling, sampling, collector, recorder, or hot-path behavior exists. |
 | `$embedded-observer-effect-review` | Only if instrumentation or measurement can perturb workload. |
 | `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |

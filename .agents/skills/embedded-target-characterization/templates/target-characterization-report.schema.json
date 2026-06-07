@@ -4,20 +4,47 @@
   "type": "object",
   "required": [
     "target",
+    "characterized_at",
+    "target_profile_version",
     "target_class",
+    "workload_fingerprint",
+    "measurement_method",
+    "measurement_duration_seconds",
+    "observer_state",
+    "environment",
     "measurement_surfaces",
     "workloads",
     "baselines",
     "constraints",
-    "confidence"
+    "confidence",
+    "confidence_per_surface",
+    "staleness",
+    "revisit_when"
   ],
   "properties": {
     "target": { "type": "string" },
+    "characterized_at": { "type": "string" },
+    "target_profile_version": { "type": "string" },
     "target_class": { "type": "string" },
     "hardware": { "type": "string" },
     "os_or_runtime": { "type": "string" },
     "power_source": { "type": "string" },
     "storage": { "type": "string" },
+    "workload_fingerprint": { "type": "string" },
+    "measurement_method": { "type": "string" },
+    "measurement_duration_seconds": { "type": ["number", "null"] },
+    "observer_state": { "enum": ["observer_off", "observer_on", "unknown"] },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "ambient_temp": { "type": ["number", "string", "null"] },
+        "power_mode": { "type": "string" },
+        "battery_state": { "type": "string" },
+        "governor": { "type": "string" },
+        "thermal_state": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
     "measurement_surfaces": {
       "type": "object",
       "additionalProperties": {
@@ -63,7 +90,13 @@
       },
       "additionalProperties": true
     },
-    "confidence": { "enum": ["high", "medium", "low", "unknown"] }
+    "confidence": { "enum": ["high", "medium", "low", "unknown"] },
+    "confidence_per_surface": {
+      "type": "object",
+      "additionalProperties": { "enum": ["high", "medium", "low", "unknown"] }
+    },
+    "staleness": { "type": "string" },
+    "revisit_when": { "type": "array", "items": { "type": "string" } }
   },
   "additionalProperties": true
 }

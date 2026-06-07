@@ -56,6 +56,7 @@ Do not use this skill for non-embedded final readiness; use `quality-gate`.
    - production budget source `placeholder_unknown` blocks submit unless feature is experimental-only
    - missing target characterization with production-ready claims blocks submit
    - host-only evidence for target battery-safe claims blocks submit
+   - stale target characterization, changed workload/power mode/measurement method, or triggered `revisit_when` blocks production-ready claims until recalibrated
 5. Decide:
    - `submit`: budgets pass and claims are measured or limited
    - `no-submit`: budget exceeded, artifact missing, or unsupported claim remains

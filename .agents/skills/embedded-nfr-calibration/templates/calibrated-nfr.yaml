@@ -1,6 +1,7 @@
 feature: "<feature>"
 target_profile: "<target>"
 status: calibrated|provisional|unknown
+claim_level: experimental|development|target_validated|production_ready
 
 budgets:
   steady_state_cpu_percent_max:
@@ -11,7 +12,39 @@ budgets:
     rationale: ""
     revisit_when: []
 
+  rss_mb_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  heap_growth_mb_per_hour_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  hot_path_allocations_per_iteration_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
   default_polling_interval_ms_min:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  default_sampling_rate_hz_max:
     value: null
     source: placeholder_unknown
     evidence: []
@@ -35,8 +68,97 @@ budgets:
     rationale: ""
     revisit_when: []
 
+  flash_write_bytes_per_day_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  network_background_bytes_per_hour_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  battery_drain_percent_per_hour_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  thermal_rise_celsius_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  latency_jitter_ms_p99_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  observer_overhead_percent_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  burst_duration_seconds_max:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+  burst_sampling_interval_ms_min:
+    value: null
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+
+claim_source_rules:
+  experimental:
+    placeholder_unknown_allowed: true
+    production_claim_allowed: false
+  development:
+    allowed_sources:
+      - measured
+      - calibrated_from_target_baseline
+      - inferred_from_operating_envelope
+      - user_mandated
+      - standard_or_platform_guidance
+      - placeholder_unknown
+    production_claim_allowed: false
+  target_validated:
+    required_sources:
+      - measured
+      - calibrated_from_target_baseline
+      - inferred_from_operating_envelope
+  production_ready:
+    required_sources:
+      - measured
+      - calibrated_from_target_baseline
+    requires_operating_envelope_evidence: true
+
 rules:
   no_production_budget_without_provenance: true
   no_measurement_no_claim: true
   host_fallback_is_not_target_proof: true
   placeholder_unknown_blocks_production_claims: true
+  stale_or_triggered_revisit_blocks_production_claims: true

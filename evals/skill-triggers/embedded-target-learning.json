@@ -114,6 +114,35 @@
       "notes": "Logger blackout near an incident should trigger envelope discovery and observer-effect review."
     },
     {
+      "id": "embedded-template-budget-production-claim",
+      "prompt": "We copied physical_budgets.yaml from the template and now want to claim the recorder is production-ready and battery-safe on our sensor target.",
+      "should_trigger": [
+        "embedded-target-characterization",
+        "embedded-nfr-calibration",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/target-characterization.md",
+        "reports/nfr-calibration/<feature>.md",
+        "reports/resource/nfr-gate-report.md"
+      ],
+      "expected_decisions": [
+        "Template budgets are provisional and cannot support production-ready or battery-safe claims without target evidence",
+        "placeholder_unknown budget provenance blocks production-ready claims unless the feature is experimental-only"
+      ],
+      "expected_evidence": [
+        "Target characterization evidence for the sensor target",
+        "Calibrated battery and recorder resource budgets",
+        "NFR gate claim review"
+      ],
+      "notes": "Template budget values must not be promoted into production-ready resource-safety claims."
+    },
+    {
       "id": "embedded-target-characterization-negative-schema-only",
       "prompt": "Add a JSON schema for a server API response.",
       "should_trigger": [

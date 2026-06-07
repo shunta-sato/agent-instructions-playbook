@@ -4,6 +4,13 @@
 
 Identify normal, near-boundary, degraded, recovery, and blackout behavior.
 
+## Preconditions
+
+- Target characterization:
+- Safe discovery boundary:
+- Abort conditions:
+- Do-not-probe:
+
 ## Scenarios
 
 | Scenario | Workload | Duration | Expected behavior | Safety limit | Report |
@@ -23,10 +30,23 @@ Identify normal, near-boundary, degraded, recovery, and blackout behavior.
 - Normal range:
 - Near-boundary indicators:
 - Degradation signals:
-- Logging / telemetry blackout:
+- Boundary findings:
+  - Signal:
+  - Boundary type:
+  - Threshold:
+  - Unit:
+  - Confidence:
+  - Evidence:
+- Telemetry blackout:
+  - Observed:
+  - Signal ID:
+  - Last seen time:
+  - Expected cadence ms:
+  - Confidence:
 - Observer effect:
 - No-go boundary:
 - Safe experimental limits:
+- Abort conditions observed:
 
 ## Budget Calibration Inputs
 

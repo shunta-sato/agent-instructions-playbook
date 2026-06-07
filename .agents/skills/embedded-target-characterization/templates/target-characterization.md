@@ -2,12 +2,27 @@
 
 ## Target Identity
 
+- Characterized at:
+- Target profile version:
 - Target class:
 - Hardware:
 - OS/runtime:
 - Power source:
 - Storage:
 - Deployment mode:
+
+## Measurement Context
+
+- Workload fingerprint:
+- Measurement method:
+- Measurement duration seconds:
+- Observer state: observer_off|observer_on|unknown
+- Environment:
+  - Ambient temp:
+  - Power mode:
+  - Battery state:
+  - Governor:
+  - Thermal state:
 
 ## Measurement Surfaces
 
@@ -47,7 +62,9 @@
 ## Confidence
 
 - Overall confidence: high|medium|low|unknown
+- Confidence per surface:
 - Why:
+- Staleness:
 - Revisit when:
 
 ## Handoff

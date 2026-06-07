@@ -100,7 +100,8 @@ Use a checkbox list. Each item should have a concrete deliverable and verificati
 - [x] (P3) Add trigger evals — deliverable: `evals/skill-triggers/embedded-target-learning.json` — verify: `validate_skill_trigger_evals.py` passed.
 - [x] (P4) Regenerate catalogs/indexes — deliverable: updated `README.md` and `AGENTS.md` — verify: `generate_agent_index.py --check` passed.
 - [x] (P5) Run final verification — deliverable: green checks — verify: `make build-release` and `make verify` passed.
-- [ ] (P6) Publish PR — deliverable: commit, push, draft PR — verify: PR URL and command output.
+- [x] (P6) Publish PR — deliverable: commit, push, draft PR — verify: PR #45 opened.
+- [x] (P7) Address PR review must-fixes — deliverable: broadened calibrated budgets, reordered embedded routing, safe-boundary envelope rules, stricter schemas, source/claim rules, template-budget eval — verify: `make build-release` and `make verify` passed with 91 trigger eval cases.
 
 ## Surprises & Discoveries
 
@@ -109,6 +110,8 @@ Record unexpected constraints, gotchas, and newly learned facts (with evidence w
 - 2026-06-07: `origin/main` advanced to `491fb8f` after the embedded NFR skill program merge, so this work starts from `origin/main`, not the previous PR branch.
 - 2026-06-07: Adding three skills keeps generated index under the default 8192-byte limit. Evidence: `python3 scripts/generate_agent_index.py --write` and `--check` succeeded.
 - 2026-06-07: Inventory check remains at seven broad-trigger warnings from existing mandatory skills, with zero errors. Evidence: `python3 scripts/report_skill_inventory.py --check --format text` exited 0.
+- 2026-06-07: PR review requested changes focused on calibrated budget coverage, routing order, operating-envelope safety preconditions, schema strictness, source/claim rules, staleness, and template-budget production-claim regression coverage.
+- 2026-06-07: PyYAML is not installed in this local environment, so YAML template syntax was checked with Ruby/Psych instead.
 
 ## Decision log
 
@@ -118,16 +121,20 @@ Record decisions and trade-offs (and why).
   - Options considered: add orchestrator now; mention future candidate only; omit entirely.
   - Chosen: omit orchestrator from active skill catalog for this PR.
   - Consequences: fewer trigger surfaces, clearer routing through the three concrete skills.
+- 2026-06-07: Address the three merge-blocking review items in this PR and include low-risk related hardening while the same files are open.
+  - Options considered: only the three must-fixes; include all follow-ups; include must-fixes plus small schema/eval/gate hardening.
+  - Chosen: include must-fixes plus structured boundary/blackout schema fields, target characterization freshness fields, claim-source rules, staleness gate text, and a template-budget production-claim eval.
+  - Consequences: stronger governance artifacts without adding new skills or hardware-specific scripts.
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/embedded-target-characterization` at `491fb8f`.
-- What is done: request read; branch and ExecPlan created; three skills, templates, schemas, routing/gate updates, trigger evals, and generated catalogs are implemented and validated.
-- What is not done: commit, push, PR.
+- Current branch: `codex/embedded-target-characterization`, PR #45.
+- What is done: request read; branch and ExecPlan created; three skills, templates, schemas, routing/gate updates, trigger evals, and generated catalogs are implemented, reviewed, and hardened for the requested PR changes.
+- What is not done: none for the current review-fix scope.
 - How to run: use `python3` for scripts.
-- How to test: `python3 scripts/validate_skills.py`, `python3 scripts/validate_skill_trigger_evals.py`, `python3 scripts/report_skill_inventory.py --check --format text`, `python3 scripts/generate_agent_index.py --check`, `make build-release`, `make verify`.
+- How to test: `python3 scripts/validate_skills.py`, `python3 scripts/validate_skill_trigger_evals.py`, `python3 scripts/report_skill_inventory.py --check --format text`, `python3 scripts/generate_agent_index.py --check`, `ruby -e 'require "yaml"; ...'`, `make build-release`, `make verify`.
 - Known risks / open questions: generated agent index size may need concise short descriptions; trigger surface must not imply all embedded skills always open.
-- Next 1-3 steps: commit changes; push branch; open draft PR.
+- Next 1-3 steps: push the review-fix commit to PR #45; wait for review.
 - Pointers: `.agents/skills/embedded-nfr-design/SKILL.md`, `.agents/skills/embedded-nfr-gate/SKILL.md`, `.agents/skills/dev-workflow/references/dev-workflow.md`, `evals/skill-triggers/embedded-nfr.json`.
 
 ## Validation & Acceptance
@@ -150,10 +157,12 @@ List the measurable acceptance criteria and how they are verified.
   - Verification: trigger eval negative cases.
 - AC8: Validation commands pass.
   - Verification: `python3 scripts/validate_skills.py`, `python3 scripts/validate_skill_trigger_evals.py`, `python3 scripts/report_skill_inventory.py --check --format text`, `python3 scripts/generate_agent_index.py --check`, `make build-release`, and `make verify` passed.
+- AC9: Template-copied budgets cannot support production-ready or battery-safe claims without target evidence.
+  - Verification: `embedded-template-budget-production-claim` trigger eval and budget provenance rules.
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged: Worktree contains the embedded target-learning layer; not yet committed.
-- What went well: Validators pass with 42 skills and 90 trigger eval cases.
-- What went wrong: Nothing blocking.
+- What shipped / merged: PR #45 contains the embedded target-learning layer and the review-fix hardening for calibrated budget coverage, routing order, safe envelope discovery, stricter schemas, and template-budget production-claim regression coverage.
+- What went well: Validators pass with 42 skills and 91 trigger eval cases; canonical verification passes.
+- What went wrong: PyYAML was unavailable locally, so YAML template parsing used Ruby/Psych.
 - Follow-ups / tech debt tickets: Optional future orchestrator skill `embedded-system-familiarization` remains out of scope.

@@ -27,8 +27,9 @@ Do not use it for static docs/schema work or ordinary web/backend performance be
 
 ## How to use
 
-1. Start from target characterization when available.
-2. Define safe scenarios using `templates/operating-envelope.md`.
+1. Start from target characterization.
+   - If target characterization is missing, create it first or explicitly record a safe discovery boundary before running any operating-envelope experiment.
+2. Define safe scenarios, safety constraints, and abort conditions using `templates/operating-envelope.md`.
 3. Include idle, nominal, peak, near_boundary, degraded, observer_off, observer_on, recovery, and blackout_or_telemetry_loss when relevant.
 4. Record safety limits before running any experiment.
 5. Capture report paths for each scenario.
@@ -47,5 +48,6 @@ Produce or update:
 ## Rules
 
 - Do not push a target past safe experimental limits.
+- Do not run near-boundary, degraded, or blackout experiments without recorded target safety constraints and abort conditions.
 - Treat telemetry blackout as evidence, not absence of failure.
 - Record observer-on and observer-off differences when the observer can perturb workload.

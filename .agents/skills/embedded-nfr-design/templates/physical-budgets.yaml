@@ -23,12 +23,15 @@ modes:
     continuous_disk_write_bytes_per_second_max: 0
     flash_write_bytes_per_day_max: null
     network_background_bytes_per_hour_max: null
+    battery_drain_percent_per_hour_max: null
     latency_jitter_ms_p99_max: null
     thermal_rise_celsius_max: null
+    observer_overhead_percent_max: null
   burst:
     description: "Bounded high-activity mode."
     trigger: "<trigger>"
     burst_sampling_interval_ms_min: null
+    burst_duration_seconds_max: null
     duration_seconds_max: null
     burst_requires_trigger_or_marker: true
     cpu_percent_max: null
@@ -66,6 +69,84 @@ budget_provenance:
     rationale: ""
     revisit_when: []
   wakeups_per_second_added_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  rss_mb_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  heap_growth_mb_per_hour_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  hot_path_allocations_per_iteration_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  default_sampling_rate_hz_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  continuous_disk_write_bytes_per_second_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  flash_write_bytes_per_day_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  network_background_bytes_per_hour_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  battery_drain_percent_per_hour_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  thermal_rise_celsius_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  latency_jitter_ms_p99_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  observer_overhead_percent_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  burst_duration_seconds_max:
+    source: placeholder_unknown
+    evidence: []
+    confidence: unknown
+    rationale: ""
+    revisit_when: []
+  burst_sampling_interval_ms_min:
     source: placeholder_unknown
     evidence: []
     confidence: unknown

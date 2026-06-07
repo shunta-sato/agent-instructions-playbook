@@ -33,11 +33,41 @@
     },
     "findings": {
       "type": "object",
+      "required": ["boundary_findings", "telemetry_blackout"],
       "properties": {
         "normal_range": { "type": "string" },
         "near_boundary_indicators": { "type": "array", "items": { "type": "string" } },
         "degradation_signals": { "type": "array", "items": { "type": "string" } },
-        "telemetry_blackout": { "type": "string" },
+        "boundary_findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["signal", "boundary_type", "threshold", "unit", "confidence", "evidence"],
+            "properties": {
+              "signal": { "type": "string" },
+              "boundary_type": {
+                "enum": ["normal", "near_boundary", "degraded", "failure_adjacent", "recovery", "blackout_or_telemetry_loss"]
+              },
+              "threshold": { "type": ["number", "string", "null"] },
+              "unit": { "type": "string" },
+              "confidence": { "enum": ["high", "medium", "low", "unknown"] },
+              "evidence": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "telemetry_blackout": {
+          "type": "object",
+          "required": ["observed", "signal_id", "expected_cadence_ms", "confidence"],
+          "properties": {
+            "observed": { "type": "boolean" },
+            "signal_id": { "type": "string" },
+            "last_seen_time": { "type": ["string", "null"] },
+            "expected_cadence_ms": { "type": ["number", "null"] },
+            "confidence": { "enum": ["high", "medium", "low", "unknown"] }
+          },
+          "additionalProperties": true
+        },
         "observer_effect": { "type": "string" },
         "no_go_boundary": { "type": "string" }
       },

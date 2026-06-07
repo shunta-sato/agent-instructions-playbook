@@ -36,7 +36,8 @@ Do not use it when no target evidence exists and the task is only project bootst
 3. Create or update `templates/calibrated-nfr.yaml` in the project budget path.
 4. For each production budget, record source, evidence, confidence, rationale, and revisit conditions.
 5. If a source is `placeholder_unknown`, forbid production-ready, low-overhead, battery-safe, flash-safe, or thermally-safe claims.
-6. Hand off calibrated budgets to `embedded-nfr-design`, `embedded-nfr-harness-design`, and `embedded-nfr-gate`.
+6. Check that the budget source supports the claim level.
+7. Hand off calibrated budgets to `embedded-nfr-design`, `embedded-nfr-harness-design`, and `embedded-nfr-gate`.
 
 ## Outputs
 
@@ -62,4 +63,6 @@ Allowed source values:
 - No production budget without provenance.
 - `placeholder_unknown` blocks production-ready claims.
 - Host fallback is not target proof.
+- `standard_or_platform_guidance` alone does not support target-validated or production-ready resource-safety claims.
+- `production-ready` requires measured or target-baseline-calibrated sources plus relevant operating-envelope evidence.
 - Revisit budgets when target class, workload profile, power mode, or measurement method changes.

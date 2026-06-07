@@ -38,7 +38,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 3) Apply routing priority to avoid overlap:
    - If the task requires choosing among cross-boundary architecture or technology options with measurable quality drivers, run `$architecture-decision-analysis` before implementation. Route to `$requirements-engineering` first if the quality drivers or requirements are too vague to measure.
-   - If embedded physical-footprint NFRs are present, run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
+   - If embedded physical-footprint NFRs are present, first route missing target context, unknown envelope behavior, and budget provenance gaps to characterization, envelope discovery, and calibration as applicable; then run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 
@@ -46,10 +46,10 @@ Embedded NFR routing table:
 
 | Skill | Trigger |
 | --- | --- |
-| `$embedded-nfr-design` | Always for embedded physical-footprint work. |
 | `$embedded-target-characterization` | If target profile, normal workload, measurement surface, resource headroom, or physical budget provenance is missing. |
 | `$embedded-operating-envelope-discovery` | If normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown. |
 | `$embedded-nfr-calibration` | If budget values are being set or revised from target characterization, baselines, or operating envelope evidence. |
+| `$embedded-nfr-design` | Always for embedded physical-footprint work after missing target context has been routed to characterization or explicitly marked unknown/provisional. |
 | `$embedded-hot-path-review` | Only if loop, polling, sampling, collector, recorder, or hot-path behavior exists. |
 | `$embedded-observer-effect-review` | Only if instrumentation or measurement can perturb workload. |
 | `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |

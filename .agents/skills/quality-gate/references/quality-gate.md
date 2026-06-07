@@ -42,7 +42,7 @@ Confirm required evidence exists for each triggered branch:
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
 - If embedded NFR claims depend on target behavior, target characterization exists or the claim is explicitly provisional.
-- If numeric production budgets are claimed, budget provenance exists and calibration artifacts are referenced.
+- If numeric production budgets are claimed, budget provenance exists, calibration artifacts are referenced, and calibration revisit conditions are not triggered.
 - If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
 - Open risks or follow-ups are explicitly documented.
 
