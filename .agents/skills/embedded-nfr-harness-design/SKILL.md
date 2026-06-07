@@ -35,6 +35,7 @@ Do not use it for generic benchmark planning, web performance tests, or code pat
    - degraded mode
    - observer-on vs observer-off when relevant
 4. Define the report shape using `templates/resource-report.schema.json`.
+   Include `budget_results` entries that pair each NFR budget with its measurement, unit, result, evidence path, and fail/unknown reason.
 5. Add commands or command skeletons:
    - target smoke command
    - host fallback command
@@ -52,6 +53,7 @@ Produce or update:
 - `baselines/resource/*.json`
 - `scripts/resource/run-resource-smoke.sh` or a project-equivalent command
 - `reports/resource/<feature>.json` schema or sample location
+- resource report `budget_results` that `embedded-nfr-gate` can compare directly
 
 ## Gotchas
 

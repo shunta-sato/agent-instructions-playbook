@@ -21,7 +21,10 @@ Embedded-facing features provide:
 ## Default Blockers
 
 - Unsupported low-overhead, battery-safe, or production-ready claim
+- Missing sampling/polling cadence budget for target-local default behavior
 - Default mode over CPU, wakeup, memory, write, or thermal budget
+- Measurement unknown treated as pass
+- Host fallback treated as target proof
 - Continuous default storage write with no flash-wear estimate
 - Battery unknown treated as AC power
 - Missing degraded-mode behavior for relevant pressure states

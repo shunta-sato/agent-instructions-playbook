@@ -20,6 +20,7 @@ Use only dimensions relevant to the feature:
 
 | Dimension | Typical question | Example merge rule |
 | --- | --- | --- |
+| Polling / sampling cadence | Is default cadence safe for always-on target use? | sub-100ms default cadence blocks submit unless explicitly allowed, measured, and justified |
 | CPU | What steady-state and burst CPU is allowed? | default CPU over budget blocks submit |
 | Wakeups | How many extra wakeups per second are added? | unbounded wakeups block submit |
 | RSS / heap | Is memory bounded across time? | unbounded growth blocks submit |
@@ -41,6 +42,9 @@ Use only dimensions relevant to the feature:
 - Unknown is a status, not a pass.
 - No-measurement-no-claim: do not claim low overhead, battery safety, thermal safety, or production readiness without matching evidence.
 - Battery unknown is not AC power.
+- Measurement unknown is not pass.
+- Host fallback is not target proof.
+- Default always-on polling below 100ms is blocked unless explicitly budgeted, measured, justified, and limited by mode.
 
 ## Measurement Evidence
 

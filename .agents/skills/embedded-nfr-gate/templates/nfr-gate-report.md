@@ -1,6 +1,6 @@
 # Embedded NFR Gate Report: <feature>
 
-Gate decision: submit|no-submit|experimental-only
+Gate decision: submit|no-submit|experimental-only|constitution-only
 
 ## Findings
 
@@ -10,6 +10,7 @@ Gate decision: submit|no-submit|experimental-only
 
 | NFR | Budget | Measurement | Result | Evidence |
 | --- | ---: | ---: | --- | --- |
+| Polling / sampling cadence |  |  | unknown |  |
 | CPU |  |  | unknown |  |
 | Wakeups |  |  | unknown |  |
 | RSS / heap |  |  | unknown |  |
@@ -19,6 +20,12 @@ Gate decision: submit|no-submit|experimental-only
 | Thermal |  |  | unknown |  |
 | Latency / jitter |  |  | unknown |  |
 | Observer overhead |  |  | unknown |  |
+
+## Runtime Mode Classification
+
+| Behavior | Mode | Cadence | Duration bound | Enabled by default? | Result |
+| --- | --- | ---: | ---: | --- | --- |
+|  | default/burst/experimental-only/debug-only |  |  |  | unknown |
 
 ## Artifact Check
 

@@ -21,9 +21,11 @@ Use this skill when one of these skills was triggered:
 - `embedded-nfr-harness-design`
 - `embedded-hot-path-review`
 - `embedded-observer-effect-review`
-- `embedded-project-constitution`
+- `embedded-project-constitution` plus feature-level embedded runtime changes or production-readiness claims
 
 Use it also when a PR contains target-local runtime behavior plus claims such as "low overhead", "battery safe", "lightweight", "flash safe", or "production ready".
+
+If only `embedded-project-constitution` was triggered and no feature implementation or production-readiness claim is being submitted, record `constitution-only: no feature gate required` and hand off constitution artifact checks to `quality-gate`.
 
 Do not use this skill for non-embedded final readiness; use `quality-gate`.
 
@@ -42,6 +44,9 @@ Do not use this skill for non-embedded final readiness; use `quality-gate`.
 4. Apply hard rules:
    - no-measurement-no-claim
    - battery_unknown is not AC
+   - measurement unknown is not pass
+   - host fallback is not target proof
+   - any target-local background behavior without default, burst, experimental-only, or debug-only mode classification blocks submit
    - default mode over budget blocks submit
    - unbounded wakeups block submit
    - continuous default disk writes need budget and flash-wear evidence

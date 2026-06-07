@@ -15,6 +15,7 @@
 
 | NFR | Default budget | Burst budget | Measurement | Merge rule | Status |
 | --- | ---: | ---: | --- | --- | --- |
+| Polling / sampling cadence | >=1000ms or <=1Hz | bounded by trigger/duration | <tool/report> | sub-100ms default cadence blocks submit unless explicitly allowed, measured, and justified | unknown |
 | CPU | <target> | <target for duration> | <tool/report> | default over budget blocks submit | unknown |
 | Wakeups | <target> | <target for duration> | <tool/report> | unbounded wakeups block submit | unknown |
 | RSS / heap | <target> | <target> | <tool/report> | unbounded growth blocks submit | unknown |
@@ -26,6 +27,12 @@
 | Thermal | <target> | <target> | <tool/report> | feature-caused thermal rise needs degraded mode | unknown |
 | Latency / jitter | <target> | <target> | <tool/report> | missed timing budget blocks submit | unknown |
 | Observer overhead | <target> | <target> | <tool/report> | unmeasured observer overhead limits claims | unknown |
+
+## Runtime Mode Classification
+
+| Behavior | Mode | Cadence | Duration bound | Enabled by default? | Required evidence |
+| --- | --- | ---: | ---: | --- | --- |
+| target-local background behavior | default/burst/experimental-only/debug-only |  |  |  |  |
 
 ## Steady-State vs Burst Classification
 

@@ -30,7 +30,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
    - runtime behavior change → `$observability`
-   - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → `$embedded-nfr-design` (+ `$embedded-hot-path-review`, `$embedded-observer-effect-review`, `$embedded-nfr-harness-design`, `$embedded-nfr-gate` when their trigger evidence applies)
+   - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → route by the embedded NFR table below
    - strict-constraint low-level code or repeated compile/test loops → `$staged-lowering`
    - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
@@ -41,6 +41,17 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - If embedded physical-footprint NFRs are present, run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
+
+Embedded NFR routing table:
+
+| Skill | Trigger |
+| --- | --- |
+| `$embedded-nfr-design` | Always for embedded physical-footprint work. |
+| `$embedded-hot-path-review` | Only if loop, polling, sampling, collector, recorder, or hot-path behavior exists. |
+| `$embedded-observer-effect-review` | Only if instrumentation or measurement can perturb workload. |
+| `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |
+| `$embedded-nfr-gate` | Before final submit if feature-level embedded NFR work was triggered. |
+| `$embedded-project-constitution` | Only for project bootstrap or a new embedded runtime class. |
 
 4) Execute implementation with the selected route + required branches.
 

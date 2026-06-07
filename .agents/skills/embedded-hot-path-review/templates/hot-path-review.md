@@ -10,16 +10,16 @@
 
 ## Per-Iteration Cost
 
-| Cost source | Present? | Evidence | Risk | Required change |
-| --- | --- | --- | --- | --- |
-| Allocation |  |  |  |  |
-| Serialization/parsing |  |  |  |  |
-| Filesystem / flash I/O |  |  |  |  |
-| Directory scan |  |  |  |  |
-| Network/radio use |  |  |  |  |
-| Blocking syscall |  |  |  |  |
-| Lock/queue operation |  |  |  |  |
-| O(n) data-structure operation |  |  |  |  |
+| Cost source | Present? | Allowed budget | Evidence | Risk | Required change |
+| --- | --- | --- | --- | --- | --- |
+| Allocation |  | 0 per default steady-state iteration |  |  |  |
+| Serialization/parsing |  | 0 per high-frequency default iteration unless measured |  |  |  |
+| Filesystem / flash I/O |  | 0 continuous default writes unless budgeted |  |  |  |
+| Directory scan |  | 0 per default iteration |  |  |  |
+| Network/radio use |  | 0 hidden background use unless budgeted |  |  |  |
+| Blocking syscall |  | 0 in sub-100ms loop unless justified |  |  |  |
+| Lock/queue operation |  | bounded wait and bounded queue |  |  |  |
+| O(n) data-structure operation |  | 0 per high-frequency iteration unless bounded |  |  |  |
 
 ## Cadence Decision
 

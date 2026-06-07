@@ -47,3 +47,18 @@
 - Baseline:
 - Scenario reports:
 - Gate report:
+
+## Budget Results
+
+Each resource report must include structured `budget_results`.
+
+| NFR | Budget | Measurement | Unit | Result | Evidence |
+| --- | ---: | ---: | --- | --- | --- |
+| polling / sampling cadence |  |  | ms or hz | unknown |  |
+| CPU |  |  | percent | unknown |  |
+| Wakeups |  |  | wakeups/sec | unknown |  |
+| RSS / heap |  |  | MB | unknown |  |
+| Storage writes |  |  | bytes/sec | unknown |  |
+| Battery |  |  | platform-specific | unknown |  |
+| Thermal |  |  | celsius | unknown |  |
+| Observer overhead |  |  | percent | unknown |  |

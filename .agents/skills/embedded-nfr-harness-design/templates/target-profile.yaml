@@ -16,6 +16,9 @@ measurement_surfaces:
   custom_runtime_counters: false
 
 default_budgets:
+  default_polling_interval_ms_min: 1000
+  default_sampling_rate_hz_max: 1
+  burst_duration_seconds_max: null
   steady_state_cpu_percent_max: null
   wakeups_per_second_added_max: null
   rss_mb_max: null
@@ -24,3 +27,5 @@ default_budgets:
 
 notes:
   - "battery_unknown_is_not_ac"
+  - "measurement_unknown_is_not_pass"
+  - "host_fallback_is_not_target_proof"

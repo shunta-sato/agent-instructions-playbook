@@ -4,17 +4,27 @@ status: draft
 rules:
   no_measurement_no_claim: true
   battery_unknown_is_not_ac: true
+  measurement_unknown_is_not_pass: true
+  host_fallback_is_not_target_proof: true
   production_ready_requires_physical_evidence: true
 
 target_classes:
   - name: "<target-class>"
     profile: "target_profiles/<target-class>.yaml"
     default_budgets:
+      default_polling_interval_ms_min: 1000
+      default_sampling_rate_hz_max: 1
+      always_on_polling_below_100ms_allowed: false
+      high_frequency_default_polling_requires_measurement: true
       steady_state_cpu_percent_max: null
       wakeups_per_second_added_max: null
       rss_mb_max: null
       continuous_disk_write_bytes_per_second_max: 0
       thermal_rise_celsius_max: null
+    burst_budgets:
+      burst_sampling_interval_ms_min: null
+      burst_duration_seconds_max: null
+      burst_requires_trigger_or_marker: true
 
 degraded_modes:
   battery_low: "<policy>"

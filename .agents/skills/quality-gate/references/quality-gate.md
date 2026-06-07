@@ -21,7 +21,8 @@ Confirm required evidence exists for each triggered branch:
 - concurrency branch → concurrency verification evidence (plan/shutdown-verification/logging)
 - architecture-decision-analysis branch → Architecture Decision Analysis Record with decision/no-decision, quality drivers, option tradeoffs, verification tasks, and handoffs
 - observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
-- embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, artifact check, budget results, claims review, and unknowns/limits
+- feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits
+- constitution-only embedded branch → constitution artifacts such as project principles, resource discipline, physical budgets, target profiles, resource harness skeleton, and PR-template section. Do not require a feature-level NFR gate report unless runtime changes or production-readiness claims are introduced.
 - staged-lowering branch → staged plan + per-pass verification log
 - legacy branch → characterization/safety-net evidence + seam/refactor notes
 - structural scan branch → smells/anti-patterns result (new/worsened handled)
@@ -37,6 +38,7 @@ Confirm required evidence exists for each triggered branch:
 - Path-specific instructions were identified and followed.
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
+- If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
 - Open risks or follow-ups are explicitly documented.
 
 If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:

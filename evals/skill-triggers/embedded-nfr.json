@@ -117,6 +117,54 @@
       "notes": "Quality-gate should refuse submit when an embedded NFR branch lacks its gate report."
     },
     {
+      "id": "battery-safe-claim-without-measurement",
+      "prompt": "Mark the edge-device recorder as battery-safe and low-overhead, but we only ran a host smoke test and have no target battery or wakeup measurement yet.",
+      "should_trigger": [
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "uiux-core"
+      ],
+      "expected_decisions": [
+        "Battery-safe and low-overhead claims are blocked until target evidence exists",
+        "Host fallback is not treated as target proof",
+        "Measurement unknown is not treated as pass"
+      ],
+      "expected_evidence": [
+        "No-measurement-no-claim list includes battery-safe and low-overhead claims",
+        "NFR gate report records no-submit or experimental-only"
+      ],
+      "notes": "Resource claims without target measurement should route to design, harness, and gate."
+    },
+    {
+      "id": "constitution-only-no-feature-submit",
+      "prompt": "Bootstrap project-level embedded principles, physical budgets, target profiles, and resource harness skeletons for a new edge logger repo. Do not implement a feature or claim production readiness yet.",
+      "should_trigger": [
+        "embedded-project-constitution",
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-gate",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review"
+      ],
+      "expected_artifacts": [
+        "docs/00_project_principles.md",
+        "docs/architecture/resource-discipline.md",
+        "requirements/physical_budgets.yaml",
+        "target_profiles/<target>.yaml",
+        "docs/testing/resource-harness.md"
+      ],
+      "expected_decisions": [
+        "Quality-gate checks constitution artifacts without requiring a feature-level NFR gate report",
+        "No production-readiness claim is introduced"
+      ],
+      "notes": "Project constitution alone should not force the feature-level embedded NFR gate."
+    },
+    {
       "id": "generic-backend-api-near-miss",
       "prompt": "Add a JSON schema and backend API response field for a web dashboard. No target-local runtime, polling, daemon, logger, or battery behavior changes.",
       "should_trigger": [

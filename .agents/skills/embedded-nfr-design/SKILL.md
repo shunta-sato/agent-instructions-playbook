@@ -39,6 +39,7 @@ Do not use it for generic backend APIs, web UI, schema-only work, pure docs, or 
 
 3. Create or update physical budgets using `templates/physical-budgets.yaml`.
    Use explicit unknown or experimental values when a budget cannot be measured yet.
+   Include sampling/polling cadence budgets so high-frequency default behavior is machine-readable.
 
 4. Separate steady-state from burst behavior.
    Default mode must be conservative; high-frequency behavior needs a bounded burst or experimental-only status.
@@ -72,5 +73,7 @@ Produce or update:
   **Instead:** record `battery_power_state: unknown` and limit production claims until measured or explicitly experimental.
 - **Common pitfall:** allowing a short sampling interval because tests pass.
   **Instead:** classify it as default, burst, or experimental and give it a budget plus measurement.
+- **Common pitfall:** omitting cadence from the budget file.
+  **Instead:** set polling/sampling fields such as `default_polling_interval_ms_min` and `default_sampling_rate_hz_max`.
 - **Common pitfall:** saying "low overhead" without evidence.
   **Instead:** add it to the no-measurement-no-claim list or remove the claim.

@@ -19,6 +19,10 @@ No-measurement-no-claim applies to:
 
 Battery unknown is not AC power. Unknown power state limits production-readiness claims.
 
+## Measurement Rule
+
+Measurement unknown is not pass. Host fallback is not target proof.
+
 ## Default Mode Rule
 
 Default mode must be conservative. High-frequency or high-write behavior is burst-only or experimental unless budgeted and measured.
