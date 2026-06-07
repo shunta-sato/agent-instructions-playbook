@@ -28,6 +28,7 @@ Do not use it when:
 
 - target characterization, operating envelope, calibrated NFRs, hardware capability map, and architecture constraints are current
 - the task is a narrow calibration update with current characterization and envelope reports
+- only a concrete sub-skill is explicitly requested and the broader target/system context is already known
 - the change is pure docs, schema, parser, or non-target code
 - the work is generic cloud/backend performance with no embedded physical footprint
 - the user asks for a narrow fix with no target-learning, optimization, or architecture decision involved
@@ -43,7 +44,7 @@ Do not use it when:
    - workload map
    - bottleneck/margin map
    - architecture constraints
-3. Mark each artifact as `current`, `stale`, `missing`, `provisional`, or `deferred`.
+3. Mark each artifact as `current`, `stale`, `missing`, `provisional`, or `deferred`, including freshness/revisit conditions.
 4. Route to concrete skills as needed:
    - `embedded-project-constitution` for project bootstrap or a new embedded runtime class
    - `embedded-target-characterization` when target facts, normal workload, measurement surfaces, or baselines are missing
@@ -62,7 +63,7 @@ Do not use it when:
    - `templates/bottleneck-margin-map.md`
    - `templates/architecture-constraints.md`
 7. Define architecture constraints, forbidden claims, and claims blocked by missing evidence.
-8. Hand off to concrete execution skills with required, missing, provisional, and deferred artifacts explicit.
+8. Hand off to concrete execution skills with `not_needed`, `required_pending`, `completed`, `deferred_with_reason`, or `blocked` status.
 
 ## Outputs
 
@@ -73,7 +74,7 @@ Produce or update:
 - `docs/targets/<target>/operating-envelope.md`
 - `docs/targets/<target>/hardware-capability-map.md`
 - `docs/targets/<target>/workload-map.md`
-- `docs/targets/<target>/bottleneck-and-margin-map.md`
+- `docs/targets/<target>/bottleneck-margin-map.md`
 - `docs/targets/<target>/architecture-constraints.md`
 - `target_profiles/<target>.yaml`
 - `baselines/resource/<target>/idle.json`
@@ -85,7 +86,7 @@ Produce or update:
 - `requirements/nfr/<feature>.yaml`
 - `reports/resource/nfr-gate-report.md`
 
-Not every artifact is required every time, but the pack must state which artifacts are required, current, missing, provisional, or deferred.
+Not every artifact is required every time, but the pack must state which artifacts are required, current, missing, provisional, or deferred; why current evidence is still valid; when it must be revisited; and whether each handoff is complete, pending, deferred, blocked, or not needed.
 
 ## Rules
 

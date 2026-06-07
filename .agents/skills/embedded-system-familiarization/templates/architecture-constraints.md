@@ -14,7 +14,7 @@ Purpose: turn familiarization findings into design constraints.
 
 ## Design Implications
 
-| Finding | Constraint | Affected component | Verification |
+| Source finding | Constraint | Affected component | Verification |
 | --- | --- | --- | --- |
 |  |  |  |  |
 

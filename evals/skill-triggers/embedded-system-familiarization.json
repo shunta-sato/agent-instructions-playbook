@@ -17,7 +17,7 @@
       "expected_artifacts": [
         "docs/targets/<target>/system-familiarization.md",
         "docs/targets/<target>/hardware-capability-map.md",
-        "docs/targets/<target>/bottleneck-and-margin-map.md",
+        "docs/targets/<target>/bottleneck-margin-map.md",
         "reports/nfr-calibration/<feature>.md"
       ],
       "expected_decisions": [
@@ -87,7 +87,7 @@
       "expected_artifacts": [
         "docs/targets/<target>/system-familiarization.md",
         "docs/targets/<target>/hardware-capability-map.md",
-        "docs/targets/<target>/bottleneck-and-margin-map.md",
+        "docs/targets/<target>/bottleneck-margin-map.md",
         "docs/targets/<target>/architecture-constraints.md"
       ],
       "expected_decisions": [
@@ -127,6 +127,25 @@
         "Use the narrower calibration skill because the familiarization pack is current"
       ],
       "notes": "Current target evidence plus a single budget update should not trigger the orchestrator."
+    },
+    {
+      "id": "embedded-system-current-familiarization-harness-threshold",
+      "prompt": "We are optimizing recorder cadence on a target with current system-familiarization.md, current target-characterization, current operating-envelope, and calibrated NFRs. Update only the gate harness threshold.",
+      "should_trigger": [
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate"
+      ],
+      "should_not_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration"
+      ],
+      "expected_decisions": [
+        "Do not rerun familiarization when the pack and supporting target evidence are current",
+        "Use the narrower harness and gate skills for the threshold update"
+      ],
+      "notes": "Broad-sounding optimization does not trigger the orchestrator when familiarization is current and the change is only a gate harness threshold."
     },
     {
       "id": "embedded-system-generic-backend-performance",

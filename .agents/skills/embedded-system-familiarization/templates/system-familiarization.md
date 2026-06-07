@@ -9,18 +9,33 @@
 
 ## 2. Artifact Status
 
-| Artifact | Status | Path | Required? | Missing/provisional/deferred reason |
-| --- | --- | --- | --- | --- |
-| target characterization | current|stale|missing|provisional|deferred |  |  |  |
-| operating envelope | current|stale|missing|provisional|deferred |  |  |  |
-| calibrated NFRs | current|stale|missing|provisional|deferred |  |  |  |
-| hardware capability map | current|stale|missing|provisional|deferred |  |  |  |
-| workload map | current|stale|missing|provisional|deferred |  |  |  |
-| bottleneck/margin map | current|stale|missing|provisional|deferred |  |  |  |
-| architecture constraints | current|stale|missing|provisional|deferred |  |  |  |
-| NFR gate report | current|stale|missing|provisional|deferred |  |  |  |
+| Artifact | Status | Path | Required? | Freshness / revisit condition | Missing/provisional/deferred reason |
+| --- | --- | --- | --- | --- | --- |
+| target characterization | current|stale|missing|provisional|deferred |  |  |  |  |
+| operating envelope | current|stale|missing|provisional|deferred |  |  |  |  |
+| calibrated NFRs | current|stale|missing|provisional|deferred |  |  |  |  |
+| hardware capability map | current|stale|missing|provisional|deferred |  |  |  |  |
+| workload map | current|stale|missing|provisional|deferred |  |  |  |  |
+| bottleneck/margin map | current|stale|missing|provisional|deferred |  |  |  |  |
+| architecture constraints | current|stale|missing|provisional|deferred |  |  |  |  |
+| NFR gate report | current|stale|missing|provisional|deferred |  |  |  |  |
 
-## 3. Target Identity
+## 3. Artifact Freshness
+
+- Target characterization current because:
+- Operating envelope current because:
+- Calibrated NFRs current because:
+- Hardware capability map current because:
+- Workload map current because:
+- Bottleneck/margin map current because:
+- Architecture constraints current because:
+- Revisit when target hardware changes:
+- Revisit when OS/kernel/runtime changes:
+- Revisit when workload profile changes:
+- Revisit when power mode changes:
+- Revisit when measurement method changes:
+
+## 4. Target Identity
 
 - Target class:
 - Hardware:
@@ -35,7 +50,7 @@
 - I/O buses:
 - Real-time constraints:
 
-## 4. Workload Map
+## 5. Workload Map
 
 | Workload | Description | Normal? | Peak? | Boundary? | Risk | Report |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -45,19 +60,19 @@
 | degraded |  |  |  |  |  |  |
 | recovery |  |  |  |  |  |  |
 
-## 5. Hardware Capability Map
+## 6. Hardware Capability Map
 
-| Capability | Available? | Measurement surface | Software lever | Risk | Evidence |
-| --- | --- | --- | --- | --- | --- |
-| CPU frequency scaling |  |  |  |  |  |
-| thermal zones |  |  |  |  |  |
-| battery state |  |  |  |  |  |
-| storage write budget |  |  |  |  |  |
-| accelerator/NPU/GPU |  |  |  |  |  |
-| scheduler / real-time |  |  |  |  |  |
-| hardware counters |  |  |  |  |  |
+| Capability | Available? | Measurement surface | Software lever | Risk | Architecture implication | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| CPU frequency scaling |  |  |  |  |  |  |
+| thermal zones |  |  |  |  |  |  |
+| battery state |  |  |  |  |  |  |
+| storage write budget |  |  |  |  |  |  |
+| accelerator/NPU/GPU |  |  |  |  |  |  |
+| scheduler / real-time |  |  |  |  |  |  |
+| hardware counters |  |  |  |  |  |  |
 
-## 6. Operating Envelope Summary
+## 7. Operating Envelope Summary
 
 - Normal range:
 - Near-boundary indicators:
@@ -67,7 +82,7 @@
 - No-go boundary:
 - Observer effect:
 
-## 7. Bottleneck and Margin Map
+## 8. Bottleneck and Margin Map
 
 | Resource | Current baseline | Near-boundary | Margin | Dominant risk | Evidence |
 | --- | ---: | ---: | ---: | --- | --- |
@@ -79,7 +94,7 @@
 | thermal |  |  |  |  |  |
 | latency/jitter |  |  |  |  |  |
 
-## 8. NFR Calibration Inputs
+## 9. NFR Calibration Inputs
 
 - CPU budget source:
 - memory budget source:
@@ -89,7 +104,7 @@
 - thermal budget source:
 - latency/jitter budget source:
 
-## 9. Architecture Constraints
+## 10. Architecture Constraints
 
 - Must:
 - Must not:
@@ -98,7 +113,7 @@
 - Experimental only:
 - Deferred until measured:
 
-## 10. Claims Blocked By Missing Evidence
+## 11. Claims Blocked By Missing Evidence
 
 | Claim | Missing evidence | Allowed wording/status |
 | --- | --- | --- |
@@ -109,16 +124,18 @@
 | thermally-safe |  | blocked|experimental-only|target-specific |
 | production-ready |  | blocked|experimental-only|target-specific |
 
-## 11. Handoffs
+## 12. Handoffs
 
-- embedded-project-constitution:
-- embedded-target-characterization:
-- embedded-operating-envelope-discovery:
-- embedded-nfr-calibration:
-- embedded-nfr-design:
-- architecture-decision-analysis:
-- embedded-nfr-harness-design:
-- embedded-hot-path-review:
-- embedded-observer-effect-review:
-- embedded-nfr-gate:
-- quality-gate:
+| Handoff | Status | Required? | Evidence path | Blocker? | Notes |
+| --- | --- | --- | --- | --- | --- |
+| embedded-project-constitution | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-target-characterization | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-operating-envelope-discovery | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-nfr-calibration | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-nfr-design | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| architecture-decision-analysis | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-nfr-harness-design | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-hot-path-review | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-observer-effect-review | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| embedded-nfr-gate | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |
+| quality-gate | not_needed|required_pending|completed|deferred_with_reason|blocked | yes|no |  | yes|no |  |

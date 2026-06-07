@@ -107,13 +107,16 @@
 - [x] (P3) Add trigger evals — deliverable: positive/negative orchestrator evals — verify: `validate_skill_trigger_evals.py` passed with 98 cases.
 - [x] (P4) Update generated artifacts — deliverable: `README.md` and `AGENTS.md` updated — verify: `generate_agent_index.py --check` passed.
 - [x] (P5) Run final verification — deliverable: green checks — verify: `make build-release` and `make verify` passed.
-- [ ] (P6) Publish PR — deliverable: commit, push, draft PR — verify: PR URL and command output.
+- [x] (P6) Publish PR — deliverable: commit, push, draft PR — verify: PR #46 opened.
+- [x] (P7) Address PR review cleanup — deliverable: path naming consistency, artifact freshness/revisit fields, handoff status table, capability-to-constraint traceability, and current-familiarization negative eval — verify: validators passed with 99 eval cases.
 
 ## Surprises & Discoveries
 
 - 2026-06-08: `origin/main` is at `c8582e2`, which includes merged PR #45 with the target-learning skills.
 - 2026-06-08: Initial inventory before this change is 42 skills, 6 eval files, 296 eval references, 0 errors, and 7 existing broad-trigger warnings.
 - 2026-06-08: After adding the orchestrator, inventory is 43 skills, 7 eval files, 332 eval references, 0 errors, and the same 7 existing broad-trigger warnings. The new skill has no broad-trigger risk flag.
+- 2026-06-08: PR review requested small cleanup: align `bottleneck-margin-map.md` artifact paths, add artifact freshness/revisit conditions, make handoff closure structured, trace hardware capability to architecture constraints, and add a current-familiarization near-miss negative.
+- 2026-06-08: After review cleanup, inventory is 43 skills, 7 eval files, 338 eval references, 0 errors, and the same 7 existing broad-trigger warnings.
 
 ## Decision log
 
@@ -124,13 +127,13 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/embedded-system-familiarization` with uncommitted validated changes.
-- What is done: request read; branch and ExecPlan created; orchestrator skill, templates, handoffs, trigger evals, README map, generated index/catalog, and validation are complete.
-- What is not done: commit, push, draft PR.
+- Current branch: `codex/embedded-system-familiarization`, PR #46.
+- What is done: request read; branch and ExecPlan created; orchestrator skill, templates, handoffs, trigger evals, README map, generated index/catalog, validation, and review cleanup are complete. `make build-release` and `make verify` passed after review cleanup.
+- What is not done: commit and push the review cleanup.
 - How to run: use `python3` for scripts.
 - How to test: `python3 scripts/validate_skills.py`, `python3 scripts/validate_skill_trigger_evals.py`, `python3 scripts/report_skill_inventory.py --check --format text`, `python3 scripts/generate_agent_index.py --check`, `make build-release`, `make verify`.
 - Known risks / open questions: the orchestrator description must stay narrow enough to avoid broad-trigger warnings or accidental all-embedded routing.
-- Next 1-3 steps: run final post-plan checks; commit changes; push branch and open draft PR.
+- Next 1-3 steps: run final post-plan checks; commit review cleanup; push branch to update PR #46.
 - Pointers: `.agents/skills/embedded-system-familiarization/SKILL.md`, `.agents/skills/embedded-system-familiarization/templates/system-familiarization.md`, `.agents/skills/dev-workflow/SKILL.md`, `evals/skill-triggers/embedded-system-familiarization.json`.
 
 ## Validation & Acceptance
@@ -154,7 +157,7 @@
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged: Worktree contains the embedded system familiarization orchestrator; not yet committed.
-- What went well: Validators pass with 43 skills and 98 trigger eval cases, and inventory remains at 0 errors with no new broad-trigger warning for the orchestrator.
+- What shipped / merged: PR #46 contains the embedded system familiarization orchestrator; review cleanup is in progress locally.
+- What went well: Validators pass with 43 skills and 99 trigger eval cases, and inventory remains at 0 errors with no new broad-trigger warning for the orchestrator.
 - What went wrong: Nothing blocking.
 - Follow-ups / tech debt tickets: None for this scope.
