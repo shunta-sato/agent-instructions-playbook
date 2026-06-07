@@ -40,7 +40,8 @@ Do not use it for ordinary command-system initialization; use `project-initializ
 7. Add a PR template section from `templates/pr-template-section.md` where the repo has a PR template convention.
 8. Add or document a resource-smoke command in `COMMANDS.md` or the repo-equivalent command registry.
 9. Route target-specific work to `embedded-target-characterization` before feature-level budgets are treated as production constraints.
-10. Route feature-level work to `embedded-nfr-design`.
+10. Route broad target-learning, hardware capability, bottleneck/margin, or architecture-constraint work to `embedded-system-familiarization`.
+11. Route feature-level work to `embedded-nfr-design`.
 
 ## Outputs
 
@@ -60,6 +61,7 @@ Produce or update project-level artifacts:
 - Project constitution produces provisional budgets.
 - Target-characterized budgets require target evidence or explicit unknown/provisional status.
 - After creating repo-level physical constitution, recommend `embedded-target-characterization` before production NFR budgets are finalized.
+- After creating repo-level physical constitution, use `embedded-system-familiarization` when a real or representative target must be understood before feature design.
 
 ## Gotchas
 

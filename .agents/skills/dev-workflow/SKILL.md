@@ -30,6 +30,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
    - runtime behavior change → `$observability`
+   - embedded/edge/target-local work where target behavior, hardware capability, operating envelope, bottlenecks, or NFR provenance are not understood → `$embedded-system-familiarization`
    - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → route by the embedded NFR table below
    - strict-constraint low-level code or repeated compile/test loops → `$staged-lowering`
    - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
@@ -38,7 +39,8 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 
 3) Apply routing priority to avoid overlap:
    - If the task requires choosing among cross-boundary architecture or technology options with measurable quality drivers, run `$architecture-decision-analysis` before implementation. Route to `$requirements-engineering` first if the quality drivers or requirements are too vague to measure.
-   - If embedded physical-footprint NFRs are present, first route missing target context, unknown envelope behavior, and budget provenance gaps to characterization, envelope discovery, and calibration as applicable; then run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
+   - If embedded physical-footprint NFRs are broad, optimization-oriented, or architecture-shaping and target behavior or hardware capability is not understood, run `$embedded-system-familiarization` first.
+   - If embedded physical-footprint NFRs are narrow, first route missing target context, unknown envelope behavior, and budget provenance gaps to the specific embedded skills as applicable; then run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 
@@ -46,6 +48,7 @@ Embedded NFR routing table:
 
 | Skill | Trigger |
 | --- | --- |
+| `$embedded-system-familiarization` | Broad target-learning, optimization, or architecture-shaping work where target behavior, hardware capability, workload envelope, bottlenecks, margins, or NFR provenance are not understood. |
 | `$embedded-target-characterization` | If target profile, normal workload, measurement surface, resource headroom, or physical budget provenance is missing. |
 | `$embedded-operating-envelope-discovery` | If normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown. |
 | `$embedded-nfr-calibration` | If budget values are being set or revised from target characterization, baselines, or operating envelope evidence. |
@@ -55,6 +58,8 @@ Embedded NFR routing table:
 | `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |
 | `$embedded-nfr-gate` | Before final submit if feature-level embedded NFR work was triggered. |
 | `$embedded-project-constitution` | Only for project bootstrap or a new embedded runtime class. |
+
+Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
 
 4) Execute implementation with the selected route + required branches.
 

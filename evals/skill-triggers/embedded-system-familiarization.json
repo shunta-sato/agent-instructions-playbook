@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "embedded-system-new-target-optimization",
+      "prompt": "We are porting our recorder to a new battery-powered sensor target and want to tune it to use the hardware efficiently without wasting CPU or battery. We do not yet know resource headroom or thermal behavior.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/system-familiarization.md",
+        "docs/targets/<target>/hardware-capability-map.md",
+        "docs/targets/<target>/bottleneck-and-margin-map.md",
+        "reports/nfr-calibration/<feature>.md"
+      ],
+      "expected_decisions": [
+        "Create a system familiarization pack before finalizing NFR budgets or architecture constraints",
+        "Do not claim hardware-efficient or battery-safe until target evidence exists"
+      ],
+      "notes": "Broad new-target optimization should trigger the principal orchestration skill."
+    },
+    {
+      "id": "embedded-system-hardware-capability-unknown",
+      "prompt": "We need to decide whether to use CPU polling, kernel events, or hardware timestamping on a target whose scheduler, thermal, and wakeup behavior we have not characterized.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/system-familiarization.md",
+        "docs/targets/<target>/hardware-capability-map.md",
+        "docs/targets/<target>/architecture-constraints.md"
+      ],
+      "expected_decisions": [
+        "Architecture decision waits for target characterization and hardware capability map"
+      ],
+      "notes": "Architecture choices depending on unknown target capability should route through familiarization."
+    },
+    {
+      "id": "embedded-system-boundary-optimization",
+      "prompt": "The system works normally most of the time, but near sustained load it starts dropping frames. We want to understand the normal/degraded boundary and redesign the logger so it does not push the device over the edge.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery",
+        "embedded-observer-effect-review",
+        "embedded-nfr-calibration"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "concurrency-android"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/system-familiarization.md",
+        "docs/targets/<target>/operating-envelope.md",
+        "reports/resource/observer-effect-review.md"
+      ],
+      "expected_decisions": [
+        "Operating envelope and observer effect must be understood before logger redesign"
+      ],
+      "notes": "Boundary behavior plus redesign is broader than envelope discovery alone."
+    },
+    {
+      "id": "embedded-system-performance-extraction",
+      "prompt": "We want to maximize throughput on this edge gateway while staying within thermal and flash-write budgets. Decide how software should use available hardware capability.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-nfr-calibration",
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "textbook-structured-content-workflow",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/system-familiarization.md",
+        "docs/targets/<target>/hardware-capability-map.md",
+        "docs/targets/<target>/bottleneck-and-margin-map.md",
+        "docs/targets/<target>/architecture-constraints.md"
+      ],
+      "expected_decisions": [
+        "Build hardware capability and bottleneck/margin maps before choosing architecture"
+      ],
+      "notes": "Using hardware capability while respecting physical budgets is the orchestrator's core positive case."
+    },
+    {
+      "id": "embedded-system-known-target-small-change",
+      "prompt": "Update a typo in the target characterization doc. No runtime, architecture, workload, or NFR changes.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration"
+      ],
+      "expected_decisions": [
+        "Do not re-run familiarization for doc-only typo fix"
+      ],
+      "notes": "Known target doc-only work should remain a near-miss negative."
+    },
+    {
+      "id": "embedded-system-narrow-calibration-only",
+      "prompt": "We already have target characterization and operating envelope reports. Calibrate the recorder CPU budget from the new nominal workload report.",
+      "should_trigger": [
+        "embedded-nfr-calibration"
+      ],
+      "should_not_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery"
+      ],
+      "expected_decisions": [
+        "Use the narrower calibration skill because the familiarization pack is current"
+      ],
+      "notes": "Current target evidence plus a single budget update should not trigger the orchestrator."
+    },
+    {
+      "id": "embedded-system-generic-backend-performance",
+      "prompt": "Optimize a web API p95 latency endpoint running in cloud containers.",
+      "should_trigger": [
+        "requirements-engineering"
+      ],
+      "should_not_trigger": [
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-nfr-design"
+      ],
+      "expected_decisions": [
+        "Generic cloud backend performance is outside embedded system familiarization"
+      ],
+      "notes": "Cloud performance must not pull in target-local familiarization."
+    }
+  ]
+}

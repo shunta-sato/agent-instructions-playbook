@@ -62,6 +62,7 @@ Do not use this skill for:
    - Each driver must have a scenario, metric or threshold, and verification method.
    - If quality drivers are too vague to measure, stop and route to `requirements-engineering`.
    - If quality drivers are embedded physical-footprint NFRs, route to `embedded-nfr-design` for budgets and measurement claims.
+   - If architecture choices depend on not-yet-understood target hardware capability, workload envelope, bottleneck/margin data, or physical NFR provenance, route to `embedded-system-familiarization` before final decision.
    - If architecture options trade off embedded physical drivers but target baselines are missing, route to `embedded-target-characterization` before final decision.
 
 5. Compare up to 3 options.
@@ -123,6 +124,7 @@ Return an Architecture Decision Analysis Record:
 - requirements-engineering:
 - observability:
 - embedded-target-characterization:
+- embedded-system-familiarization:
 - embedded-nfr-design:
 - error-handling:
 - code-smells-and-antipatterns:

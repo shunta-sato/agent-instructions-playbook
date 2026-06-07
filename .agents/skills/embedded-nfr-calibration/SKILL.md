@@ -25,6 +25,8 @@ Use this skill when:
 
 Do not use it when no target evidence exists and the task is only project bootstrap, unless budgets are explicitly marked provisional or unknown.
 
+Use `embedded-system-familiarization` when budget calibration depends on target capability, workload mapping, bottleneck/margin analysis, and architecture constraints, not only numeric baseline reports.
+
 ## How to use
 
 1. Gather inputs:

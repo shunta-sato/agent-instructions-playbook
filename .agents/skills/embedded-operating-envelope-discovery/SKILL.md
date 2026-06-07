@@ -25,6 +25,8 @@ Use this skill when:
 
 Do not use it for static docs/schema work or ordinary web/backend performance benchmarking.
 
+Use `embedded-system-familiarization` when envelope discovery is part of a broader architecture, hardware capability, bottleneck/margin, or optimization effort.
+
 ## How to use
 
 1. Start from target characterization.

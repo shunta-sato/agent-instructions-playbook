@@ -49,17 +49,18 @@ The goal is a small, curated software-development operating system: clear entry 
 - `error-handling` — failure contracts at boundaries, retries, fallbacks, and user-visible errors
 - `observability` — logs, metrics, and traces for behavior changes
 
-### Embedded NFR and resource discipline
+### Embedded / target-local systems
 
+- `embedded-system-familiarization` — principal-level orchestration for target learning, operating envelope, hardware capability, bottleneck/margin mapping, NFR calibration, and architecture constraints
+- `embedded-project-constitution` — bootstrap project-level physical budgets, target profiles, harness skeletons, and PR checks
 - `embedded-target-characterization` — learn target facts, measurement surfaces, baselines, and constraints before budgeting
 - `embedded-operating-envelope-discovery` — discover normal, degraded, boundary, recovery, and telemetry blackout behavior
 - `embedded-nfr-calibration` — derive embedded NFR budgets from target evidence with provenance and revisit conditions
 - `embedded-nfr-design` — define physical-footprint budgets and no-claim rules before embedded implementation
 - `embedded-nfr-harness-design` — turn embedded budgets into target profiles, scenarios, reports, and smoke commands
-- `embedded-nfr-gate` — decide submit/no-submit from embedded budgets, measurements, unknowns, and claims
 - `embedded-hot-path-review` — review target-local polling, sampling, recorder, collector, and loop hot paths
 - `embedded-observer-effect-review` — check whether target-local instrumentation perturbs scheduler, power, I/O, memory, thermal, or workload behavior
-- `embedded-project-constitution` — bootstrap project-level physical budgets, target profiles, harness skeletons, and PR checks
+- `embedded-nfr-gate` — decide submit/no-submit from embedded budgets, measurements, unknowns, and claims
 
 ### Concurrency
 
@@ -116,6 +117,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `embedded-observer-effect-review` | Embedded observer-effect review | `.agents/skills/embedded-observer-effect-review/SKILL.md` |
 | `embedded-operating-envelope-discovery` | Embedded operating envelope discovery | `.agents/skills/embedded-operating-envelope-discovery/SKILL.md` |
 | `embedded-project-constitution` | Embedded project constitution | `.agents/skills/embedded-project-constitution/SKILL.md` |
+| `embedded-system-familiarization` | Principal embedded system familiarization | `.agents/skills/embedded-system-familiarization/SKILL.md` |
 | `embedded-target-characterization` | Embedded target characterization | `.agents/skills/embedded-target-characterization/SKILL.md` |
 | `error-handling` | Boundary error handling | `.agents/skills/error-handling/SKILL.md` |
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
