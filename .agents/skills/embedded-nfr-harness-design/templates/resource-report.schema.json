@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Embedded resource report",
+  "type": "object",
+  "required": [
+    "feature",
+    "target_profile",
+    "scenario",
+    "status",
+    "measurements",
+    "budget_results",
+    "limits"
+  ],
+  "properties": {
+    "feature": { "type": "string" },
+    "target_profile": { "type": "string" },
+    "scenario": { "type": "string" },
+    "status": {
+      "enum": ["pass", "fail", "unknown", "not_applicable", "experimental_only"]
+    },
+    "started_at": { "type": "string" },
+    "duration_seconds": { "type": "number" },
+    "measurements": {
+      "type": "object",
+      "properties": {
+        "cpu_percent_avg": { "type": ["number", "null"] },
+        "cpu_percent_p95": { "type": ["number", "null"] },
+        "wakeups_per_second_added": { "type": ["number", "null"] },
+        "default_polling_interval_ms": { "type": ["number", "null"] },
+        "default_sampling_rate_hz": { "type": ["number", "null"] },
+        "burst_sampling_interval_ms": { "type": ["number", "null"] },
+        "rss_mb_max": { "type": ["number", "null"] },
+        "heap_growth_mb_per_hour": { "type": ["number", "null"] },
+        "disk_write_bytes_per_second": { "type": ["number", "null"] },
+        "network_background_bytes_per_hour": { "type": ["number", "null"] },
+        "thermal_rise_celsius": { "type": ["number", "null"] },
+        "latency_jitter_ms_p99": { "type": ["number", "null"] },
+        "observer_overhead_percent": { "type": ["number", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "budget_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nfr", "budget", "measurement", "unit", "result", "evidence"],
+        "properties": {
+          "nfr": { "type": "string" },
+          "budget": { "type": ["number", "string", "boolean", "null"] },
+          "measurement": { "type": ["number", "string", "boolean", "null"] },
+          "unit": { "type": "string" },
+          "result": {
+            "enum": [
+              "pass",
+              "fail",
+              "unknown",
+              "not_applicable",
+              "experimental_only"
+            ]
+          },
+          "evidence": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "command": { "type": "string" },
+        "log_path": { "type": "string" },
+        "baseline_path": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

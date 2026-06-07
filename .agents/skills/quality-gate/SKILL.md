@@ -26,6 +26,8 @@ Invoke this skill **before every submission**. It is mandatory.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.
    - If `architecture-decision-analysis` was triggered, verify an Architecture Decision Analysis Record exists and includes decision, quality drivers, tradeoffs, and verification tasks.
    - If `observability` was triggered, verify the Observability Plan includes signal purpose, actionability, counter-metric where relevant, and artifact paths.
+   - If feature-level embedded NFR work was triggered, verify `reports/resource/nfr-gate-report.md` exists and records `submit`, `no-submit`, or `experimental-only`; accept submit only when the embedded NFR gate is `submit` or the feature is explicitly experimental with production claims removed.
+   - If only `embedded-project-constitution` was triggered, verify constitution artifacts exist. Do not require a feature-level NFR gate report unless feature runtime changes or production-readiness claims are introduced.
    - If any study-note workflow was triggered, verify the relevant Study Pack Report exists.
    - If publish/sync readiness was required, verify `textbook-quality-gate` produced a gate decision.
    - If narrative or technical essay workflow was used, verify its semantic review report exists before accepting shared-mechanical-only checks.
@@ -62,3 +64,5 @@ Function-design evidence requirements when triggered:
 
 
 - Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.
+- Verify embedded NFR evidence by checking the report artifact path, not only final-response text.
+- Verify constitution-only evidence by checking the generated project artifacts, not only final-response text.

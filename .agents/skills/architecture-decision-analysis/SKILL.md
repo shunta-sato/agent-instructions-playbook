@@ -24,6 +24,7 @@ Required:
 - There are multiple viable architecture or technology options.
 - The decision changes cross-boundary structure: database, persistence model, queue, cache, service split, external dependency, synchronization model, communication boundary, data ownership, availability strategy, or deployment/rollback shape.
 - The choice affects measurable quality drivers such as latency, throughput, reliability, availability, security, operability, maintainability, or migration risk.
+- For embedded or target-local systems, the choice affects physical quality drivers such as CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer overhead.
 
 Use additionally when one or more of these applies:
 
@@ -60,6 +61,7 @@ Do not use this skill for:
 4. Identify up to 5 quality drivers.
    - Each driver must have a scenario, metric or threshold, and verification method.
    - If quality drivers are too vague to measure, stop and route to `requirements-engineering`.
+   - If quality drivers are embedded physical-footprint NFRs, route to `embedded-nfr-design` for budgets and measurement claims.
 
 5. Compare up to 3 options.
    - Include assumptions.
@@ -119,6 +121,7 @@ Return an Architecture Decision Analysis Record:
 ### 8. Handoffs
 - requirements-engineering:
 - observability:
+- embedded-nfr-design:
 - error-handling:
 - code-smells-and-antipatterns:
 - quality-gate:

@@ -1,0 +1,28 @@
+target_class: "<target-class>"
+profile_name: "<profile-name>"
+power_source: "<ac/battery/vehicle/unknown>"
+memory_mb: null
+storage_type: "<flash/emmc/sd/ssd/unknown>"
+
+measurement_surfaces:
+  cpu: "<tool or unavailable>"
+  wakeups: "<tool or unavailable>"
+  memory: "<tool or unavailable>"
+  storage_writes: "<tool or unavailable>"
+  battery_power: "<tool or unavailable>"
+  thermal: "<tool or unavailable>"
+  latency_jitter: "<tool or unavailable>"
+
+resource_smoke:
+  command: "<scripts/resource/run-resource-smoke.sh or equivalent>"
+  baseline_path: "baselines/resource/<target-class>.json"
+
+default_budgets:
+  default_polling_interval_ms_min: 1000
+  default_sampling_rate_hz_max: 1
+  burst_duration_seconds_max: null
+  steady_state_cpu_percent_max: null
+  wakeups_per_second_added_max: null
+  rss_mb_max: null
+  continuous_disk_write_bytes_per_second_max: 0
+  thermal_rise_celsius_max: null

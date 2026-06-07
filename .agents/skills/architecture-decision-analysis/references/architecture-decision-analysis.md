@@ -38,8 +38,10 @@ Template:
 | Latency | During peak search traffic, users receive results without blocking UI feedback | p95 under target threshold | benchmark or integration measurement |
 | Availability | When the external provider fails, the operation degrades predictably | fallback path exercised | integration test + failure simulation |
 | Operability | On failure, operators can identify the failed dependency and affected operation | logs/metrics/traces include identifiers | observability plan check |
+| Physical footprint | During default target-local operation, resource use stays within device budget | CPU, wakeup, memory, write, thermal, or jitter threshold | embedded NFR matrix and resource smoke |
 
 If the metric cannot be written, route to `requirements-engineering`.
+If the metric is an embedded physical-footprint budget, route to `embedded-nfr-design`.
 
 ## 3. Option comparison
 
@@ -109,6 +111,7 @@ Good:
 Use handoffs only when needed:
 
 - `requirements-engineering`: vague requirement, unclear quality driver, missing acceptance criteria.
+- `embedded-nfr-design`: embedded CPU, memory, wakeup, battery, flash wear, thermal, latency/jitter, or observer-effect budget needed.
 - `observability`: selected design needs logs, metrics, traces, correlation identifiers, or dashboards.
 - `error-handling`: boundary failure contract, retries, fallbacks, user-visible errors.
 - `code-smells-and-antipatterns`: implementation diff must be checked for new or worsened boundary/coupling issues.

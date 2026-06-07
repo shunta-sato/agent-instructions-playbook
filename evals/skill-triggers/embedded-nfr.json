@@ -1,0 +1,220 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "embedded-recorder-10ms",
+      "prompt": "Add a target-local background recorder for an edge device that samples sensor state every 10ms and writes a compact event history.",
+      "should_trigger": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-hot-path-review"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "textbook-structured-content-workflow"
+      ],
+      "expected_artifacts": [
+        "docs/nfr/<feature>.md Embedded NFR Matrix",
+        "requirements/nfr/<feature>.yaml physical budgets",
+        "docs/testing/resource-harness.md or feature resource harness plan",
+        "reports/resource/hot-path-review.md"
+      ],
+      "expected_decisions": [
+        "Default 10ms sampling is treated as high risk and must be budgeted, measured, or moved to bounded burst/experimental mode",
+        "No low-overhead or production-ready claim is allowed without measurement evidence"
+      ],
+      "expected_evidence": [
+        "Target-class assumptions and steady-state vs burst classification",
+        "CPU, wakeup, memory, storage/write, battery, thermal, and latency/jitter measurement plan"
+      ],
+      "notes": "High-frequency recorder work should route to embedded NFR design, harness design, and hot-path review."
+    },
+    {
+      "id": "embedded-daemon-proc-watcher",
+      "prompt": "Implement a robot-local daemon that watches /proc, records process health periodically, and uploads diagnostics during field failures.",
+      "should_trigger": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review",
+        "observability"
+      ],
+      "should_not_trigger": [
+        "concurrency-android",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "NFR matrix with target-local filesystem and wakeup budgets",
+        "Resource harness scenarios for default steady state and observer-on vs observer-off",
+        "reports/resource/observer-effect-review.md"
+      ],
+      "expected_decisions": [
+        "The diagnostic observer is reviewed as a possible workload perturbation",
+        "Periodic /proc watching is checked for cadence, allocation, blocking calls, and serialization"
+      ],
+      "expected_evidence": [
+        "Observer overhead is measured or marked unknown/experimental",
+        "Target smoke or host fallback limits are documented"
+      ],
+      "notes": "Target-local daemon plus diagnostics should invoke both resource and observer-effect workflows."
+    },
+    {
+      "id": "embedded-project-start",
+      "prompt": "Start a new battery-powered edge logger project with a daemon, local recorder, flash retention, and resource smoke checks.",
+      "should_trigger": [
+        "project-initialization",
+        "embedded-project-constitution",
+        "embedded-nfr-design"
+      ],
+      "should_not_trigger": [
+        "textbook-quality-gate",
+        "visual-regression-testing"
+      ],
+      "expected_artifacts": [
+        "docs/00_project_principles.md",
+        "docs/architecture/resource-discipline.md",
+        "requirements/physical_budgets.yaml",
+        "target_profiles/<target>.yaml",
+        "docs/testing/resource-harness.md"
+      ],
+      "expected_decisions": [
+        "Project-level physical budgets and no-measurement-no-claim rules are created before feature work",
+        "Battery unknown is not treated as AC power"
+      ],
+      "expected_evidence": [
+        "Resource smoke command or explicit unavailable reason in command registry",
+        "Target profile records measurement surfaces"
+      ],
+      "notes": "Project bootstrap with embedded constraints should create constitution artifacts."
+    },
+    {
+      "id": "embedded-nfr-final-gate-missing-report",
+      "prompt": "Before submitting this embedded logger change, verify readiness. The NFR matrix exists, but there is no embedded NFR gate report yet.",
+      "should_trigger": [
+        "quality-gate",
+        "embedded-nfr-gate"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "uidesign-flow"
+      ],
+      "expected_artifacts": [
+        "reports/resource/nfr-gate-report.md"
+      ],
+      "expected_decisions": [
+        "Gate decision is no-submit until the embedded NFR gate report exists",
+        "Unsupported low-overhead, battery-safe, or production-ready claims block submit"
+      ],
+      "expected_evidence": [
+        "Artifact check covers NFR matrix, physical budgets, target profile, harness plan, resource report, hot-path report, and observer-effect report when triggered"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        "reports/resource/nfr-gate-report.md"
+      ],
+      "notes": "Quality-gate should refuse submit when an embedded NFR branch lacks its gate report."
+    },
+    {
+      "id": "battery-safe-claim-without-measurement",
+      "prompt": "Mark the edge-device recorder as battery-safe and low-overhead, but we only ran a host smoke test and have no target battery or wakeup measurement yet.",
+      "should_trigger": [
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate"
+      ],
+      "should_not_trigger": [
+        "embedded-project-constitution",
+        "uiux-core"
+      ],
+      "expected_decisions": [
+        "Battery-safe and low-overhead claims are blocked until target evidence exists",
+        "Host fallback is not treated as target proof",
+        "Measurement unknown is not treated as pass"
+      ],
+      "expected_evidence": [
+        "No-measurement-no-claim list includes battery-safe and low-overhead claims",
+        "NFR gate report records no-submit or experimental-only"
+      ],
+      "notes": "Resource claims without target measurement should route to design, harness, and gate."
+    },
+    {
+      "id": "constitution-only-no-feature-submit",
+      "prompt": "Bootstrap project-level embedded principles, physical budgets, target profiles, and resource harness skeletons for a new edge logger repo. Do not implement a feature or claim production readiness yet.",
+      "should_trigger": [
+        "embedded-project-constitution",
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-gate",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review"
+      ],
+      "expected_artifacts": [
+        "docs/00_project_principles.md",
+        "docs/architecture/resource-discipline.md",
+        "requirements/physical_budgets.yaml",
+        "target_profiles/<target>.yaml",
+        "docs/testing/resource-harness.md"
+      ],
+      "expected_decisions": [
+        "Quality-gate checks constitution artifacts without requiring a feature-level NFR gate report",
+        "No production-readiness claim is introduced"
+      ],
+      "notes": "Project constitution alone should not force the feature-level embedded NFR gate."
+    },
+    {
+      "id": "generic-backend-api-near-miss",
+      "prompt": "Add a JSON schema and backend API response field for a web dashboard. No target-local runtime, polling, daemon, logger, or battery behavior changes.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review",
+        "embedded-project-constitution"
+      ],
+      "expected_decisions": [
+        "No embedded physical-footprint workflow is required because the change is generic backend/schema work"
+      ],
+      "notes": "Schema-only work should not trigger embedded NFR skills."
+    },
+    {
+      "id": "pure-parser-near-miss",
+      "prompt": "Refactor a pure parser function and add unit tests. It does not run in a target-local hot path.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review"
+      ],
+      "expected_decisions": [
+        "Parser refactor stays outside embedded NFR routing unless target-local hot-path evidence appears"
+      ],
+      "notes": "Pure parser work is a near-miss negative."
+    },
+    {
+      "id": "server-observability-near-miss",
+      "prompt": "Add request_id logs and latency metrics to a normal cloud API endpoint.",
+      "should_trigger": [
+        "observability"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-gate"
+      ],
+      "expected_decisions": [
+        "Ordinary server observability does not need embedded observer-effect review"
+      ],
+      "notes": "Observability should remain available without forcing embedded NFR routes."
+    }
+  ]
+}

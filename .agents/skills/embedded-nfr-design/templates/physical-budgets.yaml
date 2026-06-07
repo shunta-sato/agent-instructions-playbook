@@ -1,0 +1,53 @@
+feature: "<feature>"
+target_class: "<target-class>"
+status: draft
+
+rules:
+  no_measurement_no_claim: true
+  battery_unknown_is_not_ac: true
+  measurement_unknown_is_not_pass: true
+  host_fallback_is_not_target_proof: true
+
+modes:
+  default:
+    description: "Production steady state."
+    default_polling_interval_ms_min: 1000
+    default_sampling_rate_hz_max: 1
+    always_on_polling_below_100ms_allowed: false
+    high_frequency_default_polling_requires_measurement: true
+    steady_state_cpu_percent_max: null
+    wakeups_per_second_added_max: null
+    rss_mb_max: null
+    heap_growth_mb_per_hour_max: 0
+    hot_path_allocations_per_iteration_max: 0
+    continuous_disk_write_bytes_per_second_max: 0
+    flash_write_bytes_per_day_max: null
+    network_background_bytes_per_hour_max: null
+    latency_jitter_ms_p99_max: null
+    thermal_rise_celsius_max: null
+  burst:
+    description: "Bounded high-activity mode."
+    trigger: "<trigger>"
+    burst_sampling_interval_ms_min: null
+    duration_seconds_max: null
+    burst_requires_trigger_or_marker: true
+    cpu_percent_max: null
+    wakeups_per_second_added_max: null
+    disk_write_bytes_total_max: null
+  experimental:
+    production_ready_claim_allowed: false
+    reason: "<why measurement or target evidence is unavailable>"
+
+degraded_modes:
+  battery_low: "<reduce cadence, disable nonessential capture, or experimental-only>"
+  memory_pressure: "<bound buffers, drop oldest, or disable>"
+  thermal_pressure: "<reduce duty cycle or disable>"
+  storage_pressure: "<stop writes, rotate, or drop>"
+  measurement_unavailable: "<remove claims or mark experimental>"
+
+measurement:
+  target_smoke_command: "<command>"
+  host_fallback_command: "<command or none>"
+  baseline_path: "baselines/resource/<feature>.json"
+  report_path: "reports/resource/<feature>.json"
+  missing_evidence: []

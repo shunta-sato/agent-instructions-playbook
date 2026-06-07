@@ -11,6 +11,13 @@ Classify first, then plan depth is decided automatically.
 - **Normal risk**: default for most code/test changes.
 - **High risk**: cross-boundary impact, runtime-behavior shift, broad refactor, strict constraints, safety/perf critical.
 
+Embedded high-risk examples:
+
+- target-local daemon, service, logger, recorder, collector, sampler, watcher, or background loop
+- sub-100ms polling or sampling
+- target-local filesystem writes, flash wear, wakeup, battery, thermal, or jitter impact
+- resource-sensitive default behavior described as low overhead, battery safe, lightweight, or production ready
+
 Record:
 - Risk level:
 - Why this level:
@@ -40,6 +47,12 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`
 - runtime behavior change → `$observability`
+- embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → `$embedded-nfr-design`
+- target-local loop/polling/sampling/collector/recorder hot path, sub-100ms cadence, per-iteration I/O, repeated serialization, or hot-path allocation → `$embedded-hot-path-review`
+- target-local logging/recording/collection/tracing/profiling/measurement that can perturb scheduler, power, thermal, I/O, memory, wakeups, or workload → `$embedded-observer-effect-review`
+- embedded physical budgets require measurement or a target smoke command → `$embedded-nfr-harness-design`
+- feature-level embedded NFR design, harness, hot-path, or observer-effect branch was triggered → `$embedded-nfr-gate` before `$quality-gate`
+- project bootstrap or new embedded runtime class without feature implementation → `$embedded-project-constitution`
 - ambiguous requirements or explicit quality/NFR target → `$requirements-engineering`
 - strict-constraint/low-level synthesis OR repeated compile/test loops → `$staged-lowering`
 - weak tests / nondeterminism / legacy refactor → `$working-with-legacy-code`
@@ -54,6 +67,19 @@ Fill this before implementation starts:
 - Required branches to execute:
 - Required verification depth before gate:
 - Non-triggered branches explicitly skipped:
+
+### Embedded NFR routing table
+
+Use this table to avoid opening all embedded NFR skills by default.
+
+| Skill | Trigger |
+| --- | --- |
+| `$embedded-nfr-design` | Always for embedded physical-footprint work. |
+| `$embedded-hot-path-review` | Only if loop, polling, sampling, collector, recorder, or hot-path behavior exists. |
+| `$embedded-observer-effect-review` | Only if instrumentation or measurement can perturb workload. |
+| `$embedded-nfr-harness-design` | Only if measurement or budget proof is needed. |
+| `$embedded-nfr-gate` | Before final submit if feature-level embedded NFR work was triggered. |
+| `$embedded-project-constitution` | Only for project bootstrap or a new embedded runtime class. |
 
 ## 3) Live external discovery (when applicable)
 
