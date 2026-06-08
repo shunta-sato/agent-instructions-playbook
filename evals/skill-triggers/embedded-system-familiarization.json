@@ -96,6 +96,71 @@
       "notes": "Using hardware capability while respecting physical budgets is the orchestrator's core positive case."
     },
     {
+      "id": "observed-cpufreq-not-controlled-sweep",
+      "prompt": "We observed scaling_cur_freq between 600MHz and 1800MHz under the ondemand governor during CPU stress. Use this to claim the recorder is low overhead at all CPU clocks.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration",
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "textbook-quality-gate"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/system-familiarization.md",
+        "docs/targets/<target>/controlled-operating-points.md"
+      ],
+      "expected_decisions": [
+        "Observed frequency variation under ondemand is not a controlled frequency sweep",
+        "Claims across all CPU clocks are blocked until controlled operating point experiments exist"
+      ],
+      "notes": "Target55-like case: natural cpufreq variation must not count as CPU clock sweep evidence."
+    },
+    {
+      "id": "gpu-capability-without-cost-model",
+      "prompt": "The target has a GPU. Decide whether the recorder or inference pipeline should offload work to GPU to reduce CPU load.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-harness-design",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/hardware-capability-map.md",
+        "docs/targets/<target>/hardware-control-surface-map.md",
+        "docs/targets/<target>/capability-cost-model.md"
+      ],
+      "expected_decisions": [
+        "GPU presence is not enough; require control surface, API, transfer cost, workload fit, power/thermal cost model, and benchmark evidence"
+      ],
+      "notes": "Architecture claims based on hardware capability need cost evidence, not just device presence."
+    },
+    {
+      "id": "fixed-frequency-benchmark-needed",
+      "prompt": "Benchmark adc-targetd overhead at fixed 600MHz, 900MHz, 1200MHz, 1500MHz, and 1800MHz on Raspberry Pi 4.",
+      "should_trigger": [
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-harness-design"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "docs/targets/<target>/controlled-operating-points.md",
+        "docs/targets/<target>/experiment-design-matrix.md"
+      ],
+      "expected_decisions": [
+        "Create controlled operating point matrix with governor/frequency control, safety limits, and reversible setup"
+      ],
+      "notes": "A fixed-frequency benchmark request should plan controlled operating points before measurement."
+    },
+    {
       "id": "embedded-system-known-target-small-change",
       "prompt": "Update a typo in the target characterization doc. No runtime, architecture, workload, or NFR changes.",
       "should_trigger": [
@@ -111,6 +176,23 @@
         "Do not re-run familiarization for doc-only typo fix"
       ],
       "notes": "Known target doc-only work should remain a near-miss negative."
+    },
+    {
+      "id": "embedded-system-simple-runtime-no-architecture-claim",
+      "prompt": "In an embedded repo with current target characterization, current system-familiarization.md, and calibrated NFRs, rename a debug log label in the recorder. No runtime cadence, workload, architecture, operating point, or NFR claim changes.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Do not re-run familiarization for a simple embedded edit when current evidence exists and no operating point or architecture claim changes"
+      ],
+      "notes": "Generic simple embedded tasks must not over-trigger the orchestrator."
     },
     {
       "id": "embedded-system-narrow-calibration-only",
