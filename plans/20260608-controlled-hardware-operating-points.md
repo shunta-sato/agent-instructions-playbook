@@ -88,7 +88,7 @@
 - [x] (P3) Update quality gate — deliverable: operating point claim checks in skill and reference checklist — verify: checklist review.
 - [x] (P4) Add trigger evals — deliverable: new positive/negative cases — verify: `python3 scripts/validate_skill_trigger_evals.py` passed with 103 cases.
 - [x] (P5) Run final verification — deliverable: green validation commands — verify: validators, `make build-release`, and `make verify` passed.
-- [ ] (P6) Publish PR — deliverable: commit, push, draft PR — verify: GitHub PR URL.
+- [x] (P6) Publish PR — deliverable: commit, push, draft PR — verify: PR #47 opened.
 
 ## Surprises & Discoveries
 
@@ -104,13 +104,13 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/controlled-hardware-operating-points`, uncommitted edits in progress.
-- What is done: request analyzed; workflow route selected; ExecPlan created; templates, skill updates, quality-gate updates, trigger evals, and verification are complete.
-- What is not done: commit/push/PR.
+- Current branch / commit: `codex/controlled-hardware-operating-points`, PR #47.
+- What is done: request analyzed; workflow route selected; ExecPlan created; templates, skill updates, quality-gate updates, trigger evals, verification, commit, push, and draft PR are complete.
+- What is not done: none for this scope.
 - How to run: use `python3` for repository scripts.
 - How to test: `python3 scripts/validate_skills.py`; `python3 scripts/validate_skill_trigger_evals.py`; `python3 scripts/report_skill_inventory.py --check --format text`; `python3 scripts/generate_agent_index.py --check`; `make build-release`; `make verify`.
 - Known risks / open questions: keep trigger wording narrow enough that generic simple embedded tasks do not over-trigger.
-- Next 1-3 steps: commit changes; push branch; open draft PR.
+- Next 1-3 steps: review PR #47; address review feedback if requested.
 - Pointers: `.agents/skills/embedded-system-familiarization/SKILL.md`, `.agents/skills/embedded-system-familiarization/templates/system-familiarization.md`, `.agents/skills/quality-gate/references/quality-gate.md`.
 
 ## Validation & Acceptance
@@ -144,7 +144,7 @@
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged: local branch contains controlled hardware operating point templates, familiarization/quality-gate updates, and trigger eval coverage.
+- What shipped / merged: draft PR #47 contains controlled hardware operating point templates, familiarization/quality-gate updates, and trigger eval coverage.
 - What went well: validators passed with 43 skills, 103 trigger eval cases, 358 eval references, 0 errors, and only the 7 existing broad-trigger warnings.
 - What went wrong: nothing blocking.
 - Follow-ups / tech debt tickets: none for this scope.
