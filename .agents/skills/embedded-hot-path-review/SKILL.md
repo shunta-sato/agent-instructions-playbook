@@ -1,6 +1,6 @@
 ---
 name: embedded-hot-path-review
-description: "Use when reviewing embedded or target-local loops, polling, sampling, collectors, recorders, sub-100ms work, per-iteration I/O, repeated serialization, or hot-path allocation. Do not use for cold-path or generic code review without resource-sensitive runtime behavior."
+description: "Use when reviewing embedded or target-local loops, polling, sampling, collectors, recorders, sub-100ms work, per-iteration I/O, repeated serialization, or hot-path allocation. Do not use for non-embedded application request/render/job paths; use performance-review there."
 metadata:
   short-description: Embedded hot-path review
 ---
@@ -23,7 +23,7 @@ Use this skill when a change includes:
 - repeated JSON serialization, regex, sorting, directory scans, allocation, or blocking syscalls in a hot path
 - ring buffers, queues, or retention logic on a resource-constrained target
 
-Do not use it for cold-path setup, generic backend request handlers, pure tests, pure schema changes, or one-shot scripts without target-local steady-state cost.
+Do not use it for cold-path setup, non-embedded backend request handlers, frontend render paths, pure tests, pure schema changes, or one-shot scripts without target-local steady-state cost. Use `performance-review` for non-embedded request/render/job path costs.
 
 ## How to use
 

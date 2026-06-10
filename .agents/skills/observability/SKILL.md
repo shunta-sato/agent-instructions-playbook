@@ -18,6 +18,7 @@ Use this skill when a change adds or changes runtime behavior where operators or
 - User-visible operations where success, failure, or degraded behavior must be explainable.
 - Incident-prone flows such as retries, timeouts, fallbacks, rate limits, auth, payments, imports, exports, or migrations.
 - Target-local instrumentation for embedded/edge systems, only after routing physical-footprint risk through the embedded NFR skills below.
+- Latency/error signals needed to monitor a `performance-review` decision after shipping.
 
 Do not use this skill for docs-only changes, pure formatting, mechanical refactors, or tests that do not change runtime behavior.
 
@@ -40,6 +41,8 @@ Do not use this skill for docs-only changes, pure formatting, mechanical refacto
 6) Add trace spans and ensure logs and metrics are correlated via identifiers.
 
 7) For each signal, record the decision it supports, the owner/action when degraded, a counter-metric when relevant, and any misleading interpretation risk.
+
+7a) If the signal supports a `performance-review` decision, record the reviewed hot path, the cost assumption being watched, and the threshold or trend that should reopen the decision.
 
 8) Apply safety rules (no secrets/PII; follow OWASP/NIST logging guidance).
 

@@ -63,6 +63,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
 - module/class responsibility layout, new layer/interface, 2+ new classes/modules, or existing class/module gains a second reason-to-change → `$design-balance`
 - normal/high-risk implementation or new abstraction/helper/wrapper/adapter/indirection → `$implementation-economy`
+- non-embedded request/render/job path, input-proportional collection processing, loop I/O, N+1 query risk, repeated serialization/allocation, serial awaits, or cache/batching/pagination decisions → `$performance-review`
 - function/helper/API/call-site design change → `$function-boundary-governor`
 - replace flawed abstraction requiring temporary red-state migration → `$destructive-refactor`
 - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
