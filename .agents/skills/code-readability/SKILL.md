@@ -9,6 +9,8 @@ metadata:
 
 Use this skill to review or clean up code so the next reader can understand intent, structure, and tests faster. It is a readability and C++ documentation gate, not a default implementation skill.
 
+`dev-workflow` may use a lightweight naming/responsibility check in its default lane. That check does not trigger a full readability review unless the triggers below apply.
+
 ## When to use
 
 Use this skill only when at least one trigger applies:
@@ -31,6 +33,8 @@ Do not use this skill just because code was changed.
 
 3) Propose the smallest change that reduces reading time:
    rename, split a paragraph, add an intent/assumption/pitfall comment, introduce a named constant, or adjust a test name/structure.
+
+3a) For class/module names, check whether the name predicts the unit's responsibility sentence. If not, route layout decisions to `design-balance` or rename locally when no layout change is needed.
 
 4) If you touched C++:
    - `.hpp`: add Doxygen to all declarations (including private) and include units/ranges where relevant.

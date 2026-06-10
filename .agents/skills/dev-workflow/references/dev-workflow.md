@@ -30,17 +30,39 @@ Record:
 | Change brief depth | compact | full | full |
 | Requirements depth | minimal EARS + acceptance bullets | full EARS + acceptance | full EARS + acceptance + failure-path notes |
 | Test planning | impacted tests list | Test List (3–10) | Test List (3–10) + explicit strategy |
+| Default implementation lane | skip if one file, no new abstraction, public API unchanged, no behavior expansion | required | required |
+| Complexity budget | optional only when new abstraction appears | `implementation-economy` budget + audit | `implementation-economy` budget + audit |
+| Responsibility layout | optional only when module/class layout changes | `design-balance` map when layout changes | `design-balance` map when layout changes |
 | Verification depth before gate | canonical minimum for changed surface | full canonical chain | full canonical chain |
 | Final gate | `$quality-gate` required | `$quality-gate` required | `$quality-gate` required |
 | ExecPlan | optional | required if complex | required if complex/long-running |
 
-## 1) Required trigger branches (all risks)
+## 1) Default implementation lane
+
+Run this lane before trigger branches for normal/high-risk implementation. For low risk, record the skip reason only when all are true: one file, no new abstraction, public API unchanged, and no behavior expansion.
+
+1. Requirements/DoD: record the smallest acceptance criteria and Definition of Done.
+2. Test List: seed from acceptance criteria when behavior can be tested; route to `$test-driven-development` when using Red/Green/Refactor.
+3. Responsibility layout: run `$design-balance` when the change introduces 2+ classes/modules, adds a layer/interface, or adds a new reason-to-change to an existing class/module.
+4. Complexity budget: run `$implementation-economy` for normal/high-risk work and for any new helper, wrapper, adapter, class, module, or indirection.
+5. Lightweight readability check: check that touched names predict responsibilities; rename if a class/module/function name cannot be explained in one sentence.
+
+Default lane output:
+- Definition of Done / acceptance criteria:
+- Test List source or skip reason:
+- Responsibility map path/summary or skip reason:
+- Complexity budget + audit path/summary or skip reason:
+- Naming/responsibility check result:
+
+## 2) Required trigger branches (all risks)
 
 Mark each line as `triggered` or `not triggered` with one-line evidence.
 
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
 - cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
 - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
+- module/class responsibility layout, new layer/interface, 2+ new classes/modules, or existing class/module gains a second reason-to-change → `$design-balance`
+- normal/high-risk implementation or new abstraction/helper/wrapper/adapter/indirection → `$implementation-economy`
 - function/helper/API/call-site design change → `$function-boundary-governor`
 - replace flawed abstraction requiring temporary red-state migration → `$destructive-refactor`
 - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
@@ -63,11 +85,12 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - C++ headers touched (`.h/.hpp/...`) → `$code-readability` (Doxygen)
 - UI changes → `$visual-regression-testing` + matching platform reference
 
-## 2) Route summary (handoff contract)
+## 3) Route summary (handoff contract)
 
 Fill this before implementation starts:
 
 - Selected risk route:
+- Default lane executed or skipped:
 - Required branches to execute:
 - Required verification depth before gate:
 - Non-triggered branches explicitly skipped:
@@ -91,7 +114,7 @@ Use this table to avoid opening all embedded NFR skills by default.
 
 Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
 
-## 3) Live external discovery (when applicable)
+## 4) Live external discovery (when applicable)
 
 If the task touches external systems, repo tooling, CI, schemas/configs, or artifact-producing tools, discover current reality before trusting examples.
 
@@ -101,14 +124,15 @@ Record:
 - Schema/config/connection state checked:
 - Artifact/log/output paths expected:
 
-## 4) Implementation + verify execution log (short)
+## 5) Implementation + verify execution log (short)
 
+- Default lane outputs:
 - Branches executed:
 - Verification commands executed:
 - Live discovery evidence captured (or `not applicable`):
 - Remaining known gaps before gate (if any):
 
-## 5) Gate handoff (mandatory)
+## 6) Gate handoff (mandatory)
 
 Always finish by invoking `$quality-gate`.
 `$dev-workflow` does not decide final submit readiness; it hands off required evidence.

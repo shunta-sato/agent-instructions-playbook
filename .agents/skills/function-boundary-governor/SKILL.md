@@ -1,6 +1,6 @@
 ---
 name: function-boundary-governor
-description: "Autonomous function-boundary design workflow: decide keep/rename/split/merge/replace/inline/no-op, apply coherent changes, verify, and record boundary decisions."
+description: "Autonomous function-boundary design workflow for functions/helpers/APIs/call sites: decide keep/rename/split/merge/replace/inline/no-op, apply coherent changes, verify, and record boundary decisions. Use design-balance instead for module/class responsibility layout."
 metadata:
   short-description: Autonomous function-boundary design
 ---
@@ -8,6 +8,8 @@ metadata:
 ## Purpose
 
 Primary AI-led skill for function implementation quality and function-boundary design.
+
+For module/class responsibility layout, layer count, or reason-to-change mapping, use `design-balance` first. This skill works one level lower, on functions, helpers, APIs, and call sites.
 
 ## When to use (trigger conditions)
 
@@ -19,6 +21,8 @@ Use when a change:
 - introduces/modifies side effects inside functions
 - introduces generic helper/common/util modules
 - refactors function boundaries
+
+Do not use it as the primary tool for module/class responsibility maps or architecture-level option comparison.
 
 ## How to use
 

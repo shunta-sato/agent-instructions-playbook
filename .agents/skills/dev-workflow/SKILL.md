@@ -22,10 +22,16 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 1) Route by risk first (`low` | `normal` | `high`) and record why.
    - The output of this step is: required planning depth + required verification depth.
 
-2) Apply **required trigger-based branches** only when facts trigger them.
+2) Run the default implementation lane when required by risk:
+   - `low`: skip the lane only when the change is one file, adds no abstraction, leaves public APIs unchanged, and has no behavior expansion.
+   - `normal` / `high`: define acceptance criteria, seed a Test List when behavior can be tested, run `implementation-economy`, and run `design-balance` when module/class responsibility layout changes.
+
+3) Apply **required trigger-based branches** only when facts trigger them.
    - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
    - cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
    - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
+   - module/class responsibility layout, new layer/interface, or 2+ new classes/modules → `$design-balance`
+   - normal/high-risk implementation or new abstraction/helper/wrapper/adapter → `$implementation-economy`
    - function/helper/API/call-site boundary design change → `$function-boundary-governor`
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
@@ -37,11 +43,13 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
    - C++ headers touched → `$code-readability` (Doxygen gate)
 
-3) Apply routing priority to avoid overlap:
+4) Apply routing priority to avoid overlap:
    - If the task requires choosing among cross-boundary architecture or technology options with measurable quality drivers, run `$architecture-decision-analysis` before implementation. Route to `$requirements-engineering` first if the quality drivers or requirements are too vague to measure.
    - If embedded physical-footprint NFRs are broad, optimization-oriented, or architecture-shaping and target behavior or hardware capability is not understood, run `$embedded-system-familiarization` first.
    - If embedded physical-footprint NFRs are narrow, first route missing target context, unknown envelope behavior, and budget provenance gaps to the specific embedded skills as applicable; then run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
+   - If the primary question is module/class responsibility layout, naming, layer count, or reason-to-change split, run `$design-balance` before implementation.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
+   - If the primary risk is too much code, extra helpers/wrappers, or premature generality, run `$implementation-economy`.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 
 Embedded NFR routing table:
@@ -61,11 +69,11 @@ Embedded NFR routing table:
 
 Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
 
-4) Execute implementation with the selected route + required branches.
+5) Execute implementation with the selected route + required branches.
 
-5) Run canonical verification at the depth required by the selected risk route.
+6) Run canonical verification at the depth required by the selected risk route.
 
-6) Hand off to `$quality-gate` for final submission readiness.
+7) Hand off to `$quality-gate` for final submission readiness.
 
 
 ## Gotchas

@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "default-lane-feature-layout-budget",
+      "prompt": "Implement a new export workflow that adds an ExportCoordinator, CsvExportWriter, and ExportAuditStore. Keep the design small and make sure each class has one clear reason to change.",
+      "should_trigger": [
+        "dev-workflow",
+        "design-balance",
+        "implementation-economy"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "embedded-hot-path-review"
+      ],
+      "expected_artifacts": [
+        "Responsibility Map",
+        "Complexity Budget",
+        "Post-Implementation Economy Audit"
+      ],
+      "expected_decisions": [
+        "Class/module layout is checked before implementation",
+        "New abstractions are justified or removed"
+      ]
+    },
+    {
+      "id": "implementation-economy-wrapper-pressure",
+      "prompt": "Before coding this normal-risk parser change, set a budget for new helpers/wrappers and audit whether any new abstraction is worth keeping after the tests pass.",
+      "should_trigger": [
+        "implementation-economy",
+        "test-driven-development"
+      ],
+      "should_not_trigger": [
+        "design-balance",
+        "architecture-decision-analysis"
+      ],
+      "expected_artifacts": [
+        "Complexity Budget",
+        "Post-Implementation Economy Audit"
+      ],
+      "expected_decisions": [
+        "Helper/wrapper count is budgeted before implementation",
+        "Unjustified abstraction is deleted, inlined, or merged"
+      ]
+    },
+    {
+      "id": "design-balance-large-class-pressure",
+      "prompt": "This UserService is gaining billing, notification, and audit responsibilities. Decide whether to split, merge, or rename units before implementation.",
+      "should_trigger": [
+        "design-balance"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "architecture-decision-analysis"
+      ],
+      "expected_artifacts": [
+        "Responsibility Map"
+      ],
+      "expected_decisions": [
+        "Reasons to change are mapped per unit",
+        "Name and responsibility mismatches are renamed or explicitly kept"
+      ]
+    },
+    {
+      "id": "low-risk-typo-no-default-lane",
+      "prompt": "Fix a typo in one README sentence. No behavior, public API, test, class, module, helper, or wrapper changes.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "design-balance",
+        "implementation-economy",
+        "test-driven-development"
+      ],
+      "expected_decisions": [
+        "Default implementation lane is skipped with a low-risk reason"
+      ]
+    },
+    {
+      "id": "function-only-boundary-not-design-balance",
+      "prompt": "Rename one private helper and split one long function into two smaller functions without adding classes, modules, layers, or wrappers.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "design-balance",
+        "implementation-economy",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Function-level shape is routed to function-boundary-governor rather than module responsibility layout"
+      ]
+    },
+    {
+      "id": "architecture-options-not-design-balance",
+      "prompt": "Choose whether this workflow should use a queue, synchronous request path, or separate service based on latency, reliability, rollback, and operability tradeoffs.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "design-balance",
+        "implementation-economy"
+      ],
+      "expected_decisions": [
+        "Cross-boundary option comparison stays in architecture-decision-analysis"
+      ]
+    }
+  ]
+}

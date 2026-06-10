@@ -19,6 +19,7 @@ For each new or changed function/class:
 
 - Describe it in one sentence using "do X to Y".
 - If the sentence needs multiple verbs, ordering words, or mode flags, cohesion is likely weaker.
+- For module/class layout decisions, use `design-balance` to map unit, name, responsibility sentence, reason to change, and dependency direction before extracting new collaborators.
 - Judge the unit by the worst cohesion level present, then choose the smallest fix that reduces reading time.
 
 ### Cohesion scale
