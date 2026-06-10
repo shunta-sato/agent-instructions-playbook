@@ -62,7 +62,7 @@ skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-saf
 skill|tonemana-apply|Apply tone/manner choice to UIUX Pack|.agents/skills/tonemana-apply/SKILL.md
 skill|tonemana-catalog|Tone & Manner catalog + previews|.agents/skills/tonemana-catalog/SKILL.md
 skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/skills/uidesign-flow/SKILL.md
-skill|uidesign-orchestrator|full UI evidence pipeline orchestration|.agents/skills/uidesign-orchestrator/SKILL.md
+skill|uidesign-orchestrator|Explicit UI evidence orchestration|.agents/skills/uidesign-orchestrator/SKILL.md
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md
 skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.agents/skills/uiux-flow-preview/SKILL.md
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md
