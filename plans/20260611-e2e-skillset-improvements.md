@@ -93,7 +93,7 @@
 
 - [x] (P0) Phase 1 PR - deliverable: default lane plus `implementation-economy` and `design-balance` - verify: `make verify` passed on `codex/e2e-default-lane`.
 - [x] (P0) Phase 2 PR - deliverable: `performance-review` plus generic performance routing - verify: `make verify` passed on `codex/performance-review`.
-- [ ] (P1) Phase 3 PR - deliverable: remaining skill goal alignment and explicit-only cleanup - verify: `make verify`.
+- [x] (P1) Phase 3 PR - deliverable: remaining skill goal alignment and explicit-only cleanup - verify: `make verify` passed on `codex/skillset-goal-alignment`.
 - [ ] (P1) Publish all PRs - deliverable: draft PR URLs - verify: branches pushed and PRs open.
 
 ## Surprises & Discoveries
@@ -102,6 +102,7 @@
 - 2026-06-11: PR #48 already handles the study-note migration hold and remains independent from the main skillset improvement PR stack.
 - 2026-06-11: Phase 1 validation passed with 45 skills, 105 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
 - 2026-06-11: Phase 2 validation passed with 46 skills, 111 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
+- 2026-06-11: Phase 3 validation passed with 46 skills, 113 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
 
 ## Decision log
 
@@ -115,18 +116,18 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/performance-review`; uncommitted Phase 2 changes ready to commit.
-- What is done: Phase 1 PR is open; Phase 2 implementation and verification are complete.
-- What is not done: Phase 2 push/PR creation and Phase 3.
+- Current branch / commit: `codex/skillset-goal-alignment`; uncommitted Phase 3 changes ready to commit.
+- What is done: Phase 1 and Phase 2 PRs are open; Phase 3 implementation and verification are complete.
+- What is not done: Phase 3 push/PR creation.
 - How to run: use `COMMANDS.md`.
-- How to test: `make verify` passed for Phase 1 and Phase 2. Run `make verify` for each later PR branch.
+- How to test: `make verify` passed for Phase 1, Phase 2, and Phase 3.
 - Known risks / open questions:
   - Generated index size may approach its cap after adding skills.
   - Broad-trigger warnings may increase if descriptions use overly broad words.
 - Next 1-3 steps:
-  - Commit, push, and open the Phase 2 draft PR.
-  - Branch Phase 3 from Phase 2.
-  - Align remaining existing-skill goals and rerun `make verify`.
+  - Commit, push, and open the Phase 3 draft PR.
+  - Report the full PR stack.
+  - Leave study-note removal blocked until the destination repository exists.
 - Pointers:
   - `README.md`
   - `AGENTS.md`

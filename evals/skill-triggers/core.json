@@ -609,6 +609,26 @@
       "notes": "Single-step UIDesign work should not invoke the full pipeline orchestrator."
     },
     {
+      "id": "tonemana-only-not-orchestrator",
+      "prompt": "Create a Tone and Manner catalog and let me compare patterns. Do not create UIUX or UIDesign artifacts.",
+      "should_trigger": [
+        "tonemana-catalog"
+      ],
+      "should_not_trigger": [
+        "uidesign-orchestrator",
+        "uidesign-flow",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "Tone and Manner catalog",
+        "Catalog preview with pattern comparison"
+      ],
+      "expected_decisions": [
+        "Tone-only work does not invoke full UI evidence orchestration"
+      ],
+      "notes": "The orchestrator is explicit-only for the full artifact chain."
+    },
+    {
       "id": "uiux-single-step-not-orchestrator",
       "prompt": "Create a UIUX Pack for a new settings screen; tone and UIDesign previews are out of scope.",
       "should_trigger": [
@@ -796,6 +816,23 @@
         "smoke tests"
       ],
       "notes": "Executing an existing runbook is not reusable template authoring."
+    },
+    {
+      "id": "library-implementation-not-template-authoring",
+      "prompt": "Use the existing Stripe SDK docs in this repo to implement a refund API endpoint and tests.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "playbook-template-authoring"
+      ],
+      "expected_decisions": [
+        "Applying a library in product code is implementation work, not reusable template authoring"
+      ],
+      "expected_evidence": [
+        "Implementation and tests follow repository commands"
+      ],
+      "notes": "Library/API reference guidance is only for authoring reusable references, not applying a library directly."
     },
     {
       "id": "visual-regression-ui-change",
