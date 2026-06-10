@@ -43,6 +43,7 @@ The goal is a small, curated software-development operating system: clear entry 
 
 - `implementation-economy` — budget new implementation complexity and audit new abstractions
 - `design-balance` — map module/class responsibilities, names, reasons to change, and dependency direction
+- `performance-review` — review non-embedded request/render/job path cost, scaling, I/O, and N+1 risk
 - `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
 - `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
 - `architecture-decision-analysis` — compare architecture options against quality drivers, risks, tradeoffs, and verification tasks
@@ -129,6 +130,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
+| `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
 | `problem-framing-narrative-study-workflow` | Narrative problem-framing study workflow | `.agents/skills/problem-framing-narrative-study-workflow/SKILL.md` |
 | `project-initialization` | Initialize canonical verify commands | `.agents/skills/project-initialization/SKILL.md` |

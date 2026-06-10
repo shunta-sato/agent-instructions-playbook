@@ -46,6 +46,7 @@ skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execu
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
 skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
+skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
 skill|problem-framing-narrative-study-workflow|Narrative problem-framing study workflow|.agents/skills/problem-framing-narrative-study-workflow/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md

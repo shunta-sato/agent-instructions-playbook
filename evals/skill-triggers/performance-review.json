@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "request-path-n-plus-one",
+      "prompt": "Change the account dashboard endpoint to load invoices and payments for every visible account. Check query count, data-size scaling, and whether this creates N+1 behavior.",
+      "should_trigger": [
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "embedded-hot-path-review",
+        "embedded-nfr-design"
+      ],
+      "expected_artifacts": [
+        "Performance Review"
+      ],
+      "expected_decisions": [
+        "Hot path and data scale are identified",
+        "I/O or query count is declared before accepting the implementation"
+      ]
+    },
+    {
+      "id": "render-path-repeated-serialization",
+      "prompt": "Update the project list screen. It maps over hundreds of rows and formats JSON, regex matches labels, and sorts nested arrays for every render.",
+      "should_trigger": [
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "embedded-hot-path-review"
+      ],
+      "expected_decisions": [
+        "Render-path repeated work is reviewed for per-item cost",
+        "Accept or improve decision includes scale assumptions"
+      ]
+    },
+    {
+      "id": "serial-await-request-path",
+      "prompt": "This request handler awaits three independent provider calls one after another for each search result. Review whether batching or parallelism is needed before shipping.",
+      "should_trigger": [
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "concurrency-core",
+        "embedded-hot-path-review"
+      ],
+      "expected_evidence": [
+        "Serial wait risk is declared",
+        "Decision records improve-now, accept, accept-with-limit, or needs-measurement"
+      ]
+    },
+    {
+      "id": "embedded-sampler-not-generic-performance",
+      "prompt": "Review a target-local 20ms sensor sampler that serializes JSON and writes to flash every iteration on a Raspberry Pi.",
+      "should_trigger": [
+        "embedded-hot-path-review"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "expected_decisions": [
+        "Target-local physical-footprint review stays in embedded-hot-path-review"
+      ]
+    },
+    {
+      "id": "bounded-one-shot-script-no-performance-review",
+      "prompt": "Add a one-shot migration helper that transforms a fixed list of ten known config keys during setup.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "performance-review",
+        "embedded-hot-path-review"
+      ],
+      "expected_decisions": [
+        "Bounded one-shot work does not trigger performance review"
+      ]
+    },
+    {
+      "id": "cross-boundary-cache-options-architecture-first",
+      "prompt": "Choose between local cache, distributed cache, or no cache for the search service based on latency, consistency, failure modes, and rollback complexity.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "expected_decisions": [
+        "Cross-boundary cache option comparison routes to architecture-decision-analysis"
+      ]
+    }
+  ]
+}

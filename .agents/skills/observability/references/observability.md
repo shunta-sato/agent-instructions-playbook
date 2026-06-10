@@ -89,6 +89,12 @@ For each signal, record why it exists and what action it enables.
 - Artifact path or dashboard/query:
 ```
 
+If the signal supports a `performance-review` decision, include:
+
+- Reviewed hot path:
+- Cost assumption or limit being watched:
+- Threshold or trend that reopens the decision:
+
 Rules:
 
 - Do not add metrics merely because they are easy to emit.

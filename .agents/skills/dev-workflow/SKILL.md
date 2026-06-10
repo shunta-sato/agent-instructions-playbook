@@ -32,6 +32,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
    - module/class responsibility layout, new layer/interface, or 2+ new classes/modules → `$design-balance`
    - normal/high-risk implementation or new abstraction/helper/wrapper/adapter → `$implementation-economy`
+   - non-embedded request/render/job paths, input-proportional loops, loop I/O, N+1 risk, repeated serialization/allocation, serial awaits, or cache/batching decisions → `$performance-review`
    - function/helper/API/call-site boundary design change → `$function-boundary-governor`
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
@@ -50,6 +51,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - If the primary question is module/class responsibility layout, naming, layer count, or reason-to-change split, run `$design-balance` before implementation.
    - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
    - If the primary risk is too much code, extra helpers/wrappers, or premature generality, run `$implementation-economy`.
+   - If the primary performance risk is target-local or embedded physical footprint, use the embedded NFR skills and `$embedded-hot-path-review`; otherwise use `$performance-review`.
    - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
 
 Embedded NFR routing table:
