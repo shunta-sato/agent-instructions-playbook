@@ -11,8 +11,7 @@
         "embedded-hot-path-review"
       ],
       "should_not_trigger": [
-        "uiux-core",
-        "textbook-structured-content-workflow"
+        "uiux-core"
       ],
       "expected_artifacts": [
         "docs/nfr/<feature>.md Embedded NFR Matrix",
@@ -69,7 +68,6 @@
         "embedded-nfr-design"
       ],
       "should_not_trigger": [
-        "textbook-quality-gate",
         "visual-regression-testing"
       ],
       "expected_artifacts": [

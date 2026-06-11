@@ -35,10 +35,6 @@ Invoke this skill **before every submission**. It is mandatory.
    - If an architecture, hardware, or embedded NFR claim depends on a hardware operating point, verify `docs/targets/<target>/controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording; otherwise the claim must be marked `blocked`, `provisional`, `experimental-only`, or limited to observed conditions.
    - If a hardware capability claim supports an architecture decision, verify the control surface and cost model are known in `docs/targets/<target>/hardware-control-surface-map.md`, `docs/targets/<target>/hardware-capability-map.md`, or `docs/targets/<target>/capability-cost-model.md`; otherwise the architecture claim must be blocked or explicitly provisional.
    - If only `embedded-project-constitution` was triggered, verify constitution artifacts exist. Do not require a feature-level NFR gate report unless feature runtime changes or production-readiness claims are introduced.
-   - If any study-note workflow was triggered, verify the relevant Study Pack Report exists.
-   - If publish/sync readiness was required, verify `textbook-quality-gate` produced a gate decision.
-   - If narrative or technical essay workflow was used, verify its semantic review report exists before accepting shared-mechanical-only checks.
-
 3) Run concise exit-criteria review only.
    - Do not duplicate deep taxonomy here.
    - If a finding needs deep analysis, route to the dedicated skill (readability/maintainability/error-handling/etc.) and return after fixes.
