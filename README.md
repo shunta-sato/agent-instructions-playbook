@@ -43,6 +43,7 @@ The goal is a small, curated software-development operating system: clear entry 
 
 - `implementation-economy` — budget new implementation complexity and audit new abstractions
 - `design-balance` — map module/class responsibilities, names, reasons to change, and dependency direction
+- `performance-review` — review non-embedded request/render/job path cost, scaling, I/O, and N+1 risk
 - `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
 - `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
 - `architecture-decision-analysis` — compare architecture options against quality drivers, risks, tradeoffs, and verification tasks
@@ -79,21 +80,11 @@ The goal is a small, curated software-development operating system: clear entry 
 - `tonemana-catalog` — comparable tone and manner catalog with previews
 - `tonemana-apply` — apply a selected tone/manner pattern to UIUX artifacts
 - `uidesign-flow` — convert tone decisions into tokens and previews
-- `uidesign-orchestrator` — explicit end-to-end UI evidence pipeline wrapper
+- `uidesign-orchestrator` — explicit-only end-to-end UI evidence pipeline wrapper
 
 ### Authoring support
 
-- `playbook-template-authoring` — reusable deployment, infra, data-analysis, and API-reference playbook templates
-
-### Learning and study-note authoring
-
-Migration status: these skills are planned for a separate study-note repository, but that destination repository does not exist yet. Keep the skills, trigger evals, checker, Makefile targets, and quality-gate references in this repository until the destination repo exists and the migration is verified. Track the staged move in `plans/20260611-study-note-migration-hold.md`.
-
-- `textbook-structured-content-workflow` — build textbook-style learning packs from expository sources with stable concepts, methods, patterns, or taxonomies
-- `textbook-learning-content-review` — semantic review for textbook-style notes that risk definition-only or mechanically summarized content
-- `textbook-quality-gate` — final gate for textbook learning packs and shared mechanical-only checks for other study-note packs
-- `problem-framing-narrative-study-workflow` — build narrative/problem-framing learning packs around misframing, reframing, consequence, and reader application
-- `technical-essay-study-workflow` — build technical essay learning packs around claim, reasoning, context, practice, and applicability limits
+- `playbook-template-authoring` — explicit reusable deployment, infra, data-analysis, and API-reference template authoring
 
 The generated full index in `AGENTS.md` is the authoritative machine-readable list.
 
@@ -129,22 +120,18 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
+| `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
-| `problem-framing-narrative-study-workflow` | Narrative problem-framing study workflow | `.agents/skills/problem-framing-narrative-study-workflow/SKILL.md` |
 | `project-initialization` | Initialize canonical verify commands | `.agents/skills/project-initialization/SKILL.md` |
 | `quality-gate` | Final quality gate | `.agents/skills/quality-gate/SKILL.md` |
 | `requirements-engineering` | Requirements engineering | `.agents/skills/requirements-engineering/SKILL.md` |
 | `staged-lowering` | Staged lowering for constrained code | `.agents/skills/staged-lowering/SKILL.md` |
-| `technical-essay-study-workflow` | Technical essay study-note workflow | `.agents/skills/technical-essay-study-workflow/SKILL.md` |
 | `test-driven-development` | Test-driven development workflow | `.agents/skills/test-driven-development/SKILL.md` |
-| `textbook-learning-content-review` | Textbook note semantic usefulness review | `.agents/skills/textbook-learning-content-review/SKILL.md` |
-| `textbook-quality-gate` | Study-note pack publication gate | `.agents/skills/textbook-quality-gate/SKILL.md` |
-| `textbook-structured-content-workflow` | Textbook-style study-note pack workflow | `.agents/skills/textbook-structured-content-workflow/SKILL.md` |
 | `thread-safety-tooling` | Thread-safety verification | `.agents/skills/thread-safety-tooling/SKILL.md` |
 | `tonemana-apply` | Apply tone/manner choice to UIUX Pack | `.agents/skills/tonemana-apply/SKILL.md` |
 | `tonemana-catalog` | Tone & Manner catalog + previews | `.agents/skills/tonemana-catalog/SKILL.md` |
 | `uidesign-flow` | tonemana → tokens → component+screen previews | `.agents/skills/uidesign-flow/SKILL.md` |
-| `uidesign-orchestrator` | full UI evidence pipeline orchestration | `.agents/skills/uidesign-orchestrator/SKILL.md` |
+| `uidesign-orchestrator` | Explicit UI evidence orchestration | `.agents/skills/uidesign-orchestrator/SKILL.md` |
 | `uiux-core` | UI/UX core contract + deterministic review bundle | `.agents/skills/uiux-core/SKILL.md` |
 | `uiux-flow-preview` | Transition map preview with pan/zoom + focus review | `.agents/skills/uiux-flow-preview/SKILL.md` |
 | `visual-regression-testing` | Tool-agnostic UI visual verification contract | `.agents/skills/visual-regression-testing/SKILL.md` |

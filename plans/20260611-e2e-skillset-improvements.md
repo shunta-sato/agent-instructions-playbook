@@ -14,11 +14,11 @@
 - Add a normal/high-risk default lane in `dev-workflow`.
 - Wire required evidence into `quality-gate` without making the gate a deep reviewer.
 - Update neighboring skills so responsibilities and trigger boundaries remain clear.
-- Keep study-note migration separate. PR #48 records the hold because the destination repository does not exist yet.
+- Keep study-note migration separate from the main software-development skill stack. The destination repository now exists, and destination PR #1 carries the migrated assets.
 
 ### Out of scope / non-goals
-- Creating the destination study-note repository.
-- Removing study-note skills from this repository before the destination repository exists and validates.
+- Changing migrated study-note skill behavior.
+- Closing or editing older hold PRs outside the companion cleanup PR.
 - Rewriting the full embedded NFR suite.
 - Changing runtime application code; this repository change is playbook and validation content only.
 
@@ -67,7 +67,7 @@
   - Skill output contracts are markdown tables and concise records.
 - Error handling strategy:
   - If a PR cannot pass validation, fix the PR before creating the next stacked PR.
-  - If a destination repo is missing, keep study-note cleanup blocked.
+  - If the destination migration PR fails validation, keep source cleanup blocked until the destination branch is fixed.
 
 ### Observability
 
@@ -92,15 +92,26 @@
 ## Progress (WBS)
 
 - [x] (P0) Phase 1 PR - deliverable: default lane plus `implementation-economy` and `design-balance` - verify: `make verify` passed on `codex/e2e-default-lane`.
-- [ ] (P0) Phase 2 PR - deliverable: `performance-review` plus generic performance routing - verify: `make verify`.
-- [ ] (P1) Phase 3 PR - deliverable: remaining skill goal alignment and explicit-only cleanup - verify: `make verify`.
-- [ ] (P1) Publish all PRs - deliverable: draft PR URLs - verify: branches pushed and PRs open.
+- [x] (P0) Phase 2 PR - deliverable: `performance-review` plus generic performance routing - verify: `make verify` passed on `codex/performance-review`.
+- [x] (P1) Phase 3 PR - deliverable: remaining skill goal alignment and explicit-only cleanup - verify: `make verify` passed on `codex/skillset-goal-alignment`.
+- [x] (P1) Publish all PRs - deliverable: draft PR URLs - verify: PR #49, #50, and #51 are open.
+- [x] (P1) Destination study-note migration PR - deliverable: migrated study-note assets in `agent-study-note-playbook` - verify: PR #1 opened with `make verify` passing.
+- [x] (P1) Source cleanup PR - deliverable: remove migrated study-note assets and source-repo wiring - verify: PR #52 opened with `make verify` passing.
+- [x] (P1) Main corrective PR - deliverable: reapply #50/#51/#52 onto current `main` without regressing #47 controlled operating-point assets - verify: `make verify` passed on `codex/reapply-missed-skillset-stack`.
 
 ## Surprises & Discoveries
 
 - 2026-06-11: `gh` is not installed locally. Use local `git` for branch/commit/push and the GitHub connector for PR creation.
-- 2026-06-11: PR #48 already handles the study-note migration hold and remains independent from the main skillset improvement PR stack.
+- 2026-06-11: PR #48 recorded the original study-note migration hold; destination PR #1 now supersedes the hold by carrying the migrated assets.
 - 2026-06-11: Phase 1 validation passed with 45 skills, 105 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
+- 2026-06-11: Phase 2 validation passed with 46 skills, 111 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
+- 2026-06-11: Phase 3 validation passed with 46 skills, 113 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
+- 2026-06-11: Draft PRs opened: #49 for default lane skills, #50 for generic performance review, and #51 for explicit trigger boundaries.
+- 2026-06-11: Destination draft PR #1 opened in `shunta-sato/agent-study-note-playbook` with 5 migrated skills and passing `make verify`.
+- 2026-06-11: Source cleanup validation passed with 41 skills, 100 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
+- 2026-06-11: Source cleanup draft PR #52 opened against `codex/skillset-goal-alignment`.
+- 2026-06-11: After merging, `main` contained #47, #48, and #49 but not the effective #50/#51/#52 content. Directly merging `origin/codex/skillset-goal-alignment` into `main` would also delete #47 controlled operating-point artifacts, so the missing changes are being reapplied by individual cherry-picks.
+- 2026-06-11: Corrective branch validation passed with 41 skills, 104 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings. The higher eval count versus the earlier source cleanup branch is expected because #47 controlled operating-point evals are preserved on `main`.
 
 ## Decision log
 
@@ -114,18 +125,18 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/e2e-default-lane`; uncommitted Phase 1 changes ready to commit.
-- What is done: Phase 1 implementation and verification are complete.
-- What is not done: Phase 1 push/PR creation, Phase 2, and Phase 3.
+- Current branch / commit: `codex/reapply-missed-skillset-stack`; corrective changes are verified and ready to commit/push.
+- What is done: Phase 1, Phase 2, Phase 3, destination migration PR #1, and source cleanup PR #52 were implemented. Corrective branch has reapplied the missing commits onto current `main`, removed the obsolete migration-hold plan, and preserved #47 controlled operating-point assets.
+- What is not done: corrective commit, push, and PR creation.
 - How to run: use `COMMANDS.md`.
-- How to test: `make verify` passed for Phase 1. Run `make verify` for each later PR branch.
+- How to test: `make verify` passed for Phase 1, Phase 2, and Phase 3.
 - Known risks / open questions:
   - Generated index size may approach its cap after adding skills.
   - Broad-trigger warnings may increase if descriptions use overly broad words.
 - Next 1-3 steps:
-  - Commit, push, and open the Phase 1 draft PR.
-  - Branch Phase 2 from Phase 1.
-  - Add `performance-review` and rerun `make verify`.
+  - Commit the corrective cleanup/handoff updates.
+  - Push `codex/reapply-missed-skillset-stack`.
+  - Open a corrective PR against `main`.
 - Pointers:
   - `README.md`
   - `AGENTS.md`
@@ -138,12 +149,16 @@
   - Verification: new skills exist, default lane routes them, evals reference them, and `make verify` passes.
 - AC2: Phase 2 PR adds non-embedded performance review.
   - Verification: `performance-review` exists, dev-workflow/requirements/observability/embedded boundaries route it, evals reference it, and `make verify` passes.
-- AC3: Phase 3 PR aligns remaining skill goals without deleting study-note assets prematurely.
+- AC3: Phase 3 PR aligns remaining skill goals without deleting study-note assets before a destination exists.
   - Verification: affected skills document boundaries, generated catalogs are current, and `make verify` passes.
+- AC4: Source cleanup removes migrated study-note assets only after destination PR #1 exists and validates.
+  - Verification: generated catalogs drop study-note skills, remaining evals do not reference removed skills, and `make verify` passes.
+- AC5: Corrective PR brings `main` to the intended state without regressing #47.
+  - Verification: `performance-review` exists, study-note skills/checker/evals are absent from source repo, #47 controlled operating-point templates and plan remain present, and `make verify` passes.
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged:
-- What went well:
+- What shipped / merged: Draft PR stack opened: #49 `codex/e2e-default-lane`, #50 `codex/performance-review`, #51 `codex/skillset-goal-alignment`, destination migration PR #1, and source cleanup PR #52.
+- What went well: New broad/core skills were added with trigger evals and no new inventory warnings.
 - What went wrong:
-- Follow-ups / tech debt tickets:
+- Follow-ups / tech debt tickets: Review destination PR #1 and the source cleanup PR together; PR #48 is now superseded by the actual migration path.

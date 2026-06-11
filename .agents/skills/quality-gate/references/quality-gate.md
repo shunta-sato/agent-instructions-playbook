@@ -23,6 +23,7 @@ Confirm required evidence exists for each triggered branch:
 - observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
 - implementation-economy branch → Complexity Budget plus Post-Implementation Economy Audit, including keep/delete/inline/merge decisions for new abstractions
 - design-balance branch → Responsibility Map with unit, name, responsibility sentence, reason to change, and dependency direction
+- performance-review branch → Performance Review with hot path, data scale, complexity, I/O/query count, decision, evidence, and no-measurement/no-claim limits when measurement is missing
 - feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits
 - embedded system familiarization branch → `docs/targets/<target>/system-familiarization.md` with required/created/missing/provisional/deferred artifacts, artifact freshness/revisit conditions, controlled conditions, uncontrolled confounders, operating point coverage, claim-to-evidence traces with allowed wording, claims blocked by missing evidence, and handoff statuses (`not_needed|required_pending|completed|deferred_with_reason|blocked`)
 - hardware operating point claim → `docs/targets/<target>/controlled-operating-points.md` with controlled factors, observed covariates, uncontrolled confounders, coverage status, confidence, safety preconditions, control/verification/abort/restore methods, and allowed wording
@@ -39,8 +40,6 @@ Confirm required evidence exists for each triggered branch:
 - function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
 - C++ header branch → Doxygen completeness evidence
 - ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff)
-- study-note branch → Study Pack Report with source classification, files created/updated, contracts applied, semantic review decision when applicable, mechanical gate decision when publish/sync was requested
-
 ## 3) Minimum exit criteria review (always)
 
 - Path-specific instructions were identified and followed.

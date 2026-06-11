@@ -9,6 +9,11 @@ The orchestrator must be safe:
 - only create missing artifacts
 - never invent new schemas
 - stop if prerequisites are incomplete (`<fill>` remains)
+- do not run unless the request explicitly asks for the full end-to-end evidence chain
+
+## Invocation guard
+
+Before orchestration, confirm the request asks for all three connected outputs: UIUX Pack, Tone & Manner application, and UIDesign Pack. If the request is only UIUX, only tone/manner, only UIDesign previews, or only visual review, stop and use the narrower skill.
 
 ## Canonical schema: ui_spec.json meta.tone_and_manner
 

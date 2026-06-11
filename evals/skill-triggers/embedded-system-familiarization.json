@@ -11,8 +11,7 @@
         "embedded-nfr-calibration"
       ],
       "should_not_trigger": [
-        "uiux-core",
-        "textbook-quality-gate"
+        "uiux-core"
       ],
       "expected_artifacts": [
         "docs/targets/<target>/system-familiarization.md",
@@ -81,7 +80,6 @@
         "architecture-decision-analysis"
       ],
       "should_not_trigger": [
-        "textbook-structured-content-workflow",
         "uiux-core"
       ],
       "expected_artifacts": [
@@ -105,8 +103,7 @@
         "quality-gate"
       ],
       "should_not_trigger": [
-        "uiux-core",
-        "textbook-quality-gate"
+        "uiux-core"
       ],
       "expected_artifacts": [
         "docs/targets/<target>/system-familiarization.md",
