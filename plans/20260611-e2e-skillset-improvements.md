@@ -96,7 +96,7 @@
 - [x] (P1) Phase 3 PR - deliverable: remaining skill goal alignment and explicit-only cleanup - verify: `make verify` passed on `codex/skillset-goal-alignment`.
 - [x] (P1) Publish all PRs - deliverable: draft PR URLs - verify: PR #49, #50, and #51 are open.
 - [x] (P1) Destination study-note migration PR - deliverable: migrated study-note assets in `agent-study-note-playbook` - verify: PR #1 opened with `make verify` passing.
-- [x] (P1) Source cleanup PR - deliverable: remove migrated study-note assets and source-repo wiring - verify: `make verify` passed on `codex/remove-study-note-skills`.
+- [x] (P1) Source cleanup PR - deliverable: remove migrated study-note assets and source-repo wiring - verify: PR #52 opened with `make verify` passing.
 
 ## Surprises & Discoveries
 
@@ -108,6 +108,7 @@
 - 2026-06-11: Draft PRs opened: #49 for default lane skills, #50 for generic performance review, and #51 for explicit trigger boundaries.
 - 2026-06-11: Destination draft PR #1 opened in `shunta-sato/agent-study-note-playbook` with 5 migrated skills and passing `make verify`.
 - 2026-06-11: Source cleanup validation passed with 41 skills, 100 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
+- 2026-06-11: Source cleanup draft PR #52 opened against `codex/skillset-goal-alignment`.
 
 ## Decision log
 
@@ -121,9 +122,9 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/remove-study-note-skills`; source cleanup changes are verified and ready to commit.
-- What is done: Phase 1, Phase 2, and Phase 3 implementation, verification, push, and draft PR creation are complete. Destination study-note migration PR #1 is open and validated locally. Source cleanup validation passed locally.
-- What is not done: source cleanup commit, push, and PR creation.
+- Current branch / commit: `codex/remove-study-note-skills`; source cleanup PR #52 is open.
+- What is done: Phase 1, Phase 2, Phase 3, destination migration PR #1, and source cleanup PR #52 are implemented, verified, pushed, and opened as draft PRs.
+- What is not done: review/merge.
 - How to run: use `COMMANDS.md`.
 - How to test: `make verify` passed for Phase 1, Phase 2, and Phase 3.
 - Known risks / open questions:
@@ -131,9 +132,9 @@
   - Broad-trigger warnings may increase if descriptions use overly broad words.
 - Next 1-3 steps:
   - Review/merge #49, then #50, then #51.
-  - Commit source cleanup changes.
-  - Push `codex/remove-study-note-skills`.
-  - Open the source cleanup PR against `codex/skillset-goal-alignment`.
+  - Review/merge destination PR #1.
+  - Review/merge source PRs #49, #50, #51, then #52.
+  - Decide whether to close superseded hold PR #48.
 - Pointers:
   - `README.md`
   - `AGENTS.md`
@@ -153,7 +154,7 @@
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged: Draft PR stack opened: #49 `codex/e2e-default-lane`, #50 `codex/performance-review`, #51 `codex/skillset-goal-alignment`. Destination migration PR #1 opened in `agent-study-note-playbook`.
+- What shipped / merged: Draft PR stack opened: #49 `codex/e2e-default-lane`, #50 `codex/performance-review`, #51 `codex/skillset-goal-alignment`, destination migration PR #1, and source cleanup PR #52.
 - What went well: New broad/core skills were added with trigger evals and no new inventory warnings.
 - What went wrong:
 - Follow-ups / tech debt tickets: Review destination PR #1 and the source cleanup PR together; PR #48 is now superseded by the actual migration path.
