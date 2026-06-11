@@ -48,16 +48,11 @@ skill|implementation-economy|Implementation complexity budget|.agents/skills/imp
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
-skill|problem-framing-narrative-study-workflow|Narrative problem-framing study workflow|.agents/skills/problem-framing-narrative-study-workflow/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
 skill|requirements-engineering|Requirements engineering|.agents/skills/requirements-engineering/SKILL.md
 skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md
-skill|technical-essay-study-workflow|Technical essay study-note workflow|.agents/skills/technical-essay-study-workflow/SKILL.md
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md
-skill|textbook-learning-content-review|Textbook note semantic usefulness review|.agents/skills/textbook-learning-content-review/SKILL.md
-skill|textbook-quality-gate|Study-note pack publication gate|.agents/skills/textbook-quality-gate/SKILL.md
-skill|textbook-structured-content-workflow|Textbook-style study-note pack workflow|.agents/skills/textbook-structured-content-workflow/SKILL.md
 skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md
 skill|tonemana-apply|Apply tone/manner choice to UIUX Pack|.agents/skills/tonemana-apply/SKILL.md
 skill|tonemana-catalog|Tone & Manner catalog + previews|.agents/skills/tonemana-catalog/SKILL.md
