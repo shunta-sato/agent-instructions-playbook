@@ -1,6 +1,6 @@
 ---
 name: playbook-template-authoring
-description: "Use only when authoring or revising reusable, repo-neutral playbook/template skills for deployment, infrastructure operations, data fetching/analysis, or library/API reference guidance. Do not use for executing deployments, running infrastructure changes, doing one-off data analysis, or applying a library directly."
+description: "Use only when explicitly authoring or revising reusable, repo-neutral playbook/template skills for deployment, infrastructure operations, data fetching/analysis, or library/API reference guidance. Do not use for normal E2E implementation, executing deployments, running infrastructure changes, one-off data analysis, or applying a library directly."
 metadata:
   short-description: Reusable playbook/template authoring
 ---
@@ -9,18 +9,18 @@ metadata:
 
 Use this skill to create reusable playbook/template packages that other repositories can copy and specialize without embedding real secrets, production data, or org-specific endpoints.
 
-This skill is for **authoring templates**, not for running the workflow described by a template.
+This skill is for **explicit template authoring**, not for running the workflow described by a template and not for ordinary E2E software implementation.
 
 ## When to use
 
-Use this skill when the requested output is a reusable skill, runbook template, checklist, report template, reference template, or canonical example for one of these modes:
+Use this skill only when the requested output is a reusable skill, runbook template, checklist, report template, reference template, or canonical example for one of these modes:
 
 - **Deployment:** CI/CD release playbooks with preflight, artifact integrity, smoke tests, staged rollout, verification, rollback triggers, and deployment reports.
 - **Infrastructure operations:** day-2 ops runbooks with pre-check, dry-run, blast-radius controls, approval gates, phased apply, soak/cleanup, audit logs, and execution reports.
 - **Data fetching/analysis:** repeatable analysis playbooks with scoped questions, source inventory, canonical keys, safe query patterns, limitations, and reproducibility notes.
 - **Library/API reference:** reusable dependency references with version policy, setup/auth model, canonical commands/snippets, error handling, verification, and usage examples.
 
-Do not use this skill for normal deploy requests, normal infrastructure operations, ordinary data analysis, or ordinary library/API implementation tasks unless the user is asking to author or revise the reusable template/playbook itself.
+Do not use this skill for normal deploy requests, normal infrastructure operations, ordinary data analysis, ordinary library/API implementation tasks, or default-lane feature implementation unless the user is asking to author or revise the reusable template/playbook itself.
 
 ## How to use
 

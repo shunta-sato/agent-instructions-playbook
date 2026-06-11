@@ -2,12 +2,12 @@
 name: uidesign-orchestrator
 description: "Use only as an explicit end-to-end UI evidence orchestration wrapper: create or verify the UIUX Pack, create or apply Tone & Manner, wire meta.tone_and_manner, and generate the UIDesign Pack. Do not trigger for ordinary UIUX, Tone & Manner, or UIDesign single-step work. Always open references/uidesign-orchestrator.md."
 metadata:
-  short-description: full UI evidence pipeline orchestration
+  short-description: Explicit UI evidence orchestration
 ---
 
 ## Purpose
 
-This skill coordinates the full UI evidence pipeline. It is not a replacement for the individual UIUX, Tone & Manner, or UIDesign skills.
+This skill coordinates the full UI evidence pipeline. It is explicit-only and is not a replacement for the individual UIUX, Tone & Manner, or UIDesign skills.
 
 Use it only when the work must produce or verify all three connected artifacts:
 - UIUX Pack
@@ -17,6 +17,8 @@ Use it only when the work must produce or verify all three connected artifacts:
 It also ensures the UIUX Pack is wired to Tone & Manner via `meta.tone_and_manner`. It does not change information architecture (IA); IA changes belong to `uiux-core`.
 
 ## When to use
+
+Use only when the request explicitly calls for end-to-end orchestration or all connected UI evidence artifacts.
 
 - The user asks for the full UI evidence pipeline, end-to-end orchestration, or all UI evidence artifacts.
 - The request requires creating, verifying, and wiring together UIUX, Tone & Manner, and UIDesign outputs.
@@ -28,6 +30,7 @@ It also ensures the UIUX Pack is wired to Tone & Manner via `meta.tone_and_manne
 - For Tone & Manner cataloging, selection, or application only, use `tonemana-catalog` or `tonemana-apply`.
 - For visual tokens, HTML previews, styling review notes, or UIDesign output only, use `uidesign-flow`.
 - For copy tone, visual taste, or single-step design feedback that does not require the full artifact chain, use the relevant individual skill.
+- Do not infer this orchestrator just because more than one UI skill could be useful.
 
 ## Workflow (high-level)
 

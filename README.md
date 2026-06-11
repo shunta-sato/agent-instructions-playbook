@@ -80,11 +80,11 @@ The goal is a small, curated software-development operating system: clear entry 
 - `tonemana-catalog` — comparable tone and manner catalog with previews
 - `tonemana-apply` — apply a selected tone/manner pattern to UIUX artifacts
 - `uidesign-flow` — convert tone decisions into tokens and previews
-- `uidesign-orchestrator` — explicit end-to-end UI evidence pipeline wrapper
+- `uidesign-orchestrator` — explicit-only end-to-end UI evidence pipeline wrapper
 
 ### Authoring support
 
-- `playbook-template-authoring` — reusable deployment, infra, data-analysis, and API-reference playbook templates
+- `playbook-template-authoring` — explicit reusable deployment, infra, data-analysis, and API-reference template authoring
 
 ### Learning and study-note authoring
 
@@ -144,7 +144,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `tonemana-apply` | Apply tone/manner choice to UIUX Pack | `.agents/skills/tonemana-apply/SKILL.md` |
 | `tonemana-catalog` | Tone & Manner catalog + previews | `.agents/skills/tonemana-catalog/SKILL.md` |
 | `uidesign-flow` | tonemana → tokens → component+screen previews | `.agents/skills/uidesign-flow/SKILL.md` |
-| `uidesign-orchestrator` | full UI evidence pipeline orchestration | `.agents/skills/uidesign-orchestrator/SKILL.md` |
+| `uidesign-orchestrator` | Explicit UI evidence orchestration | `.agents/skills/uidesign-orchestrator/SKILL.md` |
 | `uiux-core` | UI/UX core contract + deterministic review bundle | `.agents/skills/uiux-core/SKILL.md` |
 | `uiux-flow-preview` | Transition map preview with pan/zoom + focus review | `.agents/skills/uiux-flow-preview/SKILL.md` |
 | `visual-regression-testing` | Tool-agnostic UI visual verification contract | `.agents/skills/visual-regression-testing/SKILL.md` |
