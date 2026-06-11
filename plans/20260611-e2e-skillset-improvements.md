@@ -97,6 +97,7 @@
 - [x] (P1) Publish all PRs - deliverable: draft PR URLs - verify: PR #49, #50, and #51 are open.
 - [x] (P1) Destination study-note migration PR - deliverable: migrated study-note assets in `agent-study-note-playbook` - verify: PR #1 opened with `make verify` passing.
 - [x] (P1) Source cleanup PR - deliverable: remove migrated study-note assets and source-repo wiring - verify: PR #52 opened with `make verify` passing.
+- [x] (P1) Main corrective PR - deliverable: reapply #50/#51/#52 onto current `main` without regressing #47 controlled operating-point assets - verify: `make verify` passed on `codex/reapply-missed-skillset-stack`.
 
 ## Surprises & Discoveries
 
@@ -109,6 +110,8 @@
 - 2026-06-11: Destination draft PR #1 opened in `shunta-sato/agent-study-note-playbook` with 5 migrated skills and passing `make verify`.
 - 2026-06-11: Source cleanup validation passed with 41 skills, 100 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings.
 - 2026-06-11: Source cleanup draft PR #52 opened against `codex/skillset-goal-alignment`.
+- 2026-06-11: After merging, `main` contained #47, #48, and #49 but not the effective #50/#51/#52 content. Directly merging `origin/codex/skillset-goal-alignment` into `main` would also delete #47 controlled operating-point artifacts, so the missing changes are being reapplied by individual cherry-picks.
+- 2026-06-11: Corrective branch validation passed with 41 skills, 104 trigger eval cases, 0 inventory errors, and 7 existing broad-trigger warnings. The higher eval count versus the earlier source cleanup branch is expected because #47 controlled operating-point evals are preserved on `main`.
 
 ## Decision log
 
@@ -122,19 +125,18 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/remove-study-note-skills`; source cleanup PR #52 is open.
-- What is done: Phase 1, Phase 2, Phase 3, destination migration PR #1, and source cleanup PR #52 are implemented, verified, pushed, and opened as draft PRs.
-- What is not done: review/merge.
+- Current branch / commit: `codex/reapply-missed-skillset-stack`; corrective changes are verified and ready to commit/push.
+- What is done: Phase 1, Phase 2, Phase 3, destination migration PR #1, and source cleanup PR #52 were implemented. Corrective branch has reapplied the missing commits onto current `main`, removed the obsolete migration-hold plan, and preserved #47 controlled operating-point assets.
+- What is not done: corrective commit, push, and PR creation.
 - How to run: use `COMMANDS.md`.
 - How to test: `make verify` passed for Phase 1, Phase 2, and Phase 3.
 - Known risks / open questions:
   - Generated index size may approach its cap after adding skills.
   - Broad-trigger warnings may increase if descriptions use overly broad words.
 - Next 1-3 steps:
-  - Review/merge #49, then #50, then #51.
-  - Review/merge destination PR #1.
-  - Review/merge source PRs #49, #50, #51, then #52.
-  - Decide whether to close superseded hold PR #48.
+  - Commit the corrective cleanup/handoff updates.
+  - Push `codex/reapply-missed-skillset-stack`.
+  - Open a corrective PR against `main`.
 - Pointers:
   - `README.md`
   - `AGENTS.md`
@@ -151,6 +153,8 @@
   - Verification: affected skills document boundaries, generated catalogs are current, and `make verify` passes.
 - AC4: Source cleanup removes migrated study-note assets only after destination PR #1 exists and validates.
   - Verification: generated catalogs drop study-note skills, remaining evals do not reference removed skills, and `make verify` passes.
+- AC5: Corrective PR brings `main` to the intended state without regressing #47.
+  - Verification: `performance-review` exists, study-note skills/checker/evals are absent from source repo, #47 controlled operating-point templates and plan remain present, and `make verify` passes.
 
 ## Outcomes & Retrospective (fill when done)
 

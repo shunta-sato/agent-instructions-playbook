@@ -103,8 +103,7 @@
         "quality-gate"
       ],
       "should_not_trigger": [
-        "uiux-core",
-        "textbook-quality-gate"
+        "uiux-core"
       ],
       "expected_artifacts": [
         "docs/targets/<target>/system-familiarization.md",
