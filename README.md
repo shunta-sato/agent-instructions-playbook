@@ -41,6 +41,8 @@ The goal is a small, curated software-development operating system: clear entry 
 
 ### Design, quality, and reliability
 
+- `implementation-economy` — budget new implementation complexity and audit new abstractions
+- `design-balance` — map module/class responsibilities, names, reasons to change, and dependency direction
 - `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
 - `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
 - `architecture-decision-analysis` — compare architecture options against quality drivers, risks, tradeoffs, and verification tasks
@@ -109,6 +111,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `concurrency-android` | Android concurrency and background work | `.agents/skills/concurrency-android/SKILL.md` |
 | `concurrency-core` | Concurrency design patterns and planning | `.agents/skills/concurrency-core/SKILL.md` |
 | `concurrency-ros2` | ROS 2 concurrency patterns | `.agents/skills/concurrency-ros2/SKILL.md` |
+| `design-balance` | Responsibility layout design | `.agents/skills/design-balance/SKILL.md` |
 | `destructive-refactor` | Replace flawed abstraction safely | `.agents/skills/destructive-refactor/SKILL.md` |
 | `dev-workflow` | Risk-routed dev workflow | `.agents/skills/dev-workflow/SKILL.md` |
 | `embedded-hot-path-review` | Embedded hot-path review | `.agents/skills/embedded-hot-path-review/SKILL.md` |
@@ -124,6 +127,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `error-handling` | Boundary error handling | `.agents/skills/error-handling/SKILL.md` |
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
+| `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
 | `problem-framing-narrative-study-workflow` | Narrative problem-framing study workflow | `.agents/skills/problem-framing-narrative-study-workflow/SKILL.md` |

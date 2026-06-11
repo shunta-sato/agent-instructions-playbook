@@ -38,6 +38,7 @@ Do not use this skill for:
 - Ambiguous requirements or acceptance criteria only; use `requirements-engineering`.
 - Turning vague NFRs into measurable quality scenarios only; use `requirements-engineering`.
 - Current-diff maintainability, boundary leak, cohesion, or coupling review; use `code-smells-and-antipatterns`.
+- Module/class responsibility layout, layer count, and name/responsibility alignment inside one feature; use `design-balance`.
 - Function/helper/utility/API/call-site shape decisions; keep this outside this skill.
 - Flawed abstraction replacement or call-site migration protocols; keep this outside this skill.
 - Logs, metrics, traces, or instrumentation details; use `observability`.

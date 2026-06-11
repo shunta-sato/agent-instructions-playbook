@@ -5,6 +5,7 @@ This file is the reference for the `test-driven-development` skill. Use it to ke
 ## 1) Test List (do this first)
 
 - List “variants” of expected behavior for the new change.
+- Seed the list from requirements acceptance criteria or Definition of Done when those exist.
 - This is analysis, but it is **behavior analysis**, not a full spec rewrite.
 - Do not write all tests at once. Pick one item from the list and finish it end-to-end.
 
@@ -20,7 +21,7 @@ Example Test List:
 
 - **Red**: write exactly one failing test and confirm it fails for the expected reason.
 - **Green**: implement the smallest change to make it pass, and keep all existing tests passing.
-- **Refactor**: improve structure without changing behavior (tests + production code), while keeping tests green.
+- **Refactor**: improve structure without changing behavior (tests + production code), while keeping tests green. If `implementation-economy` is active, remove or inline abstractions that exceed the budget unless they are explicitly justified in the audit.
 
 ## 3) Ordering tips
 

@@ -188,12 +188,13 @@ Before writing tricky logic, first explain it in Japanese. Then write code that 
 
 ## 11. Write less new code
 
-Every new line becomes future cost.
+Every new line becomes future cost. Use `implementation-economy` for the active complexity budget and post-implementation audit.
 
-- First look for a “do not write it” option. If the standard library or existing features suffice, do not add new code.
-- Question whether the requirement is truly necessary, and push toward the simplest form.
-- Do not build heavy mechanisms early. Add them only when needed.
-- When you find duplication, consolidate it in a readable way. Do not generalize too early and confuse readers.
+Readability checks still apply to new code that remains:
+
+- Names should explain why the code exists.
+- Comments should explain intent, assumptions, or pitfalls, not compensate for avoidable complexity.
+- If the simplest readable solution is deletion, inlining, or reuse, prefer that and record the decision in the `implementation-economy` audit when that skill is active.
 
 ## 12. Tests
 
@@ -216,4 +217,3 @@ Aim for tests that satisfy the following five properties: fast, independent, rep
 - Do not bury the test in setup details. Make “input / action / expectation” easy to follow.
 - Write assertions so failures guide the reader toward the cause. (Assert.)
 - Do not cram too many checks into one test. Too much makes failures harder to diagnose.
-

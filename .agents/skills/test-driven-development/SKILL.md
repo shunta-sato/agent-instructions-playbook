@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: "MANDATORY when doing TDD: make a Test List, pick one, Red→Green→Refactor, update the list, repeat. Always open references/test-driven-development.md."
+description: "MANDATORY when doing TDD or when dev-workflow routes implementation through a Test List: make a Test List, pick one, Red→Green→Refactor, update the list, repeat. Always open references/test-driven-development.md."
 metadata:
   short-description: Test-driven development workflow
 ---
@@ -23,13 +23,13 @@ Use this skill when:
 
 0) Open `references/test-driven-development.md`. Start from the template.
 
-1) Write a Test List first (3–10 items). Pick the smallest item.
+1) Write a Test List first (3–10 items). Seed it from acceptance criteria or Definition of Done when available. Pick the smallest item.
 
 2) Red: write the failing test with a clear name and intent.
 
 3) Green: implement the simplest code to pass.
 
-4) Refactor: improve readability / modularity while keeping tests green.
+4) Refactor: improve readability / modularity while keeping tests green. If `implementation-economy` is active, stay within the complexity budget or update the audit before continuing.
 
 5) Repeat: update the Test List (split or reorder), then go back to step 2.
 

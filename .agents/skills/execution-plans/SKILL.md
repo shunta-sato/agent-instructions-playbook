@@ -36,6 +36,7 @@ It is also a good default when you are unsure.
 - update **Progress (WBS)** as items complete
 - record **Surprises & discoveries** as you learn new constraints
 - record **Decision log** entries for trade-offs
+- record summaries of `implementation-economy` budgets and `design-balance` responsibility maps when those branches are triggered
 - update **Handoff** whenever you pause or finish a milestone
 
 4) If a human is present and the change is risky/irreversible, ask for approval after drafting the plan and before large edits.

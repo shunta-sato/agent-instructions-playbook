@@ -37,6 +37,7 @@ If you do not know something, write it as an explicit “Unknown” with a plan 
 
 - **Progress (WBS)**: keep it current.
 - **Decision log**: log decisions that affect interfaces, rollouts, data models, or concurrency.
+- **Default-lane decisions**: when `implementation-economy` or `design-balance` is triggered, record the complexity budget and responsibility map summary so handoff does not lose why the implementation stayed small or split the way it did.
 - **Surprises & discoveries**: log newly learned constraints (with evidence when possible).
 - **Handoff**: update at every stop (even a short pause), so another agent can continue.
 

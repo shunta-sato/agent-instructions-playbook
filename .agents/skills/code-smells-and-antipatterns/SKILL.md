@@ -29,6 +29,8 @@ If none applies, do not force it.
 
 This skill is **not** the primary function-boundary design mechanism.
 
+- If findings require deciding module/class responsibility layout, layer count, or name/responsibility alignment, route to `$design-balance`.
+- If findings require reducing excess helpers, wrappers, adapters, or unjustified abstractions, route to `$implementation-economy`.
 - If findings require deciding keep/rename/split/merge/replace/inline/no-op for functions, route to `$function-boundary-governor`.
 - If replacing a flawed abstraction requires temporary red-state migration, route to `$destructive-refactor`.
 - Keep this skill focused on diff-level maintainability/boundary/coupling findings.

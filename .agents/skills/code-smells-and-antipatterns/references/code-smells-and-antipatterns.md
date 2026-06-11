@@ -22,8 +22,8 @@ Smells are quick surface indicators, not guaranteed problems. The job is to look
 - **Large Class**
   - Symptom: class gains unrelated fields/method groups or becomes a hub.
   - Typical risk: god-object drift and unclear ownership.
-  - Smallest remediation: extract a small collaborator with a clear role.
-  - Fix lens: `modularity-cohesion-coupling.md`.
+  - Smallest remediation: write a responsibility map, then split, merge, or rename along reason-to-change boundaries.
+  - Fix lens: `$design-balance`.
 - **Long Parameter List**
   - Symptom: new methods or constructors add many parameters, especially booleans or config flags.
   - Typical risk: call-site errors and unclear intent.
@@ -61,8 +61,8 @@ Smells are quick surface indicators, not guaranteed problems. The job is to look
 - **God Object (Blob)**
   - Symptom: one class orchestrates many unrelated responsibilities.
   - Typical risk: single point of failure and low testability.
-  - Smallest remediation: extract a narrow, role-based collaborator.
-  - Fix lens: `architecture-boundary-review.md`.
+  - Smallest remediation: write a responsibility map, then extract only collaborators with distinct reasons to change.
+  - Fix lens: `$design-balance` + `$implementation-economy`.
 - **Anemic Domain Model**
   - Symptom: domain objects are just data holders; all logic in services.
   - Typical risk: weak invariants and duplication.
@@ -72,12 +72,14 @@ Smells are quick surface indicators, not guaranteed problems. The job is to look
   - Symptom: blurred boundaries and mixed layers in the same module.
   - Typical risk: cascading change cost and hidden dependencies.
   - Smallest remediation: re-establish one boundary with explicit DTOs or interfaces.
-  - Fix lens: `architecture-boundary-review.md`.
+  - Fix lens: `$design-balance` + `architecture-boundary-review.md`.
 
 ## “Smallest fix” playbook
 
 - Split into cohesion paragraphs + intent comments → `$code-readability`.
 - Move behavior to reduce “envy”/chains -> `modularity-cohesion-coupling.md`.
+- Map module/class responsibilities before extracting collaborators -> `$design-balance`.
+- Delete, inline, or justify extra helpers/wrappers -> `$implementation-economy`.
 - Introduce DTO/interface at boundary and fix dependency direction -> `architecture-boundary-review.md`.
 - If touching legacy unsafe area: write characterization tests first → `$working-with-legacy-code`.
 - When change affects runtime behavior: add correlation-friendly logs/metrics → `$observability`.

@@ -28,6 +28,7 @@ skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/s
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md
+skill|design-balance|Responsibility layout design|.agents/skills/design-balance/SKILL.md
 skill|destructive-refactor|Replace flawed abstraction safely|.agents/skills/destructive-refactor/SKILL.md
 skill|dev-workflow|Risk-routed dev workflow|.agents/skills/dev-workflow/SKILL.md
 skill|embedded-hot-path-review|Embedded hot-path review|.agents/skills/embedded-hot-path-review/SKILL.md
@@ -43,6 +44,7 @@ skill|embedded-target-characterization|Embedded target characterization|.agents/
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
+skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
 skill|problem-framing-narrative-study-workflow|Narrative problem-framing study workflow|.agents/skills/problem-framing-narrative-study-workflow/SKILL.md

@@ -9,6 +9,8 @@ Before deciding, build a boundary inventory:
 - Search semantic neighbors: similarly named functions, similar bodies, same domain noun/verb, helpers in common/shared/util modules, and tests encoding the same concept.
 - Classify each neighbor: `same concept | parallel concept | obsolete abstraction | uncertain`.
 
+If the main uncertainty is which class/module/layer should own a responsibility, stop and route that decision to `design-balance`. Return here only after the module/class layout is clear.
+
 ## Scoring model (separate polarity)
 
 Positive evidence (score 0-2 each):
