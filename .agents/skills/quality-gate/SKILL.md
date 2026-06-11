@@ -33,10 +33,6 @@ Invoke this skill **before every submission**. It is mandatory.
    - If production-ready, low-overhead, battery-safe, flash-safe, thermally-safe, or always-on claims depend on embedded NFRs, verify target characterization exists or the claim is explicitly provisional, budget provenance exists, calibration report exists when numeric budgets are claimed, calibration revisit conditions are not triggered, and the NFR gate report references these artifacts.
    - If `embedded-system-familiarization` was triggered, verify `docs/targets/<target>/system-familiarization.md` exists and lists required, created, missing, provisional, and deferred artifacts; artifact freshness/revisit conditions; claims blocked by missing evidence; and handoff statuses using `not_needed`, `required_pending`, `completed`, `deferred_with_reason`, or `blocked`.
    - If only `embedded-project-constitution` was triggered, verify constitution artifacts exist. Do not require a feature-level NFR gate report unless feature runtime changes or production-readiness claims are introduced.
-   - If any study-note workflow was triggered, verify the relevant Study Pack Report exists.
-   - If publish/sync readiness was required, verify `textbook-quality-gate` produced a gate decision.
-   - If narrative or technical essay workflow was used, verify its semantic review report exists before accepting shared-mechanical-only checks.
-
 3) Run concise exit-criteria review only.
    - Do not duplicate deep taxonomy here.
    - If a finding needs deep analysis, route to the dedicated skill (readability/maintainability/error-handling/etc.) and return after fixes.

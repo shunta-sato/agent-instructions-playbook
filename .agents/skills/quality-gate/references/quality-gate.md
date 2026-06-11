@@ -38,8 +38,6 @@ Confirm required evidence exists for each triggered branch:
 - function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
 - C++ header branch → Doxygen completeness evidence
 - ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff)
-- study-note branch → Study Pack Report with source classification, files created/updated, contracts applied, semantic review decision when applicable, mechanical gate decision when publish/sync was requested
-
 ## 3) Minimum exit criteria review (always)
 
 - Path-specific instructions were identified and followed.
