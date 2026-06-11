@@ -32,6 +32,10 @@ Do not use it for low-risk edits that touch one file, add no abstraction, keep p
    - new helpers/wrappers/adapters target
    - new indirection layers target
    - rough production/test line budget
+   - When working under an ExecPlan with quantitative targets, reconcile this
+     change-level budget with the plan's contribution decomposition (the net
+     line budgets across phases must sum to the plan target, or the plan
+     forecast must be updated).
 
 2. Prefer reuse, deletion, inlining, or local changes before adding a new abstraction.
 

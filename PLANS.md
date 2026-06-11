@@ -53,6 +53,31 @@ When something is uncertain, capture experiments, measurements, logs, or failing
 5) **Handoff-ready**  
 Every stopping point must update the **Handoff** section (what’s done, what’s next, how to run, where you left off).
 
+## Quantitative targets (estimation rules)
+
+A quantitative target in "Constraints / quality targets" is valid only if the
+plan also records:
+
+1. **Metric definition**: the exact measurement command, and the denominator
+   (what is included/excluded — e.g., tests, generated code, vendored code).
+   A refactor that adds tests must not count test lines in a reduction target.
+2. **Contribution decomposition**: a table allocating the target across
+   in-scope work items: `target = sum(expected contribution per WBS item)`,
+   each row backed by a measured baseline (`wc -l`, file list, schema count).
+3. **Reachability check**: subtract all out-of-scope surfaces from the
+   denominator first. If the target is unreachable even with perfect execution
+   of every phase, shrink the target or expand the scope **before**
+   implementation starts, and record this in the Decision log.
+4. **Proxy declaration**: if the purpose is not the metric itself (e.g.,
+   purpose = constant extension cost, metric = LoC), mark the metric as a
+   secondary proxy and define a primary outcome metric that a test or
+   dry-run exercise can verify directly.
+
+At every phase or milestone boundary, re-forecast each quantitative target
+using current measurements. If the forecast no longer fits the target, record
+whether the plan re-scopes, re-baselines, or explicitly accepts the miss before
+continuing implementation.
+
 ## Required sections
 
 An ExecPlan must contain these sections (exact headings can differ, but content must exist):
