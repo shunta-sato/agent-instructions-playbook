@@ -85,6 +85,8 @@ The goal is a small, curated software-development operating system: clear entry 
 
 ### Learning and study-note authoring
 
+Migration status: these skills are planned for a separate study-note repository, but that destination repository does not exist yet. Keep the skills, trigger evals, checker, Makefile targets, and quality-gate references in this repository until the destination repo exists and the migration is verified. Track the staged move in `plans/20260611-study-note-migration-hold.md`.
+
 - `textbook-structured-content-workflow` — build textbook-style learning packs from expository sources with stable concepts, methods, patterns, or taxonomies
 - `textbook-learning-content-review` — semantic review for textbook-style notes that risk definition-only or mechanically summarized content
 - `textbook-quality-gate` — final gate for textbook learning packs and shared mechanical-only checks for other study-note packs
