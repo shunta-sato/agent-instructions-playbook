@@ -1,5 +1,7 @@
 /* resolved.tokens.css
-   - Copy from ui_spec.json meta.tone_and_manner.token_refs.css
+   - Copy only from a validated ui_spec.json meta.tone_and_manner.token_refs.css
+     path under tonemana/catalog/tokens/ ending in .tokens.css
+   - Never copy absolute paths or paths containing .. traversal
    - Keep as a stable snapshot for this UIDesign Pack
 */
 :root {

@@ -31,6 +31,15 @@ A UIUX Pack with `ui_spec.json` containing:
 
 If this block is missing, stop and run `$tonemana-apply` first.
 
+Before snapshotting token files, validate both `token_refs` values:
+
+* paths are relative repository paths under `tonemana/catalog/tokens/`
+* paths are not absolute and contain no `..` traversal segments
+* the JSON token ref ends with `.tokens.json` and parses as a JSON object
+* the CSS token ref ends with `.tokens.css` and is copied only from the allowed catalog path
+
+If any check fails, stop and request corrected catalog token refs or re-run `$tonemana-apply`; do not read, copy, commit, upload, or preview contents from unvalidated paths.
+
 ## Outputs (deterministic UIDesign Pack)
 
 Folder: `uidesign/YYYYMMDD-<slug>/`
@@ -86,6 +95,7 @@ Do not request navigation/IA changes here. That goes to uiux-core.
 Minimum checks:
 
 * UIUX Pack refs exist and contain meta.tone_and_manner
+* token_refs pass the catalog path validation before snapshotting
 * token snapshot files exist (resolved.tokens.*)
 * preview files exist
 * no `<fill>` remains in UIDesign Pack
