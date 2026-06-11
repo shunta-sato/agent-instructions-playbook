@@ -23,6 +23,7 @@ Confirm required evidence exists for each triggered branch:
 - observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
 - implementation-economy branch → Complexity Budget plus Post-Implementation Economy Audit, including keep/delete/inline/merge decisions for new abstractions
 - design-balance branch → Responsibility Map with unit, name, responsibility sentence, reason to change, and dependency direction
+- performance-review branch → Performance Review with hot path, data scale, complexity, I/O/query count, decision, evidence, and no-measurement/no-claim limits when measurement is missing
 - feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits
 - embedded system familiarization branch → `docs/targets/<target>/system-familiarization.md` with required/created/missing/provisional/deferred artifacts, artifact freshness/revisit conditions, claims blocked by missing evidence, and handoff statuses (`not_needed|required_pending|completed|deferred_with_reason|blocked`)
 - embedded target characterization branch → `docs/targets/<target>/target-characterization.md`, `target_profiles/<target>.yaml`, baseline paths, and characterization report when production claims depend on target behavior

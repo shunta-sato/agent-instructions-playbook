@@ -26,6 +26,7 @@ Use this skill when:
 - a request is ambiguous, cross-component, user-facing, or risky enough to need requirements first
 - you are creating or updating a requirements brief/spec
 - vague qualities such as "fast", "reliable", "secure", or "usable" need measurable targets
+- non-embedded performance expectations need scale assumptions, latency/throughput acceptance criteria, or handoff to `performance-review`
 - embedded physical-footprint qualities such as CPU, RAM, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect need high-level requirement wording before NFR design
 - requirements must be traceable to design decisions, tests, or monitoring
 
@@ -43,8 +44,9 @@ Do not use it for small, already-clear implementation tasks unless the user asks
 5. For each requirement, include acceptance criteria, a Definition of Done, and a verification method.
 6. If an embedded NFR requirement depends on target behavior, do not finalize numeric acceptance criteria until `embedded-target-characterization` exists or the requirement is explicitly unknown/provisional.
 7. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
-8. Trace acceptance criteria into the `test-driven-development` Test List and the `quality-gate` exit criteria when implementation will follow.
-9. Add assumptions, open questions, and traceability only where they reduce ambiguity.
+8. If the requirement involves non-embedded request latency, render cost, throughput, data-size scaling, or N+1 risk, hand off to `performance-review` with scale assumptions and acceptance criteria.
+9. Trace acceptance criteria into the `test-driven-development` Test List and the `quality-gate` exit criteria when implementation will follow.
+10. Add assumptions, open questions, and traceability only where they reduce ambiguity.
 
 ## Outputs
 
