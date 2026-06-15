@@ -131,6 +131,7 @@ Layout decision: keep-layout with one new focused skill plus template. Rejected 
 - 2026-06-15: `origin/main` had advanced by 2 commits; local `main` was fast-forwarded before creating `codex/agent-workflow-contract-review`.
 - 2026-06-15: `generate_agent_index.py --write` updates both AGENTS and README generated catalog, so README generated rows should not be hand-edited.
 - 2026-06-15: First `make verify` failed only on trailing whitespace in `quality-gate/SKILL.md`; after removing it, `make verify` passed.
+- 2026-06-15: Review found stale Handoff state and a local Codex attachment path in the self-review report; both were fixed before moving the PR out of draft.
 
 ## Decision log
 
@@ -145,16 +146,14 @@ Layout decision: keep-layout with one new focused skill plus template. Rejected 
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/agent-workflow-contract-review`, no commit yet.
-- What is done: GOAL read, memory quick pass done, `main` fast-forwarded, branch created, ExecPlan drafted, new skill/template added, existing skills/gate wired, evals added, generated indexes updated, workflow contract report created, validation passed.
-- What is not done: commit, push, PR.
+- Current branch / commit: `codex/agent-workflow-contract-review` / PR #57 head after review-fix commit.
+- What is done: implementation committed and pushed, PR #57 opened and marked Ready for review, review feedback fixes applied, local `make verify` passed, and GitHub Actions checks passed for the latest pushed head when last checked.
+- What is not done: merge.
 - How to run: `make verify`.
 - How to test: `make verify`.
-- Known risks / open questions: none blocking. Inventory still reports 7 existing broad-trigger warnings; the new skill reports no broad-trigger warning.
+- Known risks / open questions: re-check GitHub Actions if another commit is pushed. Inventory still reports 7 existing broad-trigger warnings; the new skill reports no broad-trigger warning.
 - Next 1-3 steps:
-  1. Commit this branch.
-  2. Push to origin.
-  3. Open a draft PR.
+  1. Merge after approval.
 - Pointers:
   - `.agents/skills/quality-gate/SKILL.md`
   - `.agents/skills/bug-investigation-and-rca/SKILL.md`

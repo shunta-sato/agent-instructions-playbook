@@ -22,7 +22,7 @@
 
 | Stage | Artifact / command | Producer | Consumer | Notes |
 | --- | --- | --- | --- | --- |
-| Requirements | `/Users/satoshun/.codex/attachments/62fb761b-95b4-4952-9ba0-d213f13920df/pasted-text.txt` | User GOAL | ExecPlan and implementation | Defines required skill, gate wiring, trigger evals, and acceptance criteria. |
+| Requirements | User-provided GOAL in review conversation | User GOAL | ExecPlan and implementation | Defines required skill, gate wiring, trigger evals, and acceptance criteria. |
 | Plan | `plans/agent-workflow-contract-review.md` | This PR | Implementation and quality-gate | Maps requested deliverables to WBS; no deferred design deliverables. |
 | Skill source | `.agents/skills/agent-workflow-contract-review/SKILL.md` | This PR | Agents, generated catalogs, trigger eval names | Defines trigger, anti-trigger, procedure, output report. |
 | Report template | `.agents/skills/agent-workflow-contract-review/templates/workflow-contract-review.md` | This PR | Future workflow-contract reports | Matches required output sections. |
