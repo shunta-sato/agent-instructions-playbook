@@ -28,6 +28,13 @@ Use this skill when any of these apply:
 6) Verify with tests/repro/tooling output.
 7) Add prevention actions (at least 1) with a verifiable end state.
 
+If the root cause is a missed workflow/product contract, prevention must include:
+
+- the missing invariant class
+- a regression test against the generated workflow, not only helper functions
+- a Skill / quality-gate update if the review process failed to route the issue
+- a replay fixture or generated artifact snapshot when applicable
+
 For details and guidance, open `references/bug-investigation-and-rca.md`.
 
 Helper for deterministic artifact bootstrap:
@@ -86,6 +93,7 @@ Helper for deterministic artifact bootstrap:
 - Detect:
 - Mitigate:
 - Follow-up tasks (with owners / tracking IDs if available):
+- If missed workflow/product contract: missing invariant class, generated-workflow regression, process update, replay fixture or artifact snapshot:
 
 ### Workaround (only if unavoidable)
 - Workaround description:

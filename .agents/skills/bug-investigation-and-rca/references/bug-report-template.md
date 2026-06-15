@@ -38,6 +38,7 @@
 - Detect:
 - Mitigate:
 - Follow-up tasks (with owners / tracking IDs if available):
+- If missed workflow/product contract: missing invariant class, generated-workflow regression, process update, replay fixture or artifact snapshot:
 
 ### Workaround (only if unavoidable)
 - Workaround description:

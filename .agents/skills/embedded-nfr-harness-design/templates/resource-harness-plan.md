@@ -35,6 +35,22 @@
   <baseline command>
   ```
 
+## Controller-Target Harness Contract
+
+| Field | Value | Failure meaning / diagnostic |
+| --- | --- | --- |
+| controller-side command |  |  |
+| target-local command |  |  |
+| target runner binary path |  |  |
+| PATH / env assumptions |  |  |
+| preflight command |  |  |
+| artifact retrieval / include-run path |  |  |
+| install missing |  |  |
+| PATH missing |  |  |
+| version skew |  |  |
+| unsupported surface |  |  |
+| permission / helper unavailable |  |  |
+
 ## Evidence Limits
 
 - Target evidence missing:

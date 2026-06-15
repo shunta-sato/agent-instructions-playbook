@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "workflow-contract-collect-plan-validate-to-operating-contract",
+      "prompt": "Add a collect plan step that passes run_validation into operating-contract.",
+      "should_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "expected_artifacts": [
+        "reports/workflow-contract-review/<slug>.md"
+      ],
+      "expected_decisions": [
+        "Validate-run and operating-contract artifact identities are checked against the same run set",
+        "Generated argv replay is recorded before submit"
+      ],
+      "expected_evidence": [
+        "Producer/consumer consistency table includes required identity fields",
+        "Source-of-truth chain links collect plan, validation, and downstream report consumption"
+      ],
+      "notes": "A downstream report consuming validation artifacts is an Agent-facing workflow contract."
+    },
+    {
+      "id": "workflow-contract-generated-codex-prompt-target-local-sweep",
+      "prompt": "Update generated Codex prompt for target-local governor sweep.",
+      "should_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "should_not_trigger": [
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "reports/workflow-contract-review/<slug>.md"
+      ],
+      "expected_decisions": [
+        "Generated instructions are treated as workflow product surfaces",
+        "Controller vs target-local execution locations are explicit"
+      ],
+      "expected_evidence": [
+        "Generated argv replay table records execution_location and required env",
+        "Claim boundary check prevents prompt success from becoming measurement evidence"
+      ],
+      "notes": "Generated prompts that guide target-local work need workflow contract review."
+    },
+    {
+      "id": "workflow-contract-installer-path-ssh-runner",
+      "prompt": "Change installer path for adc-lab-target and update SSH runner behavior.",
+      "should_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
+      "expected_artifacts": [
+        "reports/workflow-contract-review/<slug>.md"
+      ],
+      "expected_decisions": [
+        "Installer output path and non-interactive SSH PATH compatibility are checked",
+        "Missing, PATH-missing, unsupported, and version-skew diagnostics are separated"
+      ],
+      "expected_evidence": [
+        "Deployment/runtime discovery table includes runner path and preflight command",
+        "Runtime workflow does not depend on undiscoverable installed binaries"
+      ],
+      "notes": "Installer/runtime discovery compatibility is part of the workflow product contract."
+    },
+    {
+      "id": "workflow-contract-include-run-downstream-consumption",
+      "prompt": "Add report validate-run --include-run and downstream operating-contract consumption.",
+      "should_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_artifacts": [
+        "reports/workflow-contract-review/<slug>.md"
+      ],
+      "expected_decisions": [
+        "Artifact producer and consumer use matching typed identity",
+        "Forbidden latest/newest artifact fallback is rejected"
+      ],
+      "expected_evidence": [
+        "Consumer argv cites the produced validation artifact by explicit path, ref, digest, or identity",
+        "Run-set, target, and workflow identity consistency is recorded"
+      ],
+      "notes": "Adding include-run to downstream consumption creates a multi-step evidence chain."
+    },
+    {
+      "id": "workflow-contract-negative-internal-json-parser",
+      "prompt": "Refactor internal JSON parsing for pressure payloads.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "expected_decisions": [
+        "No workflow contract report is required when no Agent-facing workflow changes"
+      ],
+      "notes": "Internal parsing alone is outside the skill boundary unless it changes a generated workflow surface."
+    },
+    {
+      "id": "workflow-contract-negative-readme-typo-no-command-example",
+      "prompt": "Fix typo in README that does not affect command examples.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "expected_decisions": [
+        "Pure prose typo fixes do not trigger workflow contract review"
+      ],
+      "notes": "The anti-trigger protects non-instruction prose."
+    },
+    {
+      "id": "workflow-contract-negative-cpu-load-iteration",
+      "prompt": "Change CPU load iteration calculation without changing CLI workflow.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "expected_decisions": [
+        "Target-local calculation changes are not enough when no generated plan, prompt, handoff, or workflow document changes"
+      ],
+      "notes": "Measurement code can be outside the workflow contract skill if not exposed through workflow surfaces."
+    },
+    {
+      "id": "workflow-contract-negative-unit-test-margin",
+      "prompt": "Add ordinary unit test for suitability margin calculation.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "agent-workflow-contract-review"
+      ],
+      "expected_decisions": [
+        "Ordinary unit tests without workflow surface changes do not require workflow contract review"
+      ],
+      "notes": "The skill should not expand into generic testing guidance."
+    }
+  ]
+}
