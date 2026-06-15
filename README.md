@@ -47,6 +47,7 @@ The goal is a small, curated software-development operating system: clear entry 
 - `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
 - `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
 - `architecture-decision-analysis` — compare architecture options against quality drivers, risks, tradeoffs, and verification tasks
+- `agent-workflow-contract-review` — review Agent-facing generated workflows, collect plans, handoffs, and downstream artifact contracts
 - `code-smells-and-antipatterns` — diff-focused maintainability and boundary review
 - `code-readability` — requested readability cleanup and C++ documentation gates
 - `error-handling` — failure contracts at boundaries, retries, fallbacks, and user-visible errors
@@ -95,6 +96,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 <!-- BEGIN README SKILL CATALOG (generated) -->
 | Skill | Description | Source |
 | --- | --- | --- |
+| `agent-workflow-contract-review` | Agent workflow contract review | `.agents/skills/agent-workflow-contract-review/SKILL.md` |
 | `architecture-decision-analysis` | Architecture decision analysis | `.agents/skills/architecture-decision-analysis/SKILL.md` |
 | `bug-investigation-and-rca` | Bug investigation & RCA | `.agents/skills/bug-investigation-and-rca/SKILL.md` |
 | `code-readability` | Code readability | `.agents/skills/code-readability/SKILL.md` |

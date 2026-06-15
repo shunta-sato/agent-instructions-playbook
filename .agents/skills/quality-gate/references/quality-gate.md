@@ -24,6 +24,7 @@ Confirm required evidence exists for each triggered branch:
 - implementation-economy branch → Complexity Budget plus Post-Implementation Economy Audit, including keep/delete/inline/merge decisions for new abstractions
 - design-balance branch → Responsibility Map with unit, name, responsibility sentence, reason to change, and dependency direction
 - performance-review branch → Performance Review with hot path, data scale, complexity, I/O/query count, decision, evidence, and no-measurement/no-claim limits when measurement is missing
+- Agent-facing workflow contract branch → `reports/workflow-contract-review/<slug>.md` with decision `submit`, workflow surfaces reviewed, source-of-truth chain, generated argv replay, producer/consumer consistency, runtime discovery assumptions, forbidden fallback checks, claim boundaries, and resolved or explicitly accepted findings
 - feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits
 - embedded system familiarization branch → `docs/targets/<target>/system-familiarization.md` with required/created/missing/provisional/deferred artifacts, artifact freshness/revisit conditions, controlled conditions, uncontrolled confounders, operating point coverage, claim-to-evidence traces with allowed wording, claims blocked by missing evidence, and handoff statuses (`not_needed|required_pending|completed|deferred_with_reason|blocked`)
 - hardware operating point claim → `docs/targets/<target>/controlled-operating-points.md` with controlled factors, observed covariates, uncontrolled confounders, coverage status, confidence, safety preconditions, control/verification/abort/restore methods, and allowed wording
@@ -45,6 +46,7 @@ Confirm required evidence exists for each triggered branch:
 - Path-specific instructions were identified and followed.
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
 - Default-lane evidence is present for normal/high-risk work, or the low-risk skip reason is explicit.
+- Agent-facing workflow, generated instruction, collect plan, executable handoff, multi-step CLI workflow, or cross-host workflow changes are blocked unless the Workflow Contract Review Report decision is `submit`.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
 - If architecture, hardware, or embedded NFR claims depend on a hardware operating point, `controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording.
 - Observed natural variation under a dynamic policy is not accepted as a controlled sweep. Claims such as "works at all CPU clocks", "low overhead across frequency range", "battery safe", and "GPU offload is better" are blocked unless the corresponding controlled experiments and cost models exist or the wording is explicitly limited/provisional.
@@ -60,6 +62,7 @@ If deeper judgment is needed, invoke dedicated skills rather than expanding this
 - error handling → `$error-handling`
 - concurrency details → `$concurrency-core`, `$thread-safety-tooling`
 - observability details → `$observability`
+- Agent-facing workflow contract details → `$agent-workflow-contract-review`
 
 ## 4) Gate decision format (required)
 

@@ -58,6 +58,22 @@
 - I/O buses:
 - Real-time constraints:
 
+## 4.1 Cross-host Deployment / Runtime Discovery
+
+| Field | Value | Evidence / diagnostic |
+| --- | --- | --- |
+| installer output path |  |  |
+| runtime invocation path |  |  |
+| non-interactive SSH PATH |  |  |
+| target runner path |  |  |
+| controller env override |  |  |
+| target-local PATH |  |  |
+| helper path |  |  |
+| version identity |  |  |
+| unsupported diagnostic |  |  |
+| missing diagnostic |  |  |
+| PATH-missing diagnostic |  |  |
+
 ## 5. Workload Map
 
 | Workload | Description | Normal? | Peak? | Boundary? | Risk | Report |

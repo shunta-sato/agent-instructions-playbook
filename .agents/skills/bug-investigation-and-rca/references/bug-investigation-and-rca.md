@@ -40,6 +40,12 @@ Each action must have:
 - owner,
 - tracking ID or issue link.
 
+When the root cause is a missed workflow/product contract, prevention must also
+include the missing invariant class, a regression test against the generated
+workflow rather than only helper functions, a Skill or quality-gate update if
+the process failed to route the issue, and a replay fixture or generated
+artifact snapshot when applicable.
+
 ## E) Tool selection matrix
 
 | Symptom | Tools | Expected outcome |
@@ -56,3 +62,4 @@ Each action must have:
 - Concurrency suspected: invoke `$thread-safety-tooling` (if available) or `$concurrency-core`.
 - Error translation/retries/fallbacks hide cause: invoke `$error-handling`.
 - Legacy area lacks safe tests: invoke `$working-with-legacy-code`.
+- Missed Agent-facing workflow/product contract: invoke `$agent-workflow-contract-review`.

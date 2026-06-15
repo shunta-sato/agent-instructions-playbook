@@ -61,6 +61,7 @@ Do not use it when:
 6. Map control surfaces using `templates/hardware-control-surface-map.md`.
    For each control action record precondition, control command or method, verification command, abort condition, restore command or method, restore verification, privilege need, reversibility, and operator approval need.
    Mark unsupported or unsafe factors as `not_controllable`, `read_only_observable`, `control_requires_privilege`, `control_unsafe`, or `control_not_supported`.
+   For cross-host workflows, also record deployment/runtime discovery compatibility: installer output path, runtime invocation path, non-interactive SSH `PATH`, target runner path, controller env override, target-local `PATH`, helper path, version identity, and the distinction between unsupported, missing, and PATH-missing diagnostics.
 7. Plan operating point coverage using `templates/controlled-operating-points.md`.
    Use coverage statuses `not_started`, `observational_only`, `partially_controlled`, `controlled_subset`, `controlled_full`, `blocked_unsafe`, and `not_controllable`.
    Use confidence levels `none`, `low`, `medium`, and `high`; observed natural variation is at most `low`, controlled subset is typically `medium`, and repeated sweeps with thermal/power/workload conditions recorded can be `high`.

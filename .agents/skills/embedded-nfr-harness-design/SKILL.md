@@ -44,6 +44,7 @@ Do not use it for generic benchmark planning, web performance tests, or code pat
    - host fallback command
    - baseline capture command
    - report generation path
+   For controller-target harnesses, also define the controller-side command, target-local command, target runner binary path, PATH/env assumptions, preflight command, artifact retrieval or include-run path, and the meaning of failures: install missing, PATH missing, version skew, unsupported surface, permission denied, or helper unavailable.
 7. State what the harness cannot prove.
 8. Route discovery work to `embedded-target-characterization` or `embedded-operating-envelope-discovery` when target envelope is unknown.
 9. Route to `embedded-nfr-gate` once reports or explicit unknowns exist.

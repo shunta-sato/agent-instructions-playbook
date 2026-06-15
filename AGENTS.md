@@ -21,6 +21,7 @@ meta|format=v1|max_bytes=8192|invoke=codex:$<skill>,copilot:/<skill>
 defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
 skills|name|short|skill_path
+skill|agent-workflow-contract-review|Agent workflow contract review|.agents/skills/agent-workflow-contract-review/SKILL.md
 skill|architecture-decision-analysis|Architecture decision analysis|.agents/skills/architecture-decision-analysis/SKILL.md
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
