@@ -8,6 +8,10 @@ The active skill path `.agents/skills/<name>/SKILL.md` should be used after revi
 
 - `ros2-qos-investigation` — source-based ROS 2 QoS implementation investigation, with Reliability QoS as the first-class case.
 
+## Workspace guide
+
+- `AGENTS.md` — starter workspace instructions for Codex when the investigation spans multiple ROS 2 and Fast DDS repositories.
+
 ## Existing skills this kit routes to
 
 | Situation | Route |
@@ -23,6 +27,7 @@ The active skill path `.agents/skills/<name>/SKILL.md` should be used after revi
 
 ## Files
 
+- `AGENTS.md`
 - `skills/ros2-qos-investigation/SKILL.md`
 - `skills/ros2-qos-investigation/references/ros2-qos-investigation.md`
 - `skills/ros2-qos-investigation/templates/investigation-report.md`
