@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "ros2-qos-reliability-source-trace",
+      "prompt": "Investigate the ROS 2 / Fast DDS Reliability QoS implementation. Trace the policy from rclcpp QoS through rmw_fastrtps into Fast DDS RTPS behavior, then prepare a report for discussion.",
+      "should_trigger": [
+        "ros2-qos-investigation"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "concurrency-ros2"
+      ],
+      "expected_artifacts": [
+        "ROS 2 QoS Investigation Report",
+        "ROS 2 QoS Source Trace Map"
+      ],
+      "expected_evidence": [
+        "Repository refs and source files",
+        "Layer-by-layer QoS trace",
+        "Open questions and next probes"
+      ]
+    },
+    {
+      "id": "ros2-qos-zero-copy-transport-split",
+      "prompt": "For a ROS 2 zero-copy project, check whether Reliable QoS takes the same path for network RTPS, Fast DDS DataSharing, and intra-process delivery. I need an implementation-based report and discussion packet.",
+      "should_trigger": [
+        "ros2-qos-investigation"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "performance-review"
+      ],
+      "expected_artifacts": [
+        "transport path split",
+        "discussion packet"
+      ],
+      "expected_evidence": [
+        "Source trace for each scoped path",
+        "Assumptions separated from confirmed claims"
+      ]
+    },
+    {
+      "id": "ros2-qos-negative-callback-deadlock",
+      "prompt": "This ROS 2 node deadlocks when a callback calls a service synchronously. Review executor and callback group choices; QoS is not part of the question.",
+      "should_trigger": [
+        "concurrency-ros2"
+      ],
+      "should_not_trigger": [
+        "ros2-qos-investigation"
+      ],
+      "expected_artifacts": [
+        "ROS2 Concurrency Notes"
+      ]
+    },
+    {
+      "id": "ros2-qos-negative-observed-drop-rca-first",
+      "prompt": "Messages are sometimes missing in production after a recent change. Reproduce the failure, capture evidence, and identify the root cause before changing QoS settings.",
+      "should_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "ros2-qos-investigation"
+      ],
+      "expected_artifacts": [
+        "Bug Report (RCA)"
+      ]
+    },
+    {
+      "id": "ros2-qos-negative-final-submit",
+      "prompt": "Before submission, check whether all required evidence is present and decide submit or no-submit.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "ros2-qos-investigation"
+      ],
+      "expected_output_contains": [
+        "Gate decision:"
+      ]
+    }
+  ]
+}
