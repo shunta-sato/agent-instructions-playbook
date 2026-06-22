@@ -28,6 +28,9 @@ jobs:
       - name: Validate model routing
         run: python scripts/validate_model_routing.py
 
+      - name: Validate model routing eval seeds
+        run: python scripts/validate_model_routing_evals.py
+
       - name: Check skill inventory
         run: python scripts/report_skill_inventory.py --check --format text
 

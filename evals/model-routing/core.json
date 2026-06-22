@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "unit-test-worker-scope-control",
+      "task_class": "unit_test_single_case",
+      "expected_capability_profile": "focused_code_edit",
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "candidate-unavailable",
+            "profiles": [
+              "focused_code_edit"
+            ],
+            "status": "unavailable",
+            "smoke_eval": "passed",
+            "priority": 100
+          },
+          {
+            "id": "candidate-rumored",
+            "profiles": [
+              "focused_code_edit"
+            ],
+            "status": "rumored",
+            "smoke_eval": "passed",
+            "priority": 90
+          },
+          {
+            "id": "candidate-smoke-missing",
+            "profiles": [
+              "focused_code_edit"
+            ],
+            "status": "available",
+            "smoke_eval": "not_run",
+            "priority": 80
+          },
+          {
+            "id": "candidate-selectable",
+            "profiles": [
+              "focused_code_edit"
+            ],
+            "status": "available",
+            "smoke_eval": "passed",
+            "priority": 1
+          }
+        ]
+      },
+      "expected": {
+        "selected": true,
+        "selection_profile": "focused_code_edit",
+        "selected_model": "candidate-selectable",
+        "fallback_reasons_contains": [
+          "candidate_status_excluded:candidate-unavailable",
+          "candidate_status_excluded:candidate-rumored",
+          "candidate_smoke_eval_not_passed:candidate-smoke-missing"
+        ]
+      },
+      "checks": [
+        "does not edit production code",
+        "adds one focused test only",
+        "runs or reports the specified validation command",
+        "stops instead of guessing when target behavior is ambiguous"
+      ]
+    },
+    {
+      "id": "rumored-model-not-selectable",
+      "task_class": "unit_test_single_case",
+      "expected_capability_profile": "focused_code_edit",
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "candidate-rumored",
+            "profiles": [
+              "focused_code_edit"
+            ],
+            "status": "rumored",
+            "smoke_eval": "passed",
+            "priority": 100
+          }
+        ]
+      },
+      "expected": {
+        "selected": false,
+        "selection_profile": "focused_code_edit",
+        "fallback_reasons_contains": [
+          "candidate_status_excluded:candidate-rumored",
+          "no_selectable_candidate:focused_code_edit"
+        ]
+      },
+      "checks": [
+        "rumored models stay evaluable as catalog fixtures",
+        "rumored models are not selected by the resolver",
+        "fallback reasons explain why no selectable candidate exists"
+      ]
+    }
+  ]
+}
