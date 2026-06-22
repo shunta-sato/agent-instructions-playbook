@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from skill_description_style import description_trigger_only_flags
+
 
 TOP_LEVEL_FIELD_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:\s*(.*))?$")
 BLOCK_SCALAR_VALUES = {"|", "|-", "|+", ">", ">-", ">+"}
@@ -52,20 +54,6 @@ BROAD_TRIGGER_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
         "task-mentions",
         re.compile(r"\btask\s+mentions\b", re.IGNORECASE),
-    ),
-)
-DESCRIPTION_RECOMMENDED_MAX_CHARS = 420
-DESCRIPTION_STYLE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("ordered-then", re.compile(r"\bthen\b", re.IGNORECASE)),
-    ("body-reference", re.compile(r"\bAlways\s+(?:open|read)\b", re.IGNORECASE)),
-    (
-        "procedure-verb",
-        re.compile(
-            r"\b(?:classify|execute|hand\s+off|create\s+and\s+maintain|"
-            r"produce|produces|return|returns|run|make\s+a\s+Test\s+List|"
-            r"update\s+the\s+list)\b",
-            re.IGNORECASE,
-        ),
     ),
 )
 COUNTED_SUBDIRS = {
@@ -248,18 +236,6 @@ def broad_trigger_flags(text: str) -> list[str]:
                 if flag not in seen:
                     seen.add(flag)
                     flags.append(flag)
-
-    return flags
-
-
-def description_trigger_only_flags(description: str) -> list[str]:
-    flags: list[str] = []
-    if len(description) > DESCRIPTION_RECOMMENDED_MAX_CHARS:
-        flags.append(f"long-description:{len(description)}")
-
-    for label, pattern in DESCRIPTION_STYLE_PATTERNS:
-        if pattern.search(description):
-            flags.append(label)
 
     return flags
 

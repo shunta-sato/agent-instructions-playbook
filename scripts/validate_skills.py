@@ -8,6 +8,11 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from skill_description_style import (
+    DESCRIPTION_RECOMMENDED_MAX_CHARS,
+    description_trigger_only_flags,
+)
+
 
 NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 TOP_LEVEL_FIELD_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:\s*(.*))?$")
@@ -19,20 +24,6 @@ ALLOWED_TOP_LEVEL_FIELDS = {
     "metadata",
     "allowed-tools",
 }
-DESCRIPTION_RECOMMENDED_MAX_CHARS = 420
-DESCRIPTION_STYLE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("ordered-then", re.compile(r"\bthen\b", re.IGNORECASE)),
-    ("body-reference", re.compile(r"\bAlways\s+(?:open|read)\b", re.IGNORECASE)),
-    (
-        "procedure-verb",
-        re.compile(
-            r"\b(?:classify|execute|hand\s+off|create\s+and\s+maintain|"
-            r"produce|produces|return|returns|run|make\s+a\s+Test\s+List|"
-            r"update\s+the\s+list)\b",
-            re.IGNORECASE,
-        ),
-    ),
-)
 
 
 @dataclass(frozen=True)
@@ -152,18 +143,15 @@ def description_style_warnings(doc: SkillDoc, repo_root: Path) -> list[str]:
     warnings: list[str] = []
     relpath = doc.path.relative_to(repo_root).as_posix()
     description = doc.fields.get("description", "")
-    if not description:
-        return warnings
-
-    if len(description) > DESCRIPTION_RECOMMENDED_MAX_CHARS:
-        warnings.append(
-            f"{relpath}: description style: {len(description)} chars; "
-            f"recommended max is {DESCRIPTION_RECOMMENDED_MAX_CHARS}"
-        )
-
-    for label, pattern in DESCRIPTION_STYLE_PATTERNS:
-        if pattern.search(description):
-            warnings.append(f"{relpath}: description style: {label}")
+    for flag in description_trigger_only_flags(description):
+        if flag.startswith("long-description:"):
+            length = flag.split(":", maxsplit=1)[1]
+            warnings.append(
+                f"{relpath}: description style: {length} chars; "
+                f"recommended max is {DESCRIPTION_RECOMMENDED_MAX_CHARS}"
+            )
+        else:
+            warnings.append(f"{relpath}: description style: {flag}")
 
     return warnings
 
