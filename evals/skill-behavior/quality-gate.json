@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "skill": "quality-gate",
+  "cases": [
+    {
+      "id": "delegated-run-missing-ledger-no-submit",
+      "prompt": "A subagent changed tests/foo_test.py and says it is done, but the submission does not cite any run_id or .agents/runs/agent-runs.jsonl record. Run the final quality gate.",
+      "given": [
+        "subagent changed files",
+        "no explicit run_id",
+        "no cited agent_run ledger record",
+        "worker success claim exists"
+      ],
+      "expected_decision": "no-submit",
+      "expected_findings": [
+        "delegated run evidence is missing",
+        "agent self-assessment is not sufficient evidence"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        ".agents/runs/agent-runs.jsonl"
+      ]
+    },
+    {
+      "id": "delegated-run-validation-missing-no-submit",
+      "prompt": "A delegated worker has a ledger record and changed files stayed in scope, but required validation was not run and no reproducible blocker is recorded. Run the final quality gate.",
+      "given": [
+        "explicit run_id is cited",
+        "changed_files are within allowed_files",
+        "validation.commands is empty",
+        "validation.blocker is empty"
+      ],
+      "expected_decision": "no-submit",
+      "expected_findings": [
+        "missing validation blocks submit",
+        "completion claim needs validation evidence"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        "validation"
+      ]
+    },
+    {
+      "id": "delegated-run-token-not-collected-submit",
+      "prompt": "A delegated worker has an explicit accepted run record: validation passed, changed files stayed within allowed files, and telemetry.status is not_collected. Run the final quality gate.",
+      "given": [
+        "explicit run_id is cited",
+        "judge_agent_run.py --require-accepted passes",
+        "validation passed",
+        "scope compliant",
+        "telemetry.status is not_collected"
+      ],
+      "expected_decision": "submit",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Gate decision: submit",
+        "0 findings"
+      ]
+    },
+    {
+      "id": "delegated-run-scope-violation-no-submit",
+      "prompt": "A delegated worker has a ledger record and validation passed, but changed_files includes src/payment.ts outside allowed_files. Run the final quality gate.",
+      "given": [
+        "explicit run_id is cited",
+        "validation passed",
+        "changed_files exceed allowed_files",
+        "judge_agent_run.py --require-accepted fails"
+      ],
+      "expected_decision": "no-submit",
+      "expected_findings": [
+        "changed files outside allowed files",
+        "scope violation blocks submit"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        "scope"
+      ]
+    }
+  ]
+}
