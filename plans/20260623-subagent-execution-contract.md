@@ -90,7 +90,7 @@
 - [x] (P1) Add references/templates — deliverable: execution-plans reference and template files — verify: files exist and are linked.
 - [x] (P2) Update skill entrypoint — deliverable: concise `SKILL.md` routing guidance — verify: `validate_skills.py`.
 - [x] (P3) Workflow-contract evidence — deliverable: report under `reports/workflow-contract-review/` — verify: decision `submit`.
-- [ ] (P4) Verification and publication — deliverable: commit, push, draft PR, review request — verify: raw PR URL.
+- [x] (P4) Verification and publication — deliverable: commit, push, draft PR, review request — verify: https://github.com/shunta-sato/agent-instructions-playbook/pull/62.
 
 ## Route / Required Branches
 
@@ -133,13 +133,13 @@
 
 ## Handoff
 
-- Current branch / commit: `codex/subagent-execution-contract`, uncommitted changes verified locally.
-- What is done: PR #61 merged; local `main` synced; branch created; plan started; references/templates, `SKILL.md` entrypoint update, workflow-contract report, and local verification are complete.
-- What is not done: commit, push, PR, review request.
+- Current branch / commit: `codex/subagent-execution-contract`, draft PR #62 open.
+- What is done: PR #61 merged; local `main` synced; branch created; plan started; references/templates, `SKILL.md` entrypoint update, workflow-contract report, local verification, commit, push, and PR creation are complete.
+- What is not done: review request, GitHub review response, PR ready-for-review transition, merge, next PR.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_skills.py`; `python3 scripts/report_skill_inventory.py --check --format text`; `make verify`.
 - Known risks / open questions: future run ledger PR may extend template fields.
-- Next 1-3 steps: commit, push, open draft PR, request review.
+- Next 1-3 steps: request review, address feedback if any, mark ready and merge on Approve.
 - Pointers: `.agents/skills/execution-plans/`, `.agents/model-routing/`, `reports/workflow-contract-review/`.
 
 ## Validation & Acceptance
@@ -157,7 +157,7 @@
 
 ## Outcomes & Retrospective
 
-- What shipped / merged: pending PR.
+- What shipped / merged: draft PR opened at https://github.com/shunta-sato/agent-instructions-playbook/pull/62.
 - What went well: details stayed in references/templates while `SKILL.md` only gained concise routing guidance.
 - What went wrong: none so far.
 - Follow-ups / tech debt tickets: run ledger, quality-gate delegated-run evidence, behavior/model smoke evals, and review/branch-completion skills remain later PRs.
