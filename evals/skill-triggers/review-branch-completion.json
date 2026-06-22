@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "requesting-review-package-after-verification",
+      "prompt": "Prepare a GitHub PR review request for this implemented branch. Include the PR URL, scope, verification commands, known risks, and what the reviewer should focus on.",
+      "should_trigger": [
+        "requesting-code-review"
+      ],
+      "should_not_trigger": [
+        "receiving-code-review",
+        "branch-completion"
+      ],
+      "expected_artifacts": [
+        "Review request package"
+      ],
+      "expected_decisions": [
+        "Review request packages scope and evidence without deciding submit readiness"
+      ],
+      "expected_output_contains": [
+        "Review target",
+        "Reviewer focus"
+      ],
+      "notes": "Requesting review is distinct from final gate readiness and branch lifecycle completion."
+    },
+    {
+      "id": "requesting-review-negative-final-gate",
+      "prompt": "Decide whether this branch is ready to submit. Required workflow-contract evidence may be missing.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "requesting-code-review"
+      ],
+      "expected_decisions": [
+        "Submit readiness remains owned by quality-gate"
+      ],
+      "notes": "The review request skill should not overlap with the final submit gate."
+    },
+    {
+      "id": "receiving-review-requested-changes",
+      "prompt": "Read the GitHub PR inline review threads and PR comments. There are requested changes, non-blocking notes, and one suggestion I think may conflict with the spec. Handle the feedback safely.",
+      "should_trigger": [
+        "receiving-code-review"
+      ],
+      "should_not_trigger": [
+        "requesting-code-review",
+        "branch-completion"
+      ],
+      "expected_artifacts": [
+        "Feedback Ledger"
+      ],
+      "expected_decisions": [
+        "Each review item receives accept, refute, defer, clarify, or acknowledge disposition",
+        "Conflicting suggestions are not blindly accepted"
+      ],
+      "expected_output_contains": [
+        "Disposition",
+        "Evidence"
+      ],
+      "notes": "Review handling requires judgment, not automatic patching."
+    },
+    {
+      "id": "receiving-review-approve-handoff",
+      "prompt": "The GitHub PR review says Approve and there are no requested changes. Process the review result and move to the appropriate next lifecycle step.",
+      "should_trigger": [
+        "receiving-code-review",
+        "branch-completion"
+      ],
+      "should_not_trigger": [
+        "requesting-code-review"
+      ],
+      "expected_decisions": [
+        "Approval is acknowledged as a merge handoff signal",
+        "Branch completion still checks git state and required checks"
+      ],
+      "notes": "An approval comment bridges review handling to branch completion."
+    },
+    {
+      "id": "branch-completion-merge-sync",
+      "prompt": "The PR is approved and checks are green. Merge it, sync local main, report the raw PR URL and merge SHA, and avoid touching unrelated untracked files.",
+      "should_trigger": [
+        "branch-completion"
+      ],
+      "should_not_trigger": [
+        "requesting-code-review"
+      ],
+      "expected_artifacts": [
+        "Completion Record"
+      ],
+      "expected_decisions": [
+        "Current git state is checked before merge",
+        "Local main is synced after merge",
+        "Unrelated worktree changes are preserved"
+      ],
+      "expected_output_contains": [
+        "Decision: merge",
+        "PR URL"
+      ],
+      "notes": "Merge completion is more than pressing merge; it includes local sync and reporting."
+    },
+    {
+      "id": "branch-completion-discard-protected",
+      "prompt": "This experiment branch should be discarded. Before doing anything destructive, check git state and make sure unrelated local changes are preserved.",
+      "should_trigger": [
+        "branch-completion"
+      ],
+      "should_not_trigger": [
+        "receiving-code-review"
+      ],
+      "expected_decisions": [
+        "Discard requires explicit authorization or a clear workflow rule",
+        "Destructive commands are avoided unless explicitly allowed"
+      ],
+      "notes": "Branch completion covers discard decisions while protecting unrelated work."
+    }
+  ]
+}

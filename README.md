@@ -98,6 +98,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | --- | --- | --- |
 | `agent-workflow-contract-review` | Agent workflow contract review | `.agents/skills/agent-workflow-contract-review/SKILL.md` |
 | `architecture-decision-analysis` | Architecture decision analysis | `.agents/skills/architecture-decision-analysis/SKILL.md` |
+| `branch-completion` | Finish branch and PR lifecycle | `.agents/skills/branch-completion/SKILL.md` |
 | `bug-investigation-and-rca` | Bug investigation & RCA | `.agents/skills/bug-investigation-and-rca/SKILL.md` |
 | `code-readability` | Code readability | `.agents/skills/code-readability/SKILL.md` |
 | `code-smells-and-antipatterns` | Diff-focused maintainability review | `.agents/skills/code-smells-and-antipatterns/SKILL.md` |
@@ -126,6 +127,8 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
 | `project-initialization` | Initialize canonical verify commands | `.agents/skills/project-initialization/SKILL.md` |
 | `quality-gate` | Final quality gate | `.agents/skills/quality-gate/SKILL.md` |
+| `receiving-code-review` | Process review feedback safely | `.agents/skills/receiving-code-review/SKILL.md` |
+| `requesting-code-review` | Prepare focused review requests | `.agents/skills/requesting-code-review/SKILL.md` |
 | `requirements-engineering` | Requirements engineering | `.agents/skills/requirements-engineering/SKILL.md` |
 | `staged-lowering` | Staged lowering for constrained code | `.agents/skills/staged-lowering/SKILL.md` |
 | `test-driven-development` | Test-driven development workflow | `.agents/skills/test-driven-development/SKILL.md` |
