@@ -9,6 +9,13 @@ Explicit invocation differs by client:
 - Codex: `$<skill>`
 - GitHub Copilot CLI / agent mode: `/<skill>`
 
+## Playbook bootstrap
+
+Before acting on software-development work, inspect the Agent Index and decide whether any skill applies.
+If the user explicitly names a skill, load it before acting.
+If the task changes code or tests, use `dev-workflow` before editing and `quality-gate` before reporting completion.
+For multi-step or delegatable work, create a task brief before invoking a subagent; the brief must name the task, allowed files, allowed commands, expected artifacts, and escalation conditions.
+
 ## Agent Index (generated)
 
 This block is machine-oriented and always present in context.

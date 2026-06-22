@@ -1,6 +1,6 @@
 ---
 name: uiux-flow-preview
-description: "Generate a Google Map-like transition review preview (flow-map.html) from ui_spec.json with pan/zoom, minimap, focus traversal, and Review Mode integration. Always open references/uiux-flow-preview.md."
+description: "Use when a UIUX Pack needs a transition-map preview from ui_spec.json with pan/zoom, minimap, focus traversal, and Review Mode."
 metadata:
   short-description: Transition map preview with pan/zoom + focus review
 ---

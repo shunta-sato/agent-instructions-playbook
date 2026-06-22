@@ -1,6 +1,6 @@
 ---
 name: staged-lowering
-description: "Staged lowering workflow for constrained code synthesis. Use when implementing low-level or strict-constraint code (kernels, SIMD/intrinsics, alignment/padding rules, codegen/DSLs, strict ABI or hardware APIs), or when direct implementation repeatedly fails to compile/test. Produces a small IR/DSL sketch and lowers it in 3–5 passes with per-pass compile/test feedback and a verification log."
+description: "Use when implementing low-level or strict-constraint code (kernels, SIMD/intrinsics, alignment/padding rules, codegen/DSLs, strict ABI or hardware APIs), or when direct implementation repeatedly fails to compile/test."
 metadata:
   short-description: Staged lowering for constrained code
 ---
