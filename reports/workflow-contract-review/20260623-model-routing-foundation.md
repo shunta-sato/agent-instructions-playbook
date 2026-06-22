@@ -12,6 +12,7 @@
   - `scripts/resolve_model_route.py` task-class resolver CLI.
   - `scripts/validate_model_routing.py` repository validation command.
   - `Makefile` canonical validation chain.
+  - `.github/workflows/agent-index.yml` GitHub Actions validation chain.
 - Generated artifacts:
   - No generated model catalog, route lockfile, custom agent, run ledger, or prompt artifact is introduced.
   - Routing files are author-maintained, JSON-compatible YAML parsed by stdlib `json`.
@@ -26,7 +27,7 @@
 | Risk gates | `.agents/model-routing/risk-gates.yml` | Repository maintainers | future route consumers, reviewers | Defines route risk labels and minimum verification expectations. |
 | Prompt detail contract | `.agents/model-routing/prompt-detail-levels.md` | Repository maintainers | humans and future generator code | Defines compact, normal, and strict prompt brief detail levels. |
 | Route resolution | `python3 scripts/resolve_model_route.py <task_class>` | Resolver script | agents, maintainers, future generated workflows | Emits selected status, selected model only from an external catalog, selected profile, and fallback reasons. |
-| Routing validation | `python3 scripts/validate_model_routing.py` | Validation script | `make lint`, `make verify`, CI | Validates references, forbidden model fields, prompt detail sections, and resolver smoke behavior. |
+| Routing validation | `python3 scripts/validate_model_routing.py` | Validation script | `make lint`, `make verify`, `.github/workflows/agent-index.yml`, CI | Validates references, forbidden model fields, prompt detail sections, and resolver smoke behavior. |
 
 ## Generated argv replay
 
@@ -34,6 +35,7 @@
 | --- | --- | --- | --- | --- | --- |
 | compile scripts | controller repo root | `python3 -m py_compile scripts/*.py` | Python 3 | bytecode compile success | stop on syntax/import error |
 | model routing validation | controller repo root | `python3 scripts/validate_model_routing.py` | Python 3 | validation summary with task/profile counts | stop on config or resolver invariant error |
+| GitHub Actions model routing validation | CI checkout root | `python scripts/validate_model_routing.py` | Python 3.11 from `actions/setup-python@v5` | validation summary with task/profile counts | stop on config or resolver invariant error |
 | no-catalog resolver smoke | controller repo root | `python3 scripts/resolve_model_route.py unit_test_single_case --format text` | Python 3 | `selected: false` and `catalog_not_provided` | stop on nonzero command |
 | external-catalog resolver smoke | controller repo root | `python3 scripts/resolve_model_route.py unit_test_single_case --catalog <temp> --format text` | Python 3, temp JSON catalog | selectable candidate chosen, excluded candidate reason recorded | stop on nonzero command |
 | canonical verification | controller repo root | `make verify` | Make, Python 3, git | full verification chain output | stop on nonzero command |
@@ -46,7 +48,7 @@
 | `capability-profiles.yml` | fallback profile names | resolver and validator | fallback chain references defined profiles and avoids cycles by visited set | pass |
 | `resolver-policy.yml` | selectable/excluded status policy | resolver and validator | selectable and excluded status sets do not overlap | pass |
 | external catalog | `models[]` candidate list | resolver only | concrete candidate IDs enter only through explicit `--catalog` input | pass |
-| `validate_model_routing.py` | validation result | `make lint`, `make test-integration`, `make verify` | canonical commands now include model routing validation | pass |
+| `validate_model_routing.py` | validation result | `make lint`, `make test-integration`, `make verify`, `.github/workflows/agent-index.yml` | local canonical commands and CI workflow now include model routing validation | pass |
 
 ## Run-set / target / workflow identity consistency
 
@@ -70,6 +72,7 @@
 | --- | --- | --- | --- | --- | --- |
 | routing config | repository `.agents/model-routing/` | loaded from repo root by resolver/validator | files are JSON-compatible YAML | `python3 scripts/validate_model_routing.py` | pass |
 | local validation scripts | repository `scripts/` | `python3 scripts/*.py` via `make` | Python 3 stdlib only | `python3 -m py_compile scripts/*.py` | pass |
+| GitHub Actions validation scripts | CI checkout `scripts/` | `python scripts/validate_model_routing.py` in `.github/workflows/agent-index.yml` | Python 3.11 stdlib only | workflow step added after skill trigger eval validation | pass |
 | external model catalog | caller-supplied JSON file | `--catalog <path>` | explicit path from caller, no latest/newest discovery | targeted resolver smoke with temp catalog | pass |
 
 ## Forbidden fallback checks
@@ -82,8 +85,8 @@
 
 ## Claim boundaries
 
-- Workflow authority artifacts: `.agents/model-routing/*`, `scripts/resolve_model_route.py`, `scripts/validate_model_routing.py`, `Makefile`.
-- Validation artifacts: targeted resolver smoke, `validate_model_routing.py`, `make verify`.
+- Workflow authority artifacts: `.agents/model-routing/*`, `scripts/resolve_model_route.py`, `scripts/validate_model_routing.py`, `Makefile`, `.github/workflows/agent-index.yml`.
+- Validation artifacts: targeted resolver smoke, `validate_model_routing.py`, `make verify`, GitHub Actions `Validate model routing` step.
 - Measurement artifacts: none; this PR does not claim model quality, token savings, latency, cost, or production readiness.
 - Blocked claims: generated model catalog, route lockfile, generated custom agents, behavior evals, run ledger, and delegated-run quality-gate evidence are not implemented by this PR.
 - Concrete model IDs: prohibited in routing definitions; placeholder IDs appear only inside resolver smoke catalogs and caller-supplied temp catalogs.
@@ -123,7 +126,7 @@ Ledger update: not required; this PR adds new focused artifacts and scripts with
 
 | ID | Severity | Finding | Required fix |
 | --- | --- | --- | --- |
-| none | none | No contract findings. | none |
+| PR61-review-1 | resolved | GitHub Actions workflow did not run `scripts/validate_model_routing.py`, so CI could pass while model-routing definitions were broken. | fixed by adding `Validate model routing` to `.github/workflows/agent-index.yml` |
 
 ## Decision
 

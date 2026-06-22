@@ -17,6 +17,7 @@
 - Add `scripts/resolve_model_route.py` to resolve task class to profile and, when a catalog is supplied, select a model candidate.
 - Add `scripts/validate_model_routing.py` to validate config consistency and resolver invariants.
 - Add canonical Makefile validation coverage.
+- Add GitHub Actions validation coverage for model-routing consistency.
 - Add workflow-contract evidence because validation and agent-routing artifacts are changed.
 
 ### Out of scope / non-goals
@@ -39,6 +40,7 @@
   - `scripts/resolve_model_route.py`
   - `scripts/validate_model_routing.py`
   - `Makefile`
+  - `.github/workflows/agent-index.yml`
   - `reports/workflow-contract-review/`
 - Existing behavior:
   - PR #59 added bootstrap guidance saying models should be resolved through task class, capability profile, current catalog, policy, and lockfile once those artifacts exist.
@@ -90,6 +92,7 @@
 - [x] (P2) Resolver/validator scripts — deliverable: `scripts/resolve_model_route.py`, `scripts/validate_model_routing.py` — verify: targeted resolver and validator commands passed.
 - [x] (P3) Makefile integration — deliverable: `make lint`/`make test-integration` run model routing validation — verify: `make verify` passed.
 - [x] (P4) Workflow evidence and publication — deliverable: report, commit, PR, review request — verify: https://github.com/shunta-sato/agent-instructions-playbook/pull/61.
+- [x] (P5) Review fix: CI validation coverage — deliverable: `.github/workflows/agent-index.yml` runs `scripts/validate_model_routing.py` — verify: local `make verify` plus workflow step inspection.
 
 ## Dev-Workflow Route
 
@@ -136,6 +139,7 @@
 
 - 2026-06-23: PyYAML is not installed, so model-routing `.yml` files will be JSON-compatible YAML and parsed with stdlib `json`.
 - 2026-06-23: Resolver policy named profile fallback order; the resolver now executes the fallback chain instead of only documenting it.
+- 2026-06-23: PR #61 review found that the GitHub Actions workflow was not yet running the new validator; Makefile coverage alone was not enough for CI protection.
 
 ## Decision log
 
@@ -147,16 +151,20 @@
   - Options considered: seed static model IDs in `resolver-policy.yml`; store current catalog in repo; require `--catalog` for candidate selection.
   - Chosen: require an explicit external catalog for candidate selection.
   - Consequences: route resolution without a catalog is still useful and returns `selected: false`; later PRs can add generated catalogs and lockfiles without rewriting task classes.
+- 2026-06-23: Add `python scripts/validate_model_routing.py` as a dedicated GitHub Actions step instead of switching CI to `make verify`.
+  - Options considered: call `make verify` in CI; add a dedicated validator step.
+  - Chosen: add a dedicated `Validate model routing` step.
+  - Consequences: preserves existing per-check workflow names and adds CI failure coverage for broken routing artifacts.
 
 ## Handoff (update at every stop)
 
 - Current branch / commit: `codex/model-routing-foundation`, PR #61 open as draft.
-- What is done: PR #60 merged; local `main` synced; branch created; routing artifacts, resolver, validator, Makefile wiring, workflow-contract report, canonical verification, commit, push, PR creation, and ChatGPT review request are complete.
-- What is not done: GitHub review response, PR ready-for-review transition, merge, next PR.
+- What is done: PR #60 merged; local `main` synced; branch created; routing artifacts, resolver, validator, Makefile wiring, GitHub Actions validator wiring, workflow-contract report, canonical verification, commit, push, PR creation, and ChatGPT review request are complete.
+- What is not done: post-fix GitHub review response, PR ready-for-review transition, merge, next PR.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_model_routing.py`; `python3 scripts/resolve_model_route.py unit_test_single_case`; `make verify`.
 - Known risks / open questions: future catalog/lockfile schema may need extension; this PR intentionally avoids concrete model IDs.
-- Next 1-3 steps: read GitHub PR #61 comments/reviews/threads, address requested changes if any, mark ready and merge on Approve.
+- Next 1-3 steps: request/await re-review on PR #61, mark ready and merge on Approve, continue to the next PR.
 - Pointers: `.agents/model-routing/`, `scripts/resolve_model_route.py`, `scripts/validate_model_routing.py`, `Makefile`.
 
 ## Validation & Acceptance
@@ -171,10 +179,12 @@
   - Verification: validator built-in resolver smoke.
 - AC5: Canonical verification includes model routing validation.
   - Verification: `make verify`.
+- AC6: GitHub Actions includes model routing validation.
+  - Verification: `.github/workflows/agent-index.yml` has a `Validate model routing` step running `python scripts/validate_model_routing.py`.
 
 ## Outcomes & Retrospective (fill when done)
 
 - What shipped / merged: draft PR opened at https://github.com/shunta-sato/agent-instructions-playbook/pull/61.
 - What went well: stdlib-only routing validation fits the existing Makefile contract and targeted resolver smoke covers fallback behavior.
-- What went wrong: none so far.
+- What went wrong: initial PR missed GitHub Actions coverage for the new validator; fixed after review.
 - Follow-ups / tech debt tickets: generated model catalog, route lockfile, generated custom agents, behavior evals, and run ledger remain later PRs.
