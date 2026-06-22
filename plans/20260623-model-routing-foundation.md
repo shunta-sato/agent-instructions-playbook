@@ -89,7 +89,7 @@
 - [x] (P1) Static routing artifacts — deliverable: `.agents/model-routing/*` — verify: `python3 scripts/validate_model_routing.py` loaded and validated all artifacts.
 - [x] (P2) Resolver/validator scripts — deliverable: `scripts/resolve_model_route.py`, `scripts/validate_model_routing.py` — verify: targeted resolver and validator commands passed.
 - [x] (P3) Makefile integration — deliverable: `make lint`/`make test-integration` run model routing validation — verify: `make verify` passed.
-- [ ] (P4) Workflow evidence and publication — deliverable: report, commit, PR, review request — verify: raw PR URL.
+- [x] (P4) Workflow evidence and publication — deliverable: report, commit, PR, review request — verify: https://github.com/shunta-sato/agent-instructions-playbook/pull/61.
 
 ## Dev-Workflow Route
 
@@ -150,13 +150,13 @@
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/model-routing-foundation`, uncommitted changes ready for review.
-- What is done: PR #60 merged; local `main` synced; branch created; routing artifacts, resolver, validator, Makefile wiring, workflow-contract report, and canonical verification are complete.
-- What is not done: commit, push, PR creation, review request.
+- Current branch / commit: `codex/model-routing-foundation`, PR #61 open as draft.
+- What is done: PR #60 merged; local `main` synced; branch created; routing artifacts, resolver, validator, Makefile wiring, workflow-contract report, canonical verification, commit, push, PR creation, and ChatGPT review request are complete.
+- What is not done: GitHub review response, PR ready-for-review transition, merge, next PR.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_model_routing.py`; `python3 scripts/resolve_model_route.py unit_test_single_case`; `make verify`.
 - Known risks / open questions: future catalog/lockfile schema may need extension; this PR intentionally avoids concrete model IDs.
-- Next 1-3 steps: commit, push, open draft PR, request review.
+- Next 1-3 steps: read GitHub PR #61 comments/reviews/threads, address requested changes if any, mark ready and merge on Approve.
 - Pointers: `.agents/model-routing/`, `scripts/resolve_model_route.py`, `scripts/validate_model_routing.py`, `Makefile`.
 
 ## Validation & Acceptance
@@ -174,7 +174,7 @@
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged: pending PR.
+- What shipped / merged: draft PR opened at https://github.com/shunta-sato/agent-instructions-playbook/pull/61.
 - What went well: stdlib-only routing validation fits the existing Makefile contract and targeted resolver smoke covers fallback behavior.
 - What went wrong: none so far.
 - Follow-ups / tech debt tickets: generated model catalog, route lockfile, generated custom agents, behavior evals, and run ledger remain later PRs.
