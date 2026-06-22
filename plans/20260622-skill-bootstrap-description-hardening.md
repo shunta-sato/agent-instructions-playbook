@@ -87,7 +87,7 @@
 - [x] (P1) Bootstrap docs — deliverable: `AGENTS.md`, `.agents/bootstrap/using-playbook.md` — verify: generated index remains untouched.
 - [x] (P2) Description lint — deliverable: script warnings and inventory flags — verify: `python3 scripts/validate_skills.py`, `python3 scripts/report_skill_inventory.py --format text`.
 - [x] (P3) Workflow contract review — deliverable: `reports/workflow-contract-review/20260622-skill-bootstrap-description-hardening.md` — verify: report decision is `submit`.
-- [ ] (P4) Final verification and publish — deliverable: green canonical checks, commit, pushed branch, PR — verify: PR URL.
+- [x] (P4) Final verification and publish — deliverable: green canonical checks, commit, pushed branch, PR — verify: https://github.com/shunta-sato/agent-instructions-playbook/pull/59.
 
 ## Dev-Workflow Route
 
@@ -156,13 +156,13 @@ Budget result: within file and abstraction budget; no new classes, modules, wrap
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/skill-bootstrap-description-hardening`, uncommitted changes in progress.
-- What is done: goal created; bootstrap docs added; description lint added; skill descriptions narrowed; workflow-contract report added; `make verify` passed.
-- What is not done: commit, push, PR.
+- Current branch / commit: `codex/skill-bootstrap-description-hardening`; draft PR #59 is open.
+- What is done: goal created; bootstrap docs added; description lint added; skill descriptions narrowed; workflow-contract report added; `make verify` passed; branch pushed; draft PR opened.
+- What is not done: later PRs for deferred model routing/run-ledger/eval/review work.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_skills.py`; `python3 scripts/report_skill_inventory.py --check --format text`; `make verify`.
 - Known risks / open questions: warning thresholds may need tightening in later PRs; model routing and run ledger remain explicitly deferred.
-- Next 1-3 steps: run quality gate review, stage intended files, commit and open PR.
+- Next 1-3 steps: review PR #59; plan later PRs for model routing, subagent execution contracts, and run ledger work.
 - Pointers: `AGENTS.md`, `scripts/validate_skills.py`, `scripts/report_skill_inventory.py`, `COMMANDS.md`.
 
 ## Validation & Acceptance
@@ -180,7 +180,7 @@ Budget result: within file and abstraction budget; no new classes, modules, wrap
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged:
+- What shipped / merged: draft PR #59 opened with bootstrap rules, helper docs, description lint, narrowed descriptions, ExecPlan, and workflow-contract report.
 - What went well: `make verify` passed; description-style lint now reports no description flags.
 - What went wrong: none so far.
 - Follow-ups / tech debt tickets: later PRs should add model routing foundation, subagent execution references/templates, run ledger, quality-gate delegated-run evidence, behavior/model-routing evals, and review/branch-completion skills.
