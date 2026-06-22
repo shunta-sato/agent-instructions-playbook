@@ -1,6 +1,6 @@
 ---
 name: uidesign-orchestrator
-description: "Use only as an explicit end-to-end UI evidence orchestration wrapper: create or verify the UIUX Pack, create or apply Tone & Manner, wire meta.tone_and_manner, and generate the UIDesign Pack. Do not trigger for ordinary UIUX, Tone & Manner, or UIDesign single-step work. Always open references/uidesign-orchestrator.md."
+description: "Use only for explicit end-to-end UI evidence orchestration across UIUX, Tone & Manner, and UIDesign packs. Do not trigger for ordinary single-step UIUX, Tone & Manner, or UIDesign work."
 metadata:
   short-description: Explicit UI evidence orchestration
 ---

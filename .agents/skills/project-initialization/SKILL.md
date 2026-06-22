@@ -1,6 +1,6 @@
 ---
 name: project-initialization
-description: "Interactive initialization workflow: configure Makefile wrapper + COMMANDS.md, run make verify, and only clear the COMMANDS.md <fill> gate after successful verification."
+description: "Use when COMMANDS.md is uninitialized, contains <fill>, or the repository lacks verified canonical build, lint, test, and verify commands."
 metadata:
   short-description: Initialize canonical verify commands
 ---

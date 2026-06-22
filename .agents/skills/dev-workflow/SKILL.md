@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: "MANDATORY routing workflow for any code/test change: classify risk and execute only the required triggered branches, then hand off to quality-gate."
+description: "Use for any task that changes code or tests. Routes implementation work by risk and applicable branch skills before editing."
 metadata:
   short-description: Risk-routed dev workflow
 ---

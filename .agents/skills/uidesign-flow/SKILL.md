@@ -1,6 +1,6 @@
 ---
 name: uidesign-flow
-description: "Bridge an approved tone-and-manner decision into concrete UI styling via tokens + visual previews. Produces a deterministic UIDesign Pack (uidesign_contract.yaml, uidesign_spec.json, auto_review.json, diff_summary.md, review_notes.md, tokens/*, previews/*). Always open references/uidesign-flow.md."
+description: "Use when an approved tone-and-manner decision must become concrete UI styling tokens and visual previews."
 metadata:
   short-description: tonemana → tokens → component+screen previews
 ---

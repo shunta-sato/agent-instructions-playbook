@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: "MANDATORY when doing TDD or when dev-workflow routes implementation through a Test List: make a Test List, pick one, Red→Green→Refactor, update the list, repeat. Always open references/test-driven-development.md."
+description: "Use when doing TDD or when dev-workflow routes implementation through a Test List."
 metadata:
   short-description: Test-driven development workflow
 ---

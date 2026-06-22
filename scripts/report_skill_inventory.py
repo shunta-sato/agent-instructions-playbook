@@ -54,6 +54,20 @@ BROAD_TRIGGER_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
         re.compile(r"\btask\s+mentions\b", re.IGNORECASE),
     ),
 )
+DESCRIPTION_RECOMMENDED_MAX_CHARS = 420
+DESCRIPTION_STYLE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("ordered-then", re.compile(r"\bthen\b", re.IGNORECASE)),
+    ("body-reference", re.compile(r"\bAlways\s+(?:open|read)\b", re.IGNORECASE)),
+    (
+        "procedure-verb",
+        re.compile(
+            r"\b(?:classify|execute|hand\s+off|create\s+and\s+maintain|"
+            r"produce|produces|return|returns|run|make\s+a\s+Test\s+List|"
+            r"update\s+the\s+list)\b",
+            re.IGNORECASE,
+        ),
+    ),
+)
 COUNTED_SUBDIRS = {
     "asset_count": "assets",
     "example_count": "examples",
@@ -79,6 +93,7 @@ class SkillInventory:
     eval_coverage_count: int
     eval_should_trigger_count: int
     eval_should_not_trigger_count: int
+    description_trigger_only_flags: list[str]
     broad_trigger_risk_flags: list[str]
 
 
@@ -237,6 +252,18 @@ def broad_trigger_flags(text: str) -> list[str]:
     return flags
 
 
+def description_trigger_only_flags(description: str) -> list[str]:
+    flags: list[str] = []
+    if len(description) > DESCRIPTION_RECOMMENDED_MAX_CHARS:
+        flags.append(f"long-description:{len(description)}")
+
+    for label, pattern in DESCRIPTION_STYLE_PATTERNS:
+        if pattern.search(description):
+            flags.append(label)
+
+    return flags
+
+
 def load_skill_inventories(
     repo_root: Path,
     skills_dir: Path,
@@ -282,6 +309,7 @@ def load_skill_inventories(
                 eval_coverage_count=0,
                 eval_should_trigger_count=0,
                 eval_should_not_trigger_count=0,
+                description_trigger_only_flags=description_trigger_only_flags(description),
                 broad_trigger_risk_flags=broad_trigger_flags(text),
             )
         )
@@ -417,6 +445,7 @@ def apply_eval_coverage(
                 eval_coverage_count=positive + negative,
                 eval_should_trigger_count=positive,
                 eval_should_not_trigger_count=negative,
+                description_trigger_only_flags=skill.description_trigger_only_flags,
                 broad_trigger_risk_flags=skill.broad_trigger_risk_flags,
             )
         )
@@ -432,6 +461,9 @@ def build_warnings(repo_root: Path, skills: list[SkillInventory]) -> list[str]:
         if skill.broad_trigger_risk_flags:
             flags = ", ".join(skill.broad_trigger_risk_flags)
             warnings.append(f"{relpath}: broad trigger risk flags: {flags}")
+        if skill.description_trigger_only_flags:
+            flags = ", ".join(skill.description_trigger_only_flags)
+            warnings.append(f"{relpath}: description trigger-only flags: {flags}")
     return warnings
 
 
@@ -450,6 +482,7 @@ def skill_to_json(repo_root: Path, skill: SkillInventory) -> dict[str, object]:
         "eval_coverage_count": skill.eval_coverage_count,
         "eval_should_trigger_count": skill.eval_should_trigger_count,
         "eval_should_not_trigger_count": skill.eval_should_not_trigger_count,
+        "description_trigger_only_flags": skill.description_trigger_only_flags,
         "broad_trigger_risk_flags": skill.broad_trigger_risk_flags,
     }
 
@@ -508,15 +541,17 @@ def render_text(report: dict[str, object]) -> str:
         "",
         (
             "name | desc_chars | lines | refs | templates | scripts | assets | "
-            "examples | evals | risk_flags"
+            "examples | evals | description_flags | risk_flags"
         ),
-        "--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---",
+        "--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---",
     ]
 
     for item in skills:
         assert isinstance(item, dict)
         risk_flags = item["broad_trigger_risk_flags"]
         assert isinstance(risk_flags, list)
+        description_flags = item["description_trigger_only_flags"]
+        assert isinstance(description_flags, list)
         lines.append(
             f"{item['name']} | "
             f"{item['description_length']} | "
@@ -527,6 +562,7 @@ def render_text(report: dict[str, object]) -> str:
             f"{item['asset_count']} | "
             f"{item['example_count']} | "
             f"{item['eval_coverage_count']} | "
+            f"{', '.join(str(flag) for flag in description_flags) if description_flags else '-'} | "
             f"{', '.join(str(flag) for flag in risk_flags) if risk_flags else '-'}"
         )
 

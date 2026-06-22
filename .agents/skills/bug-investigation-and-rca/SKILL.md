@@ -1,6 +1,6 @@
 ---
 name: bug-investigation-and-rca
-description: "Bug investigation + root cause analysis workflow. Use when fixing crashes, regressions, flakes, hangs, incorrect outputs, or incidents. Produces an evidence-based Bug Report including prevention actions."
+description: "Use when fixing or investigating crashes, regressions, flakes, hangs, incorrect outputs, or incidents."
 metadata:
   short-description: Bug investigation & RCA
 ---

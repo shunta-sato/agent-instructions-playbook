@@ -1,6 +1,6 @@
 ---
 name: design-balance
-description: "Use before feature-level implementation that adds two or more classes/modules, introduces a new layer/interface, or adds a second reason-to-change to an existing class/module. Produce a responsibility map so names, responsibilities, change reasons, and dependency direction stay coherent. Do not use for function-only helper/API decisions or cross-boundary architecture option comparison."
+description: "Use before feature-level implementation that adds two or more classes/modules, introduces a new layer/interface, or adds a second reason-to-change to an existing class/module. Do not use for function-only helper/API decisions or cross-boundary architecture option comparison."
 metadata:
   short-description: Responsibility layout design
 ---

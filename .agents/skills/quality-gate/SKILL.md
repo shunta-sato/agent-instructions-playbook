@@ -1,6 +1,6 @@
 ---
 name: quality-gate
-description: "MANDATORY final gate before submission: validate exit criteria (checks, required artifacts, and required branch evidence) and return submit/no-submit with findings."
+description: "Use before every submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
 metadata:
   short-description: Final quality gate
 ---

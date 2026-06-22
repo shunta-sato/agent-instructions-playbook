@@ -1,6 +1,6 @@
 ---
 name: visual-regression-testing
-description: "Run repo-defined UI snapshot verification, review visual diffs, update baselines only when intended, and produce a deterministic UI Visual Verification Report."
+description: "Use when UI changes require repo-defined snapshot or visual-diff verification, baseline review, or a UI Visual Verification Report."
 metadata:
   short-description: Tool-agnostic UI visual verification contract
 ---

@@ -1,6 +1,6 @@
 ---
 name: working-with-legacy-code
-description: "MANDATORY when touching code without reliable automated tests or with nondeterminism (time/random/IO). Create a safety-net test (characterization), introduce seams to make behavior deterministic, then refactor safely while keeping all gates green. Always open references/working-with-legacy-code.md."
+description: "Use when touching code without reliable automated tests or with nondeterminism such as time, randomness, or I/O."
 metadata:
   short-description: Working with legacy code safely
 ---
