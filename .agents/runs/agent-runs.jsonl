@@ -1,0 +1,1 @@
+{"schema_version":1,"record_type":"ledger_metadata","description":"Runtime agent run records are appended by scripts/agent_run.py. Scripts ignore non-agent_run records."}
