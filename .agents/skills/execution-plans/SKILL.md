@@ -37,6 +37,14 @@ It is also a good default when you are unsure.
    as explicitly deferred with a reason. Re-run this check whenever the Design
    section changes.
 
+2.6) If the plan will use a subagent, worker, delegated model, or generated
+   custom agent, open `references/subagent-execution.md` before invoking it.
+   If model choice matters, also open `references/model-routing.md`. Create the
+   task brief first from `templates/subagent-task-brief.md`; require the worker
+   report format in `templates/subagent-report.md`; use
+   `templates/supervisor-review-request.md` when asking another agent to review
+   delegated output.
+
 3) Keep the plan up to date while you work:
 - update **Progress (WBS)** as items complete
 - record **Surprises & discoveries** as you learn new constraints
