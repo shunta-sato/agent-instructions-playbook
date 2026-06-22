@@ -11,7 +11,7 @@ help:
 	@echo "  make build-debug       # compile repository Python scripts"
 	@echo "  make build-release     # compile repository Python scripts"
 	@echo "  make format            # verify generated indexes are current"
-	@echo "  make lint              # validate skill metadata and trigger evals"
+	@echo "  make lint              # validate skill metadata and eval seeds"
 	@echo "  make analysis          # validate skill inventory report"
 	@echo "  make test-unit         # no repository-local unit tests configured"
 	@echo "  make test-integration  # run repository skill/index validation chain"
@@ -32,6 +32,7 @@ git-diff-check:
 lint:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
+	$(PYTHON) scripts/validate_skill_behavior_evals.py
 	$(PYTHON) scripts/validate_model_routing.py
 
 analysis:
@@ -43,6 +44,7 @@ test-unit:
 test-integration:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
+	$(PYTHON) scripts/validate_skill_behavior_evals.py
 	$(PYTHON) scripts/validate_model_routing.py
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 	$(PYTHON) scripts/generate_agent_index.py --check
