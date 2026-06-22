@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "task_classes": {
+    "unit_test_single_case": {
+      "description": "One focused unit test or assertion group.",
+      "profile": "focused_code_edit",
+      "prompt_detail": "strict",
+      "risk_gate": "low",
+      "default_effort": "medium",
+      "max_scope": {
+        "writable_files": 1,
+        "production_code": false
+      },
+      "escalation_profile": "coding_supervisor",
+      "success_criteria": {
+        "required": [
+          "agent_exit_success",
+          "changed_files_within_allowed_scope",
+          "validation_command_passed",
+          "exactly_one_focused_test_added"
+        ]
+      }
+    },
+    "focused_code_change": {
+      "description": "Small implementation change with known files and a bounded verification command.",
+      "profile": "focused_code_edit",
+      "prompt_detail": "normal",
+      "risk_gate": "normal",
+      "default_effort": "medium",
+      "max_scope": {
+        "writable_files": 3,
+        "production_code": true
+      },
+      "escalation_profile": "coding_supervisor",
+      "success_criteria": {
+        "required": [
+          "changed_files_within_allowed_scope",
+          "validation_command_passed",
+          "quality_gate_ready"
+        ]
+      }
+    },
+    "ci_failure_diagnosis": {
+      "description": "Diagnose failing tests, build, shell, Docker, or CI behavior.",
+      "profile": "terminal_debug_supervisor",
+      "prompt_detail": "compact",
+      "risk_gate": "normal",
+      "default_effort": "high",
+      "escalation_profile": "frontier_execution_supervisor",
+      "success_criteria": {
+        "required": [
+          "failing_command_recorded",
+          "evidence_log_excerpt_recorded",
+          "root_cause_hypothesis_recorded"
+        ]
+      }
+    },
+    "architecture_review": {
+      "description": "Review design, boundaries, compatibility, and long-term maintainability.",
+      "profile": "high_reasoning_review",
+      "prompt_detail": "compact",
+      "risk_gate": "high",
+      "default_effort": "high",
+      "success_criteria": {
+        "required": [
+          "risks_identified",
+          "recommendation_recorded",
+          "unsupported_claims_marked"
+        ]
+      }
+    },
+    "codebase_exploration": {
+      "description": "Map files, ownership, existing patterns, and likely change surfaces before implementation.",
+      "profile": "codebase_explorer",
+      "prompt_detail": "compact",
+      "risk_gate": "normal",
+      "default_effort": "low",
+      "escalation_profile": "coding_supervisor",
+      "success_criteria": {
+        "required": [
+          "relevant_paths_recorded",
+          "existing_patterns_recorded",
+          "unknowns_or_risks_recorded"
+        ]
+      }
+    }
+  }
+}

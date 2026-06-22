@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "capability_profiles": {
+    "focused_code_edit": {
+      "description": "Bounded code or test edits with explicit allowed files and validation commands.",
+      "requires": [
+        "code_editing",
+        "test_awareness",
+        "scope_control"
+      ],
+      "fallback_profiles": [
+        "coding_supervisor"
+      ]
+    },
+    "coding_supervisor": {
+      "description": "Implementation supervision for moderate ambiguity, local design judgment, and review of worker output.",
+      "requires": [
+        "code_review",
+        "local_design_judgment",
+        "verification_planning"
+      ],
+      "fallback_profiles": [
+        "frontier_execution_supervisor"
+      ]
+    },
+    "terminal_debug_supervisor": {
+      "description": "Command-output diagnosis, failure evidence extraction, and root-cause hypothesis work.",
+      "requires": [
+        "terminal_reasoning",
+        "log_analysis",
+        "failure_hypothesis"
+      ],
+      "fallback_profiles": [
+        "frontier_execution_supervisor"
+      ]
+    },
+    "high_reasoning_review": {
+      "description": "Architecture, boundary, compatibility, and long-horizon design review.",
+      "requires": [
+        "high_reasoning",
+        "tradeoff_analysis",
+        "claim_boundary_review"
+      ],
+      "fallback_profiles": [
+        "frontier_execution_supervisor"
+      ]
+    },
+    "codebase_explorer": {
+      "description": "Repository orientation, search, pattern discovery, and scoped context packaging.",
+      "requires": [
+        "code_search",
+        "pattern_recognition",
+        "concise_context_packaging"
+      ],
+      "fallback_profiles": [
+        "coding_supervisor"
+      ]
+    },
+    "frontier_execution_supervisor": {
+      "description": "Highest-capability fallback for ambiguous, high-risk, or cross-boundary execution supervision.",
+      "requires": [
+        "frontier_reasoning",
+        "broad_context_synthesis",
+        "risk_management"
+      ],
+      "fallback_profiles": []
+    }
+  }
+}

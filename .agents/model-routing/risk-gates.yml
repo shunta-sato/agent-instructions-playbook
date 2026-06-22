@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "risk_gates": {
+    "low": {
+      "description": "Tiny, local work with explicit files, no public API change, and bounded validation.",
+      "requires_supervisor": false,
+      "requires_execplan": false,
+      "minimum_verification": [
+        "targeted_validation"
+      ],
+      "escalate_when": [
+        "allowed_scope_expands",
+        "production_code_appears_wrong",
+        "validation_command_missing"
+      ]
+    },
+    "normal": {
+      "description": "Default route for implementation, debugging, and repository workflow changes.",
+      "requires_supervisor": true,
+      "requires_execplan": "when_complex",
+      "minimum_verification": [
+        "canonical_changed_surface",
+        "quality_gate"
+      ],
+      "escalate_when": [
+        "cross_boundary_design_choice_required",
+        "runtime_behavior_changes",
+        "generated_artifacts_or_workflow_contracts_change"
+      ]
+    },
+    "high": {
+      "description": "Cross-boundary, architecture-shaping, safety/performance critical, or broad workflow work.",
+      "requires_supervisor": true,
+      "requires_execplan": true,
+      "minimum_verification": [
+        "full_canonical_chain",
+        "required_branch_evidence",
+        "quality_gate"
+      ],
+      "escalate_when": [
+        "requirements_or_quality_drivers_are_unmeasurable",
+        "claim_boundaries_depend_on_unverified_evidence",
+        "rollback_or_migration_path_is_unclear"
+      ]
+    }
+  }
+}

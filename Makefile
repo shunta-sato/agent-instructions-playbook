@@ -32,6 +32,7 @@ git-diff-check:
 lint:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
+	$(PYTHON) scripts/validate_model_routing.py
 
 analysis:
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
@@ -42,6 +43,7 @@ test-unit:
 test-integration:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
+	$(PYTHON) scripts/validate_model_routing.py
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 	$(PYTHON) scripts/generate_agent_index.py --check
 	git diff --check
