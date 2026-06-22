@@ -114,7 +114,7 @@
 - [x] (P2) Add run ledger files — deliverable: `.agents/runs/.gitignore`, `.agents/runs/agent-runs.jsonl` — verify: summary script skips metadata seed.
 - [x] (P3) Implement scripts — deliverable: four stdlib Python CLIs — verify: targeted temp-ledger exercises passed.
 - [x] (P4) Add workflow-contract evidence — deliverable: `reports/workflow-contract-review/20260623-lightweight-run-ledger.md` — verify: decision `submit`.
-- [ ] (P5) Verification and publication — deliverable: commit, push, draft PR, review request — verify: PR URL and green local verification.
+- [x] (P5) Verification and publication — deliverable: commit, push, draft PR — verify: https://github.com/shunta-sato/agent-instructions-playbook/pull/63 and green local verification.
 
 ## Route / Required Branches
 
@@ -209,13 +209,13 @@ Record decisions and trade-offs (and why).
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/lightweight-run-ledger`, uncommitted changes exist.
-- What is done: PR #62 merged and local `main` synced; branch and ExecPlan created; run-ledger files/scripts and workflow-contract report are implemented; targeted checks and `make verify` passed.
-- What is not done: commit/push/PR, review request.
+- Current branch / commit: `codex/lightweight-run-ledger`, draft PR #63 open at https://github.com/shunta-sato/agent-instructions-playbook/pull/63.
+- What is done: PR #62 merged and local `main` synced; branch and ExecPlan created; run-ledger files/scripts and workflow-contract report are implemented; targeted checks and `make verify` passed; PR #63 opened and PR body includes the raw PR URL.
+- What is not done: GitHub review response, PR ready-for-review transition, merge, PR 5.
 - How to run: `make verify`.
 - How to test: targeted temp-ledger script checks; `python3 scripts/parse_codex_jsonl.py <sample> --format json`; `python3 scripts/judge_agent_run.py --ledger <sample> --require-accepted`; `make verify`.
 - Known risks / open questions: PR 5 may tighten quality-gate semantics; this PR should only record the field and preliminary judgment.
-- Next 1-3 steps: run staged diff checks, commit/push, create PR and request review.
+- Next 1-3 steps: request review through ATLAS/ChatGPT, address review feedback if any, mark ready and merge on Approve.
 - Pointers: `scripts/agent_run.py`, `scripts/parse_codex_jsonl.py`, `.agents/skills/execution-plans/templates/`.
 
 ## Validation & Acceptance
@@ -233,7 +233,7 @@ Record decisions and trade-offs (and why).
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged:
-- What went well:
-- What went wrong:
-- Follow-ups / tech debt tickets:
+- What shipped / merged: draft PR opened at https://github.com/shunta-sato/agent-instructions-playbook/pull/63.
+- What went well: the ledger stores task identity, model-routing metadata, validation, scope, outcome, and optional token telemetry without adding external telemetry infrastructure.
+- What went wrong: initial script line budget was low; accepted because explicit CLI/error boundaries are easier to review.
+- Follow-ups / tech debt tickets: PR 5 should integrate delegated-run evidence into `quality-gate` without redefining a second delegation schema.
