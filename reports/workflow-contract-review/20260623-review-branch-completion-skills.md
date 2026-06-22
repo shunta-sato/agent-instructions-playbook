@@ -2,7 +2,7 @@
 
 ## Scope
 
-- PR / branch: `codex/review-branch-completion-skills`
+- PR / branch: https://github.com/shunta-sato/agent-instructions-playbook/pull/67 / `codex/review-branch-completion-skills`
 - Workflow surfaces:
   - `.agents/skills/requesting-code-review/SKILL.md`
   - `.agents/skills/receiving-code-review/SKILL.md`
