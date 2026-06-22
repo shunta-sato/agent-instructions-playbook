@@ -100,7 +100,7 @@ Layout decision: keep three separate skills because request packaging, feedback 
 - [x] (P3) Add trigger eval seed - deliverable: `evals/skill-triggers/review-branch-completion.json` - verify: `validate_skill_trigger_evals.py`.
 - [x] (P4) Regenerate indexes - deliverable: updated `AGENTS.md` and `README.md` generated blocks - verify: `generate_agent_index.py --check`.
 - [x] (P5) Final verification - deliverable: green canonical checks - verify: `make verify`.
-- [x] (P6) PR publication - deliverable: PR URL and review request - verify: GitHub PR created at https://github.com/shunta-sato/agent-instructions-playbook/pull/67; reviewer request pending in ATLAS.
+- [x] (P6) PR publication - deliverable: PR URL and review request - verify: GitHub PR created at https://github.com/shunta-sato/agent-instructions-playbook/pull/67; ATLAS review request sent.
 
 ## Surprises & Discoveries
 
@@ -119,13 +119,13 @@ Layout decision: keep three separate skills because request packaging, feedback 
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/review-branch-completion-skills`, uncommitted PR publication update.
+- Current branch / commit: `codex/review-branch-completion-skills`, PR #67 branch pushed.
 - What is done: skill skeletons created; skill content, trigger eval, ExecPlan, workflow-contract report, generated index/catalog, canonical verification, and draft PR publication.
-- What is not done: ATLAS review request.
+- What is not done: GitHub review response and merge.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_skills.py`, `python3 scripts/validate_skill_trigger_evals.py`, `python3 scripts/generate_agent_index.py --check`.
 - Known risks / open questions: `quick_validate.py` from the system skill could not run under default `python3` because `yaml` is missing; repo validators cover the submitted skill metadata.
-- Next 1-3 steps: commit and push this PR URL update; request review through ATLAS; monitor GitHub review comments.
+- Next 1-3 steps: monitor GitHub review comments; address actionable feedback if any; merge after explicit approval.
 - Pointers: `.agents/skills/requesting-code-review/SKILL.md`, `.agents/skills/receiving-code-review/SKILL.md`, `.agents/skills/branch-completion/SKILL.md`, `evals/skill-triggers/review-branch-completion.json`.
 
 ## Validation & Acceptance
