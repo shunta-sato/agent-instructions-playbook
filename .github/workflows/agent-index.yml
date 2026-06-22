@@ -22,6 +22,9 @@ jobs:
       - name: Validate skill trigger eval seeds
         run: python scripts/validate_skill_trigger_evals.py
 
+      - name: Validate skill behavior eval seeds
+        run: python scripts/validate_skill_behavior_evals.py
+
       - name: Validate model routing
         run: python scripts/validate_model_routing.py
 
