@@ -30,6 +30,7 @@ core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
 skills|name|short|skill_path
 skill|agent-workflow-contract-review|Agent workflow contract review|.agents/skills/agent-workflow-contract-review/SKILL.md
 skill|architecture-decision-analysis|Architecture decision analysis|.agents/skills/architecture-decision-analysis/SKILL.md
+skill|branch-completion|Finish branch and PR lifecycle|.agents/skills/branch-completion/SKILL.md
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
 skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/skills/code-smells-and-antipatterns/SKILL.md
@@ -58,6 +59,8 @@ skill|performance-review|Generic performance review|.agents/skills/performance-r
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
+skill|receiving-code-review|Process review feedback safely|.agents/skills/receiving-code-review/SKILL.md
+skill|requesting-code-review|Prepare focused review requests|.agents/skills/requesting-code-review/SKILL.md
 skill|requirements-engineering|Requirements engineering|.agents/skills/requirements-engineering/SKILL.md
 skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md
