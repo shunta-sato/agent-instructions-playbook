@@ -1,0 +1,113 @@
+# Workflow Contract Review
+
+## Scope
+
+- PR / branch: `codex/subagent-execution-contract`
+- Workflow surfaces:
+  - `.agents/skills/execution-plans/SKILL.md` reference routing for delegated execution.
+  - `.agents/skills/execution-plans/references/model-routing.md` task-class-first model routing guidance.
+  - `.agents/skills/execution-plans/references/subagent-execution.md` delegated execution lifecycle.
+  - `.agents/skills/execution-plans/templates/subagent-task-brief.md` pre-invocation task brief contract.
+  - `.agents/skills/execution-plans/templates/subagent-report.md` worker report contract.
+  - `.agents/skills/execution-plans/templates/supervisor-review-request.md` supervisor review package.
+- Generated artifacts:
+  - No generated prompts, generated agents, model catalogs, route lockfiles, run ledger files, or behavior evals are introduced.
+  - Templates are source artifacts, not generated output.
+
+## Source-of-truth chain
+
+| Stage | Artifact / command | Producer | Consumer | Notes |
+| --- | --- | --- | --- | --- |
+| Route metadata | `.agents/model-routing/task-classes.yml`, `capability-profiles.yml`, `risk-gates.yml`, `prompt-detail-levels.md` | repository maintainers | model-routed subagent brief author | Task class, profile, prompt detail, risk gate, and success criteria precede any concrete model choice. |
+| Delegation lifecycle | `references/subagent-execution.md` | repository maintainers | ExecPlan supervisor | Defines classify, brief, invoke, report, review, and update-plan order. |
+| Model routing guidance | `references/model-routing.md` | repository maintainers | ExecPlan supervisor and worker brief author | Prevents model selection from memory, latest/newest files, or rumored availability. |
+| Task brief | `templates/subagent-task-brief.md` | ExecPlan supervisor | delegated worker | Defines allowed files, commands, validation, stop conditions, and output requirements. |
+| Worker report | `templates/subagent-report.md` | delegated worker | ExecPlan supervisor and later quality gate/run ledger work | Records changed files, commands, validation, scope compliance, and concerns. |
+| Supervisor review request | `templates/supervisor-review-request.md` | ExecPlan supervisor | reviewer or supervisor agent | Packages brief, report, diff, validation, and decision format. |
+
+## Generated argv replay
+
+| Step | Execution location | argv | Required env | Expected artifact | Stop/continue |
+| --- | --- | --- | --- | --- | --- |
+| skill validation | controller repo root | `python3 scripts/validate_skills.py` | Python 3 | skill metadata/reference/template validation summary | stop on validation error |
+| trigger eval validation | controller repo root | `python3 scripts/validate_skill_trigger_evals.py` | Python 3 | trigger eval validation summary | stop on validation error |
+| inventory check | controller repo root | `python3 scripts/report_skill_inventory.py --check --format text` | Python 3 | inventory table showing new execution-plans refs/templates | stop on inventory error |
+| canonical verification | controller repo root | `make verify` | Make, Python 3, git | full verification chain output | stop on nonzero command |
+
+## Producer/consumer consistency
+
+| Producer | Artifact | Consumer | Required identity match | Result |
+| --- | --- | --- | --- | --- |
+| task brief template | task name, task class, capability profile, prompt detail, brief path | worker report template | report repeats the same task identity and brief path | pass |
+| worker report template | changed files, commands, validation, scope compliance | supervisor review request template | review request asks reviewer to compare those fields against the brief | pass |
+| model-routing reference | task class, profile, prompt detail, risk gate | task brief template | brief has fields for each route identity | pass |
+| subagent-execution reference | stop/escalation conditions | task brief and supervisor review request templates | templates require stop/escalation and review decision fields | pass |
+
+## Run-set / target / workflow identity consistency
+
+| Identity | Producer value | Consumer value | Result |
+| --- | --- | --- | --- |
+| run set | repository working tree on `codex/subagent-execution-contract` | validation commands and PR scope | pass |
+| workflow id | model-routed subagent execution contract | ExecPlan, references, templates, workflow-contract report | pass |
+| target id / class | delegated task class and capability profile | task brief, worker report, supervisor review request | pass |
+
+## Controller / target-local execution locations
+
+| Step | Expected location | Actual/generated location | Result |
+| --- | --- | --- | --- |
+| authoring and validation commands | controller repo root | controller repo root | pass |
+| delegated worker commands | defined by each task brief | explicit `Allowed Commands` and `Required Validation` fields | pass |
+| target-local commands | not generated by this PR | none | pass |
+
+## Deployment/runtime discovery
+
+| Runtime boundary | Install path | Invocation path | Env/PATH assumption | Preflight | Result |
+| --- | --- | --- | --- | --- | --- |
+| execution-plans skill resources | `.agents/skills/execution-plans/` | loaded by agents after skill trigger | repository skill loader can read references/templates | `python3 scripts/validate_skills.py` | pass |
+| model routing config | `.agents/model-routing/` | referenced by model-routing guidance | no concrete model IDs required in templates | `python3 scripts/validate_model_routing.py` via `make verify` | pass |
+| delegated worker runtime | outside this PR | task brief must name allowed commands and validation | no implicit PATH or latest runner assumption | template fields require explicit commands | pass |
+
+## Forbidden fallback checks
+
+- filename-order artifact selection: pass; references require explicit brief/report paths.
+- mtime/latest/newest artifact inference: pass; references explicitly forbid latest/newest plan, catalog, lockfile, or report selection.
+- stale prompt fallback: pass; `SKILL.md` routes to current references/templates when delegation is used.
+- raw co-presence as causal evidence: pass; templates repeat task identity and require comparing brief, report, diff, and validation.
+- model-from-memory selection: pass; model routing reference requires task class and current catalog/lockfile when concrete selection matters.
+
+## Claim boundaries
+
+- Workflow authority artifacts: `execution-plans/SKILL.md`, `references/model-routing.md`, `references/subagent-execution.md`, and the three templates.
+- Validation artifacts: `validate_skills.py`, `report_skill_inventory.py`, `make verify`.
+- Measurement artifacts: none; this PR does not claim delegated task quality, model quality, token savings, latency, cost, or production readiness.
+- Blocked claims: run ledger, quality-gate delegated-run enforcement, behavior evals, model smoke evals, generated agents, catalogs, and lockfiles are not implemented by this PR.
+- Token telemetry: not required; unavailable token data remains a later run-ledger concern.
+
+## Implementation Economy Evidence
+
+Complexity Budget:
+
+- Changed files target: 8 tracked files or fewer.
+- New classes/modules target: 0.
+- New helpers/wrappers/adapters target: 0.
+- New indirection layers target: 0.
+- Rough line budget: initially under 500 net lines; actual staged docs/templates are about 625 inserted lines because the PR includes three copyable contract templates plus the ExecPlan and workflow-contract report.
+- Budget decision: accept the overrun because it does not add code, classes, helpers, or runtime indirection, and each template carries required identity, validation, and escalation fields.
+
+Post-Implementation Economy Audit:
+
+| New artifact | Justification | Decision | Evidence |
+| --- | --- | --- | --- |
+| `references/model-routing.md` | Keeps model-routing guidance out of `SKILL.md` while making task-class-first routing available when delegation needs it. | keep | `SKILL.md` links to it only when model choice matters. |
+| `references/subagent-execution.md` | Defines the lifecycle and acceptance rules without bloating the skill entrypoint. | keep | `SKILL.md` links to it before delegated invocation. |
+| subagent templates | Provide copyable contracts for brief/report/review identity fields. | keep | Templates share task identity fields and explicit validation/scope checks. |
+
+## Findings
+
+| ID | Severity | Finding | Required fix |
+| --- | --- | --- | --- |
+| none | none | No contract findings. | none |
+
+## Decision
+
+submit
