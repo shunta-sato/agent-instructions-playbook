@@ -97,7 +97,7 @@
 - [x] (P2) Update quality-gate contract — deliverable: SKILL and reference changes — verify: `python3 scripts/validate_skills.py`.
 - [x] (P3) Add behavior seed cases — deliverable: `evals/skill-behavior/quality-gate.json` — verify: `python3 -m json.tool`.
 - [x] (P4) Add workflow-contract evidence — deliverable: `reports/workflow-contract-review/20260623-quality-gate-run-evidence.md` — verify: decision `submit`.
-- [ ] (P5) Verification and publication — deliverable: commit, push, draft PR, review request — verify: PR URL and green local verification.
+- [x] (P5) Verification and publication — deliverable: commit, push, draft PR — verify: https://github.com/shunta-sato/agent-instructions-playbook/pull/64 and green local verification.
 
 ## Route / Required Branches
 
@@ -155,13 +155,13 @@ Record decisions and trade-offs (and why).
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/quality-gate-run-evidence`, uncommitted changes exist.
-- What is done: PR #63 merged; local `main` synced; branch and ExecPlan created; quality-gate skill/reference edits, behavior seed, workflow-contract report, targeted ledger checks, and `make verify` are complete.
-- What is not done: commit/push/PR, review request.
+- Current branch / commit: `codex/quality-gate-run-evidence`, draft PR #64 open at https://github.com/shunta-sato/agent-instructions-playbook/pull/64.
+- What is done: PR #63 merged; local `main` synced; branch and ExecPlan created; quality-gate skill/reference edits, behavior seed, workflow-contract report, targeted ledger checks, `make verify`, commit, push, and PR creation are complete.
+- What is not done: review request, GitHub review response, PR ready-for-review transition, merge, PR 6.
 - How to run: `make verify`.
 - How to test: `python3 -m json.tool evals/skill-behavior/quality-gate.json`; targeted `judge_agent_run.py` ledger checks; `make verify`.
 - Known risks / open questions: PR 6 must add behavior eval validation, so the behavior seed file is intentionally not part of current `make verify`.
-- Next 1-3 steps: stage scoped files, commit/push, create PR and request review.
+- Next 1-3 steps: request review through ATLAS/ChatGPT, address review feedback if any, mark ready and merge on Approve.
 - Pointers: `.agents/skills/quality-gate/`, `.agents/runs/agent-runs.jsonl`, `scripts/judge_agent_run.py`.
 
 ## Validation & Acceptance
@@ -179,7 +179,7 @@ Record decisions and trade-offs (and why).
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged:
-- What went well:
-- What went wrong:
-- Follow-ups / tech debt tickets:
+- What shipped / merged: draft PR opened at https://github.com/shunta-sato/agent-instructions-playbook/pull/64.
+- What went well: quality-gate now has a concise delegated-run evidence rule, while detailed pass/fail cases live in the reference and behavior seed.
+- What went wrong: none.
+- Follow-ups / tech debt tickets: PR 6 should add behavior eval validation for `evals/skill-behavior/quality-gate.json`.
