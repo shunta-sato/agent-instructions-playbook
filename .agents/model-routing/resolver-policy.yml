@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "resolver_policy": {
+    "catalog_format": "external-json",
+    "route_lockfile_required_for_generated_agents": true,
+    "concrete_model_ids_in_routing_files": false,
+    "selectable_statuses": [
+      "available"
+    ],
+    "excluded_statuses": [
+      "disabled",
+      "unavailable",
+      "retired",
+      "policy_blocked",
+      "rumored",
+      "watchlist"
+    ],
+    "smoke_eval_selectable_values": [
+      "passed"
+    ],
+    "candidate_required_fields": [
+      "id",
+      "profiles",
+      "status",
+      "smoke_eval"
+    ],
+    "fallback_order": [
+      "task_class_profile",
+      "profile_fallbacks",
+      "frontier_execution_supervisor"
+    ],
+    "fallback_reasons": [
+      "catalog_not_provided",
+      "no_candidate_for_profile",
+      "candidate_missing_required_field",
+      "candidate_status_excluded",
+      "candidate_smoke_eval_not_passed",
+      "profile_fallback_used",
+      "no_selectable_candidate"
+    ]
+  }
+}
