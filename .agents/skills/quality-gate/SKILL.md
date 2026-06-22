@@ -30,6 +30,7 @@ Invoke this skill **before every submission**. It is mandatory.
    - If `design-balance` was triggered, verify the Responsibility Map exists and records names, responsibilities, reasons to change, and dependency direction.
    - If `performance-review` was triggered, verify the Performance Review records hot path, complexity/I-O counts, decision, evidence, and any no-measurement limits.
    - If a PR modifies Agent-facing workflows, generated instructions, collect plans, executable handoff artifacts, multi-step CLI workflows, or cross-host workflow chains, verify `agent-workflow-contract-review` produced `reports/workflow-contract-review/<slug>.md` with decision `submit`; all findings must be resolved or explicitly accepted with bounded rationale.
+   - If a subagent, worker, delegated model, or generated custom agent changed files, verify delegated run evidence from `.agents/runs/agent-runs.jsonl` by explicit run identity. Missing run evidence, missing validation, validation failure, or scope violation is `no-submit`; missing token telemetry alone is not blocking.
    - If the ExecPlan declares quantitative targets, verify the Outcomes section records measured value vs. each target, and every unmet target has a Decision log entry that re-baselines it or explicitly accepts the miss with rationale. A fully-checked WBS with silently unmet declared targets is `no-submit`.
    - If feature-level embedded NFR work was triggered, verify `reports/resource/nfr-gate-report.md` exists and records `submit`, `no-submit`, or `experimental-only`; accept submit only when the embedded NFR gate is `submit` or the feature is explicitly experimental with production claims removed.
    - If production-ready, low-overhead, battery-safe, flash-safe, thermally-safe, or always-on claims depend on embedded NFRs, verify target characterization exists or the claim is explicitly provisional, budget provenance exists, calibration report exists when numeric budgets are claimed, calibration revisit conditions are not triggered, and the NFR gate report references these artifacts.
@@ -62,6 +63,8 @@ Function-design evidence requirements when triggered:
   **Instead:** verify the report exists and its decision/findings status, then route deep issues back to `agent-workflow-contract-review`.
 - **Common pitfall:** marking `submit` with vague records of unrun commands.  
   **Instead:** for unrun commands, always record reason + reproduction steps and reflect that in submission decision.
+- **Common pitfall:** accepting delegated work from a success claim or latest ledger entry.
+  **Instead:** verify the explicitly cited run record and require validation/scope evidence; token absence alone is not a failure.
 
 ## Output expectation
 
@@ -71,6 +74,7 @@ Function-design evidence requirements when triggered:
 
 
 - Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.
+- Verify delegated run evidence by checking `.agents/runs/agent-runs.jsonl` with an explicit run ID, not by latest/newest record selection.
 - Verify embedded NFR evidence by checking the report artifact path, not only final-response text.
 - Verify constitution-only evidence by checking the generated project artifacts, not only final-response text.
 - Verify controlled operating point claims by checking the pack artifacts, not only final-response text.

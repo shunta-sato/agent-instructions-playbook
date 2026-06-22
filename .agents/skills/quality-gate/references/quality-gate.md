@@ -25,6 +25,7 @@ Confirm required evidence exists for each triggered branch:
 - design-balance branch → Responsibility Map with unit, name, responsibility sentence, reason to change, and dependency direction
 - performance-review branch → Performance Review with hot path, data scale, complexity, I/O/query count, decision, evidence, and no-measurement/no-claim limits when measurement is missing
 - Agent-facing workflow contract branch → `reports/workflow-contract-review/<slug>.md` with decision `submit`, workflow surfaces reviewed, source-of-truth chain, generated argv replay, producer/consumer consistency, runtime discovery assumptions, forbidden fallback checks, claim boundaries, and resolved or explicitly accepted findings
+- delegated/subagent/worker execution changed files → `.agents/runs/agent-runs.jsonl` contains an explicitly cited `agent_run` record for this delegated run; `python3 scripts/judge_agent_run.py --run-id <run_id> --require-accepted` passes or the same fields are manually verified from the cited record
 - feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits
 - embedded system familiarization branch → `docs/targets/<target>/system-familiarization.md` with required/created/missing/provisional/deferred artifacts, artifact freshness/revisit conditions, controlled conditions, uncontrolled confounders, operating point coverage, claim-to-evidence traces with allowed wording, claims blocked by missing evidence, and handoff statuses (`not_needed|required_pending|completed|deferred_with_reason|blocked`)
 - hardware operating point claim → `docs/targets/<target>/controlled-operating-points.md` with controlled factors, observed covariates, uncontrolled confounders, coverage status, confidence, safety preconditions, control/verification/abort/restore methods, and allowed wording
@@ -41,12 +42,17 @@ Confirm required evidence exists for each triggered branch:
 - function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
 - C++ header branch → Doxygen completeness evidence
 - ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff)
+- delegated run evidence case → explicit run ID, matching changed files, validation command results, and accepted judgment
 ## 3) Minimum exit criteria review (always)
 
 - Path-specific instructions were identified and followed.
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
 - Default-lane evidence is present for normal/high-risk work, or the low-risk skip reason is explicit.
 - Agent-facing workflow, generated instruction, collect plan, executable handoff, multi-step CLI workflow, or cross-host workflow changes are blocked unless the Workflow Contract Review Report decision is `submit`.
+- Delegated/subagent/worker changes are blocked unless the submission cites fresh run evidence by explicit run identity. Do not accept `latest`, newest file, mtime, raw co-presence, or agent self-assessment as evidence.
+- Delegated run evidence is `no-submit` when the ledger record is missing, the run ID is not explicit, required validation did not run, validation failed, validation output is missing, changed files exceed allowed files, or `judge_agent_run.py --require-accepted` fails.
+- Delegated run evidence is not `no-submit` only because token telemetry is absent or `telemetry.status` is `not_collected`.
+- Completion claims require verification evidence. A worker report that says the task is done without validation command results remains `no-submit`.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
 - If architecture, hardware, or embedded NFR claims depend on a hardware operating point, `controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording.
 - Observed natural variation under a dynamic policy is not accepted as a controlled sweep. Claims such as "works at all CPU clocks", "low overhead across frequency range", "battery safe", and "GPU offload is better" are blocked unless the corresponding controlled experiments and cost models exist or the wording is explicitly limited/provisional.
@@ -86,5 +92,6 @@ Rule: `submit` only when all required criteria are satisfied and findings are 0.
 
 
 - Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.
+- Verify delegated run evidence by checking `.agents/runs/agent-runs.jsonl` with an explicit run ID, not latest/newest record selection.
 - Verify embedded NFR evidence by checking `reports/resource/nfr-gate-report.md`, not only final-response text.
 - Verify controlled operating point evidence by checking the target pack artifact paths, not only final-response text.
