@@ -2,6 +2,28 @@
   "version": 1,
   "cases": [
     {
+      "id": "topic-pub-command",
+      "prompt": "What ros2 command publishes one std_msgs/msg/String message with data hello to /chatter?",
+      "should_trigger": [
+        "ros2-command-expert"
+      ],
+      "should_not_trigger": [
+        "concurrency-ros2"
+      ],
+      "expected_artifacts": [
+        "ROS 2 command plan"
+      ],
+      "expected_decisions": [
+        "Preserve exact topic and message type names",
+        "Classify topic pub as mutating before execution"
+      ],
+      "expected_output_contains": [
+        "ros2 topic pub",
+        "/chatter"
+      ],
+      "notes": "Command synthesis for ros2 topic pub should trigger the CLI command skill while preserving concrete names."
+    },
+    {
       "id": "ros2-graph-fresh-discovery",
       "prompt": "I need exact ROS 2 Humble CLI commands to inspect the current graph for nodes, topics with types, and services, and I want to avoid stale daemon results.",
       "should_trigger": [
@@ -68,6 +90,28 @@
       "notes": "The bundled reference routes exact command families without changing repo verification policy."
     },
     {
+      "id": "ros2-param-mutation-plan",
+      "prompt": "Plan the ros2 command to set parameter label to the literal string off on /fixture_node and show how to verify it.",
+      "should_trigger": [
+        "ros2-command-expert"
+      ],
+      "should_not_trigger": [
+        "concurrency-ros2"
+      ],
+      "expected_artifacts": [
+        "ROS 2 command plan"
+      ],
+      "expected_decisions": [
+        "Classify param set as mutating graph or node state",
+        "Require validation command"
+      ],
+      "expected_output_contains": [
+        "ros2 param set",
+        "ros2 param get"
+      ],
+      "notes": "Mutating ROS 2 CLI work belongs in the command skill and must not be treated as a read-only lookup."
+    },
+    {
       "id": "ros2-command-negative-source-code-concurrency",
       "prompt": "Change this rclcpp executor code to avoid a callback-group deadlock in a composable node.",
       "should_trigger": [
@@ -80,6 +124,18 @@
         "ROS 2 source-code concurrency changes use concurrency-ros2 rather than the CLI command guide"
       ],
       "notes": "The command skill should not absorb ROS 2 executor implementation work."
+    },
+    {
+      "id": "negative-dds-root-cause-without-cli",
+      "prompt": "Explain a possible Fast DDS shared memory transport root cause from this C++ stack trace, without any ros2 CLI command output.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "ros2-command-expert"
+      ],
+      "expected_decisions": [
+        "DDS transport root cause without CLI evidence should not trigger ros2-command-expert"
+      ],
+      "notes": "The command skill may classify CLI-visible SHM diagnostics, but it should not become a DDS root-cause skill."
     }
   ]
 }

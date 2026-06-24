@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "skill": "ros2-command-expert",
+  "cases": [
+    {
+      "id": "preserve-concrete-topic-name",
+      "prompt": "Publish one std_msgs/msg/String with data hello on /chatter.",
+      "given": [
+        "topic name is /chatter",
+        "message type is std_msgs/msg/String",
+        "payload data is hello",
+        "topic pub mutates graph-observable state"
+      ],
+      "expected_decision": "command-plan",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "ros2 topic pub -1 /chatter std_msgs/msg/String '{data: hello}'",
+        "mutating_graph_or_node_state"
+      ]
+    },
+    {
+      "id": "do-not-use-placeholder-topic",
+      "prompt": "Echo one message from /battery_state with its concrete type sensor_msgs/msg/BatteryState.",
+      "given": [
+        "concrete topic and type are supplied",
+        "placeholder topic is forbidden"
+      ],
+      "expected_decision": "bounded-observation",
+      "expected_findings": [
+        "placeholder topic is forbidden"
+      ],
+      "expected_output_contains": [
+        "/battery_state",
+        "sensor_msgs/msg/BatteryState"
+      ]
+    },
+    {
+      "id": "daemon-restart-not-default-refresh",
+      "prompt": "The node graph may be stale. Refresh the graph safely.",
+      "given": [
+        "daemon may be stale",
+        "task is not daemon recovery",
+        "direct discovery options are available for graph list commands"
+      ],
+      "expected_decision": "bounded-observation",
+      "expected_findings": [
+        "do not restart daemon as routine refresh"
+      ],
+      "expected_output_contains": [
+        "--no-daemon",
+        "--spin-time"
+      ]
+    },
+    {
+      "id": "mutating-command-requires-validation",
+      "prompt": "Set parameter label to the literal string off on /fixture_node.",
+      "given": [
+        "param set mutates node state",
+        "literal string off must avoid YAML boolean conversion"
+      ],
+      "expected_decision": "command-plan",
+      "expected_findings": [
+        "validation command required"
+      ],
+      "expected_output_contains": [
+        "ros2 param set /fixture_node label '!!str off'",
+        "ros2 param get /fixture_node label"
+      ]
+    },
+    {
+      "id": "token-telemetry-not-required",
+      "prompt": "A delegated ROS 2 command worker produced validation and scope evidence but no token telemetry. Decide whether missing token telemetry blocks acceptance.",
+      "given": [
+        "validation passed",
+        "scope compliant",
+        "telemetry.status is not_collected"
+      ],
+      "expected_decision": "not-blocking",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "token telemetry is not required"
+      ]
+    }
+  ]
+}
