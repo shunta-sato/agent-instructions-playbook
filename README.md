@@ -130,6 +130,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `receiving-code-review` | Process review feedback safely | `.agents/skills/receiving-code-review/SKILL.md` |
 | `requesting-code-review` | Prepare focused review requests | `.agents/skills/requesting-code-review/SKILL.md` |
 | `requirements-engineering` | Requirements engineering | `.agents/skills/requirements-engineering/SKILL.md` |
+| `ros2-command-expert` | Source-backed ROS 2 Humble CLI guide | `.agents/skills/ros2-command-expert/SKILL.md` |
 | `staged-lowering` | Staged lowering for constrained code | `.agents/skills/staged-lowering/SKILL.md` |
 | `test-driven-development` | Test-driven development workflow | `.agents/skills/test-driven-development/SKILL.md` |
 | `thread-safety-tooling` | Thread-safety verification | `.agents/skills/thread-safety-tooling/SKILL.md` |

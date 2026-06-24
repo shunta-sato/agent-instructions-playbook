@@ -62,6 +62,7 @@ skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
 skill|receiving-code-review|Process review feedback safely|.agents/skills/receiving-code-review/SKILL.md
 skill|requesting-code-review|Prepare focused review requests|.agents/skills/requesting-code-review/SKILL.md
 skill|requirements-engineering|Requirements engineering|.agents/skills/requirements-engineering/SKILL.md
+skill|ros2-command-expert|Source-backed ROS 2 Humble CLI guide|.agents/skills/ros2-command-expert/SKILL.md
 skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md
 skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md

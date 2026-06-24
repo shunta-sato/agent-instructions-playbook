@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "ros2-graph-fresh-discovery",
+      "prompt": "I need exact ROS 2 Humble CLI commands to inspect the current graph for nodes, topics with types, and services, and I want to avoid stale daemon results.",
+      "should_trigger": [
+        "ros2-command-expert"
+      ],
+      "should_not_trigger": [
+        "concurrency-ros2",
+        "embedded-nfr-design"
+      ],
+      "expected_artifacts": [
+        "ROS 2 command plan"
+      ],
+      "expected_decisions": [
+        "Use daemon-backed and no-daemon discovery deliberately",
+        "Verify installed help before exact non-Humble option claims"
+      ],
+      "expected_output_contains": [
+        "ros2 node list",
+        "--no-daemon"
+      ],
+      "notes": "Graph inspection through ros2 CLI should trigger the command skill, not ROS executor concurrency guidance."
+    },
+    {
+      "id": "ros2-rosout-bounded-capture",
+      "prompt": "Give me a safe bounded command recipe to collect /rosout logs for 10 seconds, filter warning and error records, and keep stdout separate from middleware stderr.",
+      "should_trigger": [
+        "ros2-command-expert"
+      ],
+      "should_not_trigger": [
+        "observability",
+        "embedded-observer-effect-review"
+      ],
+      "expected_decisions": [
+        "Use bounded capture and explicit stdout/stderr artifact paths",
+        "Do not infer absence of logs from an empty /rosout window alone"
+      ],
+      "expected_output_contains": [
+        "/rosout",
+        "timeout"
+      ],
+      "notes": "This is CLI operation guidance, not a runtime instrumentation design change."
+    },
+    {
+      "id": "ros2-bag-launch-security",
+      "prompt": "I need exact ros2 bag record/play options, launch argument syntax, and SROS2 keystore/enclave command guidance for Humble.",
+      "should_trigger": [
+        "ros2-command-expert"
+      ],
+      "should_not_trigger": [
+        "project-initialization",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "bag/launch/security command guidance"
+      ],
+      "expected_decisions": [
+        "Use the bag-launch-security reference for bag, launch, and SROS2 workflows"
+      ],
+      "expected_output_contains": [
+        "ros2 bag",
+        "ros2 launch",
+        "ros2 security"
+      ],
+      "notes": "The bundled reference routes exact command families without changing repo verification policy."
+    },
+    {
+      "id": "ros2-command-negative-source-code-concurrency",
+      "prompt": "Change this rclcpp executor code to avoid a callback-group deadlock in a composable node.",
+      "should_trigger": [
+        "concurrency-ros2"
+      ],
+      "should_not_trigger": [
+        "ros2-command-expert"
+      ],
+      "expected_decisions": [
+        "ROS 2 source-code concurrency changes use concurrency-ros2 rather than the CLI command guide"
+      ],
+      "notes": "The command skill should not absorb ROS 2 executor implementation work."
+    }
+  ]
+}

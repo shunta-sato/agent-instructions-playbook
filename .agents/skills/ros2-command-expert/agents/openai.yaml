@@ -1,0 +1,4 @@
+interface:
+  display_name: "ROS 2 Command Expert"
+  short_description: "Source-backed ROS 2 Humble CLI guide"
+  default_prompt: "Use $ros2-command-expert to inspect and operate ROS 2 Humble with ros2 CLI, bag, launch, and security commands."
