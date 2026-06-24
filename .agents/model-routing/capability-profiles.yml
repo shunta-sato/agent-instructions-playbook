@@ -56,6 +56,42 @@
         "coding_supervisor"
       ]
     },
+    "ros2_cli_command_reference": {
+      "description": "Exact ROS 2 CLI command lookup, option placement, and source/help caveat handling without target execution.",
+      "requires": [
+        "ros2_cli_reference_use",
+        "exact_command_syntax",
+        "concrete_name_preservation",
+        "no_execution_boundary"
+      ],
+      "fallback_profiles": [
+        "ros2_cli_operation_supervisor"
+      ]
+    },
+    "ros2_cli_observation_planner": {
+      "description": "Read-only ROS 2 CLI diagnosis and bounded observation planning with stdout/stderr artifact discipline.",
+      "requires": [
+        "ros2_cli_readonly_diagnosis",
+        "bounded_observation_planning",
+        "artifact_capture",
+        "claim_boundary_review"
+      ],
+      "fallback_profiles": [
+        "ros2_cli_operation_supervisor"
+      ]
+    },
+    "ros2_cli_operation_supervisor": {
+      "description": "Supervision for mutating, robot-affecting, filesystem/security, or source-sensitive ROS 2 CLI operation plans.",
+      "requires": [
+        "ros2_cli_risk_gate",
+        "approval_boundary",
+        "validation_planning",
+        "source_provenance_review"
+      ],
+      "fallback_profiles": [
+        "frontier_execution_supervisor"
+      ]
+    },
     "frontier_execution_supervisor": {
       "description": "Highest-capability fallback for ambiguous, high-risk, or cross-boundary execution supervision.",
       "requires": [

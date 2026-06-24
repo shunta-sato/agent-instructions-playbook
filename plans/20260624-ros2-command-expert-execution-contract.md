@@ -96,7 +96,11 @@
 - [x] (P12) Create PR C feature branch — deliverable: `codex/ros2-command-expert-behavior-evals` — verify: `git branch --show-current`.
 - [x] (P13) Expand PR C behavior eval coverage — deliverable: hidden flag, bag output path, security keystore path, bounded command, and claim-site anchor behavior cases — verify: `python3 scripts/validate_skill_behavior_evals.py`.
 - [x] (P14) Verify PR C — deliverable: green validators and canonical verification — verify: `make build-release` and `make verify`.
-- [ ] (P15) Publish PR C and request review — deliverable: PR URL sent to reviewer channel — verify: GitHub PR exists and review request sent.
+- [x] (P15) Publish, review, and merge PR C — deliverable: PR #70 merged into `ros2-command-expert` — verify: `https://github.com/shunta-sato/agent-instructions-playbook/pull/70`, merge commit `ad68f33d1e3ab4d22063a1ee7ffbdd4f638d9081`.
+- [x] (P16) Create PR D feature branch — deliverable: `codex/ros2-command-expert-model-routing` — verify: `git branch --show-current`.
+- [x] (P17) Add PR D model-routing and strict worker artifacts — deliverable: ROS 2 CLI profiles, task classes, routing evals, and strict worker brief — verify: `python3 scripts/validate_model_routing.py` and `python3 scripts/validate_model_routing_evals.py`.
+- [x] (P18) Verify PR D — deliverable: green validators and canonical verification — verify: `make build-release` and `make verify`.
+- [ ] (P19) Publish PR D and request review — deliverable: PR URL sent to reviewer channel — verify: GitHub PR exists and review request sent.
 
 ## Surprises & Discoveries
 
@@ -107,6 +111,8 @@
 - 2026-06-24: Reviewer also asked for stricter Fast DDS fallback behavior: `command -v fastdds`, raw evidence preservation, cleanup only on explicit request, exact cleanup reporting, and no blind `/dev/shm/fastrtps*` deletion.
 - 2026-06-24: PR #69 reviewer approved PR B and recommended claim-site anchor convention plus deferred evals for hidden flags, bag/security output paths, and bounded commands.
 - 2026-06-24: PR C behavior eval expansion raises overall behavior eval validation to 17 cases.
+- 2026-06-24: PR #70 reviewer approved PR C and recommended splitting command lookup from mutating-operation planning in the model-routing / strict worker PR.
+- 2026-06-24: PR D model-routing validation now covers 8 task classes, 9 capability profiles, and 5 model-routing eval cases.
 
 ## Decision log
 
@@ -126,6 +132,10 @@
   - Options considered: jump to model routing, add strict worker brief, finish deferred behavior eval holes first.
   - Chosen: finish deferred behavior eval holes first and add the small claim-site anchor convention requested in review.
   - Consequences: model routing and strict worker work remain later, but known ROS CLI failure modes are better locked before worker routing changes.
+- 2026-06-24: Add ROS 2 CLI task classes without static concrete model IDs.
+  - Options considered: embed model IDs in the skill, put only examples in docs, add capability profiles/task classes/evals to existing routing artifacts.
+  - Chosen: add capability profiles/task classes/evals to existing routing artifacts and keep model IDs only in eval fixture catalogs.
+  - Consequences: resolver can route command lookup, read-only diagnosis, and mutating-operation planning while preserving the no-concrete-model-ID rule.
 
 ## Post-Implementation Economy Audit
 
@@ -136,15 +146,17 @@
 | `command-plan.md` and `execution-record.md` templates | Make concrete-name extraction, approval, validation, artifacts, and claim boundary reusable for agents and future workers. | keep | Behavior evals check command-plan expectations and validation requirements. |
 | `source-provenance.md` reference | Centralizes repository/commit scope, installed-help precedence, and blocked claims so command references do not drift independently. | keep | `SKILL.md`, command references, and behavior evals route source-sensitive answers through it. |
 | Claim-site anchor convention | Keeps related `rcl`/interface facts from becoming unverified active-target claims. | keep | Behavior eval checks `/rosout` QoS answer includes anchor and target verification path. |
+| ROS 2 CLI routing task classes | Separates command lookup, read-only diagnosis, and mutating-operation planning before selecting a worker capability. | keep | `validate_model_routing.py` and `validate_model_routing_evals.py` pass. |
+| `strict-command-task-brief.md` template | Gives routed workers a no-model-ID brief with execution boundaries and required output fields. | keep | `SKILL.md` references the template and routing evals cover the task classes. |
 
 ## Handoff
 
-- Current branch / commit: `codex/ros2-command-expert-behavior-evals`, uncommitted PR C changes.
-- What is done: PR #68 and PR #69 merged into `ros2-command-expert`; PR C branch created; behavior eval expansion and claim-site convention edits complete; `make build-release` and `make verify` pass.
+- Current branch / commit: `codex/ros2-command-expert-model-routing`, uncommitted PR D changes.
+- What is done: PR #68, PR #69, and PR #70 merged into `ros2-command-expert`; PR D branch created; model-routing task classes/evals and strict worker brief implemented; `make build-release` and `make verify` pass.
 - What is not done: commit, PR creation, review request, review loop.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_skills.py`; `python3 scripts/validate_skill_trigger_evals.py`; `python3 scripts/validate_skill_behavior_evals.py`; `python3 scripts/generate_agent_index.py --check`.
-- Known risks / open questions: model routing and strict worker brief remain later PRs.
+- Known risks / open questions: final acceptance review may identify wording or routing-scope adjustments.
 - Next 1-3 steps: stage in-scope files; commit/push/open PR; request review.
 - Pointers: `.agents/skills/ros2-command-expert/SKILL.md`, `.agents/skills/ros2-command-expert/references/task-index.md`, `evals/skill-triggers/ros2-command-expert.json`.
 
@@ -162,10 +174,12 @@
   - Verification: trigger/behavior eval validators pass; PR C behavior eval file covers 13 `ros2-command-expert` cases.
 - AC6: Each PR is reviewed and merged into `ros2-command-expert` before the next PR starts.
   - Verification: GitHub PR approval, merge result, and synced local base branch.
+- AC7: Model-routing eval routes command lookup separately from mutating operation planning without static concrete model IDs.
+  - Verification: `python3 scripts/validate_model_routing.py`; `python3 scripts/validate_model_routing_evals.py`.
 
 ## Outcomes & Retrospective
 
-- What shipped / merged: PR #68 merged PR A execution-contract foundation into `ros2-command-expert`; PR #69 merged PR B source provenance and Fast DDS fallback tightening.
+- What shipped / merged: PR #68 merged PR A execution-contract foundation into `ros2-command-expert`; PR #69 merged PR B source provenance and Fast DDS fallback tightening; PR #70 merged PR C behavior eval expansion.
 - What went well: `SKILL.md` was reduced from 253 to 129 lines while keeping command details in references; validators accept the new behavior eval file.
 - What went wrong: none observed in PR A implementation.
-- Follow-ups / tech debt tickets: later PRs still need model-routing task classes and strict worker brief.
+- Follow-ups / tech debt tickets: pending PR D review may decide whether final acceptance is complete or whether a small cleanup PR is still needed.
