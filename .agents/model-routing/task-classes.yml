@@ -83,6 +83,61 @@
           "unknowns_or_risks_recorded"
         ]
       }
+    },
+    "ros2_command_lookup": {
+      "description": "Choose exact ROS 2 CLI command syntax, option placement, and caveats without executing the command.",
+      "profile": "ros2_cli_command_reference",
+      "prompt_detail": "strict",
+      "risk_gate": "low",
+      "default_effort": "medium",
+      "max_scope": {
+        "may_execute_commands": false,
+        "allowed_artifacts": [
+          "command recommendation",
+          "source/help caveat"
+        ]
+      },
+      "escalation_profile": "ros2_cli_operation_supervisor",
+      "success_criteria": {
+        "required": [
+          "concrete_ros_names_preserved",
+          "exact_command_form_returned",
+          "source_or_installed_help_boundary_recorded",
+          "no_target_execution_performed"
+        ]
+      }
+    },
+    "ros2_readonly_diagnosis": {
+      "description": "Plan or perform read-only ROS 2 CLI graph/log/bag inspection with bounded commands and captured evidence.",
+      "profile": "ros2_cli_observation_planner",
+      "prompt_detail": "normal",
+      "risk_gate": "normal",
+      "default_effort": "high",
+      "escalation_profile": "ros2_cli_operation_supervisor",
+      "success_criteria": {
+        "required": [
+          "risk_class_recorded",
+          "bounded_commands_only",
+          "stdout_stderr_artifacts_named",
+          "claim_boundaries_recorded"
+        ]
+      }
+    },
+    "ros2_mutating_operation_plan": {
+      "description": "Prepare a ROS 2 CLI command plan for mutating, robot-affecting, filesystem/security, or source-sensitive operations.",
+      "profile": "ros2_cli_operation_supervisor",
+      "prompt_detail": "strict",
+      "risk_gate": "high",
+      "default_effort": "high",
+      "escalation_profile": "frontier_execution_supervisor",
+      "success_criteria": {
+        "required": [
+          "command_plan_required",
+          "approval_boundary_recorded",
+          "validation_command_required",
+          "no_execution_without_explicit_user_approval"
+        ]
+      }
     }
   }
 }

@@ -54,6 +54,7 @@ Load only what the task needs:
 - `references/implementation-notes.md`: daemon, discovery, hidden names, QoS, YAML conversion, blocking calls, `eval` filters, and source caveats.
 - `references/answer-contract.md`: final answer and execution-record requirements.
 - `references/neighbor-skills.md`: boundaries with adjacent ROS, DDS, safety, and workflow skills.
+- `templates/strict-command-task-brief.md`: strict worker brief for routed command lookup, read-only diagnosis, and mutating-operation planning.
 
 Within one session, cache reference knowledge and environment checks. Re-read only when the target, shell environment, distro, command family, or evidence requirement changes.
 

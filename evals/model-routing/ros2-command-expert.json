@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "ros2-command-lookup-worker",
+      "task_class": "ros2_command_lookup",
+      "expected_capability_profile": "ros2_cli_command_reference",
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "candidate-unavailable",
+            "profiles": [
+              "ros2_cli_command_reference"
+            ],
+            "status": "unavailable",
+            "smoke_eval": "passed",
+            "priority": 100
+          },
+          {
+            "id": "candidate-lookup",
+            "profiles": [
+              "ros2_cli_command_reference"
+            ],
+            "status": "available",
+            "smoke_eval": "passed",
+            "priority": 10
+          }
+        ]
+      },
+      "expected": {
+        "selected": true,
+        "selection_profile": "ros2_cli_command_reference",
+        "selected_model": "candidate-lookup",
+        "fallback_reasons_contains": [
+          "candidate_status_excluded:candidate-unavailable"
+        ]
+      },
+      "checks": [
+        "does not execute target commands",
+        "preserves concrete ROS names",
+        "returns exact option placement",
+        "records source or installed-help caveat"
+      ]
+    },
+    {
+      "id": "ros2-readonly-diagnosis-worker",
+      "task_class": "ros2_readonly_diagnosis",
+      "expected_capability_profile": "ros2_cli_observation_planner",
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "candidate-readonly-watchlist",
+            "profiles": [
+              "ros2_cli_observation_planner"
+            ],
+            "status": "watchlist",
+            "smoke_eval": "passed",
+            "priority": 100
+          },
+          {
+            "id": "candidate-readonly",
+            "profiles": [
+              "ros2_cli_observation_planner"
+            ],
+            "status": "available",
+            "smoke_eval": "passed",
+            "priority": 20
+          }
+        ]
+      },
+      "expected": {
+        "selected": true,
+        "selection_profile": "ros2_cli_observation_planner",
+        "selected_model": "candidate-readonly",
+        "fallback_reasons_contains": [
+          "candidate_status_excluded:candidate-readonly-watchlist"
+        ]
+      },
+      "checks": [
+        "uses read-only or bounded observation commands only",
+        "requires exact allowed command list",
+        "requires expected stdout and stderr artifact paths",
+        "names stdout and stderr artifacts",
+        "records stop method",
+        "keeps claim boundaries explicit"
+      ]
+    },
+    {
+      "id": "ros2-mutating-plan-supervisor",
+      "task_class": "ros2_mutating_operation_plan",
+      "expected_capability_profile": "ros2_cli_operation_supervisor",
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "candidate-planner-smoke-missing",
+            "profiles": [
+              "ros2_cli_operation_supervisor"
+            ],
+            "status": "available",
+            "smoke_eval": "not_run",
+            "priority": 100
+          },
+          {
+            "id": "candidate-planner",
+            "profiles": [
+              "ros2_cli_operation_supervisor"
+            ],
+            "status": "available",
+            "smoke_eval": "passed",
+            "priority": 30
+          }
+        ]
+      },
+      "expected": {
+        "selected": true,
+        "selection_profile": "ros2_cli_operation_supervisor",
+        "selected_model": "candidate-planner",
+        "fallback_reasons_contains": [
+          "candidate_smoke_eval_not_passed:candidate-planner-smoke-missing"
+        ]
+      },
+      "checks": [
+        "requires command plan before execution",
+        "records explicit approval boundary",
+        "requires validation command",
+        "does not execute mutating command without approval"
+      ]
+    }
+  ]
+}
