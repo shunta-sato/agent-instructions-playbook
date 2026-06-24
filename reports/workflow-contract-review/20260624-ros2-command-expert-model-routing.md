@@ -21,7 +21,7 @@
 | Plan | `plans/20260624-ros2-command-expert-execution-contract.md` | branch change | implementer, reviewer, later PRs | Records PR #70 merge and PR D scope. |
 | Capability profiles | `.agents/model-routing/capability-profiles.yml` | branch change | resolver and routing eval validator | Adds ROS 2 CLI command-reference, observation-planner, and operation-supervisor capabilities. |
 | Task classes | `.agents/model-routing/task-classes.yml` | branch change | resolver and routing eval validator | Adds `ros2_command_lookup`, `ros2_readonly_diagnosis`, and `ros2_mutating_operation_plan`. |
-| Strict worker brief | `templates/strict-command-task-brief.md` | branch change | routed workers and supervisors | Defines no-execution, bounded-observation, and plan-only boundaries without concrete model IDs. |
+| Strict worker brief | `templates/strict-command-task-brief.md` | branch change | routed workers and supervisors | Defines no-execution, bounded-observation, plan-only boundaries, exact allowed commands, validation commands, and expected artifact paths without concrete model IDs. |
 | Routing eval seeds | `evals/model-routing/ros2-command-expert.json` | branch change | `validate_model_routing_evals.py` | Exercises route selection and resolver exclusion reasons for the three ROS 2 task classes. |
 
 ## Generated argv replay
@@ -46,6 +46,7 @@
 | Task classes | task class names | routing evals and strict brief | evals reference known task classes | OK; routing eval validator passed locally. |
 | Resolver policy | no concrete model IDs in routing files | model-routing artifacts | concrete model IDs appear only in eval fixture catalogs | OK. |
 | `SKILL.md` | strict brief template path | agents | referenced template exists in skill tree | OK. |
+| Strict worker brief | delegation scope fields | routed workers | allowed commands and expected artifact paths must be filled before invocation | OK. |
 
 ## Run-set / target / workflow identity consistency
 

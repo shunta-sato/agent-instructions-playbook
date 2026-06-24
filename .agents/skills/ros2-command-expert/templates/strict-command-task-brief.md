@@ -17,6 +17,17 @@ Use this brief when delegating a narrow `ros2-command-expert` subtask through mo
 - required references:
 - forbidden assumptions:
 
+## Delegation Scope
+
+The supervisor must fill every field in this section before invoking a worker. If any field is missing or too broad, the worker must stop and report the missing scope instead of choosing commands independently.
+
+- allowed read files/references:
+- allowed edit files: `none` unless explicitly authorized
+- forbidden files or areas:
+- allowed commands: exact command argv list only; use `none` for `ros2_command_lookup`
+- required validation commands: exact command argv list, or `not_applicable` with reason
+- expected artifacts: exact stdout/stderr/report paths or `not_applicable` with reason
+
 ## Execution Boundary
 
 - `ros2_command_lookup`: do not execute target commands; return exact command form, option placement, validation idea, and source/help caveat.
@@ -29,6 +40,7 @@ Use this brief when delegating a narrow `ros2-command-expert` subtask through mo
 - risk_class:
 - exact command or command plan:
 - validation command:
+- artifacts produced or expected:
 - evidence/source basis:
 - caveats and blocked claims:
 - stop/escalate condition:

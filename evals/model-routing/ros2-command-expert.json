@@ -80,6 +80,8 @@
       },
       "checks": [
         "uses read-only or bounded observation commands only",
+        "requires exact allowed command list",
+        "requires expected stdout and stderr artifact paths",
         "names stdout and stderr artifacts",
         "records stop method",
         "keeps claim boundaries explicit"

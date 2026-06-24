@@ -113,6 +113,7 @@
 - 2026-06-24: PR C behavior eval expansion raises overall behavior eval validation to 17 cases.
 - 2026-06-24: PR #70 reviewer approved PR C and recommended splitting command lookup from mutating-operation planning in the model-routing / strict worker PR.
 - 2026-06-24: PR D model-routing validation now covers 8 task classes, 9 capability profiles, and 5 model-routing eval cases.
+- 2026-06-24: PR #71 automated review found that the strict worker brief needed exact allowed commands and expected artifact paths; PR D was updated before merge.
 
 ## Decision log
 
