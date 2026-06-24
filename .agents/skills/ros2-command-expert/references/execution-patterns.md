@@ -317,7 +317,7 @@ python3 -c 'import re,sys; ansi=re.compile(r"\x1b\[[0-9;]*[A-Za-z]"); [sys.stdou
 
 Always add `--no-lost-messages` for machine-oriented `/rosout` capture. If it was omitted and stdout contains `A message was lost!!!`, rerun the capture with `--no-lost-messages` instead of trying to parse that stream as pure YAML/CSV.
 
-If using `fastdds shm clean` directly, run it twice: the first run may remove zombie ports or segments, and the second run should report `0 zombie ... cleaned` before you treat cleanup as complete. If SHM errors continue after two clean runs, investigate live processes, permissions, container IPC settings, or transport selection.
+Use `fastdds shm clean` directly only after `command -v fastdds` succeeds and the user explicitly asks for SHM cleanup. Preserve raw stdout/stderr before cleanup, run `fastdds shm clean` once, then run it a second time to confirm the result. Report the exact cleanup output from both runs. If SHM errors continue after two clean runs, investigate live processes, permissions, container IPC settings, or transport selection; do not blindly delete `/dev/shm/fastrtps*`.
 
 Persistent capture with tmux, only after `command -v tmux` succeeds:
 

@@ -80,6 +80,61 @@
       "expected_output_contains": [
         "token telemetry is not required"
       ]
+    },
+    {
+      "id": "non-humble-source-requires-installed-help",
+      "prompt": "On a Jazzy target, can I rely on the bundled source note that ros2 action send_goal has --timeout?",
+      "given": [
+        "target ROS_DISTRO is not humble",
+        "exact option support matters",
+        "bundled source evidence is Humble"
+      ],
+      "expected_decision": "installed-help-check",
+      "expected_findings": [
+        "bundled Humble source is not exact non-Humble option evidence"
+      ],
+      "expected_output_contains": [
+        "ros2 action send_goal -h",
+        "Source basis"
+      ]
+    },
+    {
+      "id": "fastdds-fallback-cleanup-contract",
+      "prompt": "A ros2 command produced valid output but also RTPS_TRANSPORT_SHM text, fastdds-shm-triage is unavailable, and I explicitly ask you to clean stale Fast DDS SHM.",
+      "given": [
+        "ros2 stdout/stderr contain SHM diagnostics",
+        "raw ROS command output exists",
+        "cleanup was explicitly requested",
+        "fastdds-shm-triage is unavailable"
+      ],
+      "expected_decision": "fallback-cleanup-plan",
+      "expected_findings": [
+        "preserve raw stdout and stderr before filtering or cleanup",
+        "do not claim DDS root cause from CLI output alone"
+      ],
+      "expected_output_contains": [
+        "command -v fastdds",
+        "fastdds shm clean",
+        "do not blindly delete /dev/shm/fastrtps*"
+      ]
+    },
+    {
+      "id": "empty-rosout-window-is-not-no-logging-proof",
+      "prompt": "A 10 second /rosout capture was empty. State whether that proves /fixture_node is not logging.",
+      "given": [
+        "bounded /rosout observation window is empty",
+        "the target node is /fixture_node",
+        "other log sinks may exist"
+      ],
+      "expected_decision": "bounded-observation-interpretation",
+      "expected_findings": [
+        "empty /rosout window is not proof that the node is not logging elsewhere"
+      ],
+      "expected_output_contains": [
+        "ros2 topic info -v /rosout",
+        "ros2 node info /fixture_node",
+        "10 second"
+      ]
     }
   ]
 }

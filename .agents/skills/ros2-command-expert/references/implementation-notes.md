@@ -1,6 +1,6 @@
 # ROS 2 `ros2` Implementation Notes
 
-These notes capture behaviors visible from ROS 2 Humble source, not just command help. The source basis is `ros2cli` branch `humble` at commit `30d4600fa0b74aaf0fccd6a855a56b902dd79b47` plus related Humble `rcl`/interface evidence where explicitly named.
+These notes capture behaviors visible from ROS 2 Humble source, not just command help. `source-provenance.md` is authoritative for repository, branch, commit, package-version scope, installed-help precedence, and blocked claims. Related Humble `rcl`/interface evidence is claim-site evidence only where explicitly named.
 
 ## Source Anchors
 

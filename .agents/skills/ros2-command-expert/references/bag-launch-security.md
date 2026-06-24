@@ -1,11 +1,6 @@
 # ROS 2 Humble `bag`, `launch`, and `security`
 
-Source scope:
-
-- `rosbag2` branch `humble`, commit `089b8f0ae229079626a8477086ea095b6a48fca8`.
-- `launch_ros` branch `humble`, commit `39517491468facd0d57ed3c3592c092baeff8afd`.
-- `launch` branch `humble`, commit `fbe7d984f109fe212ba4af9279e0da55844b78f9`.
-- `sros2` branch `humble`, commit `7c8f9869f4ae0b5db644dd6a05c2c0da007cc091`.
+Source basis: `source-provenance.md` is authoritative for the `rosbag2`, `launch_ros`, `launch`, and `sros2` repository, branch, and commit scope used by this reference.
 
 Do not assume a source checkout path. Use file names below as evidence anchors only.
 
