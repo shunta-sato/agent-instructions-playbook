@@ -32,7 +32,7 @@ Do not use this skill as the only authority for:
 
 1. Classify the task: command lookup, command check, read-only inspection, bounded observation, mutating operation plan, executed operation, or output interpretation.
 2. Classify operation risk using `references/risk-gates.md` before proposing or running commands.
-3. Load the minimum reference needed for the task.
+3. Load the minimum reference needed for the task, including `references/source-provenance.md` when a source-backed claim, non-Humble target, or version-sensitive option matters.
 4. Extract concrete arguments from the user task or from discovered command output.
 5. Choose the exact command form and validate option placement with installed help when needed.
 6. Decide whether the command is proposed only or executed.
@@ -46,6 +46,7 @@ Stop instead of guessing when the task lacks a concrete target, the operation wo
 Load only what the task needs:
 
 - `references/risk-gates.md`: required before any proposed or executed command plan.
+- `references/source-provenance.md`: source manifest, evidence priority, installed-help precedence, and blocked source claims.
 - `references/task-index.md`: natural-language task to command mapping, common traps, high-frequency exact forms.
 - `references/command-map.md`: command groups, verbs, option placement, defaults, and return behavior.
 - `references/execution-patterns.md`: bounded observations, tmux/timeout/Python fallbacks, `/rosout`, long-running commands, and safe recipes.
@@ -74,6 +75,8 @@ ros2 --help
 ros2 <command> -h
 ros2 <command> <verb> -h
 ```
+
+When a bundled-source detail affects the answer, report whether installed help or target execution was checked, using `references/source-provenance.md`.
 
 If a fresh non-interactive shell loses the ROS environment, source the active installation only after verifying the setup file exists. Do not hard-code host-specific setup paths as facts.
 

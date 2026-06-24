@@ -25,10 +25,14 @@ Use this reference to keep `ros2-command-expert` from becoming a catch-all ROS 2
 If `fastdds-shm-triage` is unavailable:
 
 - classify SHM text as transport diagnostic output, not direct CLI failure
-- preserve raw stdout and stderr artifacts
-- filter SHM lines only for parsing cleaned ROS output
+- preserve raw stdout and stderr artifacts before any filtering or cleanup
+- filter SHM lines only for parsing cleaned ROS output; keep the raw files as evidence
 - do not claim root cause without lower-layer evidence
-- if `fastdds` is available and the user asks for SHM cleanup, run `fastdds shm clean` once to remove zombies and a second time to confirm the result; do not blindly delete `/dev/shm/fastrtps*`
+- before suggesting direct cleanup, check `command -v fastdds`
+- run `fastdds shm clean` only when `fastdds` exists and the user explicitly asks for SHM cleanup
+- run `fastdds shm clean` once to remove zombies and a second time to confirm the result
+- report exactly what the two cleanup runs printed and what was cleaned
+- do not blindly delete `/dev/shm/fastrtps*`
 
 ## Boundary Checks
 

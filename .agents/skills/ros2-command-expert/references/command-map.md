@@ -1,6 +1,6 @@
 # ROS 2 `ros2` Command Map
 
-Source scope: ROS 2 Humble `ros2cli`, branch `humble`, commit `30d4600fa0b74aaf0fccd6a855a56b902dd79b47`, `ros2cli` package version `0.18.18`. Supplemental Humble command packages are covered in `bag-launch-security.md`.
+Source basis: `source-provenance.md` is authoritative for repository, branch, commit, and package-version scope. This file covers the ROS 2 Humble `ros2cli` package family from that manifest. Supplemental Humble command packages are covered in `bag-launch-security.md`.
 
 Use this as the exact command/verb map for ROS 2 Humble. Verify installed CLI help before assuming another ROS distro has identical options. Do not rely on a host-specific checkout path; source paths below are repository-relative evidence anchors.
 

@@ -74,11 +74,10 @@
 ## Milestones
 
 1. PR A: Compress `SKILL.md` into an execution gate, add risk gates/templates, and seed trigger/behavior evals for the most dangerous failure modes.
-2. PR B: Add answer contract, neighbor-skill fallback, and source provenance claim boundaries if not completed in PR A.
-3. PR C: Tighten source-backed command-map and implementation-note provenance without expanding command catalog scope.
-4. PR D: Expand behavior evals to at least 10 cases covering hidden flags, `/rosout`, SHM, bounded commands, filesystem/security path protection, and non-Humble verification.
-5. PR E: Add strict worker task brief and model-routing task classes/evals for command lookup, readonly diagnosis, and mutating operation planning.
-6. Merge each PR only after GitHub review approval and required checks pass, then sync `ros2-command-expert` and continue.
+2. PR B: Add a source provenance manifest, wire installed-help precedence, and tighten Fast DDS SHM fallback cleanup.
+3. PR C: Expand behavior evals to at least 10 cases covering hidden flags, `/rosout`, SHM, bounded commands, filesystem/security path protection, and non-Humble verification.
+4. PR D: Add strict worker task brief and model-routing task classes/evals for command lookup, readonly diagnosis, and mutating operation planning.
+5. Merge each PR only after GitHub review approval and required checks pass, then sync `ros2-command-expert` and continue.
 
 ## Progress (WBS)
 
@@ -88,14 +87,20 @@
 - [x] (P3) Add PR A eval coverage — deliverable: trigger eval updates and 5+ behavior eval cases — verify: eval validators.
 - [x] (P4) Add workflow-contract review report — deliverable: `reports/workflow-contract-review/<slug>.md` with decision `submit` — verify: quality-gate artifact check.
 - [x] (P5) Verify PR A — deliverable: green repository validation — verify: `make verify`.
-- [ ] (P6) Publish and request review — deliverable: PR URL sent to reviewer channel — verify: GitHub PR exists and review request sent.
-- [ ] (P7) Review loop — deliverable: PR A merged into `ros2-command-expert` after approval — verify: merge SHA and synced base branch.
+- [x] (P6) Publish and request review — deliverable: PR #68 URL sent to reviewer channel — verify: `https://github.com/shunta-sato/agent-instructions-playbook/pull/68`.
+- [x] (P7) Review loop — deliverable: PR A merged into `ros2-command-expert` after approval — verify: merge commit `dd4b09f38a59619d81e32be356e009593f32bef0`.
+- [x] (P8) Create PR B feature branch — deliverable: `codex/ros2-command-expert-source-provenance` — verify: `git branch --show-current`.
+- [x] (P9) Implement PR B source provenance and fallback tightening — deliverable: `source-provenance.md`, wired reference loading, fallback cleanup contract, behavior evals — verify: local diff review.
+- [x] (P10) Verify PR B — deliverable: green validators and canonical verification — verify: `make build-release` and `make verify`.
+- [ ] (P11) Publish PR B and request review — deliverable: PR URL sent to reviewer channel — verify: GitHub PR exists and review request sent.
 
 ## Surprises & Discoveries
 
 - 2026-06-24: `SKILL.md` is 253 lines and already contains many command recipes that duplicate reference content.
 - 2026-06-24: Existing behavior eval schema is seed-only JSON and supports the requested `expected_decision`, `expected_findings`, and `expected_output_contains` fields.
 - 2026-06-24: After PR A edits, `SKILL.md` is 129 lines, `ros2-command-expert` has 8 references, 2 templates, and 7 trigger eval references.
+- 2026-06-24: PR #68 reviewer approved PR A and requested that source provenance be prioritized before expanding command-map claims.
+- 2026-06-24: Reviewer also asked for stricter Fast DDS fallback behavior: `command -v fastdds`, raw evidence preservation, cleanup only on explicit request, exact cleanup reporting, and no blind `/dev/shm/fastrtps*` deletion.
 
 ## Decision log
 
@@ -107,6 +112,10 @@
   - Options considered: pure description cleanup only, PR A from the proposed split, the smaller "first minimum GOAL" package.
   - Chosen: first minimum GOAL package.
   - Consequences: first PR includes description, compressed execution gate, risk gates/templates, trigger eval, and 5 behavior eval cases.
+- 2026-06-24: Make PR B a provenance/fallback slice before broader behavior expansion.
+  - Options considered: expand all remaining behavior evals now, add model routing next, prioritize source provenance and cleanup fallback.
+  - Chosen: prioritize source provenance and cleanup fallback.
+  - Consequences: reduces duplicated source scope and clarifies claim priority before adding more command-map claims.
 
 ## Post-Implementation Economy Audit
 
@@ -115,15 +124,16 @@
 | New code abstraction | None added. | keep none | Diff is Markdown/JSON skill, reference, template, and eval seed changes only. |
 | `risk-gates.md` reference | Separates execution risk classification from command catalog so future command syntax edits do not weaken safety gates. | keep | `SKILL.md` references it before proposed/executed command planning. |
 | `command-plan.md` and `execution-record.md` templates | Make concrete-name extraction, approval, validation, artifacts, and claim boundary reusable for agents and future workers. | keep | Behavior evals check command-plan expectations and validation requirements. |
+| `source-provenance.md` reference | Centralizes repository/commit scope, installed-help precedence, and blocked claims so command references do not drift independently. | keep | `SKILL.md`, command references, and behavior evals route source-sensitive answers through it. |
 
 ## Handoff
 
-- Current branch / commit: `codex/ros2-command-expert-contract-pr-a`, uncommitted changes.
-- What is done: GOAL read, base branch synced, feature branch created, ExecPlan started, PR A execution-contract files, eval seeds, workflow-contract report, `make build-release`, `make verify`, and quality gate.
+- Current branch / commit: `codex/ros2-command-expert-source-provenance`, uncommitted PR B changes.
+- What is done: PR #68 merged into `ros2-command-expert`; PR B branch created; source provenance/fallback edits complete; `make build-release` and `make verify` pass.
 - What is not done: commit, PR creation, review request, review loop.
 - How to run: `make verify`.
 - How to test: `python3 scripts/validate_skills.py`; `python3 scripts/validate_skill_trigger_evals.py`; `python3 scripts/validate_skill_behavior_evals.py`; `python3 scripts/generate_agent_index.py --check`.
-- Known risks / open questions: source provenance and model routing may need later PRs to avoid overloading PR A.
+- Known risks / open questions: model routing, strict worker brief, and broader behavior eval expansion remain later PRs.
 - Next 1-3 steps: stage in-scope files; commit/push/open PR; request review.
 - Pointers: `.agents/skills/ros2-command-expert/SKILL.md`, `.agents/skills/ros2-command-expert/references/task-index.md`, `evals/skill-triggers/ros2-command-expert.json`.
 
@@ -144,7 +154,7 @@
 
 ## Outcomes & Retrospective
 
-- What shipped / merged: pending PR A publication.
+- What shipped / merged: PR #68 merged PR A execution-contract foundation into `ros2-command-expert`.
 - What went well: `SKILL.md` was reduced from 253 to 129 lines while keeping command details in references; validators accept the new behavior eval file.
 - What went wrong: none observed in PR A implementation.
-- Follow-ups / tech debt tickets: later PRs still need source provenance expansion, additional behavior evals, model-routing task classes, and strict worker brief.
+- Follow-ups / tech debt tickets: later PRs still need additional behavior evals, model-routing task classes, and strict worker brief.
