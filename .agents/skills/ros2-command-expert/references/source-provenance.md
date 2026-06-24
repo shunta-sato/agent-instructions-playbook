@@ -25,6 +25,14 @@ If `ROS_DISTRO` is unset or not `humble`, do not treat bundled Humble source as 
 
 Related Humble facts named in command references, such as `rclpy.qos.*.short_keys()`, `rcl_interfaces/msg/Log`, and `rcl/include/rcl/logging_rosout.h`, are claim-site anchors rather than a blanket source scope. If a task hinges on those details in a target image, verify the installed package/help/source before making an exact claim.
 
+For claim-site anchors, report the evidence class explicitly:
+
+```text
+Claim-site anchor: <file or API>; target verification: <installed help, observed command, installed source, or not checked>.
+```
+
+If no target verification was performed, phrase the claim as a bundled-Humble-source statement, not as a fact about the active target image.
+
 ## Reference Ownership
 
 - `command-map.md` owns command groups, verbs, option placement, common graph options, and source-backed return behavior for the core `ros2cli` package family.
