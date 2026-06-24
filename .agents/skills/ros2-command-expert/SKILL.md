@@ -1,37 +1,64 @@
 ---
 name: ros2-command-expert
-description: "Use when Codex needs source-backed ROS 2 Humble CLI guidance for `ros2` graph inspection, topic/service/action interaction, parameters, lifecycle, components, packages, interfaces, doctor, daemon, multicast, `/rosout`, bag, launch, or security workflows, especially when exact option placement, discovery/QoS/YAML semantics, hidden names, blocking behavior, tmux capture, output filtering, plugins, or enclaves matter."
+description: "Use when choosing, checking, or executing ROS 2 Humble `ros2` CLI commands where exact command syntax, runtime safety, discovery behavior, QoS, bag/launch/security options, or evidence-backed interpretation matters."
 metadata:
   short-description: Source-backed ROS 2 Humble CLI guide
 ---
 
 # ROS 2 Command Expert
 
-## Scope
+## Purpose
 
-Use this skill to choose and run `ros2` commands correctly, then interpret their output from implementation evidence.
+Use this skill to plan, check, execute, and interpret ROS 2 Humble `ros2` CLI commands with source-backed command semantics, explicit runtime risk gates, and evidence-backed claim boundaries.
 
-Source basis: ROS 2 Humble `ros2cli` source, branch `humble`, commit `30d4600fa0b74aaf0fccd6a855a56b902dd79b47`, `ros2cli` package version `0.18.18`. Additional Humble coverage includes `rosbag2`, `launch_ros`, `launch`, and `sros2`; see `references/bag-launch-security.md` for their exact refs.
+## When To Use
 
-This skill is intended to apply to ROS 2 Humble. Before relying on an exact behavior in another distro or robot image, verify the installed CLI with `ros2 --help` and `ros2 <command> <verb> -h`; non-Humble distributions may differ.
+Use this skill for:
 
-Do not assume any source checkout path, repository arrangement, or host-specific folder. Use source file names only as evidence anchors.
+- choosing exact `ros2` commands and option placement
+- checking command syntax, YAML payloads, hidden-name flags, QoS options, daemon/discovery behavior, or blocking behavior
+- running read-only graph inspection or bounded ROS observations
+- planning mutating ROS commands with validation and stop conditions
+- interpreting `ros2` stdout/stderr, `/rosout`, bag, launch, security, daemon, discovery, QoS, or YAML behavior
+
+Do not use this skill as the only authority for:
+
+- ROS 2 application code changes; use `dev-workflow` and code-focused skills
+- DDS transport root-cause analysis beyond CLI-visible evidence
+- production robot operation without explicit risk gate and user approval
+- performance, real-time, zero-copy, safety, or transport claims without lower-layer evidence or measurement
+
+## Required Flow
+
+1. Classify the task: command lookup, command check, read-only inspection, bounded observation, mutating operation plan, executed operation, or output interpretation.
+2. Classify operation risk using `references/risk-gates.md` before proposing or running commands.
+3. Load the minimum reference needed for the task.
+4. Extract concrete arguments from the user task or from discovered command output.
+5. Choose the exact command form and validate option placement with installed help when needed.
+6. Decide whether the command is proposed only or executed.
+7. If executed, record environment, stdout/stderr artifacts, exit code, validation command, validation result, and cleanup/stop status.
+8. State claim boundaries and caveats.
+
+Stop instead of guessing when the task lacks a concrete target, the operation would mutate state without approval, the command could affect robot behavior, the output path already exists and would be overwritten, installed help does not support the needed option, or no validation command can be defined for a mutating operation.
 
 ## Reference Loading
 
 Load only what the task needs:
 
-- Read `references/task-index.md` first when the user describes a goal in natural language and you need to choose the correct `ros2` command(s). It maps tasks to commands, expected outcomes, validation steps, and common traps.
-- Read `references/command-map.md` for command groups, verbs, options, defaults, and return behavior.
-- Read `references/execution-patterns.md` for safe command recipes, command composition, `/rosout` log collection, and tmux patterns.
-- Read `references/implementation-notes.md` for non-obvious implementation details: daemon, discovery, hidden names, QoS, YAML conversion, blocking calls, `eval` filters, and source caveats.
-- Read `references/bag-launch-security.md` for `ros2 bag`, `ros2 launch`, and `ros2 security`: exact options, storage/plugin behavior, launch argument parsing, XML/YAML launch support, and SROS2 keystore/enclave workflows.
+- `references/risk-gates.md`: required before any proposed or executed command plan.
+- `references/task-index.md`: natural-language task to command mapping, common traps, high-frequency exact forms.
+- `references/command-map.md`: command groups, verbs, option placement, defaults, and return behavior.
+- `references/execution-patterns.md`: bounded observations, tmux/timeout/Python fallbacks, `/rosout`, long-running commands, and safe recipes.
+- `references/bag-launch-security.md`: `ros2 bag`, `ros2 launch`, and `ros2 security` options and artifact safety.
+- `references/implementation-notes.md`: daemon, discovery, hidden names, QoS, YAML conversion, blocking calls, `eval` filters, and source caveats.
+- `references/answer-contract.md`: final answer and execution-record requirements.
+- `references/neighbor-skills.md`: boundaries with adjacent ROS, DDS, safety, and workflow skills.
 
-Within one session, cache both reference knowledge and environment checks. Do not repeatedly re-read the same reference files or rebuild one-off scripts for the same task family. Prefer direct `ros2` commands and the fixed recipes in this Skill; use custom Python only when native `ros2`, `timeout`, `tmux`, and simple shell post-processing cannot satisfy the request.
+Within one session, cache reference knowledge and environment checks. Re-read only when the target, shell environment, distro, command family, or evidence requirement changes.
 
-## Cached Preflight
+## Environment Preflight
 
-1. Confirm the ROS environment once per stable execution context before running graph-dependent commands:
+Before executing graph-dependent commands, record the active target context once per stable shell/session:
 
 ```bash
 command -v ros2
@@ -40,214 +67,63 @@ ros2 --help
 ros2 daemon status
 ```
 
-Do not repeat this full preflight after it has already succeeded in the same session, same target, and same ROS environment. Treat `ros2` availability, `ROS_DISTRO`, `ROS_DOMAIN_ID`, `RMW_IMPLEMENTATION`, daemon status, `tmux` availability, and `timeout` availability as cached facts for the rest of the session. Re-check only when the target or shell environment changes, a new subagent/non-interactive shell may not inherit setup, `ROS_DOMAIN_ID` or `RMW_IMPLEMENTATION` changes, a command fails as if `ros2` is missing, the daemon appears stale, or an exact installed option needs verification.
-
-If `ROS_DISTRO` is set and is not `humble`, treat this skill as Humble source evidence and verify the active installation's help before giving exact option claims.
-
-If a fresh non-interactive shell, subagent, or `bash -lc` wrapper loses the ROS environment, source the active installation's setup file in that same shell before running `ros2`. Do not hard-code a host-specific path unless it exists on the target:
+If `ROS_DISTRO` is set and is not `humble`, treat the bundled source evidence as non-authoritative for exact installed options until help verifies them:
 
 ```bash
-command -v ros2 >/dev/null 2>&1 || { [ -n "${ROS_DISTRO:-}" ] && [ -f "/opt/ros/$ROS_DISTRO/setup.bash" ] && . "/opt/ros/$ROS_DISTRO/setup.bash"; }
-command -v ros2
-```
-
-2. Decide discovery mode:
-
-- Use the default daemon path for quick graph inspection.
-- Use `--no-daemon --spin-time <seconds>` on commands that support it when graph state must be fresh, when the daemon may be stale, after changing `ROS_DOMAIN_ID` or `RMW_IMPLEMENTATION`, or during tests.
-- Do not run `ros2 daemon stop` or `ros2 daemon stop && ros2 daemon start` as routine preflight, first response, or generic graph refresh. In Discovery Server, high-load, or robot-container environments it can leave the daemon-backed graph emptier and it will not repair lower-layer DDS discovery/liveliness problems. Use daemon restart only when the task is specifically daemon diagnosis/recovery, the user explicitly approves it, or you are in an isolated test after recording both default and `--no-daemon` results.
-- For verbs that do not expose `--no-daemon --spin-time`, run the default command first. If stale daemon state is plausible, cross-check with related direct graph commands that do support `--no-daemon`; report the discrepancy instead of restarting the daemon.
-- In Discovery Server or heavily loaded systems, `--no-daemon --spin-time` can transiently return an empty or incomplete graph even when the default daemon path sees nodes. If default `ros2 node list` finds a node but direct `--no-daemon` does not, do not conclude the node disappeared; record both and prefer the path that matches the user's observed graph unless the task is specifically daemon freshness diagnosis.
-
-3. For long-running or interactive commands, prefer `tmux` only after verifying it exists once in the current execution context:
-
-```bash
-command -v tmux >/dev/null 2>&1 && echo "tmux available" || echo "tmux not installed"
-```
-
-Use `tmux` for persistent log capture, persistent publishers, interactive `run`, `bag record`, looping `bag play`, `launch`, and multi-command observation. Use shell `timeout` for bounded automation only after confirming it exists; some robot images lack GNU/coreutils `timeout`. If `tmux` or `timeout` is absent, prefer a small Python `subprocess` wrapper that sends SIGINT before SIGTERM/SIGKILL when graceful shutdown matters. Avoid dynamic shell PID-stop recipes such as `kill "$pid"` or `kill "$(cat file.pid)"` in safety-gated agent shells; if a human must use shell `kill`, first obtain the actual numeric PID and issue a separate literal `kill -INT <numeric-pid>` or `kill -TERM <numeric-pid>` command. This matters for `topic echo`, `topic hz`, `topic bw`, `topic delay`, `topic pub` without `--once/--times`, `service call -r`, `action send_goal`, `multicast receive`, `doctor hello`, `component standalone`, and long-running launch/bag commands.
-
-If `timeout` is missing but `tmux` exists, use a tmux observation session before generating Python. Start `ros2 topic echo` in tmux with output redirected to files, wait the observation window, then send `C-c` to the tmux session. If the agent runtime does not preserve tmux sessions, use an explicit detached process fallback before Python: start with `setsid`/`nohup`, write stdout/stderr and a PID file, verify the PID is alive, and record a literal stop command. Do not leave unmanaged detached collectors behind.
-
-If a tmux session appears "not preserved", diagnose before falling back: the command inside tmux may have exited immediately because of quoting, a missing setup in that shell, a bad output path, an unsupported option, or an empty finite command. Re-run once with `remain-on-exit` behavior by appending an rc file and short sleep, then inspect `tmux list-sessions`, `tmux capture-pane`, stdout, stderr, and the rc file. Do not report that tmux itself is unusable unless a simple `tmux new-session -d -s probe 'sleep 60'` also disappears from `tmux list-sessions`.
-
-4. Treat these commands as mutating or operationally significant: `topic pub`, `service call`, `action send_goal`, `param set/delete/load`, `lifecycle set`, `component load/unload/standalone`, `pkg create`, `run`, `bag record`, `bag play`, `bag convert`, `bag reindex`, `launch`, and `security create_*`/`generate_*`.
-
-5. Quote YAML payloads with single quotes in shells:
-
-```bash
-ros2 topic pub -1 /chatter std_msgs/msg/String '{data: hello}'
-ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts '{a: 1, b: 2}'
-timeout 20s ros2 action send_goal /fibonacci example_interfaces/action/Fibonacci '{order: 5}'
-```
-
-## Execution Workflow
-
-1. Classify the task:
-
-- Graph inventory: `node`, `topic`, `service`, `action`, `param list`, `lifecycle nodes`, `component list`.
-- Message/service/action interaction: `topic echo/pub/hz/bw/delay`, `service call`, `action send_goal`.
-- Static installed metadata: `interface`, `pkg`, `run`, `component types`, `bag list`.
-- System diagnosis: `doctor`, `doctor hello`, `multicast`, `daemon`, `extensions`.
-- Bag/launch/security operations: `bag record/play/info/reindex/convert/list`, `launch`, `security create_*`, `security generate_*`, `security list_*`.
-
-2. Copy concrete names from the task into commands. Do not replace a provided topic, service, action, node, container, enclave, bag, package, executable, parameter, or type with placeholders like `/topic`, `/node`, `Type`, or `sample_bag`. Do not copy example names from this Skill when the task provides different names.
-
-   Before finalizing a command, self-check every leading-slash ROS name in it: except required internal service names such as `/rosbag2_player/play_next`, `/rosbag2_recorder/snapshot`, and diagnostic paths such as `/dev/shm`, each leading-slash name should appear in the task text. If the task says `/rosout`, do not answer with `/odom`; if it says `/fixture_node`, do not answer with `/_hidden_node`; if it says `/fibonacci`, do not answer with `/navigate_to_pose`. Interface types such as `std_msgs/msg/String` are not topic names; never convert them into `/msg/String`.
-
-   Never output these placeholder/example artifacts unless the user task literally contains them: `example_package`, `/unknown`, `/topic`, `/node`, `/msg/String`, `/srv/AddTwoInts`, `/action/Fibonacci`, `/subscribers/services`, `/count`, `path`, `record`, `play`, `with`, `params.yaml`, or `Category: ...` as the only note. These are signs that you copied a template instead of solving the task.
-
-   For batch/exam-style answering, do not map from a category label alone. Read each task sentence and extract concrete arguments from that sentence every time: topic/service/action/node names, package names, executable names, bag paths, YAML file names, policy/keystore names, and requested flags.
-
-   If the task asks to verify, include the second verification command in the answer. If the task asks to "decide", "explain", "why", "risk", "caveat", "interpret", or "what not to do", the answer notes must state the reason/caveat, not just "safe" or "bounded".
-
-3. Use help before unfamiliar options:
-
-```bash
+ros2 --help
 ros2 <command> -h
 ros2 <command> <verb> -h
 ```
 
-4. Place command-level hidden flags correctly:
+If a fresh non-interactive shell loses the ROS environment, source the active installation only after verifying the setup file exists. Do not hard-code host-specific setup paths as facts.
 
-- `ros2 topic --include-hidden-topics ...` is command-level. Some topic verbs duplicate it, but not all.
-- `ros2 service --include-hidden-services ...` is command-level. `list/find` also duplicate it.
-- Node/parameter/lifecycle hidden controls are verb-level: `node list -a`, `node info --include-hidden`, `param ... --include-hidden-nodes`, `lifecycle ... --include-hidden-nodes`, `lifecycle nodes -a`.
+## Concrete Argument Contract
 
-5. Prefer bounded forms:
+Copy concrete topic, service, action, node, container, enclave, bag, package, executable, parameter, type, YAML file, policy, keystore, and output path names from the user task or observed evidence. Do not substitute placeholders like `/topic`, `/node`, `/service_name`, `/container`, `Type`, `sample_bag`, or `my_pkg` when the task supplies real names.
 
-- `ros2 topic echo --once ...`
-- `ros2 topic pub -1 ...` or `ros2 topic pub --times N ...`; add `--keep-alive N` when testing Transient Local late-subscriber behavior.
-- shell `timeout 20s ros2 action send_goal ...`; do not use `action send_goal --timeout` unless installed help explicitly lists it.
-- shell `timeout 10s ros2 ...` around commands implemented as indefinite loops.
+Before finalizing, self-check every leading-slash ROS name in the command. Except internal helper service names such as `/rosbag2_player/play_next`, `/rosbag2_recorder/snapshot`, `/rosout`, and diagnostic paths such as `/dev/shm`, each leading-slash name must come from the task or discovered evidence.
 
-6. Validate with a second signal. Example: after `topic pub`, check `topic echo --once`; after `param load`, run `param dump`; after `component load` or `component unload`, run `component list`; after `lifecycle set`, run `lifecycle get`; after `bag reindex`, run `bag info`.
+Use `templates/command-plan.md` for mutating, robot-affecting, destructive filesystem/security, ambiguous, or reviewer-facing command plans.
 
-7. Prefer command reuse over ad hoc script generation. For bounded capture, use direct `timeout ... ros2 ... >stdout 2>stderr` when `timeout` is known to exist. Do not create a new Python heredoc for every `ros2 topic echo` or `/rosout` task; Python is a fallback for missing `timeout`/`tmux` or for unavoidable custom parsing.
+## Risk And Execution Rules
 
-## High-Value Defaults
+- `read_only`: may run after environment preflight; record command, exit code, and key output.
+- `bounded_observation`: may run only with an explicit bound or controlled cleanup path; record stdout/stderr artifacts and stop method.
+- `mutating_graph_or_node_state`: propose a command plan first unless execution was explicitly requested; require validation command and exact target names.
+- `robot_affecting_or_runtime_control`: require explicit user approval before execution; prefer dry-run, help inspection, or isolated simulation unless the user confirms the target.
+- `destructive_filesystem_or_security`: never delete or overwrite existing user artifacts unless explicitly authorized; use fresh paths by default and record path checks.
 
-- Fresh graph snapshot:
+For executed commands, fill `templates/execution-record.md` or the equivalent fields in the final answer. Token telemetry absence is not a correctness failure when scope and validation evidence are present.
 
-```bash
-ros2 node list --no-daemon --spin-time 2
-ros2 topic list -t --no-daemon --spin-time 2
-ros2 service list -t --no-daemon --spin-time 2
-```
+## Output Expectations
 
-- Topic type to definition:
+For command recommendations, include:
 
-```bash
-ros2 topic type /topic >topic.type.out 2>topic.type.err
-type=$(grep -E '^[A-Za-z_][A-Za-z0-9_]*/(msg|srv|action)/[A-Za-z_][A-Za-z0-9_]*$' topic.type.out | head -1)
-[ -n "$type" ] && ros2 interface show "$type"
-```
+- task summary
+- risk class
+- exact command
+- why this command form is correct
+- validation command or why validation is not applicable
+- caveats and claim boundary
 
-- ROS log capture through `/rosout`:
+For executed commands, include:
 
-```bash
-ros2 topic echo /rosout rcl_interfaces/msg/Log --qos-reliability reliable --qos-durability transient_local --qos-depth 1000 --no-lost-messages
-ros2 topic echo /rosout rcl_interfaces/msg/Log --filter 'm.level >= 30' --no-lost-messages
-ros2 topic echo /rosout rcl_interfaces/msg/Log --filter 'm.name == "talker"' --no-lost-messages
-ros2 topic echo /rosout rcl_interfaces/msg/Log --field msg --filter '"timeout" in m.lower()' --no-lost-messages
-```
+- environment: `ROS_DISTRO`, `ROS_DOMAIN_ID`, `RMW_IMPLEMENTATION`, `ros2` path, daemon status when relevant
+- command intent and risk class
+- command(s), whether run or proposed only, exit code when run
+- stdout/stderr artifact paths when run
+- validation command and validation result
+- cleanup/stop status for bounded or long-running work
+- claim boundary: what can and cannot be concluded
 
-`ros2 topic echo` has no arbitrary log format/template option in Humble. Use YAML output, `--csv`, or `--field`; for a custom line format, post-process the output or write a subscriber outside `ros2cli`.
+## Rationalization Traps
 
-`/rosout` is only the ROS graph log topic. A running node can still write logs to launch stdout/stderr, journald, container logs, or an application log while publishing nothing on `/rosout`, especially when launched with `enable_rosout:=False`. To find which nodes can publish `/rosout`, use `ros2 topic info -v /rosout` first; it is cheaper than repeatedly scanning `--field name`. If `/rosout` has publishers but a target node is absent or a capture window is empty, check `ros2 node info /node_name`; do not conclude "the node is not logging" or "ROS 2 logs cannot be taken" from an empty `/rosout` window alone.
-
-For bounded `/rosout` collection, prefer `timeout` over generated Python when `timeout` is available:
-
-```bash
-timeout -s INT 10s ros2 topic echo /rosout rcl_interfaces/msg/Log --csv --no-lost-messages >rosout.csv 2>ros2.stderr
-```
-
-If `timeout` is unavailable and `tmux` is available:
-
-```bash
-session="rosout-$(date +%H%M%S)"
-tmux new-session -d -s "$session" 'ros2 topic echo /rosout rcl_interfaces/msg/Log --csv --no-lost-messages >rosout.csv 2>ros2.stderr'
-sleep 10
-tmux send-keys -t "$session" C-c
-```
-
-If tmux does not persist in the current agent runtime, use a detached process with a PID file and explicit cleanup:
-
-```bash
-out="rosout_$(date +%Y%m%d_%H%M%S)"
-mkdir -p "$out"
-sh -c 'setsid ros2 topic echo /rosout rcl_interfaces/msg/Log --csv --no-lost-messages >"$1/rosout.csv" 2>"$1/ros2.stderr" & echo $! >"$1/pid"' sh "$out"
-pid="$(cat "$out/pid")"
-ps -p "$pid" -o pid,stat,comm,args >"$out/process.txt"
-# later, stop with a literal numeric PID:
-# kill -INT <pid-from-$out/pid>
-```
-
-For a specific logger, filter in the `ros2` command rather than collecting all names repeatedly:
-
-```bash
-tmux new-session -d -s "$session" 'ros2 topic echo /rosout rcl_interfaces/msg/Log --csv --filter '\''m.name == "cocoda_logger_node"'\'' --no-lost-messages >cocoda_logger.csv 2>ros2.stderr'
-```
-
-For "which logger emitted the most `/rosout` records in 10 seconds", reuse this fixed shell recipe instead of inventing a new parser:
-
-```bash
-out="rosout_$(date +%Y%m%d_%H%M%S)"
-mkdir -p "$out"
-printf '%s\n' 'timeout -s INT 10s ros2 topic echo /rosout rcl_interfaces/msg/Log --csv --no-lost-messages' >"$out/commands.log"
-timeout -s INT 10s ros2 topic echo /rosout rcl_interfaces/msg/Log --csv --no-lost-messages >"$out/rosout.csv" 2>"$out/ros2.stderr"
-rc=$?
-printf 'exit=%s\n' "$rc" >>"$out/commands.log"
-awk -F, 'NF >= 8 {count[$4]++} END {for (name in count) print count[name], name}' "$out/rosout.csv" | sort -nr >"$out/by_logger.txt"
-top="$(awk 'NR == 1 {print $2}' "$out/by_logger.txt")"
-[ -n "$top" ] && awk -F, -v name="$top" '$4 == name' "$out/rosout.csv" >"$out/top_logger.csv"
-```
-
-Humble `--csv` has no header; for `rcl_interfaces/msg/Log`, the useful columns are `stamp.sec, stamp.nanosec, level, name, msg, file, function, line`. Level numbers are `10 DEBUG`, `20 INFO`, `30 WARN`, `40 ERROR`, `50 FATAL`.
-
-Separate middleware stderr from `/rosout` data when collecting logs:
-
-```bash
-ros2 topic echo /rosout rcl_interfaces/msg/Log --no-lost-messages >rosout.yaml 2>ros2.stderr
-```
-
-If stderr, or in some environments stdout, contains `RTPS_TRANSPORT_SHM Error`, do not classify the `ros2` CLI command as failed from that message alone; use the separate `fastdds-shm-triage` skill. For machine parsing, keep raw stdout/stderr artifacts, strip ANSI color escapes, and filter SHM diagnostic lines out of stdout before parsing ROS YAML or scalar output.
-
-```bash
-python3 -c 'import re,sys; ansi=re.compile(r"\x1b\[[0-9;]*[A-Za-z]"); [sys.stdout.write(s) for line in sys.stdin if "RTPS_TRANSPORT_SHM" not in (s:=ansi.sub("", line)) and "Failed init_port fastrtps_port" not in s]' <rosout.raw.yaml >rosout.yaml
-```
-
-When using `fastdds shm clean` directly, run it once to remove zombies and a second time to confirm `0 zombie ... cleaned`; continued port errors after that indicate a live IPC, permission, container, or transport configuration issue, not just stale files.
-
-- Safe one-shot publish/observe loop:
-
-```bash
-timeout 10s ros2 topic echo --once /topic pkg/msg/Type
-ros2 topic pub -1 -w 1 --keep-alive 2 /topic pkg/msg/Type '{field: value}'
-```
-
-- Parameter round trip:
-
-```bash
-ros2 param list /node
-ros2 param dump /node > node.params.yaml
-ros2 param load /node node.params.yaml
-ros2 param get /node parameter_name
-```
-
-- Filesystem-mutating commands:
-
-Use a new output path for `bag record`, `pkg create`, and security keystores/artifacts. `ros2 bag record -o` rejects an existing directory and a stale metadata-less bag directory will make later `bag info`, `bag play`, or `bag convert` fail. `ros2 pkg create` and `ros2 security create_keystore` also fail when the target already exists; choose a unique destination instead of deleting unless deletion was explicitly requested.
-
-## Source Evidence Discipline
-
-When explaining behavior, name the implementation file or symbol. Important anchors:
-
-- CLI framework: `ros2cli/ros2cli/cli.py`, `command/__init__.py`, `entry_points.py`.
-- Daemon and discovery: `ros2cli/ros2cli/node/strategy.py`, `node/direct.py`, `node/daemon.py`, `node/network_aware.py`, `daemon/__init__.py`.
-- Topic QoS/YAML: `ros2topic/ros2topic/api/__init__.py`, `verb/echo.py`, `verb/pub.py`, `verb/hz.py`, `verb/bw.py`, `verb/delay.py`.
-- Parameters: `ros2param/ros2param/api/__init__.py`, `verb/*.py`.
-- Services/actions/components/lifecycle: their package `api/__init__.py` and `verb/*.py`.
-- Bag/launch/security: `ros2bag/ros2bag/verb/*.py`, `ros2launch/ros2launch/command/launch.py`, `ros2launch/ros2launch/api/api.py`, `launch/launch/launch_service.py`, `sros2/sros2/verb/*.py`.
-
-Do not claim real-time, zero-copy, transport, or production behavior from CLI source alone. Mark those as requiring runtime measurement or lower-layer source evidence.
+| Trap | Required response |
+| --- | --- |
+| "This is just a quick `ros2 topic pub`." | Treat it as mutating; produce a command plan and validation command before execution. |
+| "The daemon might be stale, restart it." | Do not restart as routine refresh; use direct graph commands with `--no-daemon --spin-time` when supported. |
+| "The example command is close enough." | Extract concrete names from the task and replace every placeholder before answering. |
+| "No `/rosout` messages appeared, so the node is not logging." | Report the observation window and check publishers/node info before absence claims. |
+| "Timeout is probably available." | Verify `timeout` once or use the tmux/Python fallback contract. |
+| "SHM text means the ROS command failed." | Separate CLI exit/output from transport diagnostics and preserve raw stdout/stderr. |
+| "A reviewer suggested the command, so use it." | Re-check installed help, task names, risk gate, and validation requirement. |
