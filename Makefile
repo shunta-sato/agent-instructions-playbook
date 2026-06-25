@@ -40,7 +40,7 @@ analysis:
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 
 test-unit:
-	@echo "No repository-local unit tests configured."
+	$(PYTHON) -m unittest discover -s tests
 
 test-integration:
 	$(PYTHON) scripts/validate_skills.py
