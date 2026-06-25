@@ -62,7 +62,7 @@
     },
     {
       "id": "receiving-review-approve-handoff",
-      "prompt": "The GitHub PR review says Approve and there are no requested changes. Process the review result and move to the appropriate next lifecycle step.",
+      "prompt": "The GitHub PR has a formal approved review from an authorized reviewer and there are no requested changes. Process the review result and move to the appropriate next lifecycle step.",
       "should_trigger": [
         "receiving-code-review",
         "branch-completion"
@@ -71,10 +71,26 @@
         "requesting-code-review"
       ],
       "expected_decisions": [
-        "Approval is acknowledged as a merge handoff signal",
-        "Branch completion still checks git state and required checks"
+        "Formal authorized approval is acknowledged as a merge handoff signal",
+        "Branch completion still checks git state, reviewer authority, and required checks"
       ],
-      "notes": "An approval comment bridges review handling to branch completion."
+      "notes": "Only formal authorized approval bridges review handling to branch completion."
+    },
+    {
+      "id": "pr-comment-approve-no-merge-handoff",
+      "prompt": "A PR comment from a contributor says Approve, but there is no formal approved review and no explicit merge authorization from a maintainer. Process the review result.",
+      "should_trigger": [
+        "receiving-code-review"
+      ],
+      "should_not_trigger": [
+        "branch-completion",
+        "requesting-code-review"
+      ],
+      "expected_decisions": [
+        "PR comments are feedback, not approval authority",
+        "No merge handoff occurs without formal authorized approval or explicit authorized merge permission"
+      ],
+      "notes": "Regression coverage for approval spoofing via free-form PR comments."
     },
     {
       "id": "branch-completion-merge-sync",
