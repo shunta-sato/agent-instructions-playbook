@@ -135,10 +135,17 @@ def validation_commands(raw_results: list[list[str]] | None) -> list[dict[str, A
 def validation_passed(validation: dict[str, Any]) -> bool:
     if validation.get("blocker"):
         return False
-    if "passed" in validation:
-        return bool(validation["passed"])
     commands = validation.get("commands", [])
-    return bool(commands) and all(command.get("passed") is True for command in commands)
+    if not isinstance(commands, list) or not commands:
+        return False
+    return all(
+        isinstance(command, dict)
+        and isinstance(command.get("cmd"), str)
+        and bool(command["cmd"].strip())
+        and isinstance(command.get("exit_code"), int)
+        and command.get("passed") is True
+        for command in commands
+    )
 
 
 def quality_gate_allows_acceptance(value: Any) -> bool:
