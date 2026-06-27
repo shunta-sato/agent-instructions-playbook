@@ -100,8 +100,8 @@
 ## Progress (WBS)
 
 - [x] (P1) Repo inspection helpers — deliverable: scripts, template, skill update, eval update, workflow report — verify: helper smoke commands and `make verify` passed.
-- [ ] (P1R) PR1 review loop — deliverable: PR, review request, review disposition, merge — verify: approval/merge state.
-- [ ] (P2) Domain scaffold — deliverable: template skill, references, domain routing table, workflow report — verify: `make verify`.
+- [x] (P1R) PR1 review loop — deliverable: PR, review request, review disposition, merge — verify: PR #76 approved in the requested ChatGPT thread and squash-merged to `main` at `2c903aa`.
+- [x] (P2) Domain scaffold — deliverable: template skill, references, domain routing table, workflow report — verify: `make verify` passed.
 - [ ] (P2R) PR2 review loop — deliverable: PR, review request, review disposition, merge — verify: approval/merge state.
 - [ ] (P3) First domain skills — deliverable: three domain skills, references/examples, trigger evals, regenerated index, workflow report — verify: `make verify`.
 - [ ] (P3R) PR3 review loop — deliverable: PR, review request, review disposition, merge — verify: approval/merge state.
@@ -110,6 +110,7 @@
 
 - 2026-06-27: Working tree started with unrelated untracked function-design artifacts and `.DS_Store` files; they are out of scope and must not be staged.
 - 2026-06-27: `estimate_context_size.py --root .` correctly warned that root `AGENTS.md` is slightly over 8 KiB; this is evidence that the warning path works, not a PR1 blocker.
+- 2026-06-27: `report_skill_inventory.py --check` warns that `preflight-domain-template` has no trigger eval coverage. This is accepted for PR2 because the template skill is an authoring scaffold; executable domain skill eval coverage is PR3 scope.
 
 ## Decision log
 
@@ -129,14 +130,15 @@
 | `inspect_repo.py` collector module | Keeps repo fact collection repeatable while preserving human decision ownership. | keep | Smoke output separates confirmed/inferred/unknown and lists secret-like paths without opening them. |
 | `estimate_context_size.py` collector module | Provides a lightweight preflight size warning without adding tokenizer dependencies. | keep | Smoke output warns on root `AGENTS.md` over 8 KiB. |
 | `check_agent_docs.py` collector module | Encodes repeatable AGENTS/context structural checks as warnings, not decisions. | keep | Smoke output reports pass/warning/human-decision sections. |
+| `preflight-domain-template` skill | Standardizes future domain skill outputs without making the orchestrator skill larger. | keep | `validate_skills.py` passes and the template links four explicit reference artifacts. |
 
 Budget note: PR1 exceeded the initial 550-line target because each requested CLI needs standalone secret-like path filtering, hidden-path handling, structured output, and Markdown rendering. I kept the code in the requested three scripts rather than adding a fourth shared module, so review scope remains aligned with the GOAL file list. Final script line count is 810, under the accepted 850-line ceiling.
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/preflight-inspection-helpers` from `main` at `7edb9de`.
-- What is done: GOAL read; route selected; multi-PR ExecPlan created; PR1 helper scripts, repo-inspection template, preflight-engineering helper guidance, preflight trigger eval updates, workflow contract report, helper smoke verification, and `make verify`.
-- What is not done: PR1 review and merge; PR2/PR3.
+- Current branch / commit: `codex/preflight-domain-scaffold` from `main` at `2c903aa`.
+- What is done: PR1 merged as #76; PR2 domain template skill, reference templates, generated indexes, domain routing table, workflow contract report, and `make verify` completed.
+- What is not done: PR2 review and merge; PR3.
 - How to run: `make verify`; helper smoke commands:
   - `python3 -m py_compile .agents/skills/preflight-engineering/scripts/inspect_repo.py .agents/skills/preflight-engineering/scripts/estimate_context_size.py .agents/skills/preflight-engineering/scripts/check_agent_docs.py`
   - `python3 .agents/skills/preflight-engineering/scripts/inspect_repo.py --root . --markdown --max-depth 3`
@@ -144,7 +146,7 @@ Budget note: PR1 exceeded the initial 550-line target because each requested CLI
   - `python3 .agents/skills/preflight-engineering/scripts/check_agent_docs.py --root .`
 - How to test: run helper scripts against `--root .`, then run `make verify`.
 - Known risks / open questions: external review can request additional safeguards or template changes.
-- Next 1-3 steps: publish PR1 and request review.
+- Next 1-3 steps: publish PR2 and request review.
 - Pointers: start with `.agents/skills/preflight-engineering/SKILL.md` and this plan.
 
 ## Validation & Acceptance

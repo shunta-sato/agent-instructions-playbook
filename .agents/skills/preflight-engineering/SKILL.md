@@ -37,6 +37,17 @@ This skill prepares the work environment; it does not implement product fixes, r
    - After risk classification, select applicable domain preflight skills when a risk surface needs specialist invariants or first-file routing.
    - Domain preflight skills are helpers, not replacements for this orchestrator. Merge their outputs into `AGENTS.md` proposals, `.agent/ctx` maps, skill routing, test routing, approval/reviewer notes, and the final handoff prompt.
 
+## Domain preflight routing
+
+| Risk surface | Domain skill | Use when |
+|---|---|---|
+| auth/session/token | `preflight-auth-session` (candidate) | OAuth, refresh token, JWT, cookie, CSRF, login redirect |
+| public API/generated client | `preflight-api-compat` (candidate) | OpenAPI, GraphQL, public error shape, generated clients |
+| DB/migration/persistence | `preflight-db-migration` (candidate) | schema change, migration, rollback, backfill |
+| security-sensitive code | `preflight-security-sensitive` (candidate) | secrets, logging, injection, SSRF, dependency risk |
+| infra/deploy/runtime config | `preflight-infra-deploy` (candidate) | deploy config, IaC, env vars, production runtime |
+| billing/payment | `preflight-billing-payment` (candidate) | payment flow, invoice, subscription, external money movement |
+
 3. Extract invariants.
    - Keep safety, compatibility, generated-file, destructive-operation, approval, and test-command invariants.
    - Exclude style rules that lint or formatters already enforce.

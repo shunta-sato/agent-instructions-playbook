@@ -57,6 +57,7 @@ skill|implementation-economy|Implementation complexity budget|.agents/skills/imp
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
+skill|preflight-domain-template|Domain preflight skill template|.agents/skills/preflight-domain-template/SKILL.md
 skill|preflight-engineering|Preflight agent context and handoff|.agents/skills/preflight-engineering/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
