@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "preflight-full-multi-service-auth",
+      "prompt": "Before implementing an OAuth refresh-token expiry fix that spans backend auth, frontend redirects, public API compatibility, regression tests, and subagent investigation, prepare the repo map, AGENTS.md updates, skill routing, test routing, cache readiness, and commander handoff prompt.",
+      "should_trigger": [
+        "preflight-engineering"
+      ],
+      "should_not_trigger": [
+        "project-initialization",
+        "quality-gate"
+      ],
+      "expected_artifacts": [
+        "Preflight result",
+        "Development commander handoff prompt",
+        "Cache readiness check"
+      ],
+      "expected_decisions": [
+        "Full preflight is required for multi-service auth and subagent work",
+        "Secret values are not read; only paths and patterns are inventoried"
+      ],
+      "expected_output_contains": [
+        "Repository readiness score",
+        "Subagent plan",
+        "Skill routing map"
+      ]
+    },
+    {
+      "id": "preflight-cache-stable-prefix",
+      "prompt": "We will reuse this repository for repeated long-running agent work. Prepare compact AGENTS.md guidance, .agent/ctx maps, skill routing, and a prompt-cache-safe shared context prefix before assigning subagents.",
+      "should_trigger": [
+        "preflight-engineering"
+      ],
+      "should_not_trigger": [
+        "test-driven-development",
+        "bug-investigation-and-rca"
+      ],
+      "expected_decisions": [
+        "Stable guidance is kept before volatile run-specific data",
+        "Subagent shared context is fixed before worker-specific scopes"
+      ],
+      "expected_output_contains": [
+        "Cache readiness",
+        ".agent/ctx",
+        "Development commander handoff prompt"
+      ]
+    },
+    {
+      "id": "preflight-negative-small-typo",
+      "prompt": "Fix one typo in a README sentence. The repo already has clear AGENTS.md guidance and the change does not affect tests, APIs, auth, infra, or multiple files.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-engineering",
+        "requirements-engineering",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Preflight is skipped with a short reason because the change is a small one-file edit"
+      ]
+    }
+  ]
+}
