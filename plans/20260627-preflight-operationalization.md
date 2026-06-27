@@ -104,13 +104,14 @@
 - [x] (P2) Domain scaffold — deliverable: template skill, references, domain routing table, workflow report — verify: `make verify` passed.
 - [x] (P2R) PR2 review loop — deliverable: PR, review request, review disposition, merge — verify: PR #77 approved in the requested ChatGPT thread and squash-merged to `main` at `af9733f`.
 - [x] (P3) First domain skills — deliverable: three domain skills, references/examples, trigger evals, regenerated index, workflow report — verify: `make verify` passed.
-- [ ] (P3R) PR3 review loop — deliverable: PR, review request, review disposition, merge — verify: approval/merge state.
+- [x] (P3R) PR3 review loop — deliverable: PR, review request, review disposition, merge — verify: PR #78 received requested changes, was updated, re-approved in the requested ChatGPT thread, and squash-merged to `main` at `6fbb6c0`.
 
 ## Surprises & Discoveries
 
 - 2026-06-27: Working tree started with unrelated untracked function-design artifacts and `.DS_Store` files; they are out of scope and must not be staged.
 - 2026-06-27: `estimate_context_size.py --root .` correctly warned that root `AGENTS.md` is slightly over 8 KiB; this is evidence that the warning path works, not a PR1 blocker.
 - 2026-06-27: `report_skill_inventory.py --check` warns that `preflight-domain-template` has no trigger eval coverage. This is accepted for PR2 because the template skill is an authoring scaffold; executable domain skill eval coverage is PR3 scope.
+- 2026-06-27: PR3 review requested explicit no-secret/no-deploy/no-generated-client-edit boundaries in API/DB skills. The accepted fix added those boundaries to `preflight-api-compat` and `preflight-db-migration`, then `make verify` passed and re-review approved.
 
 ## Decision log
 
@@ -122,6 +123,10 @@
   - Options considered: rich scanner dependencies; standard library collectors.
   - Chosen: standard library collectors.
   - Consequences: outputs are conservative candidates, not authoritative static analysis.
+- 2026-06-27: Keep `preflight-security-sensitive`, `preflight-infra-deploy`, and `preflight-billing-payment` as candidate rows after this GOAL because the request explicitly scoped the first implemented domains to auth/session, API compatibility, and DB migration.
+  - Options considered: implement all listed domains now; candidate rows only for follow-up domains.
+  - Chosen: candidate rows only for follow-up domains.
+  - Consequences: the orchestrator can route known high-risk domains now without expanding this GOAL beyond the first three domain skills.
 
 ## Post-Implementation Economy Audit
 
@@ -139,17 +144,17 @@ Budget note: PR1 exceeded the initial 550-line target because each requested CLI
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/preflight-critical-domain-skills` from `main` at `af9733f`.
-- What is done: PR1 merged as #76; PR2 merged as #77; PR3 domain skills, references/examples, trigger evals, generated indexes, workflow contract report, and `make verify` completed.
-- What is not done: PR3 review and merge.
+- Current branch / commit: `codex/preflight-plan-finalization` from `main` at `6fbb6c0`.
+- What is done: PR1 #76, PR2 #77, and PR3 #78 are merged to `main`; requested repo inspection helpers, domain scaffold, first critical domain skills, trigger evals, reference templates/examples, generated indexes, workflow evidence, review loops, and merge loops are complete.
+- What is not done: optional follow-up candidate domain skills outside this GOAL.
 - How to run: `make verify`; helper smoke commands:
   - `python3 -m py_compile .agents/skills/preflight-engineering/scripts/inspect_repo.py .agents/skills/preflight-engineering/scripts/estimate_context_size.py .agents/skills/preflight-engineering/scripts/check_agent_docs.py`
   - `python3 .agents/skills/preflight-engineering/scripts/inspect_repo.py --root . --markdown --max-depth 3`
   - `python3 .agents/skills/preflight-engineering/scripts/estimate_context_size.py --root .`
   - `python3 .agents/skills/preflight-engineering/scripts/check_agent_docs.py --root .`
 - How to test: run helper scripts against `--root .`, then run `make verify`.
-- Known risks / open questions: external review can request additional safeguards or template changes.
-- Next 1-3 steps: publish PR3 and request review.
+- Known risks / open questions: `preflight-security-sensitive`, `preflight-infra-deploy`, and `preflight-billing-payment` remain candidate follow-ups.
+- Next 1-3 steps: none for this GOAL after this final plan record merges.
 - Pointers: start with `.agents/skills/preflight-engineering/SKILL.md` and this plan.
 
 ## Validation & Acceptance
@@ -168,6 +173,14 @@ Budget note: PR1 exceeded the initial 550-line target because each requested CLI
 ## Outcomes & Retrospective (fill when done)
 
 - What shipped / merged:
+  - PR #76: read-only preflight repo inspection helpers, output template, helper routing guidance, eval update.
+  - PR #77: `preflight-domain-template`, domain reference templates, candidate domain routing table.
+  - PR #78: `preflight-auth-session`, `preflight-api-compat`, `preflight-db-migration`, references/examples, trigger evals, generated index updates.
 - What went well:
+  - Splitting scripts, scaffold, and implemented domain skills kept review feedback focused.
+  - External review caught missing explicit non-goals in API/DB domain skills before merge.
 - What went wrong:
+  - The final ExecPlan status needed this small follow-up update because PR #78 merged before P3R/outcomes were recorded.
 - Follow-ups / tech debt tickets:
+  - Optional future skills: `preflight-security-sensitive`, `preflight-infra-deploy`, `preflight-billing-payment`.
+  - Optional future eval coverage for `preflight-domain-template` if scaffold-trigger warning noise becomes a problem.
