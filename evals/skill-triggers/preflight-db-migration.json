@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "preflight-db-migration-positive-schema-change",
+      "prompt": "Before implementing a database schema change with a migration and possible rollback, prepare DB migration invariants, first migration/schema files, validation test routing, approvals, reviewers, and handoff context.",
+      "should_trigger": [
+        "preflight-db-migration"
+      ],
+      "should_not_trigger": [
+        "test-driven-development"
+      ],
+      "expected_output_contains": [
+        "Domain preflight result",
+        "DB-NO-RUN",
+        "DB-ROLLBACK"
+      ],
+      "expected_decisions": [
+        "DB migration preflight runs before schema implementation and does not execute migrations"
+      ]
+    },
+    {
+      "id": "preflight-db-migration-positive-backfill-investigation",
+      "prompt": "Prepare DB migration preflight before assigning subagents to inspect rollback docs, ORM config, seed data, backfill jobs, old/new app compatibility, and migration validation commands.",
+      "should_trigger": [
+        "preflight-db-migration"
+      ],
+      "should_not_trigger": [
+        "project-initialization"
+      ],
+      "expected_output_contains": [
+        "Confirmed facts",
+        "Inferred facts",
+        "Unknowns"
+      ],
+      "expected_decisions": [
+        "Backfills and migrations are not executed during preflight"
+      ]
+    },
+    {
+      "id": "preflight-db-migration-negative-current-context",
+      "prompt": "Fix the persistence-layer bug. AGENTS.md, .agent/ctx/db.md, rollback notes, and targeted persistence tests are already current.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-db-migration",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "DB migration preflight is skipped because DB context and test routing are already current"
+      ]
+    },
+    {
+      "id": "preflight-db-migration-negative-read-only-query",
+      "prompt": "Adjust a read-only SQL query formatting helper with no schema change, migration, rollback, backfill, data migration, or transaction-boundary change.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-db-migration",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "DB migration preflight is not needed because no schema, migration, or data-compatibility surface is involved"
+      ]
+    }
+  ]
+}

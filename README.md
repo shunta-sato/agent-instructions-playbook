@@ -125,6 +125,9 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
+| `preflight-api-compat` | Public API compatibility preflight | `.agents/skills/preflight-api-compat/SKILL.md` |
+| `preflight-auth-session` | Auth/session preflight | `.agents/skills/preflight-auth-session/SKILL.md` |
+| `preflight-db-migration` | DB migration preflight | `.agents/skills/preflight-db-migration/SKILL.md` |
 | `preflight-domain-template` | Domain preflight skill template | `.agents/skills/preflight-domain-template/SKILL.md` |
 | `preflight-engineering` | Preflight agent context and handoff | `.agents/skills/preflight-engineering/SKILL.md` |
 | `project-initialization` | Initialize canonical verify commands | `.agents/skills/project-initialization/SKILL.md` |

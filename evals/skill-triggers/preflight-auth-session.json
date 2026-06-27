@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "preflight-auth-session-positive-refresh-token-prep",
+      "prompt": "Before implementing an OAuth refresh-token expiry fix, prepare auth session invariants, first docs/files, test routing, required approvals, reviewers, and handoff context.",
+      "should_trigger": [
+        "preflight-auth-session"
+      ],
+      "should_not_trigger": [
+        "test-driven-development"
+      ],
+      "expected_output_contains": [
+        "Domain preflight result",
+        "AUTH-LOG",
+        "Test routing"
+      ],
+      "expected_decisions": [
+        "Auth/session preflight runs before implementation because refresh-token expiry affects auth invariants"
+      ]
+    },
+    {
+      "id": "preflight-auth-session-positive-multi-agent-auth-investigation",
+      "prompt": "Prepare auth/session preflight context before assigning subagents to investigate JWT cookies, CSRF handling, login redirects, route guards, generated API clients, and auth regression tests.",
+      "should_trigger": [
+        "preflight-auth-session"
+      ],
+      "should_not_trigger": [
+        "project-initialization"
+      ],
+      "expected_output_contains": [
+        "Confirmed facts",
+        "Inferred facts",
+        "Unknowns"
+      ],
+      "expected_decisions": [
+        "Token and cookie values are not read or copied"
+      ]
+    },
+    {
+      "id": "preflight-auth-session-negative-current-context",
+      "prompt": "Fix the OAuth refresh token bug. AGENTS.md and auth context are already current, and the targeted auth tests are listed.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-auth-session",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "Domain preflight is skipped because auth context and test routing are already current"
+      ]
+    },
+    {
+      "id": "preflight-auth-session-negative-unrelated-doc",
+      "prompt": "Update one README sentence about the support email address. No auth/session flow, token handling, cookie behavior, or login redirect changes are involved.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-auth-session",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "Auth/session preflight is not needed for unrelated documentation work"
+      ]
+    }
+  ]
+}
