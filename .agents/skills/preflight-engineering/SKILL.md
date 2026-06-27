@@ -55,8 +55,10 @@ This skill prepares the work environment; it does not implement product fixes, r
    - Use `references/skill-map-template.md` for the map.
 
 8. Check prompt-cache readiness.
-   - Keep stable instructions, schemas, output formats, shared acceptance criteria, and tool-order guidance before volatile run data.
-   - Keep timestamps, request IDs, logs, grep output, test output, snippets, issue-specific notes, and worker-specific roles out of the stable prefix.
+   - Separate repo-stable prefix from task-stable shared prefix.
+   - Keep repo-stable instructions, schemas, output formats, and tool-order guidance before volatile run data.
+   - Keep task-stable GOAL, acceptance criteria, shared constraints, and common subagent output format before worker-specific scopes.
+   - Keep timestamps, request IDs, logs, grep output, test output, snippets, issue-specific notes, and worker-specific roles out of repo-stable docs and long-lived prefixes.
    - Use `references/cache-readiness-checklist.md`.
 
 9. Plan subagent use only when it pays for itself.

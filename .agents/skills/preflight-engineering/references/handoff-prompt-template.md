@@ -26,6 +26,13 @@ Hard constraints:
 - Do not run migrations, deploys, or destructive commands without explicit approval.
 - Keep the diff minimal.
 
+Task-stable shared context:
+- These lines must be identical in every subagent prompt for this task.
+- GOAL:
+- Acceptance criteria:
+- Shared constraints:
+- Shared output format:
+
 Required skills:
 - `$<skill>` for `<reason>`.
 
@@ -33,10 +40,12 @@ Subagent phase 1: read-only investigation
 Spawn read-only subagents only after shared context and output format are fixed. Wait for all reports before implementation.
 
 1. `<subagent name>`
-   - Scope:
-   - Skills:
-   - Must not edit:
-   - Output:
+   - Shared task context: reuse the section above verbatim.
+   - Worker-specific suffix:
+     - Scope:
+     - Skills:
+     - Must not edit:
+     - Output:
 
 Main implementation phase:
 - Synthesize subagent findings in the main thread.
