@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "preflight-api-compat-positive-openapi-error-shape",
+      "prompt": "Before changing an OpenAPI public error response, prepare API compatibility invariants, first specs/files, generated client ownership, consumer test routing, approvals, reviewers, and handoff context.",
+      "should_trigger": [
+        "preflight-api-compat"
+      ],
+      "should_not_trigger": [
+        "test-driven-development"
+      ],
+      "expected_output_contains": [
+        "Domain preflight result",
+        "API-SHAPE",
+        "GENERATED-CLIENT"
+      ],
+      "expected_decisions": [
+        "Public API compatibility preflight runs before API-facing implementation"
+      ]
+    },
+    {
+      "id": "preflight-api-compat-positive-generated-client-update",
+      "prompt": "Prepare public API compatibility preflight before assigning agents to update GraphQL schema, generated clients, versioning docs, and consumer contract tests.",
+      "should_trigger": [
+        "preflight-api-compat"
+      ],
+      "should_not_trigger": [
+        "project-initialization"
+      ],
+      "expected_output_contains": [
+        "Confirmed facts",
+        "Inferred facts",
+        "Unknowns"
+      ],
+      "expected_decisions": [
+        "Generated clients are not edited manually during preflight"
+      ]
+    },
+    {
+      "id": "preflight-api-compat-negative-current-context",
+      "prompt": "Implement the API handler bug fix. AGENTS.md, .agent/ctx/api.md, generated-client ownership notes, and targeted API compatibility tests are already current.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-api-compat",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "API compatibility preflight is skipped because context and test routing are already current"
+      ]
+    },
+    {
+      "id": "preflight-api-compat-negative-internal-helper",
+      "prompt": "Rename a private helper inside a non-exported internal module without changing public API shape, schemas, generated clients, or error payloads.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-api-compat",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "API compatibility preflight is not needed because no public API or generated client surface is involved"
+      ]
+    }
+  ]
+}

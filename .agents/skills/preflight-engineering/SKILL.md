@@ -41,9 +41,9 @@ This skill prepares the work environment; it does not implement product fixes, r
 
 | Risk surface | Domain skill | Use when |
 |---|---|---|
-| auth/session/token | `preflight-auth-session` (candidate) | OAuth, refresh token, JWT, cookie, CSRF, login redirect |
-| public API/generated client | `preflight-api-compat` (candidate) | OpenAPI, GraphQL, public error shape, generated clients |
-| DB/migration/persistence | `preflight-db-migration` (candidate) | schema change, migration, rollback, backfill |
+| auth/session/token | `preflight-auth-session` | OAuth, refresh token, JWT, cookie, CSRF, login redirect |
+| public API/generated client | `preflight-api-compat` | OpenAPI, GraphQL, public error shape, generated clients |
+| DB/migration/persistence | `preflight-db-migration` | schema change, migration, rollback, backfill |
 | security-sensitive code | `preflight-security-sensitive` (candidate) | secrets, logging, injection, SSRF, dependency risk |
 | infra/deploy/runtime config | `preflight-infra-deploy` (candidate) | deploy config, IaC, env vars, production runtime |
 | billing/payment | `preflight-billing-payment` (candidate) | payment flow, invoice, subscription, external money movement |
