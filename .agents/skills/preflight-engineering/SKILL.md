@@ -24,10 +24,18 @@ This skill prepares the work environment; it does not implement product fixes, r
    - Inspect instruction files, README/CONTRIBUTING, package and lock files, CI/test config, docs, `.agent/`, `.agents/skills/`, schema files, generated-code directories, migrations, deploy config, and secret-like filename patterns.
    - Do not read secret, credential, token, cookie, or key values. Record paths and patterns only.
    - Mark facts as `confirmed`, `inferred`, or `unknown`.
+   - When the repository is unfamiliar, `AGENTS.md` is missing, or docs/test routing are unknown, run the read-only helper collectors:
+     - `python3 .agents/skills/preflight-engineering/scripts/inspect_repo.py --root . --markdown`
+     - `python3 .agents/skills/preflight-engineering/scripts/estimate_context_size.py --root .`
+     - `python3 .agents/skills/preflight-engineering/scripts/check_agent_docs.py --root .`
+   - Treat helper output as candidate evidence only. The scripts collect paths, size estimates, warnings, and unknowns; they do not decide risk, rewrite `AGENTS.md`, run tests, execute migrations, deploy, or change git state.
+   - Use `references/repo-inspection-output-template.md` when summarizing helper output.
 
 2. Classify task risk.
    - Check for auth/session/token, billing/payment, public API, DB migration, security-sensitive code, production config, generated clients, multi-service work, external side effects, and dependency changes.
    - Record risk level, sensitive areas, approval needs, required reviewers, and required tests.
+   - After risk classification, select applicable domain preflight skills when a risk surface needs specialist invariants or first-file routing.
+   - Domain preflight skills are helpers, not replacements for this orchestrator. Merge their outputs into `AGENTS.md` proposals, `.agent/ctx` maps, skill routing, test routing, approval/reviewer notes, and the final handoff prompt.
 
 3. Extract invariants.
    - Keep safety, compatibility, generated-file, destructive-operation, approval, and test-command invariants.
@@ -76,6 +84,7 @@ This skill prepares the work environment; it does not implement product fixes, r
 - Use `references/agent-ctx-template.md` when drafting `.agent/ctx/*.md` or `.agent/maps/paths.md`.
 - Use `references/skill-map-template.md` when mapping skill triggers and gaps.
 - Use `references/cache-readiness-checklist.md` during final preflight validation.
+- Use `references/repo-inspection-output-template.md` when converting helper script output into auditable preflight notes.
 - Use `references/handoff-prompt-template.md` for the final commander prompt.
 - Use `references/oauth-refresh-token-example.md` for a concrete dry-run pattern.
 

@@ -47,6 +47,31 @@
       ]
     },
     {
+      "id": "preflight-repo-inspection-helpers-unfamiliar",
+      "prompt": "This repo is unfamiliar and AGENTS.md/test routing may be missing. Before assigning implementation agents, run read-only preflight repo inspection, summarize confirmed/inferred/unknown facts, and prepare context and handoff proposals.",
+      "should_trigger": [
+        "preflight-engineering"
+      ],
+      "should_not_trigger": [
+        "test-driven-development",
+        "project-initialization"
+      ],
+      "expected_artifacts": [
+        "Repo inspection summary",
+        "Preflight result",
+        "Development commander handoff prompt"
+      ],
+      "expected_decisions": [
+        "Read-only helper scripts collect candidate facts but do not make decisions",
+        "Secret-like paths are recorded as paths only and not opened"
+      ],
+      "expected_output_contains": [
+        "confirmed",
+        "inferred",
+        "unknown"
+      ]
+    },
+    {
       "id": "preflight-negative-small-typo",
       "prompt": "Fix one typo in a README sentence. The repo already has clear AGENTS.md guidance and the change does not affect tests, APIs, auth, infra, or multiple files.",
       "should_trigger": [],
@@ -82,6 +107,18 @@
       ],
       "expected_decisions": [
         "Review-feedback handling uses the review workflow instead of re-running preflight"
+      ]
+    },
+    {
+      "id": "preflight-negative-helper-not-needed-current-context",
+      "prompt": "Implement the documented parser cleanup using the current AGENTS.md, .agent/ctx/parser.md, and listed targeted tests. Do not inspect the whole repository or change preflight docs.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-engineering",
+        "project-initialization"
+      ],
+      "expected_decisions": [
+        "Preflight repo inspection is skipped because context and targeted tests are already current"
       ]
     }
   ]
