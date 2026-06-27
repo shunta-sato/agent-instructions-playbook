@@ -14,8 +14,9 @@ compatibility work before implementation starts. Extract migration safety
 invariants, first docs/files, validation commands, approvals, reviewers, and a
 handoff fragment for `preflight-engineering`.
 
-This skill does not implement product changes, run migrations, execute
-backfills, connect to production databases, or approve destructive schema work.
+This skill does not implement product changes, read or copy secret values, run
+migrations, execute backfills, deploy, connect to production databases, edit
+generated clients, or approve destructive schema work.
 
 ## How to use
 
@@ -56,6 +57,7 @@ backfills, connect to production databases, or approve destructive schema work.
 ## Self-review
 
 - No migration, seed, backfill, deploy, or production DB command was executed.
+- No secret value was read or copied, and no generated client was edited.
 - Destructive schema or data-risk approvals are explicit.
 - Rollback or forward-fix expectations are recorded or unknown.
 - Old-app/new-app compatibility and targeted migration validation are recorded or unknown.

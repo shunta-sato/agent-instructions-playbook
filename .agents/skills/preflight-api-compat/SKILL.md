@@ -13,8 +13,8 @@ Prepare public API or generated-client work before implementation starts. Extrac
 compatibility invariants, first docs/files, schema checks, consumer tests,
 approvals, reviewers, and a handoff fragment for `preflight-engineering`.
 
-This skill does not implement API changes, edit generated clients, publish
-schemas, deploy, or decide compatibility exceptions.
+This skill does not implement API changes, read or copy secret values, edit
+generated clients, publish schemas, deploy, or decide compatibility exceptions.
 
 ## How to use
 
@@ -53,6 +53,7 @@ schemas, deploy, or decide compatibility exceptions.
 ## Self-review
 
 - Public API shape and error-shape compatibility are preserved or marked for approval.
+- No secret value was read or copied.
 - Generated-client ownership and regeneration path are confirmed or unknown.
 - Consumer/contract test commands are confirmed or unknown.
 - No generated client was edited during preflight.
