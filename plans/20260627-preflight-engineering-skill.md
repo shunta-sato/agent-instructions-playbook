@@ -44,6 +44,7 @@ Post-Implementation Economy Audit:
 | --- | --- | --- | --- |
 | `preflight-engineering` Skill | Encapsulates a reusable pre-implementation workflow that would otherwise be pasted into prompts or `AGENTS.md` repeatedly. | keep | Valid skill metadata, 3 trigger eval cases, and `make verify` pass |
 | Reference templates | Keep `SKILL.md` compact while preserving reusable AGENTS/context/skill-map/cache/handoff examples. | keep | Directly referenced from `SKILL.md`; total Skill body stays 132 lines |
+| Review follow-up edits | No new abstraction; existing Skill guidance and eval boundaries are tightened in place. | keep | `make verify` pass; preflight eval count increased to 5 |
 
 ## Context & Orientation
 
@@ -91,6 +92,7 @@ Use a checkbox list. Each item should have a concrete deliverable and verificati
 - [x] (P2) Skill implementation — deliverable: `preflight-engineering` Skill, references, and trigger evals — verify: acceptance criteria self-review and `python3 scripts/validate_skills.py`.
 - [x] (P3) Generated index and validation — deliverable: regenerated index and green canonical checks — verify: `make verify`.
 - [ ] (P4) PR and review loop — deliverable: PR to `main`, ChatGPT-thread review request, PR review-result comment — verify: PR URL and posted comment.
+- [x] (P5) Review follow-up loop — deliverable: cache-prefix distinction and additional near-miss negative evals — verify: `make verify`.
 
 ## Surprises & Discoveries
 
@@ -99,6 +101,7 @@ Record unexpected constraints, gotchas, and newly learned facts (with evidence w
 - 2026-06-27: Existing worktree has unrelated untracked files. Stage only files created or updated for this request.
 - 2026-06-27: The system skill scaffold creates `agents/openai.yaml`, but this repo's source skill convention and requested file layout do not include per-skill `agents/` metadata. Remove the scaffolded file and keep repo-local metadata in `SKILL.md`.
 - 2026-06-27: Initial verification warned that `preflight-engineering` had no trigger eval coverage. Added `evals/skill-triggers/preflight-engineering.json`, and the warning disappeared on the next `make verify`.
+- 2026-06-27: After PR #74 merged, review follow-up identified two useful refinements: distinguish repo-stable and task-stable shared prompt prefixes, and add more near-miss negative trigger evals for broad-skill boundaries.
 
 ## Decision log
 
@@ -112,16 +115,20 @@ Record decisions and trade-offs (and why).
   - Options considered: paste the full request into `SKILL.md`; split templates into references.
   - Chosen: split templates into references.
   - Consequences: easier triggering and lower context cost.
+- 2026-06-27: Accept the review follow-ups in a separate PR because they improve trigger boundaries and cache guidance without changing the Skill's core scope.
+  - Options considered: defer as future work; apply immediately in the next loop.
+  - Chosen: apply immediately.
+  - Consequences: one more small PR and review cycle, lower risk of broad-trigger drift.
 
 ## Handoff (update at every stop)
 
-- Current branch / commit: `codex/preflight-engineering-skill`, commit pending.
-- What is done: branch created, source request imported, Skill files added, trigger evals added, generated index/catalog updated, workflow contract report drafted, `make verify` passed.
-- What is not done: commit, push, PR creation, external review loop, merge decision.
+- Current branch / commit: `codex/preflight-engineering-review-followup`, commit pending.
+- What is done: original Skill PR #74 merged; follow-up branch created; review items implemented; `make verify` passed.
+- What is not done: PR creation, external review loop, merge decision.
 - How to run: `python3 scripts/validate_skills.py`; `python3 scripts/generate_agent_index.py --check`; `make verify`.
 - How to test: run canonical commands from `COMMANDS.md`.
 - Known risks / open questions: external review may request narrower wording or additional examples.
-- Next 1–3 steps: run quality gate; commit and push; create PR and request review in the prior ChatGPT thread.
+- Next 1–3 steps: run quality gate; commit/push/PR and request review in the prior ChatGPT thread.
 - Pointers (files/dirs to read first): `.agents/skills/preflight-engineering/`, `reports/imported-chatgpt/20260627-preflight-engineering-skill-request.md`, `COMMANDS.md`.
 
 ## Validation & Acceptance

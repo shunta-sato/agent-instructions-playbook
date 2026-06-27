@@ -58,6 +58,31 @@
       "expected_decisions": [
         "Preflight is skipped with a short reason because the change is a small one-file edit"
       ]
+    },
+    {
+      "id": "preflight-negative-already-routed-multifile",
+      "prompt": "Implement this already-scoped two-file parser fix. AGENTS.md, .agent/ctx/test.md, and targeted tests are already current; do not use subagents or change APIs.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-engineering",
+        "requirements-engineering",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Preflight is skipped because the multi-file work is already routed and has current test guidance"
+      ]
+    },
+    {
+      "id": "preflight-negative-review-feedback-only",
+      "prompt": "Address the PR review comment by adding two missing trigger eval negative cases and rerun the repository verification. The repo context and skill routing are already established.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "preflight-engineering",
+        "project-initialization"
+      ],
+      "expected_decisions": [
+        "Review-feedback handling uses the review workflow instead of re-running preflight"
+      ]
     }
   ]
 }
