@@ -63,6 +63,7 @@ skill|preflight-db-migration|DB migration preflight|.agents/skills/preflight-db-
 skill|preflight-domain-template|Domain preflight skill template|.agents/skills/preflight-domain-template/SKILL.md
 skill|preflight-engineering|Preflight agent context and handoff|.agents/skills/preflight-engineering/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
+skill|project-structure|Physical code layout and structure budget|.agents/skills/project-structure/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
 skill|receiving-code-review|Process review feedback safely|.agents/skills/receiving-code-review/SKILL.md
 skill|requesting-code-review|Prepare focused review requests|.agents/skills/requesting-code-review/SKILL.md
@@ -83,9 +84,9 @@ end|AGENT_INDEX_V1
 <!-- END AGENT INDEX (generated) -->
 
 ## Always-on principles
-- Prefer the smallest safe change that satisfies the requirement.
+- Prefer the smallest safe change that satisfies the requirement, within the structure budget (`project-structure`, checked by `scripts/check_structure.py`). When a touched file breaches the budget, the split is part of the smallest correct change, not an optional cleanup.
 - Exception: when `function-boundary-governor` or `destructive-refactor` is triggered, prefer the smallest coherent final design, not the smallest edit.
-- No broad cleanups. Leave touched code slightly easier to read than before.
+- No broad cleanups. Leave touched code slightly easier to read than before. Structure-budget splits on touched files are required work, not broad cleanups.
 - Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol; permanent shims/sibling abstractions require explicit staged-migration ledger records.
 - If runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable.
 

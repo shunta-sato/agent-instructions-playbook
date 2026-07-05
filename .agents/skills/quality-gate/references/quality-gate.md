@@ -12,6 +12,13 @@ Focus on final decision criteria, not broad re-review taxonomy.
   - normal/high risk: full chain (build / format / static analysis / tests)
 - Any skipped command includes reason + reproducible procedure.
 
+## 1b) Structural exit check (required, all risks)
+
+- `python scripts/check_structure.py <touched source files>` was run and the result is recorded.
+- Every finding (`source-file-lines`, `entrypoint-logic-lines`, `inline-test-lines`) is resolved by an applied split in this submission, or carries an explicit bounded waiver in the change brief (for example generated code).
+- Entrypoint files (`main.rs`, `src/bin/*.rs`, `main.py`, `__main__.py`, `main.go`, `main.c/cc/cpp`) contain wiring only; behavior tests are not accumulated in entrypoints.
+- This check does not depend on triggered branches. An unresolved finding without a waiver is `no-submit`.
+
 ## 2) Triggered-branch evidence (required when triggered)
 
 Confirm required evidence exists for each triggered branch:
@@ -34,6 +41,7 @@ Confirm required evidence exists for each triggered branch:
 - embedded operating envelope branch → `docs/targets/<target>/operating-envelope.md` and scenario reports for normal, degraded, boundary, observer, recovery, or blackout behavior
 - embedded NFR calibration branch → `reports/nfr-calibration/<feature>.md` plus budget provenance when numeric production budgets are claimed
 - constitution-only embedded branch → constitution artifacts such as project principles, resource discipline, physical budgets, target profiles, resource harness skeleton, and PR-template section. Do not require a feature-level NFR gate report unless runtime changes or production-readiness claims are introduced.
+- project-structure branch → layout decisions (file → role) plus structure budget result (pass, or findings with applied fixes/waivers)
 - staged-lowering branch → staged plan + per-pass verification log
 - legacy branch → characterization/safety-net evidence + seam/refactor notes
 - structural scan branch → smells/anti-patterns result (new/worsened handled)

@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "project-structure-new-rust-cli",
+      "prompt": "Create a new Rust CLI tool that parses web server access logs and prints per-endpoint latency statistics as text or JSON.",
+      "should_trigger": [
+        "dev-workflow",
+        "project-structure"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-hot-path-review",
+        "uiux-core"
+      ],
+      "expected_decisions": [
+        "Binary crate starts with a thin main.rs plus lib.rs and domain modules, not a single-file implementation",
+        "Test placement follows Rust conventions: unit tests beside modules, integration tests in tests/"
+      ],
+      "expected_evidence": [
+        "Layout decisions recorded as file-to-role mapping",
+        "scripts/check_structure.py result on created files"
+      ],
+      "notes": "Greenfield project creation is generative layout work; a host CLI is not embedded work."
+    },
+    {
+      "id": "project-structure-monolithic-main",
+      "prompt": "src/main.rs has grown to 700 lines and about half of it is #[cfg(test)] test code. Clean this up.",
+      "should_trigger": [
+        "project-structure",
+        "design-balance"
+      ],
+      "should_not_trigger": [
+        "embedded-hot-path-review",
+        "performance-review"
+      ],
+      "expected_decisions": [
+        "Domain logic moves from main.rs into lib.rs modules",
+        "Inline tests move to sibling test modules or tests/ integration tests"
+      ],
+      "expected_evidence": [
+        "scripts/check_structure.py passes after the split"
+      ],
+      "notes": "Structure budget breach on an entrypoint; design-balance names the split units."
+    },
+    {
+      "id": "project-structure-test-placement-question",
+      "prompt": "Where should the integration tests for this crate live, and which tests can stay inside the module files?",
+      "should_trigger": [
+        "project-structure"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "visual-regression-testing"
+      ],
+      "expected_decisions": [
+        "Unit tests stay in #[cfg(test)] modules within budget; integration tests go to tests/ against the public API"
+      ],
+      "notes": "Pure placement question routes to the layout skill."
+    },
+    {
+      "id": "project-structure-not-for-local-rename",
+      "prompt": "Rename the local variable `tmp` to `parsed_entry` inside one function in src/parser.rs.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "project-structure",
+        "design-balance"
+      ],
+      "notes": "Tiny local edit; structure watch still runs inside dev-workflow but the layout skill itself should not load."
+    },
+    {
+      "id": "project-structure-not-for-architecture-choice",
+      "prompt": "Compare SQLite and Postgres as the storage backend given our latency and operational-cost targets.",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "project-structure"
+      ],
+      "notes": "Cross-boundary option comparison is architecture analysis, not physical layout."
+    }
+  ]
+}
