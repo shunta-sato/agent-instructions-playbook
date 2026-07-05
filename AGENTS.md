@@ -3,11 +3,12 @@
 This repository is a reusable playbook for software-development agents.
 
 Keep this file short. Put detailed guidance in the on-demand playbooks under:
-- `.agents/skills/<name>/SKILL.md` (repo skills for Codex and GitHub Copilot)
+- `.agents/skills/<name>/SKILL.md` (repo skills for Codex, GitHub Copilot, and Claude Code)
 
 Explicit invocation differs by client:
 - Codex: `$<skill>`
 - GitHub Copilot CLI / agent mode: `/<skill>`
+- Claude Code: `/<skill>` via the generated `.claude/skills` symlinks (client mapping in `CLAUDE.md`)
 
 ## Playbook bootstrap
 

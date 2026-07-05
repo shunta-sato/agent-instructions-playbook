@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated": "2026-07-05",
+  "notes": "Generated model catalog for the resolver (resolver-policy.yml: catalog_format=external-json). Concrete model IDs live only here and in the derived route lockfile, never in skill bodies. smoke_eval is evidence-backed: flip pending->passed only with a recorded supervised run (see evidence fields).",
+  "models": [
+    {
+      "id": "claude-sonnet-5",
+      "aliases": ["sonnet"],
+      "profiles": [
+        "focused_code_edit",
+        "codebase_explorer"
+      ],
+      "status": "available",
+      "smoke_eval": "passed",
+      "evidence": [
+        "plans/20260705-structure-gates.md Outcomes: logstat A/B implementation runs (worker, focused_code_edit)",
+        "plans/20260705-sonnet5-executable.md Outcomes: blind routing smoke eval 9/10 (explorer/judge)",
+        "plans/20260705-skill-contract-infra.md Outcomes: WS6/WS7 scoped edit runs with escalation-on-scope-boundary"
+      ]
+    },
+    {
+      "id": "claude-fable-5",
+      "aliases": ["fable"],
+      "profiles": [
+        "coding_supervisor",
+        "terminal_debug_supervisor",
+        "high_reasoning_review",
+        "frontier_execution_supervisor"
+      ],
+      "status": "available",
+      "smoke_eval": "passed",
+      "evidence": [
+        "reports/skillset-review-20260705.md and Phase 1-3 PRs (#80-#82): supervision, threshold design, judge verification of all delegated runs"
+      ]
+    },
+    {
+      "id": "claude-opus-4-8",
+      "aliases": ["opus"],
+      "profiles": [
+        "coding_supervisor",
+        "terminal_debug_supervisor",
+        "high_reasoning_review",
+        "frontier_execution_supervisor"
+      ],
+      "status": "available",
+      "smoke_eval": "pending",
+      "evidence": [],
+      "smoke_procedure": "Run one supervised task per claimed profile in Claude Code with model claude-opus-4-8 (e.g. supervise a scoped worker edit and judge its run record); record the run via scripts/agent_run.py --harness claude-code, then set smoke_eval to passed with the run evidence listed here and regenerate the route lockfile."
+    }
+  ]
+}

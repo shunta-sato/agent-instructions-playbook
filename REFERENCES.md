@@ -25,6 +25,11 @@ This playbook is inspired by, or aligned with, the following sources.
 - GitHub Copilot CLI agent skills (`.github/skills`, `.claude/skills`, or `.agents/skills`; explicit `/skill` invocation): https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills
 - GitHub Copilot custom-instruction support matrix: https://docs.github.com/en/copilot/reference/custom-instructions-support
 
+### Claude Code
+- Skills discovery (`.claude/skills/<name>/SKILL.md`; this repo symlinks them from `.agents/skills` via `scripts/sync_claude_skills.py`): https://docs.anthropic.com/en/docs/claude-code/skills
+- Custom subagents (`.claude/agents/*.md` with name/description/tools/model frontmatter): https://docs.anthropic.com/en/docs/claude-code/sub-agents
+- Repository entry point: `CLAUDE.md` (client mapping to AGENTS.md, model routing lockfile, run evidence)
+
 ## UI visual verification / snapshot testing
 
 - Nacho Bassino, *Automating UI verification for AI coding agents* (example contract using Make targets and AGENTS flow): https://nachbaur.com/posts/ai-agent-ui-testing/
