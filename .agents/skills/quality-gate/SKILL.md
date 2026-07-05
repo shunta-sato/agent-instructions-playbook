@@ -31,6 +31,8 @@ Invoke this skill **before every submission**. It is mandatory.
 
 2) Validate required artifacts/evidence from triggered branches exist, including function-design evidence when triggered.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.
+   - If the task touched public/cross-module APIs or was a rework/consolidation/deletion request, verify the compat-mode is recorded; `break-allowed` must quote the requester's waiver.
+   - If a refactor branch (`destructive-refactor`; `function-boundary-governor` with `replace|merge|inline|delete`; `design-balance` with `merge|remove-layer`) ran under compat-mode `break-allowed`, verify the removed-symbol sweep: `python scripts/check_api_removal.py --symbol <old-name> ...` over the codebase returns zero hits. Any surviving old symbol, deprecated marker, re-export alias, or parallel old/new version is `no-submit`. The staged-migration ledger escape applies only under compat-mode `staged`, never under `break-allowed`.
    - If `project-structure` was triggered, verify the layout decisions (file → role) and the structure budget result are recorded.
    - If `architecture-decision-analysis` was triggered, verify an Architecture Decision Analysis Record exists and includes decision, quality drivers, tradeoffs, and verification tasks.
    - If `observability` was triggered, verify the Observability Plan includes signal purpose, actionability, counter-metric where relevant, and artifact paths.
@@ -41,6 +43,8 @@ Invoke this skill **before every submission**. It is mandatory.
    - If a subagent, worker, delegated model, or generated custom agent changed files, verify delegated run evidence from `.agents/runs/agent-runs.jsonl` by explicit run identity. Missing run evidence, missing validation, validation failure, or scope violation is `no-submit`; missing token telemetry alone is not blocking.
    - If the ExecPlan declares quantitative targets, verify the Outcomes section records measured value vs. each target, and every unmet target has a Decision log entry that re-baselines it or explicitly accepts the miss with rationale. A fully-checked WBS with silently unmet declared targets is `no-submit`.
    - If feature-level embedded NFR work was triggered, verify `reports/resource/nfr-gate-report.md` exists and records `submit`, `no-submit`, or `experimental-only`; accept submit only when the embedded NFR gate is `submit` or the feature is explicitly experimental with production claims removed.
+   - If `requirements-engineering` declared measurable quality/NFR targets (metric + target + measurement method), verify each target records a measured value vs. the target, or an explicit `not-measured`/`unmet` entry with reason. A silently unmeasured or unmet declared target is `no-submit`.
+   - If the submission claims fast, low-latency, scalable, high-throughput, reliable, or production-ready behavior for non-embedded work, verify measurement evidence exists (command + result) or the claim is explicitly limited (`provisional` / `not-measured`). This mirrors the embedded claim rule below.
    - If production-ready, low-overhead, battery-safe, flash-safe, thermally-safe, or always-on claims depend on embedded NFRs, verify target characterization exists or the claim is explicitly provisional, budget provenance exists, calibration report exists when numeric budgets are claimed, calibration revisit conditions are not triggered, and the NFR gate report references these artifacts.
    - If `embedded-system-familiarization` was triggered, verify `docs/targets/<target>/system-familiarization.md` exists and lists required, created, missing, provisional, and deferred artifacts; artifact freshness/revisit conditions; controlled conditions; uncontrolled confounders; operating point coverage; claim-to-evidence traces with allowed wording; claims blocked by missing evidence; and handoff statuses using `not_needed`, `required_pending`, `completed`, `deferred_with_reason`, or `blocked`.
    - If an architecture, hardware, or embedded NFR claim depends on a hardware operating point, verify `docs/targets/<target>/controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording; otherwise the claim must be marked `blocked`, `provisional`, `experimental-only`, or limited to observed conditions.
@@ -56,7 +60,7 @@ Invoke this skill **before every submission**. It is mandatory.
 
 
 Function-design evidence requirements when triggered:
-- function-boundary-governor → function decision record (`keep|rename|split|merge|replace|inline|no-op`) + rationale
+- function-boundary-governor → function decision record (`keep|rename|split|merge|replace|inline|delete|no-op`) + rationale
 - destructive-refactor → convergence record (`replaced|no-op|rollback`), call-site migration evidence, and red-state usage record
 - when no-op or rollback is chosen → explicit reasoning
 - ledger-required cases (replaced abstractions, intentional duplication, staged adapters) → ledger entry present at `.agents/design-ledger/function-boundaries.md`

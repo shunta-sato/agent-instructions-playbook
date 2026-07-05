@@ -44,6 +44,8 @@ Use when:
 - during red state, do not fix newly discovered smells unless they block convergence
 - complete planned migration pass before one-by-one failure repair
 
+Compat-mode rule: if compat-mode is not already recorded, request it from the router (dev-workflow step 1b) instead of assuming `preserve`. Under `break-allowed`, delete — do not deprecate: compatibility shims, deprecated markers, re-export aliases, and parallel old/new versions are defects, not caution. The staged-migration ledger escape hatch (forbid compatibility shims "unless staged migration is explicitly required and ledgered") applies ONLY under compat-mode `staged` and is unavailable under `break-allowed`.
+
 4) Migration
 - update all call sites
 - move side effects to correct boundary

@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "nfr-target-declared-server",
+      "prompt": "Make the search endpoint fast: p95 under 150ms at 100 RPS, measured with our k6 script. Implement and prove it.",
+      "should_trigger": [
+        "dev-workflow",
+        "requirements-engineering",
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-hot-path-review"
+      ],
+      "expected_decisions": [
+        "Quality Targets list recorded with metric, target, and measurement method for the p95 latency requirement",
+        "Measured result is filled in the Quality Targets list before the quality gate"
+      ],
+      "expected_evidence": [
+        "k6 measurement command and its result are recorded at gate time"
+      ],
+      "notes": "Non-embedded server latency/throughput target with an explicit measurement method should route through the generic NFR path, not embedded."
+    },
+    {
+      "id": "nfr-vague-quality-word",
+      "prompt": "The importer should be fast and scalable. Improve it.",
+      "should_trigger": [
+        "dev-workflow",
+        "requirements-engineering"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Vague quality words (fast, scalable) are converted into a Quality Targets list entry with metric, target, and measurement method before implementation proceeds"
+      ],
+      "notes": "Vague quality words need measurable targets defined before implementation, without invoking embedded or architecture-comparison workflows."
+    },
+    {
+      "id": "nfr-not-for-embedded",
+      "prompt": "The robot-side recorder must stay under 3% CPU on the target device, measured by the on-target harness.",
+      "should_trigger": [
+        "dev-workflow",
+        "embedded-nfr-design"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "notes": "Physical target constraint on an embedded/robot-local recorder routes to the embedded NFR pipeline, not the generic non-embedded performance-review path."
+    }
+  ]
+}

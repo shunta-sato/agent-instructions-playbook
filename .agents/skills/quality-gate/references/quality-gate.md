@@ -49,6 +49,8 @@ Confirm required evidence exists for each triggered branch:
 - structural scan branch → smells/anti-patterns result (new/worsened handled)
 - function-boundary-governor branch → function-boundary decision record
 - destructive-refactor branch → convergence record (replaced|no-op|rollback), migrated call-sites evidence, red-state usage record
+- refactor branch under compat-mode `break-allowed` → removed-symbol sweep output: `python scripts/check_api_removal.py --symbol <old-name> ...` with zero hits (tool output, not a claim); surviving old symbols/shims/aliases are `no-submit`
+- API-touching or rework/consolidation/deletion task → recorded compat-mode (`preserve|staged|break-allowed`; `break-allowed` quotes the requester's waiver)
 - function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
 - C++ header branch → Doxygen completeness evidence
 - ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff)
@@ -63,6 +65,8 @@ Confirm required evidence exists for each triggered branch:
 - Delegated run evidence is `no-submit` when the ledger record is missing, the run ID is not explicit, required validation did not run, validation failed, validation output is missing, changed files exceed allowed files, or `judge_agent_run.py --require-accepted` fails.
 - Missing token telemetry alone never blocks: treat absent telemetry or `telemetry.status: not_collected` as acceptable when every other run-evidence criterion passes.
 - Completion claims require verification evidence. A worker report that says the task is done without validation command results remains `no-submit`.
+- If `requirements-engineering` declared measurable quality/NFR targets (metric + target + measurement method), each target records a measured value vs. the target, or an explicit `not-measured`/`unmet` entry with reason; silently unmeasured or unmet declared targets are `no-submit`.
+- Non-embedded performance/reliability claims (fast, low-latency, scalable, high-throughput, reliable, production-ready) are blocked without measurement evidence (command + result) or an explicit `provisional`/`not-measured` limit — the same no-measurement-no-claim rule embedded work already follows.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
 - If architecture, hardware, or embedded NFR claims depend on a hardware operating point, `controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording.
 - Observed natural variation under a dynamic policy is not accepted as a controlled sweep. Claims such as "works at all CPU clocks", "low overhead across frequency range", "battery safe", and "GPU offload is better" are blocked unless the corresponding controlled experiments and cost models exist or the wording is explicitly limited/provisional.
@@ -70,6 +74,7 @@ Confirm required evidence exists for each triggered branch:
 - If embedded NFR claims depend on target behavior, target characterization exists or the claim is explicitly provisional.
 - If numeric production budgets are claimed, budget provenance exists, calibration artifacts are referenced, and calibration revisit conditions are not triggered.
 - If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
+- If compat-mode was `break-allowed`, no deprecated shim, re-export alias, or parallel old/new version survives — verified by the `scripts/check_api_removal.py` sweep, not by the agent's claim.
 - Open risks or follow-ups are explicitly documented.
 
 If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:

@@ -21,6 +21,7 @@ Forbidden:
 - unrelated fixes
 - drifting scope
 - preserving old/new siblings permanently
+- keeping the old API "just in case" under break-allowed
 
 ## Convergence and rollback
 
@@ -35,6 +36,12 @@ Forbidden:
 - no `newX`, `legacyX`, `x2`, `commonX`, `helper`, `util` leftovers
 - no boolean-flag API hiding semantic differences
 - design ledger updated
+
+## Deletion checklist (after migration)
+
+- sweep old symbol names across code, tests, docs, and re-exports:
+  `python scripts/check_api_removal.py --symbol <old-name> ...`
+- under `break-allowed`, the convergence record must include the sweep output (zero hits)
 
 
 ## Break-window declaration (required)

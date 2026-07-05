@@ -43,6 +43,8 @@ Otherwise the decision is `no-op`.
 
 ## Decision rules
 
+The numeric decision rule above is authoritative. The absolute merge conditions below are illustrative of what a strong merge looks like, not an additional zero-risk gate — do not require all of them to hold before merging when the numeric rule already passes.
+
 Merge only if all are true:
 - concept clarity >= 2
 - invariant ownership >= 2
@@ -50,6 +52,8 @@ Merge only if all are true:
 - call-site readability gain > 0
 - boundary crossing risk == 0
 - parameterization pressure == 0
+
+When duplication risk is high and compat-mode is `break-allowed`, prefer consolidation whenever the numeric rule passes — small nonzero risk (<=1) does not justify keeping near-duplicates.
 
 Replace when:
 - one or more replacement reasons are true:
@@ -90,9 +94,10 @@ For each affected function capture:
 - caller set and neighbor classification
 - chosen action and rejected alternatives
 - action taken and touched files
+- old names searched and cleanup result; under `break-allowed`, backed by `scripts/check_api_removal.py` sweep output rather than prose
 
 
-## Action guidance for keep/rename/split/inline
+## Action guidance for keep/rename/split/inline/delete
 
 Keep when:
 - concept, invariant, side-effect profile, and call sites are already coherent.
@@ -105,3 +110,6 @@ Split when:
 
 Inline when:
 - abstraction cost exceeds value and call sites become clearer without it.
+
+Delete when:
+- call-site discovery confirms zero remaining callers; under `break-allowed`, external callers outside the repo do not count as callers.

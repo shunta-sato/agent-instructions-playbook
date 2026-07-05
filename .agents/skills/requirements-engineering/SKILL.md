@@ -55,6 +55,7 @@ Do not use it for small, already-clear implementation tasks unless the user asks
 7. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
 8. If the requirement involves non-embedded request latency, render cost, throughput, data-size scaling, or N+1 risk, hand off to `performance-review` with scale assumptions and acceptance criteria.
 9. Trace acceptance criteria into the `test-driven-development` Test List and the `quality-gate` exit criteria when implementation will follow.
+9b. Record every measurable quality/NFR target in a gate-checkable Quality Targets list: `metric | target | measurement method | measured result (filled before gate, or not-measured with reason)`. The quality gate blocks submission when a declared target is silently unmeasured or unmet.
 10. Add assumptions, open questions, and traceability only where they reduce ambiguity.
 
 ## Output expectation
@@ -63,6 +64,7 @@ Depending on the task, produce one or more of:
 
 - Problem Frame
 - Spec-before-build checklist
+- Quality Targets list (metric | target | measurement method | measured result or not-measured reason)
 - Requirements Brief or Requirements Spec section
 - EARS requirements with IDs, priority, rationale, acceptance criteria, and verification method
 - Definition of Done with observable completion conditions

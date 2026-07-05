@@ -5,7 +5,9 @@
   "models": [
     {
       "id": "claude-sonnet-5",
-      "aliases": ["sonnet"],
+      "aliases": [
+        "sonnet"
+      ],
       "profiles": [
         "focused_code_edit",
         "codebase_explorer"
@@ -19,8 +21,27 @@
       ]
     },
     {
+      "id": "claude-opus-4-8",
+      "aliases": [
+        "opus"
+      ],
+      "profiles": [
+        "coding_supervisor",
+        "terminal_debug_supervisor",
+        "high_reasoning_review",
+        "frontier_execution_supervisor"
+      ],
+      "status": "available",
+      "smoke_eval": "passed",
+      "evidence": [
+        "run 20260705T112230Z-opus-smoke-reviewer-11f5d90d in .agents/runs/agent-runs.jsonl: playbook-reviewer supervision of a delegated break-allowed refactor \u2014 independent re-verification (5 validation commands, all pass), correct fail-closed no-submit on missing worker run evidence, honest run recording, write-scope respected"
+      ]
+    },
+    {
       "id": "claude-fable-5",
-      "aliases": ["fable"],
+      "aliases": [
+        "fable"
+      ],
       "profiles": [
         "coding_supervisor",
         "terminal_debug_supervisor",
@@ -32,20 +53,6 @@
       "evidence": [
         "reports/skillset-review-20260705.md and Phase 1-3 PRs (#80-#82): supervision, threshold design, judge verification of all delegated runs"
       ]
-    },
-    {
-      "id": "claude-opus-4-8",
-      "aliases": ["opus"],
-      "profiles": [
-        "coding_supervisor",
-        "terminal_debug_supervisor",
-        "high_reasoning_review",
-        "frontier_execution_supervisor"
-      ],
-      "status": "available",
-      "smoke_eval": "pending",
-      "evidence": [],
-      "smoke_procedure": "Run one supervised task per claimed profile in Claude Code with model claude-opus-4-8 (e.g. supervise a scoped worker edit and judge its run record); record the run via scripts/agent_run.py --harness claude-code, then set smoke_eval to passed with the run evidence listed here and regenerate the route lockfile."
     }
   ]
 }

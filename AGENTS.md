@@ -87,9 +87,9 @@ end|AGENT_INDEX_V1
 
 ## Always-on principles
 - Prefer the smallest safe change that satisfies the requirement, within the structure budget (`project-structure`, checked by `scripts/check_structure.py`). When a touched file breaches the budget, the split is part of the smallest correct change, not an optional cleanup.
-- Exception: when `function-boundary-governor` or `destructive-refactor` is triggered, prefer the smallest coherent final design, not the smallest edit.
-- No broad cleanups. Leave touched code slightly easier to read than before. Structure-budget splits on touched files are required work, not broad cleanups.
-- Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol; permanent shims/sibling abstractions require explicit staged-migration ledger records.
+- Exception: when `function-boundary-governor`, `destructive-refactor`, or `design-balance` is triggered, prefer the smallest coherent final design, not the smallest edit.
+- No broad cleanups **unrelated to the task**. Leave touched code slightly easier to read than before. Triggered refactor work — structure-budget splits, function/API consolidation or deletion, class/module reorganization, and preparatory refactors in the feature's landing area — is required work, not a broad cleanup.
+- Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol. Compatibility handling follows the recorded compat-mode: under `preserve`, callers keep working; under `staged`, temporary adapters require a ledger entry with a removal condition; under `break-allowed` (requester explicitly waived compatibility), delete — keeping old APIs, deprecated markers, aliases, or parallel old/new versions is a defect, not caution.
 - If runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable.
 
 ## Mandatory workflow for code/test changes

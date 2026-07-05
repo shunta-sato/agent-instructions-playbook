@@ -10,7 +10,8 @@
 ## Decision
 - Old abstraction(s):
 - New abstraction(s):
-- Keep parallel? yes/no
+- Compat-mode: preserve|staged|break-allowed
+- Keep parallel? yes/no (invalid to answer yes under `break-allowed`)
 
 ## Reasoning
 - Concept boundaries:

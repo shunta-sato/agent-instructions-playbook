@@ -2,7 +2,7 @@
 
 All notable changes to this repository are documented in this file.
 
-## v4.15.0
+## v4.17.0
 
 ### Added
 - Landed the function-design verification suite (WS0a, `plans/20260525-function-design-verification.md`): six deterministic behavioral fixtures under `evals/function-design/` (boolean-flag-abstraction, sibling-helper-accumulation, intentional-parallelism, wrong-side-effect, staged-public-api-adapter, no-op-small-duplication), each with an `expected/good` workspace, at least one `expected/bad/<name>` workspace, and a scenario `oracle.py` that inspects files, AST, tests, and design-ledger evidence rather than final-response prose.
@@ -11,7 +11,32 @@ All notable changes to this repository are documented in this file.
 - Added `evals/skill-triggers/function-design.json`: 19 routing cases (positive, negative, and routing-overlap) for the function-design skill family.
 - Added `reports/function-design-evals/`: agent-run report format plus the initial manual skill-vs-no-skill comparison runs from 2026-05-25 (recorded against the earlier draft fixture set).
 
-(v4.14.0 is reserved by the in-flight refactoring-overhaul branch, PR #86.)
+## v4.16.0
+
+### Changed
+- Generalized the NFR machinery beyond embedded work: `quality-gate` now verifies every measurable quality/NFR target declared by `requirements-engineering` (measured value vs. target, or an explicit `not-measured`/`unmet` entry — silently unmeasured declared targets are `no-submit`), and blocks non-embedded performance/reliability claims (fast, low-latency, scalable, high-throughput, reliable, production-ready) without measurement evidence or an explicit `provisional`/`not-measured` limit, mirroring the embedded no-measurement-no-claim rule.
+- `requirements-engineering`: measurable targets are recorded in a gate-checkable Quality Targets list (`metric | target | measurement method | measured result or not-measured reason`).
+
+### Added
+- Added `evals/skill-triggers/nfr-claims.json` (generic vs embedded NFR routing, vague-quality-word conversion) and two `quality-gate` behavior cases (unmeasured claim → no-submit; measured target → submit).
+
+## v4.15.0
+
+### Changed
+- Completed the Opus 4.8 smoke evaluation: a `playbook-reviewer` supervision run on `claude-opus-4-8` (recorded as `20260705T112230Z-opus-smoke-reviewer-11f5d90d`, the first real entry in `.agents/runs/agent-runs.jsonl`) independently re-verified a delegated refactor and issued a correct fail-closed `no-submit` on missing worker run evidence. `model-catalog.json` flipped to `smoke_eval: passed` with the run cited; the regenerated route lockfile now resolves supervision task classes to `claude-opus-4-8` and worker classes to `claude-sonnet-5` with zero fallback reasons (`claude-fable-5` remains the validated fallback supervisor).
+
+## v4.14.0
+
+### Added
+- Added **compat-mode** (`preserve | staged | break-allowed`) recorded at dev-workflow routing and enforced at quality-gate: under `break-allowed` (requester explicitly waived compatibility), old APIs, deprecated markers, re-export aliases, and parallel old/new versions are defects — delete, don't deprecate; the staged-migration ledger escape applies only under `staged`.
+- Added `scripts/check_api_removal.py`: mechanical removed-symbol sweep (word-boundary matching, history/ledger paths exempt) wired into quality-gate so "the old API is gone" is tool-verified state, not a claim. Plus unit tests.
+- Added dev-workflow refactoring triggers (rework/consolidation/deletion requests, zero-caller code → `delete`), a preparatory-refactor step 2b ("make the change easy first", recorded as `prep-refactor: done | not-needed`), and `evals/skill-triggers/refactoring.json`.
+
+### Changed
+- `function-boundary-governor`: `delete` added as a first-class action (zero-caller verification; previously deletion had to masquerade as replace/inline); numeric decision rule declared authoritative over the absolute merge list; consolidation preferred over retention under `break-allowed` when the rubric passes.
+- `design-balance`: removal-direction triggers (redundant/near-duplicate units, hierarchy flattening, lost reason-to-exist), execution handoff to `destructive-refactor` for red-state work, and an anti-retention rule under `break-allowed`.
+- `destructive-refactor`: break-allowed imperatives, post-migration deletion checklist backed by the sweep, and "keeping the old API just in case" explicitly forbidden.
+- `AGENTS.md`: the smallest-coherent-design exception now covers `design-balance`; "No broad cleanups" is scoped to cleanups *unrelated to the task*; compat-mode added to the always-on principles.
 
 ## v4.13.0
 
