@@ -19,6 +19,15 @@ jobs:
       - name: Validate skills
         run: python scripts/validate_skills.py
 
+      - name: Check metadata.requires manifests are current
+        run: python scripts/update_skill_requires.py --check
+
+      - name: Check Claude Code skills mirror is in sync
+        run: python scripts/sync_claude_skills.py --check
+
+      - name: Check route lockfile is current
+        run: python scripts/generate_route_lockfile.py --check
+
       - name: Validate skill trigger eval seeds
         run: python scripts/validate_skill_trigger_evals.py
 

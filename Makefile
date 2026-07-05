@@ -32,6 +32,8 @@ git-diff-check:
 lint:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/update_skill_requires.py --check
+	$(PYTHON) scripts/sync_claude_skills.py --check
+	$(PYTHON) scripts/generate_route_lockfile.py --check
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
 	$(PYTHON) scripts/validate_skill_behavior_evals.py
 	$(PYTHON) scripts/validate_model_routing.py
@@ -46,6 +48,8 @@ test-unit:
 test-integration:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/update_skill_requires.py --check
+	$(PYTHON) scripts/sync_claude_skills.py --check
+	$(PYTHON) scripts/generate_route_lockfile.py --check
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
 	$(PYTHON) scripts/validate_skill_behavior_evals.py
 	$(PYTHON) scripts/validate_model_routing.py
