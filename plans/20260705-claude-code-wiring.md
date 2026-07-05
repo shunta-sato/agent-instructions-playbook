@@ -40,7 +40,7 @@
 ## Handoff (update at every stop)
 
 - Current branch: `claude-code-wiring`
-- Next steps after merge: (1) run one supervised task with `playbook-reviewer` on Opus 4.8 → flip catalog smoke_eval → regenerate lockfile; (2) decide WS10 (`.github/prompts/` retirement); (3) Phase 4 (embedded anti-triggers, observability trigger strengthening, portfolio rebalance).
+- 2026-07-05 update: all three follow-ups closed — Opus 4.8 smoke completed (run `20260705T112230Z-opus-smoke-reviewer-11f5d90d`: playbook-reviewer supervised a delegated refactor, independently re-verified all claims, issued a correct fail-closed `no-submit` on missing worker run evidence, respected write scope); catalog flipped, lockfile now resolves supervision→claude-opus-4-8, workers→claude-sonnet-5 with zero fallback reasons. WS10 done (PR #85). Phase 4 done (PR #84). The smoke run is also the first real record ever written to `.agents/runs/agent-runs.jsonl`.
 
 ## Validation & Acceptance
 

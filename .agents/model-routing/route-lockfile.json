@@ -12,10 +12,8 @@
       "risk_gate": "high",
       "default_effort": "high",
       "selected": true,
-      "selected_model": "claude-fable-5",
-      "fallback_reasons": [
-        "candidate_smoke_eval_not_passed:claude-opus-4-8"
-      ],
+      "selected_model": "claude-opus-4-8",
+      "fallback_reasons": [],
       "success_criteria": {
         "required": [
           "risks_identified",
@@ -33,10 +31,8 @@
       "risk_gate": "normal",
       "default_effort": "high",
       "selected": true,
-      "selected_model": "claude-fable-5",
-      "fallback_reasons": [
-        "candidate_smoke_eval_not_passed:claude-opus-4-8"
-      ],
+      "selected_model": "claude-opus-4-8",
+      "fallback_reasons": [],
       "success_criteria": {
         "required": [
           "failing_command_recorded",

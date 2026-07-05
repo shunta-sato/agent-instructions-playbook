@@ -2,6 +2,11 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.15.0
+
+### Changed
+- Completed the Opus 4.8 smoke evaluation: a `playbook-reviewer` supervision run on `claude-opus-4-8` (recorded as `20260705T112230Z-opus-smoke-reviewer-11f5d90d`, the first real entry in `.agents/runs/agent-runs.jsonl`) independently re-verified a delegated refactor and issued a correct fail-closed `no-submit` on missing worker run evidence. `model-catalog.json` flipped to `smoke_eval: passed` with the run cited; the regenerated route lockfile now resolves supervision task classes to `claude-opus-4-8` and worker classes to `claude-sonnet-5` with zero fallback reasons (`claude-fable-5` remains the validated fallback supervisor).
+
 ## v4.14.0
 
 ### Added
