@@ -1,0 +1,158 @@
+diff --git a/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/.agents/design-ledger/function-boundaries.md b/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/.agents/design-ledger/function-boundaries.md
+new file mode 100644
+index 0000000..6e1599c
+--- /dev/null
++++ b/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/.agents/design-ledger/function-boundaries.md
+@@ -0,0 +1,34 @@
++# Function Boundary Design Ledger
++
++## Replaced abstraction: user payload import parsing
++
++Decision: replaced abstraction
++
++Old abstraction:
++- `parse_user_payload`
++
++New abstractions:
++- `normalize_user_payload`
++- `persist_user_payload`
++- `preview_user_import`
++
++Reason:
++- `parse_user_payload` mixed pure normalization with repository mutation, timestamp assignment, and audit logging.
++- Preview import needs normalization without persistence, timestamp writes, or audit entries.
++- A flag such as `persist=False` would hide two responsibilities behind one function.
++
++Call-site migration:
++- `import_user` now composes `normalize_user_payload` with `persist_user_payload`.
++- `update_user_from_admin` now uses the same persistence boundary with explicit `source`.
++- `preview_user_import` uses only `normalize_user_payload`.
++
++Do not reintroduce:
++- `parse_user_payload`
++- `persist=False`
++- `skip_persist`
++- `dry_run`
++- sibling parser names such as `new_parse_user_payload`
++
++Verification:
++- `python3 -m unittest discover -s tests`
++- `python3 function-design-eval-content/evals/function-design/scripts/run_oracles.py --scenario wrong-side-effect --workspace reports/function-design-evals/20260525-224836/wrong-side-effect/workspace`
+diff --git a/function-design-eval-content/evals/function-design/fixtures/wrong-side-effect/baseline/src/user_imports.py b/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/src/user_imports.py
+index 0a94b87..2fe9f7f 100644
+--- a/function-design-eval-content/evals/function-design/fixtures/wrong-side-effect/baseline/src/user_imports.py
++++ b/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/src/user_imports.py
+@@ -5,27 +5,36 @@ def clear_audit_log():
+     AUDIT_LOG.clear()
+ 
+ 
+-def parse_user_payload(payload, repository, clock):
++def normalize_user_payload(payload):
+     email = payload["email"].strip().lower()
+     name = " ".join(payload.get("name", "").split())
+     if not email or "@" not in email:
+         raise ValueError("email is invalid")
++    return {"email": email, "name": name}
+ 
+-    user = {
+-        "email": email,
+-        "name": name,
+-        "updated_at": clock(),
+-    }
++
++def persist_user_payload(normalized_user, repository, clock, *, source=None):
++    user = dict(normalized_user)
++    user["updated_at"] = clock()
++    if source is not None:
++        user["source"] = source
+     repository.append(user)
+-    AUDIT_LOG.append({"event": "user_imported", "email": email})
++    AUDIT_LOG.append({"event": "user_imported", "email": user["email"]})
+     return user
+ 
+ 
+ def import_user(payload, repository, clock):
+-    return parse_user_payload(payload, repository, clock)
++    return persist_user_payload(normalize_user_payload(payload), repository, clock)
+ 
+ 
+ def update_user_from_admin(payload, repository, clock):
+-    user = parse_user_payload(payload, repository, clock)
+-    user["source"] = "admin"
+-    return user
++    return persist_user_payload(
++        normalize_user_payload(payload),
++        repository,
++        clock,
++        source="admin",
++    )
++
++
++def preview_user_import(payload):
++    return normalize_user_payload(payload)
+diff --git a/function-design-eval-content/evals/function-design/fixtures/wrong-side-effect/baseline/tests/test_user_imports.py b/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/tests/test_user_imports.py
+index d012e92..4e63778 100644
+--- a/function-design-eval-content/evals/function-design/fixtures/wrong-side-effect/baseline/tests/test_user_imports.py
++++ b/reports/function-design-evals/20260525-224836/wrong-side-effect/workspace/tests/test_user_imports.py
+@@ -1,6 +1,12 @@
+ import unittest
+ 
+-from src.user_imports import AUDIT_LOG, clear_audit_log, import_user, update_user_from_admin
++from src.user_imports import (
++    AUDIT_LOG,
++    clear_audit_log,
++    import_user,
++    preview_user_import,
++    update_user_from_admin,
++)
+ 
+ 
+ def fixed_clock():
+@@ -13,22 +19,44 @@ class UserImportTests(unittest.TestCase):
+ 
+     def test_import_user_normalizes_and_persists(self):
+         repository = []
+-        user = import_user({"email": "  ALICE@Example.COM ", "name": " Alice   Doe "}, repository, fixed_clock)
++        user = import_user(
++            {"email": "  ALICE@Example.COM ", "name": " Alice   Doe "},
++            repository,
++            fixed_clock,
++        )
+ 
+         self.assertEqual(user["email"], "alice@example.com")
+         self.assertEqual(user["name"], "Alice Doe")
+         self.assertEqual(user["updated_at"], "2026-05-25T00:00:00Z")
+         self.assertEqual(repository, [user])
+-        self.assertEqual(AUDIT_LOG, [{"event": "user_imported", "email": "alice@example.com"}])
++        self.assertEqual(
++            AUDIT_LOG,
++            [{"event": "user_imported", "email": "alice@example.com"}],
++        )
+ 
+     def test_update_user_from_admin_keeps_existing_side_effects(self):
+         repository = []
+-        user = update_user_from_admin({"email": "ROOT@example.com", "name": " Root "}, repository, fixed_clock)
++        user = update_user_from_admin(
++            {"email": "ROOT@example.com", "name": " Root "},
++            repository,
++            fixed_clock,
++        )
+ 
+         self.assertEqual(user["source"], "admin")
+         self.assertEqual(repository, [user])
+         self.assertEqual(len(AUDIT_LOG), 1)
+ 
++    def test_preview_user_import_only_normalizes(self):
++        repository = []
++        preview = preview_user_import(
++            {"email": "  ALICE@Example.COM ", "name": " Alice   Doe "}
++        )
++
++        self.assertEqual(preview, {"email": "alice@example.com", "name": "Alice Doe"})
++        self.assertEqual(repository, [])
++        self.assertEqual(AUDIT_LOG, [])
++        self.assertNotIn("updated_at", preview)
++
+     def test_invalid_email_raises(self):
+         with self.assertRaises(ValueError):
+             import_user({"email": "not-email", "name": "Bad"}, [], fixed_clock)

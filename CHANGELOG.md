@@ -2,6 +2,17 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.15.0
+
+### Added
+- Landed the function-design verification suite (WS0a, `plans/20260525-function-design-verification.md`): six deterministic behavioral fixtures under `evals/function-design/` (boolean-flag-abstraction, sibling-helper-accumulation, intentional-parallelism, wrong-side-effect, staged-public-api-adapter, no-op-small-duplication), each with an `expected/good` workspace, at least one `expected/bad/<name>` workspace, and a scenario `oracle.py` that inspects files, AST, tests, and design-ledger evidence rather than final-response prose.
+- Added `evals/function-design/scripts/run_oracles.py` (with shared `oracle_common.py`): harness proving every expected-good state passes its oracle and every expected-bad sample fails it (currently 6 scenarios, 6 bad samples).
+- Added `scripts/validate_function_design_protocol.py`: static concept/autonomy validator (47 concept checks, 5 autonomy-deferral bans) over `function-boundary-governor`, `destructive-refactor`, `quality-gate`, and `AGENTS.md`, wired into `make lint`, `make test-integration`, and CI.
+- Added `evals/skill-triggers/function-design.json`: 19 routing cases (positive, negative, and routing-overlap) for the function-design skill family.
+- Added `reports/function-design-evals/`: agent-run report format plus the initial manual skill-vs-no-skill comparison runs from 2026-05-25 (recorded against the earlier draft fixture set).
+
+(v4.14.0 is reserved by the in-flight refactoring-overhaul branch, PR #86.)
+
 ## v4.13.0
 
 ### Removed

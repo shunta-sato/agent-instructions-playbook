@@ -1,0 +1,1 @@
+"""Boolean-flag baseline package."""

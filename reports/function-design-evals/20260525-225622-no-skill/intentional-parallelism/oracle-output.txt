@@ -1,0 +1,7 @@
+ORACLE FAIL
+- forbidden generic-helper/flag patterns found: ['parse_discount_code', 'strict\\s*=']
+- ledger missing term: keep parallel
+- ledger missing term: parse_customer_coupon
+- ledger missing term: parse_admin_discount_override
+- ledger missing term: error behavior
+- ledger missing term: side-effect

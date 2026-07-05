@@ -1,0 +1,35 @@
+{
+  "scenario": "wrong-side-effect",
+  "mode": "no_skill_control",
+  "triggered_skills": [],
+  "decision": "failed_design_control",
+  "temporary_red_state_used": false,
+  "old_abstractions": [
+    "parse_user_payload"
+  ],
+  "new_abstractions": [
+    "preview_user_import"
+  ],
+  "deleted_functions": [],
+  "migrated_call_sites": [],
+  "forbidden_patterns_found": [
+    "persist="
+  ],
+  "ledger_updates": [],
+  "verification_commands": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests",
+    "PYTHONDONTWRITEBYTECODE=1 python3 function-design-eval-content/evals/function-design/scripts/run_oracles.py --scenario wrong-side-effect --workspace reports/function-design-evals/20260525-225622-no-skill/wrong-side-effect/workspace"
+  ],
+  "oracle_result": "fail",
+  "scorecard": {
+    "trigger_correctness": "fail",
+    "task_behavior": "pass",
+    "function_design": "fail",
+    "restraint": "fail",
+    "destructive_protocol": "fail",
+    "call_site_migration": "fail",
+    "ledger_quality": "fail",
+    "verification_quality": "fail",
+    "autonomy": "n/a"
+  }
+}

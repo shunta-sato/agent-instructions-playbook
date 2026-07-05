@@ -1,0 +1,28 @@
+# Function Boundary Design Ledger
+
+## Intentional duplication: customer coupon vs admin discount override
+
+Decision: keep parallel
+
+Functions:
+- `parse_customer_coupon`
+- `parse_admin_discount_override`
+
+Reason:
+- Customer coupon parsing returns `None` for invalid public input.
+- Admin override parsing raises for invalid input and audits successful overrides.
+- Error behavior and side-effect profiles differ, so a generic helper would hide semantic differences behind flags.
+- Future changes are likely to diverge because public coupon parsing and admin override auditing serve different caller contracts.
+
+Do not reintroduce:
+- `parse_discount_code`
+- `strict=`
+- `mode=`
+- generic helper names for this boundary
+
+Do not merge unless:
+- both paths share the same error contract and audit ownership is moved outside parsing.
+
+Verification:
+- `python3 -m unittest discover -s tests`
+- `python3 function-design-eval-content/evals/function-design/scripts/run_oracles.py --scenario intentional-parallelism --workspace reports/function-design-evals/20260525-224836/intentional-parallelism/workspace`

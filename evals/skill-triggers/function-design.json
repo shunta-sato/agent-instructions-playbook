@@ -1,0 +1,394 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "function-boundary-similar-helper-positive",
+      "prompt": "Add a helper for partner invoices that looks almost identical to the existing customer invoice helper. Check nearby helpers and avoid creating another sibling if there is a cleaner boundary.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Classify semantic neighbors before adding or merging helpers",
+        "Choose keep, split, merge, replace, inline, or no-op for the affected helper boundary"
+      ],
+      "expected_evidence": [
+        "Existing helper references and call sites are listed",
+        "Rejected alternatives explain why textual similarity alone is insufficient"
+      ],
+      "notes": "Adding a helper similar to an existing function should route to the function-boundary governor."
+    },
+    {
+      "id": "destructive-refactor-wrong-side-effect-positive",
+      "prompt": "The existing normalizeAndSaveUser function almost fits a preview use case, but it writes to storage. Add the preview use case while improving the design and migrating call sites.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Replace the flawed abstraction instead of adding a without-side-effects sibling",
+        "Declare whether a temporary red state is used and how convergence will be verified"
+      ],
+      "expected_evidence": [
+        "Old function references and call sites are searched after migration",
+        "Ledger records the replaced abstraction or an explicitly staged adapter"
+      ],
+      "expected_artifacts": [
+        ".agents/design-ledger/function-boundaries.md entry when the abstraction is replaced"
+      ],
+      "notes": "Wrong side effects in an almost-fitting function are a destructive-refactor trigger."
+    },
+    {
+      "id": "function-boundary-agentic-sibling-accumulation-positive",
+      "prompt": "A prior agent produced several similar parse helpers: parseClientPayload, parseAdminPayload, parsePartnerPayload. Add a new payload variant without piling on another sibling helper.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Decide whether accumulated helpers should merge, replace, or remain intentionally parallel",
+        "Avoid vague common/helper/util names for the final boundary"
+      ],
+      "expected_evidence": [
+        "Semantic-neighbor search includes all existing parse helpers",
+        "Call-site migration or intentional-parallel ledger evidence is recorded"
+      ],
+      "notes": "Agent-created sibling helpers should trigger boundary governance."
+    },
+    {
+      "id": "destructive-refactor-replace-old-abstraction-positive",
+      "prompt": "Replace the old pricing abstraction end-to-end. It owns the wrong invariants, its name no longer matches responsibility, and all internal call sites should migrate to the new concept.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
+      "expected_decisions": [
+        "Declare baseline, target design, break window, migration scope, convergence checks, and rollback procedure",
+        "Delete obsolete functions after call-site migration"
+      ],
+      "expected_evidence": [
+        "Old abstraction search confirms references are gone or ledgered as staged",
+        "Verification output proves convergence back to green"
+      ],
+      "expected_artifacts": [
+        ".agents/design-ledger/function-boundaries.md replaced-abstraction entry"
+      ],
+      "notes": "Replacing an old flawed abstraction is the core destructive-refactor path."
+    },
+    {
+      "id": "destructive-refactor-move-side-effects-positive",
+      "prompt": "Move persistence and notification side effects out of calculateRenewalQuote, keep externally observable behavior, and migrate every caller to clearer function boundaries.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "observability"
+      ],
+      "expected_decisions": [
+        "Separate pure calculation from effectful orchestration",
+        "Record migrated call sites and old-name cleanup"
+      ],
+      "expected_evidence": [
+        "Tests cover both pure calculation and effectful caller behavior",
+        "Search confirms no skipPersist/dryRun compatibility flag was introduced"
+      ],
+      "notes": "Moving side effects across function boundaries should not be solved by a behavior flag."
+    },
+    {
+      "id": "function-boundary-boolean-flag-positive",
+      "prompt": "This function now needs an includeArchived flag for a second use case. Support the use case without turning one function into a mode switch.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Treat the boolean flag as parameterization pressure and decide split, replace, or no-op",
+        "Choose call-site readable concept functions over optional behavior switches when responsibilities differ"
+      ],
+      "expected_evidence": [
+        "Call sites show the selected concept boundary",
+        "Forbidden boolean behavior flags are absent or explicitly justified as coherent options"
+      ],
+      "notes": "Boolean flags that hide responsibilities should trigger function-boundary governance."
+    },
+    {
+      "id": "destructive-refactor-delete-obsolete-positive",
+      "prompt": "After migrating to buildInvoiceSummary, delete the obsolete buildInvoicePayload function and prove no production references remain.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "project-initialization"
+      ],
+      "expected_decisions": [
+        "Complete call-site migration before deleting the obsolete function",
+        "Record convergence evidence and old-name search results"
+      ],
+      "expected_evidence": [
+        "Production reference search for the obsolete name",
+        "Tests covering migrated behavior"
+      ],
+      "notes": "Deleting obsolete functions after migration is part of the destructive-refactor convergence path."
+    },
+    {
+      "id": "destructive-refactor-public-api-staged-adapter-positive",
+      "prompt": "Replace an internal public-API-shaped helper. Internal callers can migrate now, but external callers require a temporary adapter with a documented removal condition.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Keep a public compatibility adapter only as an explicitly staged migration",
+        "Record adapter removal condition and internal call-site migration evidence"
+      ],
+      "expected_evidence": [
+        "Internal references use the new abstraction",
+        "Ledger contains staged adapter scope, reason, and removal condition"
+      ],
+      "expected_artifacts": [
+        ".agents/design-ledger/function-boundaries.md staged-adapter entry"
+      ],
+      "notes": "Public compatibility is allowed only when staged and ledgered."
+    },
+    {
+      "id": "function-boundary-local-variable-rename-negative",
+      "prompt": "Rename a local variable inside calculateTotal from tmp to subtotal and update no behavior.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Scope remains a local readability-safe edit with no function boundary decision"
+      ],
+      "expected_evidence": [
+        "No helper/API/call-site boundary changed"
+      ],
+      "notes": "A local variable rename should not trigger function-design refactoring."
+    },
+    {
+      "id": "function-boundary-generated-code-negative",
+      "prompt": "Regenerate the protobuf client code and commit the generated output exactly as produced.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor",
+        "code-readability"
+      ],
+      "expected_decisions": [
+        "Generated code is treated as generated output, not hand-refactored function design"
+      ],
+      "expected_evidence": [
+        "Generator command or source artifact is recorded"
+      ],
+      "notes": "Generated output should not be cleaned up by function-design skills."
+    },
+    {
+      "id": "function-boundary-test-fixture-duplication-negative",
+      "prompt": "The tests repeat small JSON fixture dictionaries. Review whether any function-boundary cleanup is warranted.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "No-op or keep-parallel is allowed for test fixture duplication likely to stay clearer inline",
+        "Avoid adding a production helper solely for duplicated test data"
+      ],
+      "expected_evidence": [
+        "Decision record explains why duplication is test-only or likely to diverge"
+      ],
+      "notes": "Near-miss duplication should exercise restraint, not destructive refactor."
+    },
+    {
+      "id": "function-boundary-intentional-parallel-negative",
+      "prompt": "Review two textually similar parsing functions. One raises on missing input and the other returns None because callers have different error behavior.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Keep the functions parallel when error behavior and future divergence differ",
+        "Record intentional duplication instead of introducing a shared helper"
+      ],
+      "expected_evidence": [
+        "Tests or call-site evidence show distinct error behavior",
+        "Ledger records keep-parallel reasoning if duplication is recurring"
+      ],
+      "expected_artifacts": [
+        ".agents/design-ledger/function-boundaries.md intentional-duplication entry when recurring"
+      ],
+      "notes": "Textual similarity with different error behavior should not over-apply DRY."
+    },
+    {
+      "id": "function-boundary-small-diverging-duplication-negative",
+      "prompt": "Two tiny branches duplicate three lines today, but product requirements say they will diverge next sprint. Do a function-boundary review.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Choose no-op or keep parallel when duplication is small and future divergence is likely",
+        "Do not introduce a vague helper for speculative reuse"
+      ],
+      "expected_evidence": [
+        "Decision record cites future divergence likelihood and abstraction cost"
+      ],
+      "notes": "Small likely-to-diverge duplication is a restraint case."
+    },
+    {
+      "id": "function-boundary-docs-only-negative",
+      "prompt": "Update the docs to describe that normalizeAndSaveUser currently both normalizes input and writes to storage. Do not change code.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Task remains docs-only and does not trigger refactoring workflows"
+      ],
+      "expected_evidence": [
+        "No production files are changed"
+      ],
+      "notes": "Describing existing bad design is not itself a function-design change."
+    },
+    {
+      "id": "function-boundary-formatting-only-negative",
+      "prompt": "Run the formatter over the touched Python files with no behavior, helper, API, or call-site changes.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Scope remains formatting-only",
+        "No function-boundary decision record is required"
+      ],
+      "expected_evidence": [
+        "Diff shows formatting-only changes"
+      ],
+      "notes": "Formatting alone should not trigger function-design skills."
+    },
+    {
+      "id": "destructive-refactor-readability-only-negative",
+      "prompt": "Review these function names and comments for readability only. Do not replace abstractions or migrate call sites.",
+      "should_trigger": [
+        "code-readability"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "code-smells-and-antipatterns"
+      ],
+      "expected_decisions": [
+        "Readability findings stay separate from destructive replacement protocol"
+      ],
+      "expected_evidence": [
+        "Findings cite names or comments, not a break-window migration"
+      ],
+      "notes": "Readability-only work should not escalate into destructive refactor."
+    },
+    {
+      "id": "function-design-generic-maintainability-routing",
+      "prompt": "Review this diff for general maintainability risks, module coupling, and architecture boundary leaks without focusing on helper/API shape.",
+      "should_trigger": [
+        "code-smells-and-antipatterns"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Generic maintainability review stays with code-smells-and-antipatterns",
+        "Function-boundary-governor is not loaded unless helper/API/call-site design becomes the primary question"
+      ],
+      "expected_evidence": [
+        "Findings cite coupling, cohesion, or boundary leak evidence"
+      ],
+      "notes": "This guards routing overlap between structural review and function-design skills."
+    },
+    {
+      "id": "function-design-legacy-no-tests-routing",
+      "prompt": "Refactor a legacy helper that has no reliable tests and depends on wall-clock time before splitting its responsibilities.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "working-with-legacy-code"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Capture characterization or safety-net evidence before risky boundary changes",
+        "Escalate to destructive-refactor only if replacement with a break window becomes necessary"
+      ],
+      "expected_evidence": [
+        "Current behavior and nondeterministic seams are documented",
+        "Function-boundary decision records test-protection risk"
+      ],
+      "notes": "Unsafe legacy/no-test work keeps legacy safeguards active."
+    },
+    {
+      "id": "quality-gate-function-design-evidence",
+      "prompt": "Run the final gate for a patch that used function-boundary-governor and destructive-refactor to replace an abstraction.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "dev-workflow"
+      ],
+      "expected_decisions": [
+        "Gate blocks submission if function-boundary decision evidence is missing",
+        "Gate blocks submission if destructive-refactor convergence, call-site migration, or ledger evidence is missing"
+      ],
+      "expected_evidence": [
+        "Function-boundary decision record",
+        "Convergence record with migrated call-site evidence and verification command results",
+        ".agents/design-ledger/function-boundaries.md entry for replaced abstraction, intentional duplication, or staged adapter"
+      ],
+      "expected_output_contains": [
+        "Gate decision:",
+        "function-boundary"
+      ],
+      "notes": "Quality gate must expect evidence from function-design skills when they were triggered."
+    }
+  ]
+}

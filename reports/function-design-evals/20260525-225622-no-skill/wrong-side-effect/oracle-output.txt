@@ -1,0 +1,10 @@
+ORACLE FAIL
+- missing expected function: normalize_user_payload
+- missing expected function: persist_user_payload
+- old mixed abstraction `parse_user_payload` still appears in production code
+- forbidden patterns found in production code: ['persist\\s*=']
+- ledger missing term: replaced abstraction
+- ledger missing term: parse_user_payload
+- ledger missing term: normalize_user_payload
+- ledger missing term: persist_user_payload
+- ledger missing term: do not reintroduce

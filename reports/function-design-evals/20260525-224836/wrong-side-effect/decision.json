@@ -1,0 +1,46 @@
+{
+  "scenario": "wrong-side-effect",
+  "triggered_skills": [
+    "dev-workflow",
+    "function-boundary-governor",
+    "destructive-refactor",
+    "quality-gate"
+  ],
+  "decision": "replaced",
+  "temporary_red_state_used": false,
+  "old_abstractions": [
+    "parse_user_payload"
+  ],
+  "new_abstractions": [
+    "normalize_user_payload",
+    "persist_user_payload",
+    "preview_user_import"
+  ],
+  "deleted_functions": [
+    "parse_user_payload"
+  ],
+  "migrated_call_sites": [
+    "import_user",
+    "update_user_from_admin"
+  ],
+  "forbidden_patterns_found": [],
+  "ledger_updates": [
+    "workspace/.agents/design-ledger/function-boundaries.md"
+  ],
+  "verification_commands": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests",
+    "PYTHONDONTWRITEBYTECODE=1 python3 function-design-eval-content/evals/function-design/scripts/run_oracles.py --scenario wrong-side-effect --workspace reports/function-design-evals/20260525-224836/wrong-side-effect/workspace"
+  ],
+  "oracle_result": "pass",
+  "scorecard": {
+    "trigger_correctness": "pass",
+    "task_behavior": "pass",
+    "function_design": "pass",
+    "restraint": "pass",
+    "destructive_protocol": "pass",
+    "call_site_migration": "pass",
+    "ledger_quality": "pass",
+    "verification_quality": "pass",
+    "autonomy": "pass"
+  }
+}

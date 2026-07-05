@@ -36,6 +36,7 @@ lint:
 	$(PYTHON) scripts/generate_route_lockfile.py --check
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
 	$(PYTHON) scripts/validate_skill_behavior_evals.py
+	$(PYTHON) scripts/validate_function_design_protocol.py
 	$(PYTHON) scripts/validate_model_routing.py
 	$(PYTHON) scripts/validate_model_routing_evals.py
 
@@ -52,6 +53,7 @@ test-integration:
 	$(PYTHON) scripts/generate_route_lockfile.py --check
 	$(PYTHON) scripts/validate_skill_trigger_evals.py
 	$(PYTHON) scripts/validate_skill_behavior_evals.py
+	$(PYTHON) scripts/validate_function_design_protocol.py
 	$(PYTHON) scripts/validate_model_routing.py
 	$(PYTHON) scripts/validate_model_routing_evals.py
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
