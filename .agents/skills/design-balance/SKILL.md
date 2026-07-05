@@ -23,6 +23,12 @@ Use this skill when a change:
 - risks a large class, god object, unclear service/manager hub, or excess layering
 - needs names checked against responsibilities
 
+### Checkable thresholds
+
+- **large class/module** = any of: >400 lines (the structure budget), OR >7 public functions/methods, OR ≥3 distinct reasons to change.
+- **god object / unclear hub** = a unit that ≥3 otherwise-unrelated modules depend on AND that owns ≥3 distinct reasons to change.
+- **excess layering** = a layer that only forwards calls without transforming data or enforcing an invariant, OR a single operation crossing >3 internal layers.
+
 Do not use it for:
 
 - function/helper/API boundary decisions only; use `function-boundary-governor`

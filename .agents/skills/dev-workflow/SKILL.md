@@ -29,7 +29,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 3) Apply **required trigger-based branches** only when facts trigger them.
    - new source file/module/crate/package, test placement decision, or structure budget finding on a touched file → `$project-structure`
    - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
-   - cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
+   - cross-boundary architecture/technology option comparison with measurable quality drivers (metric + target + measurement method all present; definition in `$architecture-decision-analysis`) → `$architecture-decision-analysis`
    - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
    - module/class responsibility layout, new layer/interface, or 2+ new classes/modules → `$design-balance`
    - normal/high-risk implementation or new abstraction/helper/wrapper/adapter → `$implementation-economy`
@@ -45,15 +45,21 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
    - C++ headers touched → `$code-readability` (Doxygen gate)
 
-4) Apply routing priority to avoid overlap:
-   - If the task requires choosing among cross-boundary architecture or technology options with measurable quality drivers, run `$architecture-decision-analysis` before implementation. Route to `$requirements-engineering` first if the quality drivers or requirements are too vague to measure.
-   - If embedded physical-footprint NFRs are broad, optimization-oriented, or architecture-shaping and target behavior or hardware capability is not understood, run `$embedded-system-familiarization` first.
-   - If embedded physical-footprint NFRs are narrow, first route missing target context, unknown envelope behavior, and budget provenance gaps to the specific embedded skills as applicable; then run `$embedded-nfr-design` before implementation. Route to `$architecture-decision-analysis` only when multiple cross-boundary architecture options must be compared.
-   - If the primary question is module/class responsibility layout, naming, layer count, or reason-to-change split, run `$design-balance` before implementation.
-   - If the primary question is function boundary/helper/API shape/side-effect placement/call-site migration, run `$function-boundary-governor` first.
-   - If the primary risk is too much code, extra helpers/wrappers, or premature generality, run `$implementation-economy`.
-   - If the primary performance risk is target-local or embedded physical footprint, use the embedded NFR skills and `$embedded-hot-path-review`; otherwise use `$performance-review`.
-   - Add `$code-smells-and-antipatterns` only when module-layer dependencies/coupling/architecture boundaries/adapters are also changing.
+4) Resolve overlaps with the routing precedence table. Walk the rows top-down; the **first matching row wins** and that skill runs before implementation. Later rows may still be triggered branches, but the winning row decides what runs first.
+
+| # | The decision this task needs first is... | Route first |
+|---|---|---|
+| 1 | choosing among cross-boundary architecture or technology options — and every quality driver has metric + target + measurement method | `$architecture-decision-analysis` |
+| 2 | same as row 1, but at least one quality driver lacks metric, target, or measurement method | `$requirements-engineering`, and only after that `$architecture-decision-analysis` |
+| 3 | embedded physical-footprint NFRs that are broad, optimization-oriented, or architecture-shaping, and target behavior or hardware capability is not understood | `$embedded-system-familiarization` |
+| 4 | embedded physical-footprint NFRs that are narrow | the specific embedded skills for missing target context (table below), and after that `$embedded-nfr-design` |
+| 5 | which module/class/layer owns a responsibility, naming, layer count, or reason-to-change split | `$design-balance` |
+| 6 | function boundary, helper/API shape, side-effect placement, or call-site migration | `$function-boundary-governor` |
+| 7 | too much code, extra helpers/wrappers, or premature generality | `$implementation-economy` |
+| 8 | performance of target-local / embedded physical footprint | embedded NFR skills + `$embedded-hot-path-review` |
+| 9 | performance of host/app request, render, or job paths | `$performance-review` |
+
+   Add `$code-smells-and-antipatterns` on top of any row only when module-layer dependencies, coupling, architecture boundaries, or adapters are also changing.
 
 Embedded NFR routing table:
 

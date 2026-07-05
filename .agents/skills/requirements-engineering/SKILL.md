@@ -21,6 +21,11 @@ It covers:
 
 ## When to use
 
+### Checkable thresholds
+
+- **ambiguous** = testable acceptance criteria cannot be written from the request alone.
+- **non-trivial** = any of: ≥2 modules touched, OR ≥2 user-visible behaviors added/changed, OR a new domain concept is introduced.
+
 Use this skill when:
 
 - a request is ambiguous, cross-component, user-facing, or risky enough to need requirements first

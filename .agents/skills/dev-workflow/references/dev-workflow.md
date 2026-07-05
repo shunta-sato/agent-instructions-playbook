@@ -61,7 +61,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 
 - new source file/module/crate/package created, test placement decision, or structure budget finding on a touched file → `$project-structure`
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
-- cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
+- cross-boundary architecture/technology option comparison with measurable quality drivers (metric + target + measurement method all present) → `$architecture-decision-analysis`
 - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
 - module/class responsibility layout, new layer/interface, 2+ new classes/modules, or existing class/module gains a second reason-to-change → `$design-balance`
 - normal/high-risk implementation or new abstraction/helper/wrapper/adapter/indirection → `$implementation-economy`

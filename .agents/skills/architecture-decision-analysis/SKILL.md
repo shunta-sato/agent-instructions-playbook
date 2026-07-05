@@ -26,6 +26,13 @@ Required:
 - The choice affects measurable quality drivers such as latency, throughput, reliability, availability, security, operability, maintainability, or migration risk.
 - For embedded or target-local systems, the choice affects physical quality drivers such as CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer overhead.
 
+### Checkable thresholds
+
+A quality driver is measurable only when all three are present: a metric name, a target value or direction, and a measurement method. If any of the three is missing, route to `$requirements-engineering` first.
+
+- Measurable: "p95 request latency < 200ms, measured by the load-test harness".
+- Vague (not measurable): "should be fast / scalable / maintainable".
+
 Use additionally when one or more of these applies:
 
 - Implementation should not proceed until risks, tradeoffs, verification tasks, and rollback or fallback considerations are recorded.

@@ -8,6 +8,8 @@ This file is the reference for requirements briefs, specs, requirement IDs, veri
 
 Use this only when the request is ambiguous, solution-first, user-facing, risky, or missing acceptance conditions.
 
+Checkable definition: **ambiguous** = testable acceptance criteria cannot be written from the request alone (see `SKILL.md` for the full threshold set, including **non-trivial**).
+
 ### Problem Frame
 
 Keep this to at most 6 lines.
