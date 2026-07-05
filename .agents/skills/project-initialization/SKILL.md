@@ -3,6 +3,8 @@ name: project-initialization
 description: "Use when COMMANDS.md is uninitialized, contains <fill>, or the repository lacks verified canonical build, lint, test, and verify commands."
 metadata:
   short-description: Initialize canonical verify commands
+  requires:
+    - references/project-initialization.md
 ---
 
 ## Purpose
@@ -65,3 +67,11 @@ If `make verify` fails, initialization is **not complete** and `<fill>` must rem
 - Run `make verify`.
 - If successful, update verification line in `COMMANDS.md` and re-check `rg "<fill>" COMMANDS.md` returns no matches.
 - If unsuccessful, preserve `<fill>` and leave actionable remediation notes.
+
+## Output expectation
+
+- State whether `COMMANDS.md` still contains `<fill>` (via `rg "<fill>" COMMANDS.md`).
+- State whether `make verify` was run and its exit code.
+- On success: confirm `verified by agent` was updated to `yes (YYYY-MM-DD)`.
+- On failure: keep `<fill>` and report the failure reason plus exact retry steps.
+- If embedded/edge physical constraints were detected, state the handoff to `embedded-project-constitution`.

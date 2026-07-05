@@ -3,6 +3,8 @@ name: preflight-db-migration
 description: "Preflight DB migration, schema change, rollback, backfill, data compatibility, transaction boundary. Use before database or persistence-layer changes."
 metadata:
   short-description: DB migration preflight
+  requires:
+    - references/db-migration-reference.md
 ---
 
 # Preflight DB Migration
@@ -61,3 +63,10 @@ generated clients, or approve destructive schema work.
 - Destructive schema or data-risk approvals are explicit.
 - Rollback or forward-fix expectations are recorded or unknown.
 - Old-app/new-app compatibility and targeted migration validation are recorded or unknown.
+
+## Output expectation
+
+- Return the common output contract from `preflight-domain-template`, filled for the DB/migration domain.
+- Include the five DB invariants (`DB-NO-RUN`, `DB-ROLLBACK`, `DB-DESTRUCTIVE`, `DB-BACKFILL`, `DB-COMPAT`) verbatim when applicable, or state why one does not apply.
+- Keep migration execution and approval unknowns explicit.
+- Route destructive or production data risks to explicit human approval before implementation.

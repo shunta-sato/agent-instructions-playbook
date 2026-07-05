@@ -3,6 +3,8 @@ name: concurrency-ros2
 description: "ROS 2 (rclcpp/rclpy) concurrency guidance: executors, callback groups, services/actions/timers, and deadlock-safe patterns. Use when modifying ROS nodes or callbacks."
 metadata:
   short-description: ROS 2 concurrency patterns
+  requires:
+    - references/concurrency-ros2.md
 ---
 
 ## Purpose

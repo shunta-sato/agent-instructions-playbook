@@ -3,6 +3,8 @@ name: quality-gate
 description: "Use before every submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
 metadata:
   short-description: Final quality gate
+  requires:
+    - references/quality-gate.md
 ---
 
 ## Purpose

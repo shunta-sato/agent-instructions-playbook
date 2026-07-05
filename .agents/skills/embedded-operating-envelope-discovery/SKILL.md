@@ -3,6 +3,9 @@ name: embedded-operating-envelope-discovery
 description: "Use to discover normal, near-boundary, degraded, failure-adjacent, and logging/telemetry blackout behavior for embedded targets before calibrating NFR budgets. Do not use for ordinary performance benchmarking without an embedded target envelope question."
 metadata:
   short-description: Embedded operating envelope discovery
+  requires:
+    - templates/operating-envelope-report.schema.json
+    - templates/operating-envelope.md
 ---
 
 ## Purpose
@@ -38,7 +41,7 @@ Use `embedded-system-familiarization` when envelope discovery is part of a broad
 6. Record normal ranges, early warning trends, boundary conditions, blackout points, observer effect, and no-go boundaries.
 7. Hand off to `embedded-nfr-calibration` with calibration inputs.
 
-## Outputs
+## Output expectation
 
 Produce or update:
 

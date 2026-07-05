@@ -3,6 +3,11 @@ name: preflight-domain-template
 description: "Template for authoring domain preflight skills that extract invariants, first docs/files, AGENTS.md proposals, .agent/ctx maps, test routing, approvals, reviewers, and handoff fragments. Use when creating or reviewing a new preflight-* domain skill, not during product implementation."
 metadata:
   short-description: Domain preflight skill template
+  requires:
+    - references/domain-agents-template.md
+    - references/domain-ctx-template.md
+    - references/domain-handoff-fragment-template.md
+    - references/domain-trigger-eval-template.md
 ---
 
 # Preflight Domain Template
@@ -97,3 +102,10 @@ deploy, edit generated clients, or decide final implementation scope.
 - The proposal names first docs/files and targeted tests before implementation starts.
 - Approvals and reviewers are explicit when destructive, public API, security, billing, deploy, or data risks appear.
 - Deferred or unimplemented domain surfaces are marked as gaps rather than silently omitted.
+
+## Output expectation
+
+- A new `preflight-<domain>` skill must return the Common Output Contract exactly, with every heading present (`Domain` through `Remaining gaps`).
+- Domain invariants must be human-auditable rules, not opaque shorthand.
+- Confirmed facts, inferred facts, and unknowns must be listed separately.
+- Nested `AGENTS.md` and `.agent/ctx/<domain>.md` proposals must use the referenced templates, not free-form text.

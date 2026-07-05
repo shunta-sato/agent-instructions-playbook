@@ -3,6 +3,11 @@ name: working-with-legacy-code
 description: "Use when touching code without reliable automated tests or with nondeterminism such as time, randomness, or I/O."
 metadata:
   short-description: Working with legacy code safely
+  requires:
+    - references/working-with-legacy-code-cpp.md
+    - references/working-with-legacy-code-py.md
+    - references/working-with-legacy-code-ts.md
+    - references/working-with-legacy-code.md
 ---
 
 ## Purpose

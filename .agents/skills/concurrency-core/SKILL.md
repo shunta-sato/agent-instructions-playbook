@@ -3,6 +3,8 @@ name: concurrency-core
 description: "Concurrency design patterns & safety workflow. Use when you introduce or modify concurrency (threads/async/callbacks/queues/locks), parallelize for performance, or need a clear shutdown/cancellation strategy."
 metadata:
   short-description: Concurrency design patterns and planning
+  requires:
+    - references/concurrency-core.md
 ---
 
 ## Purpose

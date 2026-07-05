@@ -3,6 +3,27 @@ name: uidesign-flow
 description: "Use when an approved tone-and-manner decision must become concrete UI styling tokens and visual previews."
 metadata:
   short-description: tonemana → tokens → component+screen previews
+  requires:
+    - references/uidesign-flow.md
+    - templates/auto_review.json
+    - templates/diff_summary.md
+    - templates/previews/components.html
+    - templates/previews/index.html
+    - templates/previews/preview.css
+    - templates/previews/preview.js
+    - templates/previews/review/review.css
+    - templates/previews/review/review_export.js
+    - templates/previews/review/review_store.js
+    - templates/previews/review/review_ui.js
+    - templates/previews/screens/entry.html
+    - templates/previews/screens/form.html
+    - templates/previews/screens/status.html
+    - templates/previews/viewports.js
+    - templates/review_notes.md
+    - templates/tokens/resolved.tokens.css
+    - templates/tokens/resolved.tokens.json
+    - templates/uidesign_contract.yaml
+    - templates/uidesign_spec.json
 ---
 
 ## Purpose

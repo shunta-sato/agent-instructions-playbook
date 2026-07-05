@@ -14,6 +14,7 @@ Explicit invocation differs by client:
 Before acting on software-development work, inspect the Agent Index and decide whether any skill applies.
 If the user explicitly names a skill, load it before acting.
 If the task changes code or tests, use `dev-workflow` before editing and `quality-gate` before reporting completion.
+When loading a skill, also load every file listed in its frontmatter `metadata.requires` before executing it; a listed file that cannot be read is an error, not a skippable extra.
 For multi-step or delegatable work, create a task brief before invoking a subagent; the brief must name the task, allowed files, allowed commands, expected artifacts, and escalation conditions.
 
 ## Agent Index (generated)

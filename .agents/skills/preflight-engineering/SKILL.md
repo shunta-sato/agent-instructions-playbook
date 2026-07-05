@@ -3,6 +3,17 @@ name: preflight-engineering
 description: "Preflight, AGENTS.md, agent context, skill routing, test routing, subagent handoff, prompt caching readiness. Use before long-running, multi-agent, unfamiliar, high-risk, or cross-service coding tasks. Do not use for small one-file edits."
 metadata:
   short-description: Preflight agent context and handoff
+  requires:
+    - references/agent-ctx-template.md
+    - references/agents-template.md
+    - references/cache-readiness-checklist.md
+    - references/handoff-prompt-template.md
+    - references/oauth-refresh-token-example.md
+    - references/repo-inspection-output-template.md
+    - references/skill-map-template.md
+    - scripts/check_agent_docs.py
+    - scripts/estimate_context_size.py
+    - scripts/inspect_repo.py
 ---
 
 # Preflight Engineering

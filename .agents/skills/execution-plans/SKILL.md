@@ -3,6 +3,13 @@ name: execution-plans
 description: "Use when work is complex, long-running, multi-step, cross-boundary, likely to span multiple PRs/sessions, or needs handoff-ready planning under plans/."
 metadata:
   short-description: "ExecPlan: plan/WBS/progress + handoff"
+  requires:
+    - references/execution-plans.md
+    - references/model-routing.md
+    - references/subagent-execution.md
+    - templates/subagent-report.md
+    - templates/subagent-task-brief.md
+    - templates/supervisor-review-request.md
 ---
 
 ## Purpose

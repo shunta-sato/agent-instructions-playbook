@@ -3,6 +3,13 @@ name: tonemana-apply
 description: "Apply a selected Tone & Manner pattern to an existing UIUX Pack by producing a versioned Tonemana Pack and wiring references into UIUX artifacts. Use when a human has selected, or asks to choose and apply, a tone/manner pattern for a UI project."
 metadata:
   short-description: Apply tone/manner choice to UIUX Pack
+  requires:
+    - references/tonemana-apply.md
+    - templates/auto_review.json
+    - templates/diff_summary.md
+    - templates/review_notes.md
+    - templates/tonemana_contract.yaml
+    - templates/tonemana_spec.json
 ---
 
 # tonemana-apply
@@ -15,7 +22,7 @@ Treat tone as atmosphere and manner as explicit rules. Keep text constraints und
 - Required: `selected_pattern_id`, `uiux_pack_path`
 - Optional: `overrides`, `touchpoints`
 
-## Outputs
+## Output expectation
 - `tonemana/YYYYMMDD-<slug>/tonemana_contract.yaml`
 - `tonemana/YYYYMMDD-<slug>/tonemana_spec.json`
 - `tonemana/YYYYMMDD-<slug>/auto_review.json`

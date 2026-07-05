@@ -3,6 +3,8 @@ name: code-readability
 description: "Trigger only for requested readability review/cleanup, touched-code readability work involving comments, names, control flow, function shape, or test clarity, touched C++ headers, or dev-workflow routing to the C++ documentation gate. Do not trigger for ordinary implementation solely because code changed. Enforces mandatory C++ Doxygen and readability documentation gates."
 metadata:
   short-description: Code readability
+  requires:
+    - references/code-readability.md
 ---
 
 ## Purpose

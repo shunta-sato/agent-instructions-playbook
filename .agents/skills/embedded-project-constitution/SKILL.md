@@ -3,6 +3,13 @@ name: embedded-project-constitution
 description: "Use when starting an embedded, edge, target-local, daemon/logger/recorder/collector project or introducing that runtime class into an existing repo, to create project-level physical budgets, target profiles, harness skeletons, and no-claim rules. Do not use for ordinary project initialization without embedded physical constraints."
 metadata:
   short-description: Embedded project constitution
+  requires:
+    - templates/physical-budgets.yaml
+    - templates/pr-template-section.md
+    - templates/project-principles.md
+    - templates/resource-discipline.md
+    - templates/resource-harness.md
+    - templates/target-profile.yaml
 ---
 
 ## Purpose
@@ -43,7 +50,7 @@ Do not use it for ordinary command-system initialization; use `project-initializ
 10. Route broad target-learning, hardware capability, bottleneck/margin, or architecture-constraint work to `embedded-system-familiarization`.
 11. Route feature-level work to `embedded-nfr-design`.
 
-## Outputs
+## Output expectation
 
 Produce or update project-level artifacts:
 

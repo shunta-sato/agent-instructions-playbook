@@ -3,6 +3,9 @@ name: thread-safety-tooling
 description: "Thread-safety verification toolkit. Use when C/C++ code introduces threads/locks/atomics or when race conditions/deadlocks are plausible. Provides TSan and compile-time thread-safety analysis guidance."
 metadata:
   short-description: Thread-safety verification
+  requires:
+    - references/concurrency-verification-matrix-template.md
+    - references/thread-safety-tooling.md
 ---
 
 ## Purpose

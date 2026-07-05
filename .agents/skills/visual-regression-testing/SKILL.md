@@ -3,6 +3,11 @@ name: visual-regression-testing
 description: "Use when UI changes require repo-defined snapshot or visual-diff verification, baseline review, or a UI Visual Verification Report."
 metadata:
   short-description: Tool-agnostic UI visual verification contract
+  requires:
+    - references/visual-regression-android.md
+    - references/visual-regression-ios.md
+    - references/visual-regression-testing.md
+    - references/visual-regression-web.md
 ---
 
 ## Purpose
@@ -35,3 +40,14 @@ Use this skill to enforce a consistent UI visual verification contract without h
   **Instead:** separate font/resolution/theme/locale differences and record reproduction conditions before judgment.
 - **Common pitfall:** trusting stale snapshot commands or artifact paths.
   **Instead:** capture the command source, tool versions, device/browser connection state, config/baseline paths, and produced artifact paths.
+
+## Output expectation
+
+Produce a `## UI Visual Verification Report` with exactly these fields (see `references/visual-regression-testing.md` for the mandatory format):
+- Platform: `ios|android|web`
+- Environment: OS + key tool versions
+- Live discovery evidence: command source + config/baseline path + device/browser/CI state
+- Command(s) executed
+- Snapshot output path(s)
+- Baseline updated?: `yes|no`
+- Review summary: reasoning for accepted diffs, or why the check could not run and how CI should cover it

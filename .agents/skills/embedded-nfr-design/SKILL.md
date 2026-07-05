@@ -3,6 +3,10 @@ name: embedded-nfr-design
 description: "Use before implementing embedded, edge, target-local, daemon, logger, recorder, collector, sampler, polling-loop, or resource-sensitive always-on behavior to define physical NFR budgets and measurement claims. Do not use for generic backend, web, or schema-only work with no target-local physical footprint."
 metadata:
   short-description: Embedded physical NFR design
+  requires:
+    - references/embedded-nfr-taxonomy.md
+    - templates/nfr-matrix.md
+    - templates/physical-budgets.yaml
 ---
 
 ## Purpose
@@ -69,7 +73,7 @@ Do not use it for generic backend APIs, web UI, schema-only work, pure docs, or 
    - `observability` when runtime diagnostic signals are added
    - `embedded-nfr-gate` before final submit readiness
 
-## Outputs
+## Output expectation
 
 Produce or update:
 

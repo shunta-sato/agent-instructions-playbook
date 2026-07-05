@@ -3,6 +3,8 @@ name: test-driven-development
 description: "Use when doing TDD or when dev-workflow routes implementation through a Test List."
 metadata:
   short-description: Test-driven development workflow
+  requires:
+    - references/test-driven-development.md
 ---
 
 ## Purpose

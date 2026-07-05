@@ -3,6 +3,8 @@ name: preflight-auth-session
 description: "Preflight auth, OAuth, refresh token, session, JWT, cookie, CSRF, login redirect, token logging. Use before auth/session/security-sensitive implementation or multi-agent investigation."
 metadata:
   short-description: Auth/session preflight
+  requires:
+    - references/auth-session-reference.md
 ---
 
 # Preflight Auth Session
@@ -59,3 +61,10 @@ clients, run auth flows against production, or change runtime configuration.
 - Login redirect and route-guard entry points are identified or marked unknown.
 - Auth public error-shape compatibility is preserved or marked for approval.
 - Targeted auth test commands are confirmed or explicitly unknown.
+
+## Output expectation
+
+- Return the common output contract from `preflight-domain-template`, filled for the auth/session domain.
+- Include the six auth invariants (`AUTH-LOG`, `AUTH-EXPIRED-REFRESH`, `AUTH-REDIRECT`, `AUTH-ERROR-MAP`, `API-SHAPE`, `GENERATED-CLIENT`) verbatim when applicable, or state why one does not apply.
+- Separate confirmed facts, inferred facts, and unknowns.
+- Propose `.agent/ctx/auth.md` or nested `AGENTS.md` auth fragments only when the repository shape supports them.
