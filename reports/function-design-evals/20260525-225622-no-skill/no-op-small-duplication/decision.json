@@ -1,0 +1,34 @@
+{
+  "scenario": "no-op-small-duplication",
+  "mode": "no_skill_control",
+  "triggered_skills": [],
+  "decision": "failed_design_control",
+  "temporary_red_state_used": false,
+  "old_abstractions": [],
+  "new_abstractions": [
+    "build_order_lines"
+  ],
+  "deleted_functions": [],
+  "migrated_call_sites": [],
+  "forbidden_patterns_found": [
+    "helper",
+    "build_order_lines"
+  ],
+  "ledger_updates": [],
+  "verification_commands": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests",
+    "PYTHONDONTWRITEBYTECODE=1 python3 function-design-eval-content/evals/function-design/scripts/run_oracles.py --scenario no-op-small-duplication --workspace reports/function-design-evals/20260525-225622-no-skill/no-op-small-duplication/workspace"
+  ],
+  "oracle_result": "fail",
+  "scorecard": {
+    "trigger_correctness": "fail",
+    "task_behavior": "pass",
+    "function_design": "fail",
+    "restraint": "fail",
+    "destructive_protocol": "n/a",
+    "call_site_migration": "n/a",
+    "ledger_quality": "fail",
+    "verification_quality": "fail",
+    "autonomy": "n/a"
+  }
+}

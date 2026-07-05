@@ -1,0 +1,32 @@
+{
+  "scenario": "wrong-side-effect",
+  "triggered_skills": [
+    "function-boundary-governor",
+    "destructive-refactor"
+  ],
+  "decision": "replaced",
+  "temporary_red_state_used": true,
+  "old_abstractions": [
+    "normalize_and_save_user"
+  ],
+  "new_abstractions": [
+    "normalize_user",
+    "save_normalized_user"
+  ],
+  "deleted_functions": [
+    "normalize_and_save_user"
+  ],
+  "migrated_call_sites": [
+    "src/importer.py",
+    "src/preview.py"
+  ],
+  "forbidden_patterns_found": [],
+  "ledger_updates": [
+    ".agents/design-ledger/function-boundaries.md"
+  ],
+  "verification_commands": [
+    "python3 -m unittest discover -s tests",
+    "python3 evals/function-design/scripts/run_oracles.py"
+  ],
+  "oracle_result": "pass"
+}

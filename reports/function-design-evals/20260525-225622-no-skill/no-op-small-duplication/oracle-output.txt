@@ -1,0 +1,6 @@
+ORACLE FAIL
+- src file set changed: expected [PosixPath('__init__.py'), PosixPath('order_totals.py')], actual [PosixPath('__init__.py'), PosixPath('helpers.py'), PosixPath('order_totals.py')]
+- forbidden production helper/refactor patterns found: ['\\bhelper', 'build_order_lines']
+- ledger missing term: test-local
+- ledger missing term: small
+- ledger missing term: do not introduce

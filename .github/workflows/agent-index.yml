@@ -34,6 +34,9 @@ jobs:
       - name: Validate skill behavior eval seeds
         run: python scripts/validate_skill_behavior_evals.py
 
+      - name: Validate function-design protocol concepts
+        run: python scripts/validate_function_design_protocol.py
+
       - name: Validate model routing
         run: python scripts/validate_model_routing.py
 

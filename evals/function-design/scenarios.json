@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "id": "wrong-side-effect",
+      "fixture": "fixtures/wrong-side-effect",
+      "expected_skills": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decision": "replaced",
+      "forbidden_patterns": [
+        "withoutSideEffects",
+        "dryRun",
+        "skipPersist",
+        "newX",
+        "x2"
+      ]
+    },
+    {
+      "id": "sibling-helper-accumulation",
+      "fixture": "fixtures/sibling-helper-accumulation",
+      "expected_skills": [
+        "function-boundary-governor"
+      ],
+      "expected_decision": "merged",
+      "forbidden_patterns": [
+        "common",
+        "helper",
+        "handle",
+        "process",
+        "util"
+      ]
+    },
+    {
+      "id": "intentional-parallelism",
+      "fixture": "fixtures/intentional-parallelism",
+      "expected_skills": [
+        "function-boundary-governor"
+      ],
+      "expected_decision": "keep_parallel",
+      "forbidden_patterns": [
+        "required flag",
+        "shared parser helper"
+      ]
+    },
+    {
+      "id": "boolean-flag-abstraction",
+      "fixture": "fixtures/boolean-flag-abstraction",
+      "expected_skills": [
+        "function-boundary-governor"
+      ],
+      "expected_decision": "replaced",
+      "forbidden_patterns": [
+        "includeFoo",
+        "skipBar",
+        "dryRun",
+        "legacy",
+        "mode"
+      ]
+    },
+    {
+      "id": "staged-public-api-adapter",
+      "fixture": "fixtures/staged-public-api-adapter",
+      "expected_skills": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decision": "replaced",
+      "required_artifacts": [
+        ".agents/design-ledger/function-boundaries.md staged adapter entry"
+      ]
+    },
+    {
+      "id": "no-op-small-duplication",
+      "fixture": "fixtures/no-op-small-duplication",
+      "expected_skills": [
+        "function-boundary-governor"
+      ],
+      "expected_decision": "no_op",
+      "forbidden_patterns": [
+        "production helper for test fixture data"
+      ]
+    }
+  ]
+}

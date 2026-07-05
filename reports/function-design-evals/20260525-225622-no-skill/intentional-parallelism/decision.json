@@ -1,0 +1,37 @@
+{
+  "scenario": "intentional-parallelism",
+  "mode": "no_skill_control",
+  "triggered_skills": [],
+  "decision": "failed_design_control",
+  "temporary_red_state_used": false,
+  "old_abstractions": [
+    "parse_customer_coupon",
+    "parse_admin_discount_override"
+  ],
+  "new_abstractions": [
+    "parse_discount_code"
+  ],
+  "deleted_functions": [],
+  "migrated_call_sites": [],
+  "forbidden_patterns_found": [
+    "parse_discount_code",
+    "strict="
+  ],
+  "ledger_updates": [],
+  "verification_commands": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests",
+    "PYTHONDONTWRITEBYTECODE=1 python3 function-design-eval-content/evals/function-design/scripts/run_oracles.py --scenario intentional-parallelism --workspace reports/function-design-evals/20260525-225622-no-skill/intentional-parallelism/workspace"
+  ],
+  "oracle_result": "fail",
+  "scorecard": {
+    "trigger_correctness": "fail",
+    "task_behavior": "pass",
+    "function_design": "fail",
+    "restraint": "fail",
+    "destructive_protocol": "n/a",
+    "call_site_migration": "n/a",
+    "ledger_quality": "fail",
+    "verification_quality": "fail",
+    "autonomy": "n/a"
+  }
+}
