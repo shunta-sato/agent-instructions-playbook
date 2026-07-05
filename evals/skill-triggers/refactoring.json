@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "refactoring-rework-compat-waived",
+      "prompt": "This parser module has grown three overlapping entry points over time. Rework it into one clean API — you may break backward compatibility, nothing outside this repo uses it.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "working-with-legacy-code",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Compat-mode is recorded as break-allowed, quoting the requester's waiver of backward compatibility",
+        "Old entry points are deleted outright rather than deprecated, re-exported, or kept as parallel old/new versions"
+      ],
+      "expected_evidence": [
+        "python scripts/check_api_removal.py --symbol <old entry point names> sweep over the codebase returns zero hits"
+      ],
+      "notes": "Explicit rework request plus an explicit compatibility waiver is the canonical break-allowed trigger; destructive-refactor is needed because consolidating three entry points into one requires temporary red state while call sites migrate."
+    },
+    {
+      "id": "refactoring-delete-unused-api",
+      "prompt": "The exporters::xml module has no callers anywhere — remove it and its public API.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "design-balance"
+      ],
+      "expected_decisions": [
+        "Delete action is taken only after verifying zero remaining callers for exporters::xml and its public API"
+      ],
+      "notes": "Zero-caller code routes directly to function-boundary-governor's delete action; there is no live abstraction to migrate call sites off of, so destructive-refactor's red-state migration protocol is not needed."
+    },
+    {
+      "id": "refactoring-flatten-class-hierarchy",
+      "prompt": "We have AbstractHandler -> BaseHandler -> DefaultHandler -> Handler, and only Handler is ever instantiated. Flatten this hierarchy; compatibility can break.",
+      "should_trigger": [
+        "dev-workflow",
+        "design-balance",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "performance-review"
+      ],
+      "expected_decisions": [
+        "Compat-mode is recorded as break-allowed based on the explicit statement that compatibility can break",
+        "design-balance's remove-layer/merge decision is executed through destructive-refactor's break-window declaration and red-state migration protocol"
+      ],
+      "notes": "A 4-layer class hierarchy collapsing to one instantiated class is a module/class responsibility-layout decision (design-balance: remove-layer), not a function-level one, so function-boundary-governor is not the primary route here."
+    },
+    {
+      "id": "refactoring-consolidate-near-duplicates",
+      "prompt": "format_price, render_amount, and money_to_string do almost the same thing. Consolidate into one function.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "design-balance"
+      ],
+      "expected_decisions": [
+        "Merge decision for format_price, render_amount, and money_to_string is made against the positive/risk rubric, not on textual similarity alone",
+        "Old function names are removed after the merge, or kept only as an explicit no-op with recorded reasons"
+      ],
+      "notes": "Three near-duplicate functions doing the same thing is the core function-boundary-governor merge scenario; no new layer or class is being introduced, so design-balance does not apply."
+    },
+    {
+      "id": "refactoring-prep-before-feature",
+      "prompt": "Add a CSV export format. Note: the existing export code is one 600-line function with if-chains per format, so plan accordingly.",
+      "should_trigger": [
+        "dev-workflow",
+        "project-structure",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "bug-investigation-and-rca"
+      ],
+      "expected_decisions": [
+        "Preparatory refactor of the 600-line if-chain export function is recorded as done before the CSV feature is implemented on the improved base"
+      ],
+      "notes": "Nothing here waives compatibility or asks for a rework/consolidation/deletion; it is ordinary feature work whose landing area is awkward, so the preparatory-refactor step (dev-workflow step 2b) applies and staged/preserve compat-mode suffices — destructive-refactor's red-state protocol is not warranted."
+    },
+    {
+      "id": "refactoring-not-a-rework-small-rename",
+      "prompt": "Rename the parse_line function to parse_record across the crate.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor",
+        "design-balance",
+        "execution-plans"
+      ],
+      "notes": "Rename is a boundary decision but needs no red state: parse_line's responsibility and behavior are unchanged, so this is a plain function-boundary-governor rename action, not a rework/consolidation/deletion needing destructive-refactor or a multi-session ExecPlan."
+    },
+    {
+      "id": "refactoring-compat-preserved-staged",
+      "prompt": "Replace the config loading API, but external plugins depend on the old one — keep them working during the transition.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering"
+      ],
+      "expected_decisions": [
+        "Compat-mode is recorded as staged, since external plugins must keep working during the transition",
+        "A temporary adapter is added with a ledger entry naming its removal condition, rather than an indefinite parallel old/new version"
+      ],
+      "notes": "Replacing a public API while explicitly needing to keep old callers working during a transition is the staged compat-mode case; destructive-refactor's staged-migration ledger escape hatch applies here, unlike the break-allowed cases where it is unavailable."
+    }
+  ]
+}

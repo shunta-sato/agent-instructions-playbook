@@ -49,6 +49,8 @@ Confirm required evidence exists for each triggered branch:
 - structural scan branch → smells/anti-patterns result (new/worsened handled)
 - function-boundary-governor branch → function-boundary decision record
 - destructive-refactor branch → convergence record (replaced|no-op|rollback), migrated call-sites evidence, red-state usage record
+- refactor branch under compat-mode `break-allowed` → removed-symbol sweep output: `python scripts/check_api_removal.py --symbol <old-name> ...` with zero hits (tool output, not a claim); surviving old symbols/shims/aliases are `no-submit`
+- API-touching or rework/consolidation/deletion task → recorded compat-mode (`preserve|staged|break-allowed`; `break-allowed` quotes the requester's waiver)
 - function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
 - C++ header branch → Doxygen completeness evidence
 - ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff)
@@ -70,6 +72,7 @@ Confirm required evidence exists for each triggered branch:
 - If embedded NFR claims depend on target behavior, target characterization exists or the claim is explicitly provisional.
 - If numeric production budgets are claimed, budget provenance exists, calibration artifacts are referenced, and calibration revisit conditions are not triggered.
 - If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
+- If compat-mode was `break-allowed`, no deprecated shim, re-export alias, or parallel old/new version survives — verified by the `scripts/check_api_removal.py` sweep, not by the agent's claim.
 - Open risks or follow-ups are explicitly documented.
 
 If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:

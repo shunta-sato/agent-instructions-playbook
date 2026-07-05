@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.14.0
+
+### Added
+- Added **compat-mode** (`preserve | staged | break-allowed`) recorded at dev-workflow routing and enforced at quality-gate: under `break-allowed` (requester explicitly waived compatibility), old APIs, deprecated markers, re-export aliases, and parallel old/new versions are defects — delete, don't deprecate; the staged-migration ledger escape applies only under `staged`.
+- Added `scripts/check_api_removal.py`: mechanical removed-symbol sweep (word-boundary matching, history/ledger paths exempt) wired into quality-gate so "the old API is gone" is tool-verified state, not a claim. Plus unit tests.
+- Added dev-workflow refactoring triggers (rework/consolidation/deletion requests, zero-caller code → `delete`), a preparatory-refactor step 2b ("make the change easy first", recorded as `prep-refactor: done | not-needed`), and `evals/skill-triggers/refactoring.json`.
+
+### Changed
+- `function-boundary-governor`: `delete` added as a first-class action (zero-caller verification; previously deletion had to masquerade as replace/inline); numeric decision rule declared authoritative over the absolute merge list; consolidation preferred over retention under `break-allowed` when the rubric passes.
+- `design-balance`: removal-direction triggers (redundant/near-duplicate units, hierarchy flattening, lost reason-to-exist), execution handoff to `destructive-refactor` for red-state work, and an anti-retention rule under `break-allowed`.
+- `destructive-refactor`: break-allowed imperatives, post-migration deletion checklist backed by the sweep, and "keeping the old API just in case" explicitly forbidden.
+- `AGENTS.md`: the smallest-coherent-design exception now covers `design-balance`; "No broad cleanups" is scoped to cleanups *unrelated to the task*; compat-mode added to the always-on principles.
+
 ## v4.12.0
 
 ### Changed

@@ -22,6 +22,7 @@ Record:
 - Risk level:
 - Why this level:
 - Escalation trigger (what would raise risk):
+- Compat-mode (`preserve` | `staged` | `break-allowed`) when public/cross-module APIs are touched or the task is a rework/consolidation/deletion request; for `break-allowed`, quote the requester's waiver:
 
 ### Required outputs by risk
 
@@ -47,9 +48,11 @@ Run this lane before trigger branches for normal/high-risk implementation. For l
 3. Responsibility layout: run `$design-balance` when the change introduces 2+ classes/modules, adds a layer/interface, or adds a new reason-to-change to an existing class/module.
 4. Complexity budget: run `$implementation-economy` for normal/high-risk work and for any new helper, wrapper, adapter, class, module, or indirection.
 5. Lightweight readability check: check that touched names predict responsibilities; rename if a class/module/function name cannot be explained in one sentence.
+6. Preparatory refactor check (make the change easy first): if the landing area has structure-budget findings, near-duplicate functions the feature would extend, or forces a boolean-flag/shotgun edit, do a scoped preparatory refactor as its own verified step (tests green before and after), then implement the feature.
 
 Default lane output:
 - Definition of Done / acceptance criteria:
+- Prep-refactor: done | not-needed (one-line reason):
 - Test List source or skip reason:
 - Responsibility map path/summary or skip reason:
 - Complexity budget + audit path/summary or skip reason:
@@ -60,6 +63,8 @@ Default lane output:
 Mark each line as `triggered` or `not triggered` with one-line evidence.
 
 - new source file/module/crate/package created, test placement decision, or structure budget finding on a touched file → `$project-structure`
+- explicit rework/rewrite/consolidation/simplification request, API deletion, or backward compatibility explicitly waived → record compat-mode, then `$function-boundary-governor` (function/API level) or `$design-balance` (module/class level); temporary red state needed → `$destructive-refactor`
+- code or API with zero remaining callers → `$function-boundary-governor` (`delete` action)
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
 - cross-boundary architecture/technology option comparison with measurable quality drivers (metric + target + measurement method all present) → `$architecture-decision-analysis`
 - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`

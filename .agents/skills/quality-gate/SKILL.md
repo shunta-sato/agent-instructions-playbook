@@ -31,6 +31,8 @@ Invoke this skill **before every submission**. It is mandatory.
 
 2) Validate required artifacts/evidence from triggered branches exist, including function-design evidence when triggered.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.
+   - If the task touched public/cross-module APIs or was a rework/consolidation/deletion request, verify the compat-mode is recorded; `break-allowed` must quote the requester's waiver.
+   - If a refactor branch (`destructive-refactor`; `function-boundary-governor` with `replace|merge|inline|delete`; `design-balance` with `merge|remove-layer`) ran under compat-mode `break-allowed`, verify the removed-symbol sweep: `python scripts/check_api_removal.py --symbol <old-name> ...` over the codebase returns zero hits. Any surviving old symbol, deprecated marker, re-export alias, or parallel old/new version is `no-submit`. The staged-migration ledger escape applies only under compat-mode `staged`, never under `break-allowed`.
    - If `project-structure` was triggered, verify the layout decisions (file → role) and the structure budget result are recorded.
    - If `architecture-decision-analysis` was triggered, verify an Architecture Decision Analysis Record exists and includes decision, quality drivers, tradeoffs, and verification tasks.
    - If `observability` was triggered, verify the Observability Plan includes signal purpose, actionability, counter-metric where relevant, and artifact paths.
@@ -56,7 +58,7 @@ Invoke this skill **before every submission**. It is mandatory.
 
 
 Function-design evidence requirements when triggered:
-- function-boundary-governor → function decision record (`keep|rename|split|merge|replace|inline|no-op`) + rationale
+- function-boundary-governor → function decision record (`keep|rename|split|merge|replace|inline|delete|no-op`) + rationale
 - destructive-refactor → convergence record (`replaced|no-op|rollback`), call-site migration evidence, and red-state usage record
 - when no-op or rollback is chosen → explicit reasoning
 - ledger-required cases (replaced abstractions, intentional duplication, staged adapters) → ledger entry present at `.agents/design-ledger/function-boundaries.md`
