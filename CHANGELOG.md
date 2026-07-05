@@ -2,6 +2,15 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.12.0
+
+### Changed
+- Added an explicit anti-trigger to all 10 embedded skills: work is embedded only when a physical target constraint exists (battery/power, thermal, flash wear, real-time deadline, constrained target CPU/RAM, or a separate target device); logger/recorder/collector/sampler/polling vocabulary alone does not qualify. Stops embedded-skill co-firing on host-side CLIs, servers, and ordinary daemons.
+- `dev-workflow`: the observability trigger now enumerates checkable sub-conditions (async/background work, external call, periodic job, user-visible operation, retry/timeout/fallback path), and the embedded NFR table explicitly adds to — never replaces — the general trigger branches (an embedded daemon with changed runtime behavior still triggers `observability`).
+
+### Added
+- Added `evals/skill-triggers/portfolio-calibration.json`: positive trigger cases for the highest-traffic underspecified skills (implementation-economy, execution-plans, test-driven-development, bug-investigation-and-rca) plus regression cases for the two measured routing weaknesses (observability underfire on embedded daemons, embedded co-fire on host-side vocabulary).
+
 ## v4.11.0
 
 ### Added

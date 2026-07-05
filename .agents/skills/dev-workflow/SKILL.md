@@ -39,7 +39,7 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - function/helper/API/call-site boundary design change → `$function-boundary-governor`
    - replacing flawed abstraction with temporary red-state migration → `$destructive-refactor`
    - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling` (+ variant skills)
-   - runtime behavior change → `$observability`
+   - runtime behavior change (new/changed async or background work, external call, periodic job, user-visible operation, or retry/timeout/fallback path) → `$observability`
    - embedded/edge/target-local work where target behavior, hardware capability, operating envelope, bottlenecks, or NFR provenance are not understood → `$embedded-system-familiarization`
    - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → route by the embedded NFR table below
    - strict-constraint low-level code or repeated compile/test loops → `$staged-lowering`
@@ -79,6 +79,8 @@ Embedded NFR routing table:
 | `$embedded-project-constitution` | Only for project bootstrap or a new embedded runtime class. |
 
 Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
+
+The embedded table **adds** branches; it never replaces the general trigger branches in step 3. An embedded daemon whose runtime behavior changes still triggers `$observability`. Conversely, work is embedded only when a physical target constraint exists (battery/power, thermal, flash wear, real-time deadline, constrained target CPU/RAM, or a separate target device) — logger/collector/polling vocabulary alone does not qualify.
 
 5) Execute implementation with the selected route + required branches.
 

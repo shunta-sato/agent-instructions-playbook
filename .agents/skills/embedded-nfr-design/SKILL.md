@@ -28,6 +28,8 @@ Use this skill when a change adds or modifies:
 
 Do not use it for generic backend APIs, web UI, schema-only work, pure docs, or pure parser/data-structure changes unless the prompt or code path states a target-local physical-footprint constraint.
 
+Do not use for host-side CLIs, batch tools, servers, or ordinary daemons that have no physical target constraint. Work is embedded only when an actual constraint exists: battery/power budget, thermal limit, flash-wear limit, real-time deadline, constrained target CPU/RAM, or a physically separate target device. Logger/recorder/collector/sampler/polling vocabulary alone does not make work embedded; when in doubt and no physical constraint is named, treat the work as non-embedded and use the general skills (`$performance-review`, `$observability`).
+
 ## How to use
 
 0) Open `references/embedded-nfr-taxonomy.md` and only the templates needed for the feature.
