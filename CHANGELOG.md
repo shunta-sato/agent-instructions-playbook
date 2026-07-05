@@ -2,6 +2,11 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.13.0
+
+### Removed
+- Retired the hand-maintained `.github/prompts/` Copilot prompt mirror (17 files; WS10 from the 2026-07-05 review). GitHub Copilot loads repo skills directly from `.agents/skills`, so the mirror was pure drift risk. `.github/copilot-instructions.md`, README, and REFERENCES updated accordingly.
+
 ## v4.12.0
 
 ### Changed

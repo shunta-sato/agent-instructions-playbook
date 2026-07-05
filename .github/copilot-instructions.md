@@ -1,6 +1,6 @@
 # GitHub Copilot Repository Instructions
 
-These instructions complement `AGENTS.md`, repo skills under `.agents/skills`, and prompt files under `.github/prompts`.
+These instructions complement `AGENTS.md` and repo skills under `.agents/skills` (Copilot loads skills from there directly; the former `.github/prompts` mirror is retired).
 
 ## Primary goal
 
