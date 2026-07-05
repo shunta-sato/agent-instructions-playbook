@@ -75,6 +75,39 @@
         "Gate decision: no-submit",
         "scope"
       ]
+    },
+    {
+      "id": "nfr-claim-without-measurement-no-submit",
+      "prompt": "The submission for non-embedded work claims the endpoint is now fast and scalable. Run the final quality gate.",
+      "given": [
+        "submission claims the endpoint is now fast and scalable",
+        "no measurement command or result recorded",
+        "no provisional or not-measured limit stated",
+        "declared target p95 under 150ms exists in the Quality Targets list"
+      ],
+      "expected_decision": "no-submit",
+      "expected_findings": [
+        "unsupported fast/scalable claim has no measurement evidence",
+        "declared p95 under 150ms target is silently unmeasured"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit"
+      ]
+    },
+    {
+      "id": "nfr-target-measured-submit",
+      "prompt": "The submission includes the Quality Targets list with measured p95=132ms against the declared target of 150ms, k6 output is recorded, and all other quality-gate criteria pass. Run the final quality gate.",
+      "given": [
+        "Quality Targets list present with metric, target, and measurement method",
+        "measured result p95=132ms recorded against target p95<150ms",
+        "k6 output recorded as measurement evidence",
+        "all other quality-gate criteria pass"
+      ],
+      "expected_decision": "submit",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Gate decision: submit"
+      ]
     }
   ]
 }
