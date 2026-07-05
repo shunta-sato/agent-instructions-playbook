@@ -18,7 +18,7 @@ This playbook is inspired by, or aligned with, the following sources.
 
 ### GitHub Copilot / VS Code
 - Repository custom instructions (`.github/copilot-instructions.md`) and path-specific instructions (`.github/instructions/*.instructions.md`): https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions
-- Prompt files (recommended location `.github/prompts/`, run via `/prompt-name` in chat): https://code.visualstudio.com/docs/copilot/customization/prompt-files
+- Prompt files (historical; this repo retired its `.github/prompts/` mirror once Copilot loaded `.agents/skills` directly): https://code.visualstudio.com/docs/copilot/customization/prompt-files
 - GitHub Docs prompt files (Customization library): https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files
 - VS Code Copilot settings reference (default search locations for instruction/prompt files): https://code.visualstudio.com/docs/copilot/reference/copilot-settings
 - GitHub “About Agent Skills” (concepts and supported products): https://docs.github.com/en/copilot/concepts/agents/about-agent-skills

@@ -15,6 +15,11 @@ All notable changes to this repository are documented in this file.
 - `destructive-refactor`: break-allowed imperatives, post-migration deletion checklist backed by the sweep, and "keeping the old API just in case" explicitly forbidden.
 - `AGENTS.md`: the smallest-coherent-design exception now covers `design-balance`; "No broad cleanups" is scoped to cleanups *unrelated to the task*; compat-mode added to the always-on principles.
 
+## v4.13.0
+
+### Removed
+- Retired the hand-maintained `.github/prompts/` Copilot prompt mirror (17 files; WS10 from the 2026-07-05 review). GitHub Copilot loads repo skills directly from `.agents/skills`, so the mirror was pure drift risk. `.github/copilot-instructions.md`, README, and REFERENCES updated accordingly.
+
 ## v4.12.0
 
 ### Changed

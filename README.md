@@ -7,8 +7,7 @@ The goal is a small, curated software-development operating system: clear entry 
 ## Core files
 
 - `AGENTS.md` — always-loaded core rules and the skill index
-- `.agents/skills/*/SKILL.md` — single source of repo-local Agent Skills for Codex and GitHub Copilot
-- `.github/prompts/*.prompt.md` — Copilot prompt files for explicit chat workflows
+- `.agents/skills/*/SKILL.md` — single source of repo-local Agent Skills for Codex, GitHub Copilot, and Claude Code (`.claude/skills` symlinks)
 - `COMMANDS.md` — canonical build / lint / test commands
 - `PLANS.md` — guide for ExecPlan operations
 - `README.md` — repository overview and minimum onboarding
