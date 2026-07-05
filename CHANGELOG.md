@@ -2,6 +2,15 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.16.0
+
+### Changed
+- Generalized the NFR machinery beyond embedded work: `quality-gate` now verifies every measurable quality/NFR target declared by `requirements-engineering` (measured value vs. target, or an explicit `not-measured`/`unmet` entry — silently unmeasured declared targets are `no-submit`), and blocks non-embedded performance/reliability claims (fast, low-latency, scalable, high-throughput, reliable, production-ready) without measurement evidence or an explicit `provisional`/`not-measured` limit, mirroring the embedded no-measurement-no-claim rule.
+- `requirements-engineering`: measurable targets are recorded in a gate-checkable Quality Targets list (`metric | target | measurement method | measured result or not-measured reason`).
+
+### Added
+- Added `evals/skill-triggers/nfr-claims.json` (generic vs embedded NFR routing, vague-quality-word conversion) and two `quality-gate` behavior cases (unmeasured claim → no-submit; measured target → submit).
+
 ## v4.15.0
 
 ### Changed
