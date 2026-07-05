@@ -93,3 +93,11 @@ Result:
 - local sync state:
 - cleanup deferred:
 ```
+
+## Output expectation
+
+- Fill the Completion Record above with a decision of exactly one of: `merge`, `publish-pr`, `keep`, `discard`, `cleanup-only`.
+- Record current branch, base/head, and dirty/untracked file state.
+- Record verification, review/approval, and CI/checks evidence.
+- List the actions actually performed (commit/push/PR/merge/sync/cleanup).
+- Report the raw PR URL and, when merging, the merge or squash SHA.

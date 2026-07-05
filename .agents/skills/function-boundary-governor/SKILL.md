@@ -3,6 +3,9 @@ name: function-boundary-governor
 description: "Autonomous function-boundary design workflow for functions/helpers/APIs/call sites: decide keep/rename/split/merge/replace/inline/no-op, apply coherent changes, verify, and record boundary decisions. Use design-balance instead for module/class responsibility layout."
 metadata:
   short-description: Autonomous function-boundary design
+  requires:
+    - references/function-boundary-governor.md
+    - templates/function-design-ledger-entry.md
 ---
 
 ## Purpose

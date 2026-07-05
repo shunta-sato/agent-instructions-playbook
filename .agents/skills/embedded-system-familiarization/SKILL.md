@@ -3,6 +3,16 @@ name: embedded-system-familiarization
 description: "Use when embedded, edge, target-local, robot, Android, ROS 2, kernel/driver-adjacent, sensor, logger, recorder, or daemon work requires understanding target behavior, hardware capability, operating envelope, bottlenecks, or NFR provenance before design or optimization. Do not use for small changes with current characterization and no runtime/architecture impact."
 metadata:
   short-description: Principal embedded system familiarization
+  requires:
+    - templates/architecture-constraints.md
+    - templates/bottleneck-margin-map.md
+    - templates/capability-cost-model.md
+    - templates/controlled-operating-points.md
+    - templates/experiment-design-matrix.md
+    - templates/hardware-capability-map.md
+    - templates/hardware-control-surface-map.md
+    - templates/system-familiarization.md
+    - templates/workload-map.md
 ---
 
 ## Purpose
@@ -95,7 +105,7 @@ Do not use it when:
 14. When handing off to `architecture-decision-analysis`, include an architecture evidence packet summarizing hardware/control surface status, operating point coverage, cost model status, benchmark evidence, confounders, provisional assumptions, blocked claims, and verification tasks.
 15. Hand off to concrete execution skills with `not_needed`, `required_pending`, `completed`, `deferred_with_reason`, or `blocked` status.
 
-## Outputs
+## Output expectation
 
 Produce or update:
 

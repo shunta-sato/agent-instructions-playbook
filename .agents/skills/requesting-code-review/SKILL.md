@@ -70,3 +70,11 @@ Known risks / deferred:
 
 Please leave review comments on: <GitHub PR / specified channel>
 ```
+
+## Output expectation
+
+- Fill the Request Package with the raw PR URL or exact diff identifier, base/head, and draft/ready state.
+- Include scope (what changed and what did not), verification commands with results, and reviewer focus.
+- Name known risks or deferred/excluded work explicitly, or state there are none.
+- State where review comments should be left when a specific channel is required.
+- Do not state a submit/no-submit decision; that belongs to `quality-gate`.

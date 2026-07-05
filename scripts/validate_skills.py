@@ -16,6 +16,7 @@ from skill_description_style import (
 
 NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 TOP_LEVEL_FIELD_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:\s*(.*))?$")
+OUTPUT_EXPECTATION_RE = re.compile(r"^## Output expectation$", re.MULTILINE)
 ALLOWED_TOP_LEVEL_FIELDS = {
     "name",
     "description",
@@ -131,6 +132,8 @@ def validate_skill(doc: SkillDoc, repo_root: Path) -> list[str]:
 
     if not doc.body:
         errors.append(f"{relpath}: SKILL.md body must be non-empty")
+    elif not OUTPUT_EXPECTATION_RE.search(doc.body):
+        errors.append(f"{relpath}: SKILL.md body must contain a '## Output expectation' heading")
 
     line_count = len(doc.path.read_text(encoding="utf-8").splitlines())
     if line_count > 500:

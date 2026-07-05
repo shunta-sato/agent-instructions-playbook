@@ -3,6 +3,9 @@ name: bug-investigation-and-rca
 description: "Use when fixing or investigating crashes, regressions, flakes, hangs, incorrect outputs, or incidents."
 metadata:
   short-description: Bug investigation & RCA
+  requires:
+    - references/bug-investigation-and-rca.md
+    - references/bug-report-template.md
 ---
 
 ## Purpose
@@ -51,7 +54,9 @@ Helper for deterministic artifact bootstrap:
 - **Common pitfall:** shipping a workaround as permanent without follow-up tracking.  
   **Instead:** document risk, removal conditions, and tracking ticket, then plan removal timing.
 
-## Output expectation (strict format; always emit)
+## Output expectation
+
+Strict format; always emit.
 
 ## Bug Report (RCA)
 - Title:

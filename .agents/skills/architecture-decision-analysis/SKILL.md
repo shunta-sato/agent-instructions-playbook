@@ -3,6 +3,8 @@ name: architecture-decision-analysis
 description: "Use before implementation or during explicit design review when a cross-boundary technical decision requires comparing multiple architecture options against measurable quality drivers, risks, tradeoffs, and verification tasks. Do not use for ordinary implementation, requirements drafting, diff-focused smell review, function/helper/API boundary decisions, observability instrumentation details, or final submit gating."
 metadata:
   short-description: Architecture decision analysis
+  requires:
+    - references/architecture-decision-analysis.md
 ---
 
 ## Purpose

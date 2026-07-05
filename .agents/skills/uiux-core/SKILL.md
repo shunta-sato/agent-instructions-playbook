@@ -3,6 +3,13 @@ name: uiux-core
 description: "Use for platform-agnostic UI/UX design or review work that needs a deterministic UIUX Pack. Also use for web, iOS, or Android UIUX work with the matching platform adapter."
 metadata:
   short-description: UI/UX core contract + deterministic review bundle
+  requires:
+    - references/uiux-core.md
+    - references/uiux-platform-adapters.md
+    - templates/auto_review.json
+    - templates/diff_summary.md
+    - templates/ui_contract.yaml
+    - templates/ui_spec.json
 ---
 
 ## Purpose

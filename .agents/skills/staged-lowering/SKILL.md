@@ -3,6 +3,8 @@ name: staged-lowering
 description: "Use when implementing low-level or strict-constraint code (kernels, SIMD/intrinsics, alignment/padding rules, codegen/DSLs, strict ABI or hardware APIs), or when direct implementation repeatedly fails to compile/test."
 metadata:
   short-description: Staged lowering for constrained code
+  requires:
+    - references/staged-lowering.md
 ---
 
 ## Purpose

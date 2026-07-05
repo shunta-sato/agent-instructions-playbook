@@ -3,6 +3,8 @@ name: embedded-hot-path-review
 description: "Use when reviewing embedded or target-local loops, polling, sampling, collectors, recorders, sub-100ms work, per-iteration I/O, repeated serialization, or hot-path allocation. Do not use for non-embedded application request/render/job paths; use performance-review there."
 metadata:
   short-description: Embedded hot-path review
+  requires:
+    - templates/hot-path-review.md
 ---
 
 ## Purpose
@@ -51,7 +53,7 @@ Do not use it for cold-path setup, non-embedded backend request handlers, fronte
 5. Write `reports/resource/hot-path-review.md` using the template.
 6. Route findings to `embedded-nfr-design`, `embedded-nfr-harness-design`, or `embedded-nfr-gate` as needed.
 
-## Outputs
+## Output expectation
 
 Produce:
 

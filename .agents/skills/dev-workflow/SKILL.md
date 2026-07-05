@@ -3,6 +3,8 @@ name: dev-workflow
 description: "Use for any task that changes code or tests. Routes implementation work by risk and applicable branch skills before editing."
 metadata:
   short-description: Risk-routed dev workflow
+  requires:
+    - references/dev-workflow.md
 ---
 
 ## Purpose

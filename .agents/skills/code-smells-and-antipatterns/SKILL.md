@@ -3,6 +3,11 @@ name: code-smells-and-antipatterns
 description: "Review the current diff for new or worsened maintainability/design issues: code smells, architecture boundary leaks, weak cohesion, and risky coupling. Use for structural changes, public APIs, adapters/integrations, or design review; avoid generic full-codebase audits."
 metadata:
   short-description: Diff-focused maintainability review
+  requires:
+    - references/architecture-boundary-review.md
+    - references/code-smells-and-antipatterns.md
+    - references/finding-template.md
+    - references/modularity-cohesion-coupling.md
 ---
 
 ## Purpose
@@ -65,7 +70,9 @@ Open only the reference material that matches the diff:
    - why fixing now would increase risk, and
    - what to monitor (tests/metrics/logs) until a planned follow-up.
 
-## Output expectation (strict format)
+## Output expectation
+
+Strict format.
 
 Require the output to include:
 

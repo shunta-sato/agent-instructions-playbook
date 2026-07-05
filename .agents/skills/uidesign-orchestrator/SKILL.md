@@ -3,6 +3,8 @@ name: uidesign-orchestrator
 description: "Use only for explicit end-to-end UI evidence orchestration across UIUX, Tone & Manner, and UIDesign packs. Do not trigger for ordinary single-step UIUX, Tone & Manner, or UIDesign work."
 metadata:
   short-description: Explicit UI evidence orchestration
+  requires:
+    - references/uidesign-orchestrator.md
 ---
 
 ## Purpose
@@ -47,3 +49,9 @@ Always include:
 - `uidesign/<pack>/previews/index.html` (visual styling review entry point)
 - `tonemana/catalog/previews/index.html` (mention UI-based 7-pattern switching)
 - A short reminder: agree transitions first, then compare tone-and-manner in Review Mode (`Export JSON/Markdown`).
+
+## Output expectation
+
+- Report the changed paths for all three artifacts: UIUX Pack, Tone & Manner catalog/project pack, and UIDesign Pack.
+- Confirm the UIUX Pack is wired to Tone & Manner via `meta.tone_and_manner`.
+- Include all three required entry-point paths and the review-order reminder from the completion message above.

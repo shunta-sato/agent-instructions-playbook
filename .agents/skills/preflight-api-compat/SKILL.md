@@ -3,6 +3,8 @@ name: preflight-api-compat
 description: "Preflight public API compatibility, OpenAPI, GraphQL, generated clients, public error shapes, versioning. Use before API-facing changes or generated client updates."
 metadata:
   short-description: Public API compatibility preflight
+  requires:
+    - references/api-compat-reference.md
 ---
 
 # Preflight API Compat
@@ -57,3 +59,10 @@ generated clients, publish schemas, deploy, or decide compatibility exceptions.
 - Generated-client ownership and regeneration path are confirmed or unknown.
 - Consumer/contract test commands are confirmed or unknown.
 - No generated client was edited during preflight.
+
+## Output expectation
+
+- Return the common output contract from `preflight-domain-template`, filled for the API-compat domain.
+- Include the five API invariants (`API-SHAPE`, `GENERATED-CLIENT`, `API-SCHEMA`, `API-ERROR`, `CLIENT-REGEN`) verbatim when applicable, or state why one does not apply.
+- Mark schema/versioning facts as confirmed, inferred, or unknown.
+- State generated-file and public API approval routing before implementation starts.

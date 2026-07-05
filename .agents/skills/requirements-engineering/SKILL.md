@@ -3,6 +3,10 @@ name: requirements-engineering
 description: "Use for ambiguous or non-trivial feature planning and requirements documentation: problem framing, spec-before-build checks, requirements briefs/specs, EARS-style requirements, acceptance criteria, traceability, and ISO/IEC 25010 quality scenarios. Do not use for tiny unambiguous implementation tasks, architecture option comparison, or diff-focused design review unless requirements output is requested."
 metadata:
   short-description: Requirements engineering
+  requires:
+    - references/ears-requirements-to-design.md
+    - references/iso25010-quality-scenarios.md
+    - references/requirements-briefs-and-specs.md
 ---
 
 ## Purpose
@@ -53,7 +57,7 @@ Do not use it for small, already-clear implementation tasks unless the user asks
 9. Trace acceptance criteria into the `test-driven-development` Test List and the `quality-gate` exit criteria when implementation will follow.
 10. Add assumptions, open questions, and traceability only where they reduce ambiguity.
 
-## Outputs
+## Output expectation
 
 Depending on the task, produce one or more of:
 

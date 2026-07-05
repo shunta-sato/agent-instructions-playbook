@@ -3,6 +3,8 @@ name: observability
 description: "Use when a runtime behavior change needs diagnosable signals: async/background jobs, external calls, user-visible operations, or incident-prone flows. Do not use for docs-only or refactor-only changes with no behavior shift."
 metadata:
   short-description: Observability plan and checklist
+  requires:
+    - references/observability.md
 ---
 
 ## Purpose

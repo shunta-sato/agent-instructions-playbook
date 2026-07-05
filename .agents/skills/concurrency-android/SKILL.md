@@ -3,6 +3,8 @@ name: concurrency-android
 description: "Android concurrency & background work: coroutines/dispatchers, structured concurrency, WorkManager vs Services/Foreground services, and OS execution limits. Use when modifying Android app code or background processing."
 metadata:
   short-description: Android concurrency and background work
+  requires:
+    - references/concurrency-android.md
 ---
 
 ## Purpose

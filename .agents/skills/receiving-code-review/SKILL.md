@@ -58,3 +58,11 @@ Use this compact ledger when review has more than one item:
 
 If the ledger has only approval and no required changes, record the approval
 signal and move to `branch-completion`.
+
+## Output expectation
+
+- Assign every review item exactly one disposition: `accept`, `refute`, `defer`, `clarify`, or `acknowledge`.
+- Fill the Feedback Ledger with comment/thread, disposition, action, and evidence for each item.
+- Include verification results after applying accepted fixes.
+- For `refute` or `defer`, cite the requirement, plan, PR scope, or code evidence supporting the decision.
+- State the approval signal and handoff to `branch-completion` when review is clear to proceed.

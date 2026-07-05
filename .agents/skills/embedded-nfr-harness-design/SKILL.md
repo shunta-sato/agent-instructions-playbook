@@ -3,6 +3,10 @@ name: embedded-nfr-harness-design
 description: "Use after embedded physical budgets exist, or when an embedded daemon/logger/recorder/sampler needs resource, battery, wakeup, flash, thermal, latency, or observer-overhead measurement. Do not use for performance advice without a target-local physical footprint."
 metadata:
   short-description: Embedded NFR harness design
+  requires:
+    - templates/resource-harness-plan.md
+    - templates/resource-report.schema.json
+    - templates/target-profile.yaml
 ---
 
 ## Purpose
@@ -49,7 +53,7 @@ Do not use it for generic benchmark planning, web performance tests, or code pat
 8. Route discovery work to `embedded-target-characterization` or `embedded-operating-envelope-discovery` when target envelope is unknown.
 9. Route to `embedded-nfr-gate` once reports or explicit unknowns exist.
 
-## Outputs
+## Output expectation
 
 Produce or update:
 

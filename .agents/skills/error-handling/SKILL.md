@@ -3,6 +3,8 @@ name: error-handling
 description: "Use when a change defines or reviews failure contracts: boundary error translation, nullability/sentinel choices, retries/fallbacks, or API/user-visible failure behavior. Do not use for ordinary validation copy edits or pure logging changes with no failure-contract change."
 metadata:
   short-description: Boundary error handling
+  requires:
+    - references/error-handling.md
 ---
 
 ## Purpose
