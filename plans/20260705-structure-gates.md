@@ -47,11 +47,12 @@
 - [x] (P1) `AGENTS.md` principle amendment + regenerated index
 - [x] (P1) `implementation-economy` / `test-driven-development` boundary clauses
 - [x] (P2) `evals/skill-triggers/project-structure.json` — verify: `validate_skill_trigger_evals.py`
-- [ ] (P3) Sonnet 5 supervised behavior validation on the PR (Rust CLI fixture task)
+- [x] (P3) Sonnet 5 supervised behavior validation on the PR (Rust CLI fixture task) — verify: A/B oracle results in Outcomes
 
 ## Surprises & Discoveries
 
-- 2026-07-05: None yet.
+- 2026-07-05: The A/B control run (Sonnet 5 + pre-change skills) did **not** reproduce the monolith: Claude Sonnet 5's default instincts already produce modular code, unlike the Codex agent in the original incident. The differential the gates buy on a strong model is therefore (a) canonical layout (`lib.rs` growth path — control produced a binary-only crate with no `lib.rs`), (b) a thinner entrypoint (25 vs 54 logic lines), and (c) **verifiable** structural evidence instead of unverified instinct. The regression case (weak model / bad day / accretion over many sessions) is covered by the mechanical oracle unit test.
+- 2026-07-05: The structure budget produced zero false positives on the control run (6 files, pass) — calibration holds for idiomatic non-gated output.
 
 ## Decision log
 
@@ -80,7 +81,11 @@
 
 ## Outcomes & Retrospective (fill when done)
 
-- What shipped / merged:
-- What went well:
-- What went wrong:
-- Follow-ups / tech debt tickets:
+- What shipped / merged: PR #80 (structure gates) + supervised A/B validation.
+- A/B validation (2026-07-05, task: stdlib-only Rust CLI `logstat`, identical prompts, Sonnet 5 workers, independent judge verification):
+  - Run A (control, main skills): modular but **no `lib.rs`** (binary-only crate, integration tests must subprocess); `main.rs` 54 lines; structure check pass (6 files); `cargo test` 38/38; no structural evidence produced (nothing in the main-branch gate asks for it).
+  - Run B (treatment, PR skills): canonical `main.rs` (25 wiring lines) + `lib.rs` + 4 domain modules + `tests/`; structure watch executed and cited (`check_structure.py` pass, 7 files); `project-structure` triggered with layout decisions recorded; `cargo test` 40/40.
+  - AC3 met: treatment repo passes `check_structure.py`; the revised skill chain (dev-workflow step 6 → project-structure → quality-gate 1b) was discovered and executed by Sonnet 5 without any hint in the task prompt, with zero misexecution.
+- What went well: Sonnet 5 followed the new decision points exactly (numeric budget, mandatory watch, evidence contract) — supports the review's thesis that checkable predicates are what mid-tier models need.
+- What went wrong: nothing blocking; note the control's quality means monolith-prevention could not be demonstrated end-to-end on this model (covered instead by the oracle unit test for the incident scenario).
+- Follow-ups / tech debt tickets: Phase 2 (decision-tree rewrites), Phase 3 (`.claude/` wiring + model catalog/lockfile), Phase 4 (embedded anti-triggers) per `reports/skillset-review-20260705.md`.
