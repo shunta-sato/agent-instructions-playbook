@@ -22,6 +22,10 @@ Use this skill when a change:
 - adds a new responsibility to an existing class/module
 - risks a large class, god object, unclear service/manager hub, or excess layering
 - needs names checked against responsibilities
+- an existing class/module is redundant or near-duplicate of another
+- a class hierarchy needs flattening
+- a unit has lost its last distinct reason to exist
+- responsibilities should be consolidated into fewer units
 
 ### Checkable thresholds
 
@@ -56,9 +60,9 @@ Do not use it for:
    - Benefit: clearer change locality, invariant ownership, call-site readability, testability.
    - Risk: extra files, parameter pressure, boundary leakage, naming vagueness, review cost.
 
-5. Decide `keep-layout`, `split`, `merge`, `rename`, `remove-layer`, or `defer-no-op`.
+5. Decide `keep-layout`, `split`, `merge`, `rename`, `remove-layer`, or `defer-no-op`. Consolidation decisions follow the recorded compat-mode; under `break-allowed`, `keep-layout`/`defer-no-op` require a stated reason stronger than caution (e.g. genuinely distinct reasons to change), because retention out of habit is the documented failure mode.
 
-6. Hand off to `implementation-economy` for complexity budget pressure and to `code-smells-and-antipatterns` for current-diff maintainability findings.
+6. Hand off to `implementation-economy` for complexity budget pressure and to `code-smells-and-antipatterns` for current-diff maintainability findings. If executing a `merge`, `remove-layer`, or unit deletion requires temporary red state across call sites, route execution to `$destructive-refactor` for the break-window protocol; record compat-mode first (dev-workflow step 1b).
 
 ## Output expectation
 

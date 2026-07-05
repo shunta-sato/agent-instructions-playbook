@@ -1,6 +1,6 @@
 ---
 name: function-boundary-governor
-description: "Autonomous function-boundary design workflow for functions/helpers/APIs/call sites: decide keep/rename/split/merge/replace/inline/no-op, apply coherent changes, verify, and record boundary decisions. Use design-balance instead for module/class responsibility layout."
+description: "Autonomous function-boundary design workflow for functions/helpers/APIs/call sites: decide keep/rename/split/merge/replace/inline/delete/no-op, apply coherent changes, verify, and record boundary decisions. Use design-balance instead for module/class responsibility layout."
 metadata:
   short-description: Autonomous function-boundary design
   requires:
@@ -31,12 +31,16 @@ Do not use it as the primary tool for module/class responsibility maps or archit
 
 1) Open `references/function-boundary-governor.md`.
 2) Run required discovery from the reference: changed-function inventory, semantic-neighbor search, and call-site discovery.
-3) For each affected function, decide one action: `keep | rename | split | merge | replace | inline | no-op`.
+3) For each affected function, decide one action: `keep | rename | split | merge | replace | inline | delete | no-op`.
 4) Use separated positive/risk rubric + decision rules to reject low-coherence refactors.
 5) If replacement requires temporary red-state migration, route to `$destructive-refactor`.
 6) Apply only scoped edits needed for coherent final design.
 7) Verify with required command depth from `$dev-workflow`.
 8) Update canonical design ledger path `.agents/design-ledger/function-boundaries.md` using `templates/function-design-ledger-entry.md` when required.
+
+## Delete guidance
+
+`delete` removes a function/helper/API with no replacement; it is valid when call-site discovery confirms zero remaining callers via the existing call-site discovery step. Under `break-allowed`, external callers outside the repo do not count as callers.
 
 ## Hard rules
 
@@ -55,7 +59,7 @@ Return:
 - Decision per function with action and rationale.
 - Action taken: `changed | no-op | delegated-to-destructive-refactor | rollback`.
 - Files edited and call sites migrated (if any).
-- Old names searched and cleanup result.
+- Old names searched and cleanup result (under `break-allowed`, backed by the `scripts/check_api_removal.py` sweep output rather than prose).
 - Whether `$destructive-refactor` was invoked.
 - Verification commands/results.
 - Ledger update path (`.agents/design-ledger/function-boundaries.md`) or explicit no-update reason.

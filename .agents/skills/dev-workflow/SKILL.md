@@ -24,12 +24,21 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
 1) Route by risk first (`low` | `normal` | `high`) and record why.
    - The output of this step is: required planning depth + required verification depth.
 
+1b) Record the compat-mode whenever the task touches public or cross-module APIs, or is a rework/consolidation/deletion request:
+   - `preserve` (default): existing callers must keep working.
+   - `staged`: temporary adapters allowed, each with a ledger entry naming its removal condition.
+   - `break-allowed`: the requester explicitly waived backward compatibility — quote the waiver. Under `break-allowed`, delete rather than deprecate: old APIs, deprecated markers, re-export aliases, and parallel old/new versions are defects, not caution.
+
 2) Run the default implementation lane when required by risk:
    - `low`: skip the lane only when the change is one file, adds no abstraction, leaves public APIs unchanged, has no behavior expansion, and every touched source file stays within the structure budget (`python scripts/check_structure.py <touched files>` passes).
    - `normal` / `high`: define acceptance criteria, seed a Test List when behavior can be tested, run `implementation-economy`, and run `design-balance` when module/class responsibility layout changes.
 
+2b) Preparatory refactor (make the change easy first), normal/high risk only: check whether the landing area makes the change awkward — structure-budget findings on files about to be touched, near-duplicate functions the feature would extend, or an edit that forces a boolean flag or shotgun changes. If so, first do a scoped preparatory refactor as its own verified step (tests green before and after), then implement the feature on the improved base. Record `prep-refactor: done | not-needed (one-line reason)`.
+
 3) Apply **required trigger-based branches** only when facts trigger them.
    - new source file/module/crate/package, test placement decision, or structure budget finding on a touched file → `$project-structure`
+   - explicit rework/rewrite/consolidation/simplification request, API deletion, or a statement that backward compatibility may be broken → record compat-mode (step 1b), then `$function-boundary-governor` for function/API level or `$design-balance` for module/class level; if execution needs temporary red state across call sites → `$destructive-refactor`
+   - code or API with zero remaining callers → `$function-boundary-governor` (`delete` action)
    - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
    - cross-boundary architecture/technology option comparison with measurable quality drivers (metric + target + measurement method all present; definition in `$architecture-decision-analysis`) → `$architecture-decision-analysis`
    - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
