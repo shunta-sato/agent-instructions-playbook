@@ -23,10 +23,11 @@ Use this skill **for any task that changes code and/or tests**. It is mandatory.
    - The output of this step is: required planning depth + required verification depth.
 
 2) Run the default implementation lane when required by risk:
-   - `low`: skip the lane only when the change is one file, adds no abstraction, leaves public APIs unchanged, and has no behavior expansion.
+   - `low`: skip the lane only when the change is one file, adds no abstraction, leaves public APIs unchanged, has no behavior expansion, and every touched source file stays within the structure budget (`python scripts/check_structure.py <touched files>` passes).
    - `normal` / `high`: define acceptance criteria, seed a Test List when behavior can be tested, run `implementation-economy`, and run `design-balance` when module/class responsibility layout changes.
 
 3) Apply **required trigger-based branches** only when facts trigger them.
+   - new source file/module/crate/package, test placement decision, or structure budget finding on a touched file → `$project-structure`
    - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
    - cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
    - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
@@ -73,18 +74,24 @@ Use `$embedded-system-familiarization` as an orchestrator for broad target-learn
 
 5) Execute implementation with the selected route + required branches.
 
-6) Run canonical verification at the depth required by the selected risk route.
+6) Run the structure watch (all risks, including low): `python scripts/check_structure.py <touched source files>`.
+   - Any finding makes `$project-structure` required in this change: apply the split (layout), routing naming/ownership to `$design-balance` and function moves to `$function-boundary-governor`.
+   - This step is state-based on purpose: it fires on accumulated size even when this change added only a few lines.
 
-7) Hand off to `$quality-gate` for final submission readiness.
+7) Run canonical verification at the depth required by the selected risk route.
+
+8) Hand off to `$quality-gate` for final submission readiness.
 
 
 ## Gotchas
 
-- **Common pitfall:** following optional skill lists after routing and blurring required-branch decisions.  
+- **Common pitfall:** following optional skill lists after routing and blurring required-branch decisions.
   **Instead:** maintain only-triggered branches as required and do not execute untriggered branches.
-- **Common pitfall:** forcing low risk and bypassing required branches.  
+- **Common pitfall:** forcing low risk and bypassing required branches.
   **Instead:** re-evaluate risk when API/behavior/UI/concurrency/boundary changes appear, and add required branches.
-- **Common pitfall:** trying to make pass/fail decisions in dev-workflow.  
+- **Common pitfall:** treating each small append to one file as low risk forever, so no layout skill ever fires while the file becomes a monolith.
+  **Instead:** the structure watch is mandatory at every risk level; a budget finding forces `$project-structure` regardless of how small this change is.
+- **Common pitfall:** trying to make pass/fail decisions in dev-workflow.
   **Instead:** limit dev-workflow to specifying required verification depth; delegate final judgment to `$quality-gate`.
 
 ## Output expectation
@@ -92,5 +99,6 @@ Use `$embedded-system-familiarization` as an orchestrator for broad target-learn
 - Output must make the required route obvious:
   - selected risk and rationale
   - triggered required branches
+  - structure watch result (pass, or findings + applied splits)
   - verification depth to run before gate
 - Final submit/no-submit judgment belongs to `$quality-gate`.

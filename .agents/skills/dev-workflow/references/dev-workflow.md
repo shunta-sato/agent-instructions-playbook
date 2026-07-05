@@ -33,13 +33,14 @@ Record:
 | Default implementation lane | skip if one file, no new abstraction, public API unchanged, no behavior expansion | required | required |
 | Complexity budget | optional only when new abstraction appears | `implementation-economy` budget + audit | `implementation-economy` budget + audit |
 | Responsibility layout | optional only when module/class layout changes | `design-balance` map when layout changes | `design-balance` map when layout changes |
+| Structure watch (`scripts/check_structure.py` on touched files) | required | required | required |
 | Verification depth before gate | canonical minimum for changed surface | full canonical chain | full canonical chain |
 | Final gate | `$quality-gate` required | `$quality-gate` required | `$quality-gate` required |
 | ExecPlan | optional | required if complex | required if complex/long-running |
 
 ## 1) Default implementation lane
 
-Run this lane before trigger branches for normal/high-risk implementation. For low risk, record the skip reason only when all are true: one file, no new abstraction, public API unchanged, and no behavior expansion.
+Run this lane before trigger branches for normal/high-risk implementation. For low risk, record the skip reason only when all are true: one file, no new abstraction, public API unchanged, no behavior expansion, and the structure watch passes on every touched source file.
 
 1. Requirements/DoD: record the smallest acceptance criteria and Definition of Done.
 2. Test List: seed from acceptance criteria when behavior can be tested; route to `$test-driven-development` when using Red/Green/Refactor.
@@ -58,6 +59,7 @@ Default lane output:
 
 Mark each line as `triggered` or `not triggered` with one-line evidence.
 
+- new source file/module/crate/package created, test placement decision, or structure budget finding on a touched file → `$project-structure`
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
 - cross-boundary architecture/technology option comparison with measurable quality drivers → `$architecture-decision-analysis`
 - generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
@@ -129,6 +131,7 @@ Record:
 
 - Default lane outputs:
 - Branches executed:
+- Structure watch result (`scripts/check_structure.py` on touched files; findings + applied splits, or pass):
 - Verification commands executed:
 - Live discovery evidence captured (or `not applicable`):
 - Remaining known gaps before gate (if any):

@@ -22,8 +22,13 @@ Invoke this skill **before every submission**. It is mandatory.
 1) Verify canonical commands are green at the required depth (build / format / static analysis / tests).
    - If something cannot run, record reason + reproducible procedure.
 
+1b) Run the structural exit check: `python scripts/check_structure.py <touched source files>`.
+   - Any finding is `no-submit` until the split is applied in this submission, or an explicit bounded waiver (for example generated code) is recorded in the change brief.
+   - This check is independent of which branches were triggered: a change that never triggered `design-balance` still fails here if a touched file breached the structure budget.
+
 2) Validate required artifacts/evidence from triggered branches exist, including function-design evidence when triggered.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.
+   - If `project-structure` was triggered, verify the layout decisions (file → role) and the structure budget result are recorded.
    - If `architecture-decision-analysis` was triggered, verify an Architecture Decision Analysis Record exists and includes decision, quality drivers, tradeoffs, and verification tasks.
    - If `observability` was triggered, verify the Observability Plan includes signal purpose, actionability, counter-metric where relevant, and artifact paths.
    - If `implementation-economy` was triggered, verify the Complexity Budget and Post-Implementation Economy Audit exist.
@@ -55,13 +60,15 @@ Function-design evidence requirements when triggered:
 
 ## Gotchas
 
-- **Common pitfall:** repeating deep-review taxonomy in quality-gate and making it verbose.  
+- **Common pitfall:** repeating deep-review taxonomy in quality-gate and making it verbose.
   **Instead:** limit gate to exit-criteria decisions and delegate deep dives to dedicated skills.
-- **Common pitfall:** approving as mostly OK while required artifacts are missing.  
+- **Common pitfall:** approving as mostly OK while required artifacts are missing.
   **Instead:** keep `no-submit` until required evidence for triggered branches is complete.
+- **Common pitfall:** passing a structurally degraded change because all process artifacts exist (a monolithic entrypoint full of inline tests can satisfy every triggered-branch checklist).
+  **Instead:** the structural exit check is its own criterion; findings from `scripts/check_structure.py` block submit even when every artifact is present.
 - **Common pitfall:** duplicating the workflow-contract deep checklist inside this final gate.
   **Instead:** verify the report exists and its decision/findings status, then route deep issues back to `agent-workflow-contract-review`.
-- **Common pitfall:** marking `submit` with vague records of unrun commands.  
+- **Common pitfall:** marking `submit` with vague records of unrun commands.
   **Instead:** for unrun commands, always record reason + reproduction steps and reflect that in submission decision.
 - **Common pitfall:** accepting delegated work from a success claim or latest ledger entry.
   **Instead:** verify the explicitly cited run record and require validation/scope evidence; token absence alone is not a failure.

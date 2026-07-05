@@ -38,6 +38,7 @@ Do not use it for low-risk edits that touch one file, add no abstraction, keep p
      forecast must be updated).
 
 2. Prefer reuse, deletion, inlining, or local changes before adding a new abstraction.
+   - Boundary: splitting an oversized file or moving tests to their canonical location (`project-structure` structure budget) is complexity **placement**, not a new abstraction. Required splits never count against this budget, and this skill must not be used to justify keeping code in one file beyond the structure budget.
 
 3. For each new abstraction, write a one-line **worth-its-weight** justification:
    - what complexity it removes

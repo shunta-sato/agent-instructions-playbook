@@ -2,6 +2,21 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.8.0
+
+### Added
+- Added the `project-structure` skill: generative physical-layout guidance owning the canonical structure budget (source file ≤ 400 lines, entrypoint logic ≤ 150 lines, Rust inline tests ≤ 200 lines/file), with a Rust layout reference (`main.rs`/`lib.rs` split, unit vs integration test placement).
+- Added `scripts/check_structure.py`, a stdlib-only state-based structure-budget checker, plus unit tests.
+- Added `evals/skill-triggers/project-structure.json` trigger eval seeds, including anti-trigger guards against embedded skill co-firing on plain CLI work.
+- Added `reports/skillset-review-20260705.md` strategic review (root cause of the monolithic `main.rs` incident and the Claude Code / mixed-model roadmap).
+
+### Changed
+- `dev-workflow`: added a mandatory structure watch at all risk levels (state-based, fires on accumulated file size even for tiny appends); the low-risk lane skip now also requires a passing structure check; added a `project-structure` trigger branch.
+- `quality-gate`: added a structural exit check (1b) independent of triggered branches — unresolved `check_structure.py` findings are `no-submit` without an explicit bounded waiver.
+- `AGENTS.md`: the smallest-safe-change principle is now bounded by the structure budget; required splits are part of the smallest correct change, not broad cleanups.
+- `implementation-economy`: required structure-budget splits are complexity placement, not new abstraction, and never count against the complexity budget.
+- `test-driven-development`: tests are placed by `project-structure` conventions and never accumulate in entrypoint files.
+
 ## v4.7.0
 
 ### Added
