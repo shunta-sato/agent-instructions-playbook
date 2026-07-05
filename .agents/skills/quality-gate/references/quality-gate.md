@@ -3,6 +3,8 @@
 This checklist is for `$quality-gate` only.
 Focus on final decision criteria, not broad re-review taxonomy.
 
+Sweep rule: evaluate every item in every applicable section in one complete pass, collecting all failures. Never stop at the first failed item and never decide before the pass is finished.
+
 ## 1) Command status (required)
 
 - Canonical commands are recorded with exact commands + key results.
@@ -40,7 +42,7 @@ Confirm required evidence exists for each triggered branch:
 - embedded target characterization branch → `docs/targets/<target>/target-characterization.md`, `target_profiles/<target>.yaml`, baseline paths, and characterization report when production claims depend on target behavior
 - embedded operating envelope branch → `docs/targets/<target>/operating-envelope.md` and scenario reports for normal, degraded, boundary, observer, recovery, or blackout behavior
 - embedded NFR calibration branch → `reports/nfr-calibration/<feature>.md` plus budget provenance when numeric production budgets are claimed
-- constitution-only embedded branch → constitution artifacts such as project principles, resource discipline, physical budgets, target profiles, resource harness skeleton, and PR-template section. Do not require a feature-level NFR gate report unless runtime changes or production-readiness claims are introduced.
+- constitution-only embedded branch → constitution artifacts such as project principles, resource discipline, physical budgets, target profiles, resource harness skeleton, and PR-template section. A feature-level NFR gate report is required only when runtime changes or production-readiness claims are introduced; constitution artifacts alone satisfy this branch otherwise.
 - project-structure branch → layout decisions (file → role) plus structure budget result (pass, or findings with applied fixes/waivers)
 - staged-lowering branch → staged plan + per-pass verification log
 - legacy branch → characterization/safety-net evidence + seam/refactor notes
@@ -59,7 +61,7 @@ Confirm required evidence exists for each triggered branch:
 - Agent-facing workflow, generated instruction, collect plan, executable handoff, multi-step CLI workflow, or cross-host workflow changes are blocked unless the Workflow Contract Review Report decision is `submit`.
 - Delegated/subagent/worker changes are blocked unless the submission cites fresh run evidence by explicit run identity. Do not accept `latest`, newest file, mtime, raw co-presence, or agent self-assessment as evidence.
 - Delegated run evidence is `no-submit` when the ledger record is missing, the run ID is not explicit, required validation did not run, validation failed, validation output is missing, changed files exceed allowed files, or `judge_agent_run.py --require-accepted` fails.
-- Delegated run evidence is not `no-submit` only because token telemetry is absent or `telemetry.status` is `not_collected`.
+- Missing token telemetry alone never blocks: treat absent telemetry or `telemetry.status: not_collected` as acceptable when every other run-evidence criterion passes.
 - Completion claims require verification evidence. A worker report that says the task is done without validation command results remains `no-submit`.
 - If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
 - If architecture, hardware, or embedded NFR claims depend on a hardware operating point, `controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording.

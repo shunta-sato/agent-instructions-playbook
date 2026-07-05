@@ -18,6 +18,7 @@ Invoke this skill **before every submission**. It is mandatory.
 ## How to use
 
 0) Open `references/quality-gate.md` and run the checklist.
+   - Sweep rule: evaluate **every** applicable item before deciding. Never stop at the first failed item — the Findings list must be the complete result of one full pass.
 
 1) Verify canonical commands are green at the required depth (build / format / static analysis / tests).
    - If something cannot run, record reason + reproducible procedure.
@@ -42,7 +43,7 @@ Invoke this skill **before every submission**. It is mandatory.
    - If `embedded-system-familiarization` was triggered, verify `docs/targets/<target>/system-familiarization.md` exists and lists required, created, missing, provisional, and deferred artifacts; artifact freshness/revisit conditions; controlled conditions; uncontrolled confounders; operating point coverage; claim-to-evidence traces with allowed wording; claims blocked by missing evidence; and handoff statuses using `not_needed`, `required_pending`, `completed`, `deferred_with_reason`, or `blocked`.
    - If an architecture, hardware, or embedded NFR claim depends on a hardware operating point, verify `docs/targets/<target>/controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording; otherwise the claim must be marked `blocked`, `provisional`, `experimental-only`, or limited to observed conditions.
    - If a hardware capability claim supports an architecture decision, verify the control surface and cost model are known in `docs/targets/<target>/hardware-control-surface-map.md`, `docs/targets/<target>/hardware-capability-map.md`, or `docs/targets/<target>/capability-cost-model.md`; otherwise the architecture claim must be blocked or explicitly provisional.
-   - If only `embedded-project-constitution` was triggered, verify constitution artifacts exist. Do not require a feature-level NFR gate report unless feature runtime changes or production-readiness claims are introduced.
+   - If only `embedded-project-constitution` was triggered, verify constitution artifacts exist. A feature-level NFR gate report is required only when feature runtime changes or production-readiness claims are introduced; constitution artifacts alone satisfy this branch otherwise.
 3) Run concise exit-criteria review only.
    - Do not duplicate deep taxonomy here.
    - If a finding needs deep analysis, route to the dedicated skill (readability/maintainability/error-handling/etc.) and return after fixes.
@@ -60,6 +61,8 @@ Function-design evidence requirements when triggered:
 
 ## Gotchas
 
+- **Common pitfall:** deciding `no-submit` at the first failed item and skipping the rest of the checklist.
+  **Instead:** finish the full sweep first so the submitter can fix everything in one round; then decide.
 - **Common pitfall:** repeating deep-review taxonomy in quality-gate and making it verbose.
   **Instead:** limit gate to exit-criteria decisions and delegate deep dives to dedicated skills.
 - **Common pitfall:** approving as mostly OK while required artifacts are missing.

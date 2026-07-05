@@ -20,11 +20,13 @@ Smells are quick surface indicators, not guaranteed problems. The job is to look
   - Smallest remediation: split into cohesion paragraphs or helper functions.
   - Fix lens: `$code-readability`.
 - **Large Class**
+  - Checkable definition: >400 lines, OR >7 public methods, OR ≥3 distinct reasons to change (same threshold as `$design-balance`).
   - Symptom: class gains unrelated fields/method groups or becomes a hub.
   - Typical risk: god-object drift and unclear ownership.
   - Smallest remediation: write a responsibility map, then split, merge, or rename along reason-to-change boundaries.
   - Fix lens: `$design-balance`.
 - **Long Parameter List**
+  - Checkable definition: >4 parameters.
   - Symptom: new methods or constructors add many parameters, especially booleans or config flags.
   - Typical risk: call-site errors and unclear intent.
   - Smallest remediation: introduce a request/params object with named fields.

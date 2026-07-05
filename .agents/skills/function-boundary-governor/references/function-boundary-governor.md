@@ -30,6 +30,17 @@ Risk evidence (score 0-2 each):
 - public API churn
 - parameterization pressure
 
+### Numeric decision rule
+
+There are 7 positive criteria (0-2 each, maximum 14) and 6 risk criteria (0-2 each).
+
+Proceed with merge/split/replace ONLY IF all of the following hold:
+- every positive criterion scores >= 1, AND
+- the positive total is >= 10 (two-thirds of the 14-point positive maximum), AND
+- every risk criterion scores <= 1.
+
+Otherwise the decision is `no-op`.
+
 ## Decision rules
 
 Merge only if all are true:
@@ -61,6 +72,8 @@ No-op when one or more are true:
 - duplication is small and likely to diverge
 
 ## Mandatory reject signals
+
+Checkable test for "textual only": similarity is textual-only when a single unit test could NOT express both call sites' expected behavior without branching on the caller — if invariants, error behavior, or reasons-to-change differ, it is textual-only; reject the merge.
 
 Reject refactor (or choose no-op) when:
 - similarity is textual only

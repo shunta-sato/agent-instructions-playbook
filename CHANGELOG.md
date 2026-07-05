@@ -2,6 +2,13 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.9.0
+
+### Changed
+- `dev-workflow`: replaced the routing-priority prose (nine interacting "primary question" rules) with a first-match-wins precedence table, executable without frontier-level judgment.
+- `quality-gate`: added an explicit sweep rule (evaluate every applicable item in one pass; never stop at the first failure) and rewrote triple/double-negative criteria (constitution-only NFR requirement, telemetry non-blocking rule) into positive form.
+- Replaced vague predicates with checkable definitions: large class / god object / excess layering (`design-balance`, `code-smells-and-antipatterns`), long parameter list (>4), numeric merge/split decision rule and textual-similarity test (`function-boundary-governor`), measurable quality driver = metric + target + measurement method (`architecture-decision-analysis`, mirrored in `dev-workflow`), ambiguous / non-trivial (`requirements-engineering`).
+
 ## v4.8.0
 
 ### Added
