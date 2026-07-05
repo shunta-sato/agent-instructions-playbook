@@ -71,7 +71,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`
-- runtime behavior change → `$observability`
+- runtime behavior change (new/changed async or background work, external call, periodic job, user-visible operation, or retry/timeout/fallback path) → `$observability`
 - embedded/edge/target-local work where target behavior, hardware capability, operating envelope, bottlenecks, or NFR provenance are not understood → `$embedded-system-familiarization`
 - embedded/edge/target-local work with missing target profile, unknown normal workload, unknown measurement surfaces, unknown resource headroom, or guessed physical budget → `$embedded-target-characterization`
 - embedded work where normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown → `$embedded-operating-envelope-discovery`
@@ -116,6 +116,8 @@ Use this table to avoid opening all embedded NFR skills by default.
 | `$embedded-project-constitution` | Only for project bootstrap or a new embedded runtime class. |
 
 Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
+
+The embedded table adds branches; it never replaces the general trigger branches in section 2 (an embedded daemon with changed runtime behavior still triggers `$observability`). Work is embedded only when a physical target constraint exists (battery/power, thermal, flash wear, real-time deadline, constrained target CPU/RAM, or a separate target device); logger/collector/polling vocabulary alone does not qualify.
 
 ## 4) Live external discovery (when applicable)
 

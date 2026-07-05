@@ -43,6 +43,7 @@ Do not use it when:
 - the change is pure docs, schema, parser, or non-target code
 - the work is generic cloud/backend performance with no embedded physical footprint
 - the user asks for a narrow fix with no target-learning, optimization, or architecture decision involved
+- the work is a host-side CLI, batch tool, server, or ordinary daemon with no physical target constraint (battery/power budget, thermal limit, flash-wear limit, real-time deadline, constrained target CPU/RAM, or a physically separate target device); logger/recorder/collector/sampler/polling vocabulary alone does not make work embedded, and when in doubt with no physical constraint named, use the general skills (`$performance-review`, `$observability`) instead
 
 ## How to use
 

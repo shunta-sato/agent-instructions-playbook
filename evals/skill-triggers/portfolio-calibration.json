@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "implementation-economy-wrapper-vs-reuse",
+      "prompt": "Add a RetryingHttpClientWrapper class around our existing HttpClient so the payments module can retry failed calls. The existing HttpClient already exposes hooks for retry policies.",
+      "should_trigger": [
+        "dev-workflow",
+        "implementation-economy"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "embedded-nfr-design"
+      ],
+      "expected_artifacts": [
+        "Complexity Budget declaring the new wrapper class and justification"
+      ],
+      "expected_decisions": [
+        "Reuse of existing HttpClient retry hooks is considered before adding a new wrapper class",
+        "The wrapper is justified in writing or replaced with direct reuse/configuration"
+      ],
+      "expected_evidence": [
+        "Existing HttpClient retry-hook capability is inspected before the wrapper is justified or rejected"
+      ],
+      "notes": "Classic wrapper-vs-reuse case: new adapter class around code that may already support the need."
+    },
+    {
+      "id": "implementation-economy-review-fewer-layers",
+      "prompt": "This PR review comment says: 'This introduces three new interfaces and a factory for a single implementation. Can we flatten this and use less layering?'",
+      "should_trigger": [
+        "implementation-economy"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "visual-regression-testing"
+      ],
+      "expected_decisions": [
+        "Each existing interface/factory layer is re-justified or removed",
+        "Response addresses the reviewer's request for less layering, not just cosmetic renames"
+      ],
+      "expected_evidence": [
+        "Updated complexity budget reflects the reduced class/interface count"
+      ],
+      "notes": "A review explicitly asking for less layering is a direct implementation-economy trigger."
+    },
+    {
+      "id": "implementation-economy-normal-risk-two-helpers",
+      "prompt": "Add server-side validation for a new coupon-code field: normal-risk change touching the checkout service, adding a formatCouponCode helper and a validateCouponCode helper alongside the existing validators.",
+      "should_trigger": [
+        "dev-workflow",
+        "implementation-economy"
+      ],
+      "should_not_trigger": [
+        "staged-lowering",
+        "embedded-hot-path-review"
+      ],
+      "expected_artifacts": [
+        "Complexity Budget listing the two new helpers and their line estimate"
+      ],
+      "expected_decisions": [
+        "Risk is routed as normal, triggering the default implementation lane and complexity budget",
+        "The two new helpers are declared and justified rather than assumed acceptable by default"
+      ],
+      "expected_evidence": [
+        "Existing validator helpers are checked for reuse before adding two new ones"
+      ],
+      "notes": "Normal-risk feature work that adds a small number of helpers should still go through the complexity budget, not just dev-workflow's default lane silently."
+    },
+    {
+      "id": "implementation-economy-premature-generic-abstraction",
+      "prompt": "We only have one caller for exporting orders to CSV, but let's build a generic ExporterFactory<T> with pluggable format strategies (CSV, XML, JSON) now so it's ready for the future.",
+      "should_trigger": [
+        "implementation-economy"
+      ],
+      "should_not_trigger": [
+        "execution-plans",
+        "architecture-decision-analysis"
+      ],
+      "expected_decisions": [
+        "Generic multi-format abstraction is rejected or deferred because only one caller and one format exist today",
+        "A minimal single-purpose CSV export function is preferred over the generic factory"
+      ],
+      "expected_evidence": [
+        "Single-caller, single-format fact is recorded as the basis for rejecting premature generality"
+      ],
+      "notes": "Premature generalization for a single current caller is a core implementation-economy anti-pattern."
+    },
+    {
+      "id": "execution-plans-multi-pr-migration",
+      "prompt": "Migrate our ORM from the legacy query builder to the new one across 40 modules. This will span several PRs; the first PR migrates the user module and sets the pattern, later PRs migrate the rest.",
+      "should_trigger": [
+        "execution-plans"
+      ],
+      "should_not_trigger": [
+        "test-driven-development",
+        "tonemana-catalog"
+      ],
+      "expected_artifacts": [
+        "plans/<slug>.md ExecPlan"
+      ],
+      "expected_decisions": [
+        "Work is broken down per-module or per-PR with explicit sequencing",
+        "Decision log records the migration pattern chosen in the first PR for later PRs to follow"
+      ],
+      "expected_evidence": [
+        "PLANS.md and references/execution-plans.md were consulted",
+        "Handoff captures which modules are migrated and which remain"
+      ],
+      "notes": "Explicit multi-PR migration spanning many modules is a canonical ExecPlan trigger."
+    },
+    {
+      "id": "execution-plans-long-running-refactor-handoff",
+      "prompt": "This refactor of the billing engine will likely take multiple sessions. I need to be able to hand this off to another agent or come back to it tomorrow without losing context.",
+      "should_trigger": [
+        "execution-plans"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "bug-investigation-and-rca"
+      ],
+      "expected_artifacts": [
+        "plans/<slug>.md ExecPlan with handoff section"
+      ],
+      "expected_decisions": [
+        "Current state, blockers, and next steps are captured for handoff",
+        "Work breakdown is kept current across sessions"
+      ],
+      "expected_evidence": [
+        "Handoff captures current state, blockers, and next steps",
+        "Progress tracking is updated as sessions end and resume"
+      ],
+      "notes": "Explicit cross-session handoff need is a direct ExecPlan trigger, independent of any bug or quality-gate framing."
+    },
+    {
+      "id": "execution-plans-quantitative-targets-wbs",
+      "prompt": "Reduce checkout service p95 latency from 800ms to under 300ms and cut memory usage by 30%. Break this into phases with a decision log for the approaches we try and reject.",
+      "should_trigger": [
+        "execution-plans",
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "uidesign-flow"
+      ],
+      "expected_artifacts": [
+        "plans/<slug>.md ExecPlan with quantitative contribution decomposition per phase"
+      ],
+      "expected_decisions": [
+        "Work breakdown structure allocates the latency and memory targets across phases",
+        "Decision log records reasons, alternatives, and adopted choice for each attempted approach"
+      ],
+      "expected_evidence": [
+        "PLANS.md and references/execution-plans.md were consulted",
+        "Phase-level progress is measured against the 300ms and 30% targets"
+      ],
+      "notes": "Quantitative targets needing a WBS and decision log are an explicit ExecPlan trigger from the README/execution-plans skill."
+    },
+    {
+      "id": "tdd-new-behavior-test-list",
+      "prompt": "Add support for parsing ISO 8601 durations in the scheduling module. Start from a Test List covering the acceptance criteria before writing any implementation.",
+      "should_trigger": [
+        "test-driven-development"
+      ],
+      "should_not_trigger": [
+        "bug-investigation-and-rca",
+        "embedded-hot-path-review"
+      ],
+      "expected_artifacts": [
+        "Test list for ISO 8601 duration parsing behavior"
+      ],
+      "expected_decisions": [
+        "Test List is seeded from acceptance criteria before implementation starts",
+        "Smallest test item is picked first"
+      ],
+      "expected_evidence": [
+        "Red test failure is observed before implementation",
+        "Green test output is captured after implementation"
+      ],
+      "notes": "New behavior explicitly driven from a Test List is a direct TDD trigger."
+    },
+    {
+      "id": "tdd-refactor-needs-protection-first",
+      "prompt": "Before refactoring the pricing calculator's tangled discount logic, we have no tests around it. Get it under test protection first, then refactor safely.",
+      "should_trigger": [
+        "test-driven-development",
+        "working-with-legacy-code"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Characterization/protective tests are written before any refactor step",
+        "Refactor proceeds only after tests are green and protecting current behavior"
+      ],
+      "expected_evidence": [
+        "Test coverage is captured for current discount-logic behavior before refactor",
+        "Green test output is preserved across refactor steps"
+      ],
+      "notes": "Refactor-first-get-tests-in-place is the TDD-for-safety trigger, often paired with legacy-code guidance."
+    },
+    {
+      "id": "tdd-explicit-red-green-refactor-request",
+      "prompt": "Let's do this the TDD way: write a failing test for the new email-validation rule, make it pass with minimal code, then refactor.",
+      "should_trigger": [
+        "test-driven-development"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "uiux-core"
+      ],
+      "expected_decisions": [
+        "Next test (email-validation rule) is selected before implementation",
+        "Refactor happens only after a green test state"
+      ],
+      "expected_evidence": [
+        "Red test failure is observed before implementation",
+        "Green test output is captured after implementation"
+      ],
+      "notes": "Explicit red/green/refactor phrasing should trigger the TDD workflow directly."
+    },
+    {
+      "id": "bug-rca-flaky-test",
+      "prompt": "The `test_order_settlement` test fails intermittently in CI, maybe 1 in 20 runs, but always passes locally. Investigate why it's flaky and fix it.",
+      "should_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "requirements-engineering",
+        "uiux-core"
+      ],
+      "expected_artifacts": [
+        "reports/bug-reports/<slug>.md Bug Report or equivalent bug report artifact"
+      ],
+      "expected_decisions": [
+        "Root cause of the intermittent failure (timing, ordering, shared state) is separated from the symptom",
+        "Prevention action (e.g. deflaking mechanism) is defined before closure"
+      ],
+      "expected_evidence": [
+        "CI run history or reproduction attempts showing the intermittent failure",
+        "Minimal repro or failing test output isolating the flake"
+      ],
+      "notes": "Flaky test investigation is an explicit bug-investigation-and-rca trigger."
+    },
+    {
+      "id": "bug-rca-production-crash-with-logs",
+      "prompt": "Production is throwing NullPointerException in OrderProcessor.finalize() several times an hour. Here are the stack traces and error logs from the last incident. Find the root cause and fix it.",
+      "should_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "playbook-template-authoring"
+      ],
+      "expected_artifacts": [
+        "reports/bug-reports/<slug>.md Bug Report or equivalent bug report artifact"
+      ],
+      "expected_decisions": [
+        "Root cause is separated from the NullPointerException symptom and assumptions",
+        "Prevention action is defined before closure"
+      ],
+      "expected_evidence": [
+        "Provided stack traces and error logs are used as reproduction/diagnostic evidence",
+        "Reproduction steps or explanation of why reproduction is currently impossible"
+      ],
+      "notes": "Production crash with attached logs/stack traces is a core RCA trigger."
+    },
+    {
+      "id": "bug-rca-regression-after-dependency-bump",
+      "prompt": "After bumping the `date-fns` dependency from 2.x to 3.x, timezone conversions in the reporting module started returning wrong dates. Figure out what changed and fix it without just pinning the old version.",
+      "should_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "project-initialization"
+      ],
+      "expected_artifacts": [
+        "reports/bug-reports/<slug>.md Bug Report or equivalent bug report artifact"
+      ],
+      "expected_decisions": [
+        "Root cause is tied to a specific behavior change in the dependency, not just 'the upgrade'",
+        "Prevention action addresses future dependency-bump regressions (e.g. contract test), not only pinning the version"
+      ],
+      "expected_evidence": [
+        "Dependency changelog or diff behavior showing the timezone-handling change",
+        "Failing test or minimal repro demonstrating wrong dates after the bump"
+      ],
+      "notes": "Regression traced to a dependency bump is a bug-investigation-and-rca trigger, not just an upgrade task."
+    },
+    {
+      "id": "observability-embedded-daemon-runtime-behavior-change",
+      "prompt": "Change our robot-local telemetry daemon so that instead of uploading metrics every 5 minutes, it batches and uploads every 30 seconds. Make sure operators can still diagnose upload failures and see per-batch outcome and latency.",
+      "should_trigger": [
+        "observability",
+        "embedded-nfr-design",
+        "embedded-observer-effect-review"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "tonemana-catalog"
+      ],
+      "expected_artifacts": [
+        "Observability Plan or equivalent notes for the daemon's batch upload behavior",
+        "NFR matrix or physical budget notes for the changed upload cadence"
+      ],
+      "expected_decisions": [
+        "Diagnosable signals (outcome, latency, correlation id) are defined for the new 30-second batch cadence",
+        "Increased upload frequency is reviewed for wakeup, radio/network, and battery impact before being treated as safe"
+      ],
+      "expected_evidence": [
+        "Per-batch outcome and latency evidence is captured or planned",
+        "Cadence change from 5 minutes to 30 seconds is assessed for physical-footprint impact, not only logged"
+      ],
+      "notes": "Regression case: a robot-local/embedded daemon whose runtime behavior changes must still route through the general observability branch alongside embedded-specific skills. A routing walk that stops at the embedded table can skip observability entirely, which is the known miss this case guards against."
+    },
+    {
+      "id": "observability-background-job-external-api",
+      "prompt": "Add a nightly reconciliation job that calls the vendor payout API for each merchant and writes results to our ledger table. Make failures and slow calls diagnosable in production.",
+      "should_trigger": [
+        "observability"
+      ],
+      "should_not_trigger": [
+        "uiux-core",
+        "tonemana-apply"
+      ],
+      "expected_artifacts": [
+        "Observability Plan or equivalent notes for the reconciliation job"
+      ],
+      "expected_decisions": [
+        "Correlation id (e.g. job_id per run, merchant id per call) and outcome logging are explicit",
+        "Vendor API failures and slow calls are made explainable without leaking secrets"
+      ],
+      "expected_evidence": [
+        "Log/metric/trace plan covering start, outcome, and failure for each vendor call",
+        "Existing logging/metrics conventions are checked before adding new ones"
+      ],
+      "notes": "Ordinary non-embedded background job calling an external API is a standard observability trigger, used here as a contrast to the embedded regression case."
+    },
+    {
+      "id": "embedded-vocab-host-rotating-file-logger",
+      "prompt": "Add a rotating file logger to our Linux server daemon that uploads metrics hourly to our monitoring backend.",
+      "should_trigger": [
+        "dev-workflow",
+        "observability"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review"
+      ],
+      "expected_decisions": [
+        "'Daemon' and 'logger' vocabulary is recognized as ordinary Linux server software, not embedded/edge/target-local runtime",
+        "Hourly metrics upload is treated as a normal background job needing observability, not a physical-footprint budget"
+      ],
+      "expected_evidence": [
+        "No target device, firmware, robot-local, or resource-constrained hardware context is present in the request",
+        "Log rotation and hourly upload outcome are made diagnosable through ordinary logging/metrics conventions"
+      ],
+      "notes": "Regression guard: embedded-sounding vocabulary ('daemon', 'logger', 'uploads metrics') on an ordinary Linux server must not misroute into the embedded NFR/hot-path/observer-effect skills, which are for target-local physical-footprint risk only."
+    },
+    {
+      "id": "embedded-vocab-host-cli-log-collector",
+      "prompt": "Write a CLI log collector that polls a REST API every minute and stores results in SQLite for later analysis.",
+      "should_trigger": [
+        "dev-workflow",
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "embedded-nfr-design",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review"
+      ],
+      "expected_decisions": [
+        "'Collector' and 'polls every minute' vocabulary is recognized as an ordinary host-side CLI tool, not target-local embedded polling",
+        "Per-poll REST call and SQLite write are reviewed as ordinary I/O-in-a-loop cost, not a physical NFR budget"
+      ],
+      "expected_evidence": [
+        "No target device, firmware, or resource-constrained hardware context is present in the request",
+        "Minute-scale polling cadence is well outside sub-100ms hot-path territory that would justify embedded routing"
+      ],
+      "notes": "Regression guard: a host-side CLI tool using 'collector'/'polls'/'stores results' vocabulary must not misroute into embedded-hot-path-review or embedded-nfr-design; minute-scale REST polling into SQLite is ordinary application performance/dev-workflow territory."
+    }
+  ]
+}

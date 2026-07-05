@@ -30,6 +30,8 @@ Do not use it for pure docs/schema work, generic cloud/backend NFRs, or target w
 
 For broader target-learning efforts that also need hardware capability mapping, workload mapping, bottleneck/margin analysis, and architecture constraints, use `embedded-system-familiarization` first.
 
+Do not use for host-side CLIs, batch tools, servers, or ordinary daemons that have no physical target constraint. Work is embedded only when an actual constraint exists: battery/power budget, thermal limit, flash-wear limit, real-time deadline, constrained target CPU/RAM, or a physically separate target device. Logger/recorder/collector/sampler/polling vocabulary alone does not make work embedded; when in doubt and no physical constraint is named, treat the work as non-embedded and use the general skills (`$performance-review`, `$observability`).
+
 ## How to use
 
 1. Identify the target and safe discovery boundary.

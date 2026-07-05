@@ -30,6 +30,8 @@ Do not use it for static docs/schema work or ordinary web/backend performance be
 
 Use `embedded-system-familiarization` when envelope discovery is part of a broader architecture, hardware capability, bottleneck/margin, or optimization effort.
 
+Do not use for host-side CLIs, batch tools, servers, or ordinary daemons that have no physical target constraint. Work is embedded only when an actual constraint exists: battery/power budget, thermal limit, flash-wear limit, real-time deadline, constrained target CPU/RAM, or a physically separate target device. Logger/recorder/collector/sampler/polling vocabulary alone does not make work embedded; when in doubt and no physical constraint is named, treat the work as non-embedded and use the general skills (`$performance-review`, `$observability`).
+
 ## How to use
 
 1. Start from target characterization.
