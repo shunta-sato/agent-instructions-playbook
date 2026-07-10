@@ -67,7 +67,7 @@ def issue_run_id(slug: str) -> str:
     safe_slug = re.sub(r"[^a-zA-Z0-9._-]+", "-", slug.strip()).strip("-._")
     if not safe_slug:
         safe_slug = "agent-run"
-    timestamp = dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     return f"{timestamp}-{safe_slug}-{uuid.uuid4().hex[:8]}"
 
 
@@ -251,7 +251,7 @@ def build_run_record(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
         "schema_version": SCHEMA_VERSION,
         "record_type": RUN_RECORD_TYPE,
         "run_id": run_id,
-        "created_at": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
+        "created_at": dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat(),
         "harness": args.harness,
         "task_class": args.task_class,
         "capability_profile": args.capability_profile,
