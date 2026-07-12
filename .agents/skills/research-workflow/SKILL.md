@@ -3,8 +3,6 @@ name: research-workflow
 description: "Use when the task's epistemic mode is research: exploratory optimization, feasibility probes, model/architecture exploration, benchmark investigation, or proof-of-concept work where learning per unit cost matters more than shipping. Routes probes to experiment-loop and synthesis to research-synthesis. Do not use in delivery mode, or once findings are being promoted into a delivery path (dev-workflow, quality-gate)."
 metadata:
   short-description: Research-mode router
-  requires:
-    - references/research-framing.md
 ---
 
 ## Purpose
@@ -28,6 +26,8 @@ Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-ga
    - `question`
    - `decision` (what this unlocks)
    - `next_probe`
+
+   The 4-line frame is sufficient for routine work. Open `optional/research-framing.md` only when the four-line frame is insufficient to make the next probe decision, or the cycle is stuck and needs a divergent-ideation pass — it is not part of the mandatory load for this skill.
 
 2) Select the next probe with this ordinal decision tree, in order:
    1. If a probe under one hour can falsify at least one live hypothesis, do it first.

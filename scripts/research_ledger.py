@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 """Shared primitives for the Research OS ledger.
 
-The Research OS stores research records in the same JSONL substrate as
-``agent_run`` records (see ``scripts/agent_run.py``). ``agent_run`` records
-interleave freely and are ignored here; research records form a hash chain
-over their own subsequence.
+Research records share the JSONL substrate with ``agent_run`` records (see
+``scripts/agent_run.py``), which interleave freely and are ignored here;
+research records form a hash chain over their own subsequence.
 
-This module is the single source of truth for every value that both the
-producer (``research_run.py``) and the mechanical gate
-(``check_research_evidence.py``) must agree on: canonical hashing, chain
-linkage, command digests, predicate evaluation, outcome derivation, claim
-``n`` collapsing, and the deterministic claims view. Keeping these in one
-place is what guarantees the validator re-derives exactly what the runner
-wrote — divergence would be a silent integrity hole.
+This module is the single source of truth for every value the producer
+(``research_run.py``) and the gate (``check_research_evidence.py``) must
+agree on: hashing, chain linkage, command digests, predicate/outcome
+evaluation, claim binding, claim ``n``, and the claims view. Keeping these in
+one place guarantees the validator re-derives exactly what the runner wrote —
+divergence would be a silent integrity hole.
+
+Threat model (scope, stated plainly). The hash chain is tamper-EVIDENT for
+honest-but-buggy flows and accidental corruption (mutated records, broken
+links, stale views, un-re-derivable results are all caught). It is NOT
+tamper-PROOF: an agent with write access to both these scripts and the ledger
+can forge a fully self-consistent chain and nothing here detects it.
+Adversarial-grade anchoring (an externally published chain head, or a
+protected append-only writer) is a documented follow-up, not a property yet.
 
 Only Python stdlib is used.
 """
@@ -78,9 +84,9 @@ def compute_hash(record: dict[str, Any]) -> str:
 def stamp_utc() -> str:
     """Runner-stamped UTC timestamp; never accepted from a caller.
 
-    Microsecond resolution is retained on purpose: the integrity rule that a
-    result's ``started_at`` must strictly follow its ``registered_at`` fails
-    under second resolution when register and execute land in the same second.
+    Microsecond resolution is retained so the rule that a result's
+    ``started_at`` strictly follows its ``registered_at`` holds even when
+    register and execute land in the same second.
     """
     return dt.datetime.now(dt.timezone.utc).isoformat()
 
@@ -178,11 +184,21 @@ def apply_comparator(comparator: str, lhs: Any, rhs: Any) -> bool:
 
 
 def derive_outcome(disconfirm: dict[str, Any], metrics: Any) -> str:
-    """Evaluate the disconfirm predicate: TRUE means disconfirmed."""
+    """Evaluate the disconfirm predicate: TRUE means disconfirmed.
+
+    A missing metric (or non-object metrics) is ``not-evaluable``. A metric
+    whose value is non-numeric under an ordered comparator (``<``/``<=``/``>``/
+    ``>=``) is also ``not-evaluable`` rather than a ``TypeError`` crash; ``==``
+    compares equality safely and is evaluated normally.
+    """
     metric = disconfirm.get("metric")
     if not isinstance(metrics, dict) or metric not in metrics:
         return "not-evaluable"
-    disconfirmed = apply_comparator(disconfirm["comparator"], metrics[metric], disconfirm["threshold"])
+    comparator = disconfirm["comparator"]
+    value = metrics[metric]
+    if comparator in ("<", "<=", ">", ">=") and not _is_number(value):
+        return "not-evaluable"
+    disconfirmed = apply_comparator(comparator, value, disconfirm["threshold"])
     return "disconfirmed" if disconfirmed else "supported"
 
 
@@ -208,13 +224,73 @@ def multiplicity(prior_records: list[dict[str, Any]], digest: str) -> int:
 
 
 def claim_n(records: list[dict[str, Any]], evidence_ids: list[str]) -> int:
-    """Distinct command digests among evidence results — replays collapse."""
-    digests = {
-        result["command_digest"]
-        for eid in evidence_ids
-        if (result := find_result(records, eid)) is not None
-    }
-    return len(digests)
+    """Conservative experimental multiplicity for a claim's evidence.
+
+    A distinct ``command_digest`` is not distinct configuration. ``n`` counts
+    distinct non-null ``variation_axis`` values with pairwise-distinct result
+    digests; with no axis declared it is 1 regardless of digest count.
+    """
+    any_axis = False
+    seen_digests: set[Any] = set()
+    counted_axes: set[str] = set()
+    for eid in evidence_ids:
+        prereg = find_preregister(records, eid)
+        result = find_result(records, eid)
+        if prereg is None or result is None:
+            continue
+        axis = prereg.get("variation_axis")
+        if not axis:
+            continue
+        any_axis = True
+        digest = result.get("command_digest")
+        if digest in seen_digests:  # a replay under a relabeled axis: ignore
+            continue
+        seen_digests.add(digest)
+        counted_axes.add(axis)
+    if not any_axis:
+        return 1
+    return len(counted_axes)
+
+
+def evaluate_claim_binding(
+    records: list[dict[str, Any]],
+    metric: str,
+    direction: str,
+    evidence_ids: list[str],
+) -> tuple[list[str], list[dict[str, str]]]:
+    """Re-derive a claim's semantic binding to its evidence from the ledger.
+
+    Returns ``(errors, outcome_basis)`` — the latter a per-evidence
+    ``[{"experiment_id", "outcome"}]`` list stored on the claim so the gate
+    re-derives, without trusting the runner: (a) claim metric == every cited
+    prereg's metric; (b) every cited result is real evidence (exit_code 0,
+    outcome ``supported``/``disconfirmed``); (c) direction agrees with the
+    outcomes (only ``mixed`` tolerates a mixture).
+    """
+    errors: list[str] = []
+    basis: list[dict[str, str]] = []
+    for eid in evidence_ids:
+        prereg = find_preregister(records, eid)
+        result = find_result(records, eid)
+        if prereg is None or result is None:
+            errors.append(f"{eid}: no completed experiment result")
+            continue
+        pre_metric = (prereg.get("disconfirm") or {}).get("metric")
+        if pre_metric != metric:
+            errors.append(f"{eid}: claim metric {metric!r} != preregistered {pre_metric!r}")
+        outcome = result.get("outcome")
+        if result.get("exit_code") != 0:
+            errors.append(f"{eid}: result exit_code {result.get('exit_code')!r} is not evidence")
+        if outcome not in ("supported", "disconfirmed"):
+            errors.append(f"{eid}: outcome {outcome!r} is not evidence")
+        basis.append({"experiment_id": eid, "outcome": outcome})
+    outcomes = [b["outcome"] for b in basis]
+    if outcomes:
+        if direction in ("improves", "degrades") and not all(o == "supported" for o in outcomes):
+            errors.append(f"direction {direction} requires all evidence outcomes supported")
+        elif direction == "no-effect" and not all(o == "disconfirmed" for o in outcomes):
+            errors.append("direction no-effect requires all evidence outcomes disconfirmed")
+    return errors, basis
 
 
 # --- git helpers -------------------------------------------------------------
@@ -241,40 +317,39 @@ def git_head(repo_root: Path) -> str:
 def _excluded_from_digest(rel_path: str, ledger_rel: str | None) -> bool:
     """Whether a dirty path must be kept out of ``command_digest``.
 
-    The digest is meant to fingerprint experiment *inputs*. Two categories of
-    dirty path are outputs of the recording process itself, not inputs, and
-    must be excluded or the digest becomes self-invalidating:
-
-    * The ledger being written to (``ledger_rel``) and the canonical default
-      ledger (``LEDGER_REL``). ``register`` appends to the ledger, so including
-      it would make ``execute`` hash a *different* ledger than ``register`` did
-      and reject every first register->execute pair. The recording medium must
-      not participate in the digest of the thing it records.
-    * Runner-generated artifacts under ``RUNNER_OUTPUT_REL`` (``research/runs/``).
+    Excludes outputs of the recording process itself, which are not experiment
+    inputs: the ledger being written (``ledger_rel``) and the default ledger
+    (``LEDGER_REL``) — ``register`` appends to it, so including it would make
+    ``execute`` hash a different ledger and reject every first pair — and
+    runner artifacts under ``RUNNER_OUTPUT_REL`` (``research/runs/``).
     """
     if rel_path == LEDGER_REL or rel_path == ledger_rel:
         return True
     return rel_path == RUNNER_OUTPUT_REL or rel_path.startswith(RUNNER_OUTPUT_REL + "/")
 
 
-def dirty_tracked_files(repo_root: Path, ledger_path: Path | None = None) -> list[dict[str, str]]:
-    """Dirty tracked files that count as ``command_digest`` inputs.
+def dirty_input_files(repo_root: Path, ledger_path: Path | None = None) -> list[dict[str, str]]:
+    """Dirty files that count as ``command_digest`` inputs.
 
-    ``ledger_path`` (when given) is resolved to a repo-relative path and
-    excluded along with the default ledger and runner outputs; see
-    ``_excluded_from_digest``.
+    Fingerprinting inputs requires BOTH tracked files modified vs ``HEAD`` and
+    untracked, non-ignored files (``git ls-files --others --exclude-standard``).
+    The untracked set is load-bearing: running a disposable probe WITHOUT
+    ``git add`` is the normal research case, and if it did not enter the digest
+    it could be edited between ``register`` and ``execute`` undetected. The
+    ledger and runner outputs are excluded; see ``_excluded_from_digest``.
     """
-    out = _git(repo_root, ["diff", "--name-only", "HEAD", "--"])
-    if not out:
-        return []
+    tracked = _git(repo_root, ["diff", "--name-only", "HEAD", "--"]) or ""
+    untracked = _git(repo_root, ["ls-files", "--others", "--exclude-standard"]) or ""
     ledger_rel: str | None = None
     if ledger_path is not None:
         try:
             ledger_rel = ledger_path.resolve().relative_to(repo_root.resolve()).as_posix()
         except ValueError:
             ledger_rel = None
+    names = {line.strip() for line in tracked.splitlines() if line.strip()}
+    names |= {line.strip() for line in untracked.splitlines() if line.strip()}
     entries: list[dict[str, str]] = []
-    for name in sorted({line.strip() for line in out.splitlines() if line.strip()}):
+    for name in sorted(names):
         if _excluded_from_digest(name, ledger_rel):
             continue
         path = repo_root / name
@@ -284,6 +359,17 @@ def dirty_tracked_files(repo_root: Path, ledger_path: Path | None = None) -> lis
 
 
 # --- claims view -------------------------------------------------------------
+
+
+def claims_view_path(repo_root: Path, ledger_path: Path) -> Path:
+    """The claims view expected to accompany ``ledger_path``.
+
+    The canonical ledger (``LEDGER_REL``) maps to ``research/claims.md``; any
+    other ledger carries its view as ``claims.md`` NEXT TO the ledger file.
+    """
+    if ledger_path.resolve() == (repo_root / LEDGER_REL).resolve():
+        return repo_root / "research" / "claims.md"
+    return ledger_path.parent / "claims.md"
 
 
 def render_claims(records: list[dict[str, Any]]) -> str:
@@ -305,6 +391,9 @@ def render_claims(records: list[dict[str, Any]]) -> str:
         lines.append(f"## {claim['claim_id']}")
         lines.append(sentence)
         lines.append(f"evidence: {', '.join(claim['evidence'])}")
+        if claim.get("outcome_basis"):
+            basis = ", ".join(f"{b['experiment_id']}={b['outcome']}" for b in claim["outcome_basis"])
+            lines.append(f"outcome-basis: {basis}")
         if claim.get("sources"):
             lines.append(f"sources: {', '.join(claim['sources'])}")
         lines.append("")

@@ -89,7 +89,7 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
         raise ValueError("; ".join(errors))
 
     head = rl.git_head(repo_root)
-    dirty = rl.dirty_tracked_files(repo_root, ledger_path)
+    dirty = rl.dirty_input_files(repo_root, ledger_path)
     records = rl.load_research_records(ledger_path)
     experiment_id = rl.next_counter(records, rl.PREREGISTER, "E")
     record: dict[str, Any] = {
@@ -122,7 +122,7 @@ def cmd_execute(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
 
     command = prereg["command"]
     head = rl.git_head(repo_root)
-    dirty = rl.dirty_tracked_files(repo_root, ledger_path)
+    dirty = rl.dirty_input_files(repo_root, ledger_path)
     digest = rl.command_digest(head, dirty, command)
     if digest != prereg["command_digest"]:
         raise ValueError(
@@ -159,7 +159,7 @@ def cmd_execute(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
 
 def cmd_explore(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     head = rl.git_head(repo_root)
-    dirty = rl.dirty_tracked_files(repo_root, ledger_path)
+    dirty = rl.dirty_input_files(repo_root, ledger_path)
     digest = rl.command_digest(head, dirty, args.command)
     records = rl.load_research_records(ledger_path)
     exploration_id = rl.next_counter(records, rl.EXPLORATION, "X")
@@ -198,6 +198,17 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         if not (prereg["registered_at"] < result["started_at"]):
             raise ValueError(f"evidence {eid}: registered_at is not before started_at")
 
+    # Semantic binding (S3): the claim's metric must match every cited
+    # experiment's preregistered metric, every cited result must be real
+    # evidence (exit 0, evaluable outcome), and the direction must be
+    # consistent with those outcomes. outcome_basis is persisted so the gate
+    # re-derives all of this from the ledger.
+    binding_errors, outcome_basis = rl.evaluate_claim_binding(
+        records, args.metric, args.direction, args.evidence
+    )
+    if binding_errors:
+        raise ValueError("; ".join(binding_errors))
+
     claim_id = rl.next_counter(records, rl.CLAIM, "C")
     record = {
         "schema_version": rl.SCHEMA_VERSION,
@@ -209,6 +220,7 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         "metric": args.metric,
         "configurations": args.configuration,
         "evidence": args.evidence,
+        "outcome_basis": outcome_basis,
         "sources": args.source or [],
         "n": rl.claim_n(records, args.evidence),
     }
@@ -220,9 +232,15 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
 def cmd_render_claims(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     records = rl.load_research_records(ledger_path)
     content = rl.render_claims(records)
-    output = Path(args.output)
-    if not output.is_absolute():
-        output = repo_root / output
+    if args.output:
+        output = Path(args.output)
+        if not output.is_absolute():
+            output = repo_root / output
+    else:
+        # Default output tracks the ledger, mirroring the gate's freshness
+        # check: research/claims.md for the canonical ledger, an adjacent
+        # claims.md for any other --ledger.
+        output = rl.claims_view_path(repo_root, ledger_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(content, encoding="utf-8")
     print(output.as_posix())
@@ -265,7 +283,12 @@ def build_parser() -> argparse.ArgumentParser:
     claim.set_defaults(func=cmd_claim)
 
     render = sub.add_parser("render-claims", help="Render the claims view.")
-    render.add_argument("--output", default="research/claims.md")
+    render.add_argument(
+        "--output",
+        default="",
+        help="Output path; default tracks the ledger (research/claims.md for "
+        "the canonical ledger, an adjacent claims.md otherwise).",
+    )
     render.set_defaults(func=cmd_render_claims)
     return parser
 

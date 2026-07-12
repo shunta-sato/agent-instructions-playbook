@@ -5,7 +5,7 @@
 ## Purpose / Big Picture
 
 - Add a research epistemic mode to the playbook so exploratory R&D (SoC NPU/GPU model optimization, multi-task model research, VLM→VLA work) runs at probe speed without inheriting delivery-grade process, while evidence discipline gets STRONGER, not weaker.
-- Design lineage: owner problem statement → external proposal (nGPT-5.6) → supervisor meta-review (8 corrections) → corrected v0 → 4-agent verification workflow (integration fact-checks + adversarial attack, 14 holes + clamps). Core principle: **one substrate, two epistemic policies, orthogonal safety overlay** — and after the adversarial pass: *never root integrity in records the agent writes about itself*.
+- Design lineage: owner problem statement → external proposal (nGPT-5.6) → supervisor meta-review (8 corrections) → corrected v0 → 4-agent verification workflow (integration fact-checks + adversarial attack, 14 holes + clamps). Core principle: **one substrate, two epistemic policies, orthogonal safety overlay** — and after the adversarial pass: *never root integrity in records the agent writes about itself*. v0 delivers this as tamper-EVIDENCE for honest-but-buggy flows: the runner is the sole writer and the chain detects accidental or careless mutation. An agent with write access to the scripts and ledger can still forge a self-consistent chain — adversarial-grade anchoring (externally published chain head, protected writer) is an explicit follow-up, not a v0 property.
 
 ## Scope
 
@@ -34,6 +34,7 @@ Domain research skills; hypothesis state machines; baseline-ladder mandates; pri
 - [x] (P0) Mode conditionalization ×6 + policy file + structure-waiver wiring + task classes (Sonnet worker; run 20260712T044653Z-...-5d7fa694)
 - [x] (P1) Supervisor integration — index/manifests/symlinks/lockfile regenerated (research_probe/exploration→claude-sonnet-5, research_synthesis→claude-opus-4-8); make verify green
 - [x] (P2) Live blind validation — see Outcomes
+- [ ] (P3) Fixture A pre-merge time-to-first-probe run, added as part of the review response (no longer deferred to post-merge) — results: <supervisor to fill>
 - [x] (P3) PR
 
 ## Surprises & Discoveries
@@ -58,4 +59,4 @@ Domain research skills; hypothesis state machines; baseline-ladder mandates; pri
 - AC1 ✅ make verify green incl. the new ledger gate. AC2 ✅ blind research-mode run produced a chained, validator-accepted evidence trail with zero unsupported empirical claims (quicksort degradation confirmed ~1390x vs 20x threshold, runner outcome `supported`). AC3 ✅ delivery mode unchanged (default_mode delivery; all existing validators/evals green).
 - What went well: three parallel workers (1 Opus, 2 Sonnet) with disjoint scopes, zero collisions; the blind run doubled as a bug-finding fixture — the Research OS caught its own first integrity defect before merge.
 - What went wrong: the digest self-invalidation defect (fixed pre-merge, regression-tested); two workers repeated the known `--changed-from-git` sweep pitfall in shared worktrees (both self-corrected per contract) — consider a worker-brief note or tool fix later.
-- Follow-ups / tech debt tickets: fixture A (time-to-first-probe A/B benchmark) after real usage baselines; promotion-path claim-lint over decision surfaces; multiplicity tracking across `--ledger` overrides; `agent_run.py --changed-from-git` shared-worktree ergonomics.
+- Follow-ups / tech debt tickets: promotion-path claim-lint over decision surfaces; multiplicity tracking across `--ledger` overrides; `agent_run.py --changed-from-git` shared-worktree ergonomics; external chain-head anchoring (CI-published or signed) for adversarial-grade integrity. Fixture A (time-to-first-probe A/B benchmark) is no longer deferred to post-merge — it is being run pre-merge as part of this review response — results: <supervisor to fill>.

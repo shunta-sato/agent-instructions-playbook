@@ -14,6 +14,38 @@ Empty/absent research records pass.
 and safety-review findings over a changed-path set, with a default-deny
 (unmatched = delivery) path model.
 
+The boundary gate binds to a DECLARED mode, not to what the diff happens to
+touch. ``--mode research`` means "this session declared research work": any
+delivery-path change then needs promotion. ``--mode delivery`` means "this
+session declared delivery work": editing a research-only path is legitimate
+(delivery gates are stricter, and claims discipline is mode-independent), so
+it emits only a non-blocking ``NOTE mode:`` line and never changes the exit
+code. When ``--mode`` is omitted — the CI case, where per-session
+declarations are not knowable — the gate falls back to a mixing rule: a
+single diff that touches BOTH research-mode and delivery-mode paths requires
+promotion. Safety-path review is evaluated in every case.
+
+Promotion acknowledgment: when the diff both produces ``promotion-required``
+findings and adds/modifies an acknowledgment file under ``.agents/promotions/``
+(any ``*.md`` except ``README.md``), every ``promotion-required`` finding is
+downgraded to a non-blocking ``NOTE promotion acknowledged:`` line and the gate
+exits 0 — that file is the committed, reviewable record of the research→delivery
+crossing (research-synthesis's promote contract). ``safety-review-required`` is
+never downgraded. Residual risk, documented not hidden: a CI diff touching only
+delivery paths, or only research paths, cannot be distinguished from a
+correctly-declared session, so CI catches mixing but not a mis-declared
+single-mode session; the session-side ``--mode`` binding closes that gap.
+
+Threat model (scope, stated plainly). ``--check-ledger`` is
+tamper-EVIDENT for honest-but-buggy flows and accidental corruption — it
+catches mutated records, broken chain links, un-re-derivable outcomes,
+stale claims views, and forged/inconsistent claim records. It is NOT
+tamper-PROOF: an agent with write access to both the scripts and the ledger
+can forge a fully self-consistent chain that this gate accepts.
+Adversarial-grade anchoring (an externally published chain head, or a
+protected append-only writer outside the deriving party's control) is a
+documented follow-up, not a property this gate currently provides.
+
 Output follows ``check_structure.py`` / ``check_api_removal.py``: FINDING
 lines, a summary line, exit codes 0 (clean) / 1 (findings) / 2 (usage).
 Only Python stdlib is used.
@@ -94,32 +126,71 @@ def _check_claims(records: list[dict[str, Any]], findings: list[str]) -> None:
         if record.get("record_type") != rl.CLAIM:
             continue
         cid = record.get("claim_id")
-        for eid in record.get("evidence", []):
+        evidence = record.get("evidence", [])
+        for eid in evidence:
             prereg = rl.find_preregister(records, eid)
             result = rl.find_result(records, eid)
             if prereg is None or result is None:
                 findings.append(f"claim-evidence-invalid: {cid}: {eid}")
             elif not (prereg["registered_at"] < result["started_at"]):
                 findings.append(f"claim-evidence-harking: {cid}: {eid}")
-        expected_n = rl.claim_n(records, record.get("evidence", []))
+
+        # Semantic binding (S3), re-derived from the ledger so a hand-forged
+        # claim record cannot assert an inconsistent metric/direction pairing.
+        binding_errors, derived_basis = rl.evaluate_claim_binding(
+            records, record.get("metric"), record.get("direction"), evidence
+        )
+        for error in binding_errors:
+            findings.append(f"claim-binding: {cid}: {error}")
+
+        # Grandfathering: records written before outcome_basis existed
+        # (schema field absent) skip the basis comparison but still face every
+        # re-derived check above and the n check below. New records carry the
+        # basis and must match what the ledger re-derives.
+        if "outcome_basis" in record and record.get("outcome_basis") != derived_basis:
+            findings.append(f"claim-basis-mismatch: {cid}")
+
+        expected_n = rl.claim_n(records, evidence)
         if record.get("n") != expected_n:
             findings.append(f"claim-n-mismatch: {cid}: expected {expected_n}")
 
 
-def _check_claims_view(records: list[dict[str, Any]], repo_root: Path, findings: list[str]) -> None:
-    view = repo_root / "research" / "claims.md"
+def _check_claims_view(
+    records: list[dict[str, Any]],
+    repo_root: Path,
+    ledger_path: Path | None,
+    findings: list[str],
+) -> None:
+    # The view belongs to the ledger being checked: research/claims.md for the
+    # canonical ledger, an adjacent claims.md for any other --ledger. When no
+    # ledger_path is supplied (legacy callers/tests), fall back to the
+    # canonical view. Freshness is only asserted if the view file exists.
+    if ledger_path is None:
+        view = repo_root / "research" / "claims.md"
+    else:
+        view = rl.claims_view_path(repo_root, ledger_path)
     if not view.is_file():
         return
     if view.read_text(encoding="utf-8") != rl.render_claims(records):
-        findings.append("stale-claims-view: research/claims.md")
+        rel = relative_display_path(view, repo_root)
+        findings.append(f"stale-claims-view: {rel}")
 
 
-def check_ledger(records: list[dict[str, Any]], repo_root: Path) -> list[str]:
+def relative_display_path(path: Path, repo_root: Path) -> str:
+    try:
+        return path.resolve().relative_to(repo_root.resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def check_ledger(
+    records: list[dict[str, Any]], repo_root: Path, ledger_path: Path | None = None
+) -> list[str]:
     findings: list[str] = []
     _check_chain(records, findings)
     _check_results(records, findings)
     _check_claims(records, findings)
-    _check_claims_view(records, repo_root, findings)
+    _check_claims_view(records, repo_root, ledger_path, findings)
     return findings
 
 
@@ -133,7 +204,7 @@ def run_ledger_mode(ledger_path: Path, repo_root: Path) -> int:
     if not records:
         print("research-evidence: pass (no research records)")
         return 0
-    findings = check_ledger(records, repo_root)
+    findings = check_ledger(records, repo_root, ledger_path)
     if findings:
         for finding in findings:
             print(f"FINDING {finding}")
@@ -171,16 +242,71 @@ def _matches_safety(path: str, safety_paths: list[str]) -> bool:
     return any(path == prefix or path.startswith(prefix) for prefix in safety_paths)
 
 
-def evaluate_diff(changed_paths: list[str], repo_root: Path, policy: dict[str, Any]) -> list[str]:
+PROMOTIONS_DIR = ".agents/promotions/"
+
+
+def _is_acknowledgment(path: str) -> bool:
+    """A committed promotion-acknowledgment record: any ``*.md`` under
+    ``.agents/promotions/`` other than the directory's ``README.md``."""
+    return (
+        path.startswith(PROMOTIONS_DIR)
+        and path.endswith(".md")
+        and Path(path).name != "README.md"
+    )
+
+
+def evaluate_diff(
+    changed_paths: list[str],
+    repo_root: Path,
+    policy: dict[str, Any],
+    mode: str | None = None,
+) -> tuple[list[str], list[str]]:
+    """Boundary findings and notes for a changed-path set under a ``mode``.
+
+    Returns ``(findings, notes)``. Findings are blocking (exit 1); notes are
+    non-blocking (exit 0). ``mode`` binds the gate to what the session
+    declared rather than to what the diff infers:
+
+    * ``"research"``: any delivery-path change → ``promotion-required``.
+    * ``"delivery"``: a change under a research-only path is legitimate and
+      emits a non-blocking ``mode`` note (claims discipline still applies).
+    * ``None`` (CI, declarations unknowable): the mixing rule — promotion is
+      required only when the diff touches BOTH research and delivery paths.
+
+    Promotion acknowledgment: if the diff carries an acknowledgment file (see
+    ``_is_acknowledgment``), every ``promotion-required`` finding is emitted
+    as a ``promotion acknowledged`` note instead. ``safety-review-required``
+    is never downgraded. Symlink-boundary and safety findings are evaluated in
+    every case.
+    """
     path_modes = policy.get("path_modes", {}) or {}
     safety_paths = policy.get("safety_paths", []) or []
     modes = {path: resolve_mode(path, path_modes) for path in changed_paths}
-    research_declared = any(mode == "research" for mode in modes.values())
+    has_research = any(m == "research" for m in modes.values())
+    has_delivery = any(m == "delivery" for m in modes.values())
+
+    if mode == "research":
+        promote_delivery = True
+    elif mode == "delivery":
+        promote_delivery = False
+    else:  # CI: no session declaration — flag only genuine mixing.
+        promote_delivery = has_research and has_delivery
+
+    ack_files = sorted(path for path in changed_paths if _is_acknowledgment(path))
 
     findings: list[str] = []
+    notes: list[str] = []
     for path in sorted(changed_paths):
-        if research_declared and modes[path] == "delivery":
-            findings.append(f"promotion-required: {path}")
+        if promote_delivery and modes[path] == "delivery":
+            if ack_files:
+                notes.append(f"promotion acknowledged: {ack_files[0]} covers {path}")
+            else:
+                findings.append(f"promotion-required: {path}")
+        if mode == "delivery" and modes[path] == "research":
+            notes.append(
+                f"mode: delivery-mode change under research path {path}"
+                " — claims discipline still applies"
+            )
 
         absolute = repo_root / path
         if absolute.is_symlink():
@@ -195,7 +321,7 @@ def evaluate_diff(changed_paths: list[str], repo_root: Path, policy: dict[str, A
 
         if _matches_safety(path, safety_paths):
             findings.append(f"safety-review-required: {path}")
-    return findings
+    return findings, notes
 
 
 def changed_paths_from_range(repo_root: Path, diff_range: str) -> list[str]:
@@ -208,14 +334,18 @@ def changed_paths_from_range(repo_root: Path, diff_range: str) -> list[str]:
     return [line.strip() for line in completed.stdout.splitlines() if line.strip()]
 
 
-def run_diff_mode(diff_range: str, policy_path: Path, repo_root: Path) -> int:
+def run_diff_mode(
+    diff_range: str, policy_path: Path, repo_root: Path, mode: str | None = None
+) -> int:
     try:
         policy = load_policy(policy_path)
     except FileNotFoundError as exc:
         print(f"research-evidence: error: {exc}", file=sys.stderr)
         return 2
     changed_paths = changed_paths_from_range(repo_root, diff_range)
-    findings = evaluate_diff(changed_paths, repo_root, policy)
+    findings, notes = evaluate_diff(changed_paths, repo_root, policy, mode)
+    for note in notes:
+        print(f"NOTE {note}")
     if findings:
         for finding in findings:
             print(f"FINDING {finding}")
@@ -235,6 +365,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--check-ledger", action="store_true", help="Verify the research chain.")
     parser.add_argument("--diff-range", default="", help="Git range A..B for promotion checks.")
     parser.add_argument("--policy", default="", help="Policy file for diff-range mode.")
+    parser.add_argument(
+        "--mode",
+        choices=("research", "delivery"),
+        default="",
+        help="Declared session mode for diff-range binding; omit for CI mixing checks.",
+    )
     return parser.parse_args(argv)
 
 
@@ -249,7 +385,7 @@ def main(argv: list[str] | None = None) -> int:
         policy_path = Path(args.policy)
         if not policy_path.is_absolute():
             policy_path = repo_root / policy_path
-        return run_diff_mode(args.diff_range, policy_path, repo_root)
+        return run_diff_mode(args.diff_range, policy_path, repo_root, args.mode or None)
 
     if args.check_ledger:
         ledger_path = Path(args.ledger).resolve() if args.ledger else (repo_root / rl.LEDGER_REL).resolve()

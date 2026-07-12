@@ -10,6 +10,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so the pull_request boundary gate can resolve the
+          # merge-base for origin/<base_ref>...HEAD.
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -45,6 +49,10 @@ jobs:
 
       - name: Check research evidence ledger
         run: python scripts/check_research_evidence.py --check-ledger
+
+      - name: Check research promotion/safety boundary (PR only)
+        if: github.event_name == 'pull_request'
+        run: python scripts/check_research_evidence.py --diff-range "origin/${{ github.base_ref }}...HEAD" --policy .agents/project-policy.yml
 
       - name: Check skill inventory
         run: python scripts/report_skill_inventory.py --check --format text

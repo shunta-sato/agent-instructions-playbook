@@ -93,7 +93,7 @@ end|AGENT_INDEX_V1
 - Exception: when `function-boundary-governor`, `destructive-refactor`, or `design-balance` is triggered, prefer the smallest coherent final design, not the smallest edit.
 - No broad cleanups **unrelated to the task**. Leave touched code slightly easier to read than before. Triggered refactor work — structure-budget splits, function/API consolidation or deletion, class/module reorganization, and preparatory refactors in the feature's landing area — is required work, not a broad cleanup.
 - Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol. Compatibility handling follows the recorded compat-mode: under `preserve`, callers keep working; under `staged`, temporary adapters require a ledger entry with a removal condition; under `break-allowed` (requester explicitly waived compatibility), delete — keeping old APIs, deprecated markers, aliases, or parallel old/new versions is a defect, not caution.
-- If runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable.
+- In delivery mode, if runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable; research probes are exempt (measurement instrumentation is part of the experiment itself).
 
 ## Mandatory workflow for code/test changes (delivery mode)
 1) Apply the `dev-workflow` playbook end-to-end before editing (start with risk routing: low / normal / high, then execute trigger-based required branches only when applicable).
@@ -101,7 +101,7 @@ end|AGENT_INDEX_V1
 
 Role split: `dev-workflow` decides required route/branches; `quality-gate` decides submit readiness via exit criteria.
 
-If work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`.
+In delivery mode, if work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`. In research mode the ledger plus `research-synthesis` IS the long-running record — an ExecPlan is required only at promotion.
 
 In `research` mode this section is replaced by `research-workflow`; promotion back into delivery paths re-enters it in full.
 
@@ -111,9 +111,11 @@ If `COMMANDS.md` still contains `<fill>`, treat the project as uninitialized: do
 Initialization completes only after `make verify` succeeds; remove `<fill>` only after that success.
 If you cannot run a command, state why and provide a reproducible procedure.
 
-## Required final response format
+## Required final response format (delivery mode)
 Return, in this order:
 1) Change Brief (what/why, scope, assumptions, risks)
 2) What changed (files + intent)
 3) Verification (commands + results; or what you could not run)
 4) Follow-ups (optional)
+
+Research-mode responses follow the `research-workflow` Output expectation (frame, experiment IDs with outcomes, interpretation) instead.
