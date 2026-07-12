@@ -127,7 +127,7 @@ class ClaimIntegrityTests(unittest.TestCase):
             ledger = Path(tmp) / "ledger.jsonl"
             rc, _ = run_cli([
                 "--repo-root", tmp, "--ledger", str(ledger), "claim",
-                "--effect", "x", "--direction", "improves", "--metric", "err",
+                "--direction", "improves", "--metric", "err",
                 "--configuration", "c", "--evidence", "E-9999",
             ])
         self.assertEqual(rc, 1)
@@ -182,7 +182,7 @@ class LaunderingTests(unittest.TestCase):
             run_cli(base + ["execute", "--experiment-id", "E-0001"])
             run_cli(base + ["execute", "--experiment-id", "E-0002"])
             rc, out = run_cli(base + [
-                "claim", "--effect", "faster", "--direction", "improves",
+                "claim", "--direction", "improves",
                 "--metric", "err", "--configuration", "seed=42",
                 "--evidence", "E-0001", "--evidence", "E-0002",
             ])
@@ -215,7 +215,7 @@ class ClaimBindingTests(unittest.TestCase):
 
     def _claim(self, base, metric, direction):
         return run_cli(base + [
-            "claim", "--effect", "x", "--direction", direction, "--metric", metric,
+            "claim", "--direction", direction, "--metric", metric,
             "--configuration", "c", "--evidence", "E-0001",
         ])
 
@@ -261,9 +261,9 @@ class ClaimBindingTests(unittest.TestCase):
 
 
 class ClaimNTests(unittest.TestCase):
-    def _pair(self, eid, digest, axis=""):
+    def _pair(self, eid, digest, axis="", command="run"):
         return [
-            make_prereg(eid, "2026-01-01T00:00:00+00:00", digest, axis=axis),
+            make_prereg(eid, "2026-01-01T00:00:00+00:00", digest, command=command, axis=axis),
             make_result(eid, "2026-01-02T00:00:00+00:00", digest, {"err": 0.5}),
         ]
 
@@ -271,17 +271,33 @@ class ClaimNTests(unittest.TestCase):
         records = self._pair("E-0001", "d1") + self._pair("E-0002", "d2")
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 1)
 
-    def test_distinct_declared_axes_count_two(self) -> None:
-        records = self._pair("E-0001", "d1", "seed=1") + self._pair("E-0002", "d2", "seed=2")
+    def test_true_seed_variation_counts_two(self) -> None:
+        # R3: commands identical except the seed token → one template, distinct
+        # raw commands, distinct values → n=2.
+        records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1")
+                   + self._pair("E-0002", "d2", "seed=2", "run --seed=2"))
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 2)
 
+    def test_reviewer_counterexample_non_axis_diff_collapses_to_one(self) -> None:
+        # R3: the axes claim seed=1/seed=2 but the commands ALSO differ at a
+        # non-axis position (--output run1/run2), so the templates are not
+        # byte-identical → collapse to n=1 with a note.
+        records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1 --output run1.json")
+                   + self._pair("E-0002", "d2", "seed=2", "run --seed=2 --output run2.json"))
+        n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
+        self.assertEqual(n, 1)
+        self.assertIn("non-axis position", note)
+
     def test_duplicate_axis_values_collapse(self) -> None:
-        records = self._pair("E-0001", "d1", "seed=1") + self._pair("E-0002", "d2", "seed=1")
+        # Same value AND same raw command → not pairwise distinct → n=1.
+        records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1")
+                   + self._pair("E-0002", "d2", "seed=1", "run --seed=1"))
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 1)
 
     def test_mixed_axis_keys_collapse_to_one(self) -> None:
         # Different knobs (seed vs batch) are not comparable configurations.
-        records = self._pair("E-0001", "d1", "seed=1") + self._pair("E-0002", "d2", "batch=2")
+        records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1")
+                   + self._pair("E-0002", "d2", "batch=2", "run --batch=2"))
         n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
         self.assertEqual(n, 1)
         self.assertIn("mixes axis keys", note)
@@ -312,6 +328,19 @@ class RegisterAxisTests(unittest.TestCase):
     def test_conforming_axis_present_in_command_accepted(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             rc, _ = self._register(tmp, "seed=7", "run --seed=7")
+        self.assertEqual(rc, 0)
+
+    def test_short_value_accidental_substring_refused(self) -> None:
+        # R3: "7" is a substring of the token "77" but not a whole token, so the
+        # old substring match no longer accepts it.
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "seed=7", "run --seed 77")
+        self.assertEqual(rc, 1)
+
+    def test_bare_argv_token_value_accepted(self) -> None:
+        # R3: the value as its own argv token also qualifies.
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "seed=7", "run --seed 7")
         self.assertEqual(rc, 0)
 
 

@@ -43,6 +43,9 @@ Domain research skills; hypothesis state machines; baseline-ladder mandates; pri
 - 2026-07-12: The same run found a real defect: `command_digest` hashed all dirty tracked files including the ledger itself, so `register`'s own append self-invalidated `execute` on the canonical ledger. The worker did not patch out-of-scope code — it used the runner's `--ledger` override, disclosed the workaround, and escalated. Fixed by an Opus worker (run 20260712T050939Z-...-cddbc1d0): recording medium + runner outputs excluded from digest inputs in the shared module, regression test with a negative control. Live canonical-ledger smoke (E-0002→C-0001) confirms.
 - 2026-07-12: `playbook-explorer` contains no dev-workflow mandate sentence — the "six locations" were five plus one correctly-reported non-application.
 
+- 2026-07-12 (review round 3): remaining semantic bypasses closed — non-finite thresholds refused; claim effect preregistered and inherited (free-text removed); `no-effect` requires equivalence-flagged supported evidence (the "all disconfirmed" rule was wrong and is deleted); variation axes are command-template-bound (n>1 only when evidence commands are identical after axis-token substitution); acknowledgments bind to ledger evidence (claim IDs must resolve; `Delivery-run:` records must exist, have passed validation, and their changed/allowed union must contain every promoted path). The supervisor now records an integration run like any worker — the gate closed only after run `20260712T165226Z-focused_code_change-19e96118` was recorded and cited.
+- Follow-up authorized for the next feature: split `check_research_evidence.py` into ledger-check and boundary-gate modules — all three scripts sit at the 400-line ceiling after three fix rounds; the structure budget is doing its job and the split should land before any further growth.
+
 ## Handoff (update at every stop)
 
 - Current branch: `research-os-v0` (worktree)

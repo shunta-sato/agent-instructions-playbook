@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
-"""Research OS runner — the only writer of research records.
-
-Appends preregistration, exploration, result, and claim records to the
-shared JSONL ledger (``.agents/runs/agent-runs.jsonl``). Every timestamp,
-identifier, digest, outcome, and ``n`` is computed here or in
-``research_ledger`` — never accepted from the caller — so the mechanical
-gate can re-derive them.
-
-Subcommands: register, execute, explore, claim, render-claims.
-Only Python stdlib is used.
-"""
+"""Research OS runner — the only writer of research records. Appends
+preregister/exploration/result/claim records to the shared JSONL ledger;
+every timestamp, id, digest, outcome, effect, and ``n`` is computed here or in
+``research_ledger`` (never from the caller) so the gate re-derives them.
+Subcommands: register, execute, explore, claim, render-claims. Stdlib only."""
 
 from __future__ import annotations
 
@@ -26,12 +20,10 @@ try:  # direct execution: scripts/ is on sys.path[0]
 except ModuleNotFoundError:  # imported as scripts.research_run (tests, -m)
     from scripts import research_ledger as rl
 
-
 def repo_root_from_args(explicit: str) -> Path:
     if explicit:
         return Path(explicit).resolve()
     return Path(__file__).resolve().parent.parent
-
 
 def ledger_path_from_args(repo_root: Path, explicit: str) -> Path:
     if explicit:
@@ -39,13 +31,11 @@ def ledger_path_from_args(repo_root: Path, explicit: str) -> Path:
         return path.resolve() if path.is_absolute() else (repo_root / path).resolve()
     return (repo_root / rl.LEDGER_REL).resolve()
 
-
 def parse_number(text: str) -> float | int:
     try:
         return int(text)
     except ValueError:
         return float(text)
-
 
 def make_run_dir(repo_root: Path, identifier: str) -> tuple[Path, str]:
     """Create an empty run directory; return (absolute path, repo-relative)."""
@@ -57,13 +47,11 @@ def make_run_dir(repo_root: Path, identifier: str) -> tuple[Path, str]:
     absolute.mkdir(parents=True, exist_ok=True)
     return absolute, rel
 
-
 def run_command(command: str, repo_root: Path, run_dir: Path) -> int:
     env = dict(os.environ)
     env["RESEARCH_RUN_DIR"] = str(run_dir)
     completed = subprocess.run(command, shell=True, cwd=str(repo_root), env=env)
     return completed.returncode
-
 
 def read_metrics(run_dir: Path) -> Any:
     result_file = run_dir / "result.json"
@@ -74,22 +62,66 @@ def read_metrics(run_dir: Path) -> Any:
         raise ValueError("result.json must contain a JSON object or null")
     return payload
 
+# --- working-tree fingerprinting (runner-only; the gate re-derives outcomes,
+# never the working-tree digest, so these live with their sole caller) --------
+
+def _git(repo_root: Path, args: list[str]) -> str | None:
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(repo_root), *args], check=True, capture_output=True, text=True
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+    return completed.stdout
+
+def git_head(repo_root: Path) -> str:
+    out = _git(repo_root, ["rev-parse", "HEAD"])
+    return out.strip() if out else "no-git"
+
+def _excluded_from_digest(rel_path: str, ledger_rel: str | None) -> bool:
+    """A dirty path that is the recorder's own output, not an experiment input:
+    the ledger being written (incl. default ``LEDGER_REL`` that ``register``
+    appends to) and runner artifacts under ``RUNNER_OUTPUT_REL``."""
+    if rel_path == rl.LEDGER_REL or rel_path == ledger_rel:
+        return True
+    return rel_path == rl.RUNNER_OUTPUT_REL or rel_path.startswith(rl.RUNNER_OUTPUT_REL + "/")
+
+def dirty_input_files(repo_root: Path, ledger_path: Path | None = None) -> list[dict[str, str]]:
+    """Dirty ``command_digest`` inputs: tracked files modified vs ``HEAD`` plus
+    untracked, non-ignored files — the untracked set is load-bearing, since a
+    probe run WITHOUT ``git add`` would otherwise be editable between calls."""
+    tracked = _git(repo_root, ["diff", "--name-only", "HEAD", "--"]) or ""
+    untracked = _git(repo_root, ["ls-files", "--others", "--exclude-standard"]) or ""
+    ledger_rel: str | None = None
+    if ledger_path is not None:
+        try:
+            ledger_rel = ledger_path.resolve().relative_to(repo_root.resolve()).as_posix()
+        except ValueError:
+            ledger_rel = None
+    names = {ln.strip() for ln in tracked.splitlines() if ln.strip()}
+    names |= {ln.strip() for ln in untracked.splitlines() if ln.strip()}
+    entries: list[dict[str, str]] = []
+    for name in sorted(names):
+        if _excluded_from_digest(name, ledger_rel):
+            continue
+        path = repo_root / name
+        if path.is_file():
+            entries.append({"path": name, "sha256": rl.sha256_file(path)})
+    return entries
 
 # --- subcommands -------------------------------------------------------------
 
-
 def validate_variation_axis(axis: str, command: str) -> list[str]:
-    """F3: a declared axis must be ``key=value`` (non-empty parts) whose value
-    appears literally in the registered command, so ``n`` is not a free-text
-    label but a mechanically checkable configuration knob."""
+    """F3/R3: a declared axis must be ``key=value`` (non-empty parts) whose
+    value appears as a WHOLE token of the command, so ``n`` is a mechanically
+    checkable configuration knob, not a free-text label or bare substring."""
     parsed = rl._axis_key_value(axis)
     if parsed is None:
         return ["variation_axis must be key=value with non-empty key and value"]
     _key, value = parsed
-    if value not in command:
-        return [f"variation_axis value {value!r} must appear literally in the command"]
+    if not rl.axis_value_in_command(value, command):
+        return [f"variation_axis value {value!r} must appear as a whole token in the command"]
     return []
-
 
 def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     disconfirm = {
@@ -103,8 +135,8 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
     if errors:
         raise ValueError("; ".join(errors))
 
-    head = rl.git_head(repo_root)
-    dirty = rl.dirty_input_files(repo_root, ledger_path)
+    head = git_head(repo_root)
+    dirty = dirty_input_files(repo_root, ledger_path)
     records = rl.load_research_records(ledger_path)
     experiment_id = rl.next_counter(records, rl.PREREGISTER, "E")
     record: dict[str, Any] = {
@@ -124,10 +156,13 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
     }
     if args.variation_axis:
         record["variation_axis"] = args.variation_axis
+    if args.effect:  # R2a: the claimable effect is preregistered here, inherited by claims.
+        record["effect"] = args.effect
+    if args.no_effect_predicate:  # R2b: disconfirm is an equivalence bound (supported = no effect).
+        record["no_effect_predicate"] = True
     rl.chain_and_append(ledger_path, record)
     print(experiment_id)
     return 0
-
 
 def cmd_execute(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     records = rl.load_research_records(ledger_path)
@@ -138,8 +173,8 @@ def cmd_execute(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
         )
 
     command = prereg["command"]
-    head = rl.git_head(repo_root)
-    dirty = rl.dirty_input_files(repo_root, ledger_path)
+    head = git_head(repo_root)
+    dirty = dirty_input_files(repo_root, ledger_path)
     digest = rl.command_digest(head, dirty, command)
     if digest != prereg["command_digest"]:
         raise ValueError(
@@ -173,10 +208,9 @@ def cmd_execute(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
     print(f"{args.experiment_id} {outcome} {run_dir_rel}")
     return 0
 
-
 def cmd_explore(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
-    head = rl.git_head(repo_root)
-    dirty = rl.dirty_input_files(repo_root, ledger_path)
+    head = git_head(repo_root)
+    dirty = dirty_input_files(repo_root, ledger_path)
     digest = rl.command_digest(head, dirty, args.command)
     records = rl.load_research_records(ledger_path)
     exploration_id = rl.next_counter(records, rl.EXPLORATION, "X")
@@ -201,7 +235,6 @@ def cmd_explore(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
     print(f"{exploration_id} {run_dir_rel}")
     return 0
 
-
 def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     if args.direction not in rl.DIRECTIONS:
         raise ValueError(f"direction must be one of {list(rl.DIRECTIONS)}")
@@ -215,20 +248,21 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         if not (prereg["registered_at"] < result["started_at"]):
             raise ValueError(f"evidence {eid}: registered_at is not before started_at")
 
-    # Semantic binding (S3): the claim's metric must match every cited
-    # experiment's preregistered metric, every cited result must be real
-    # evidence (exit 0, evaluable outcome), and the direction must be
-    # consistent with those outcomes. outcome_basis is persisted so the gate
-    # re-derives all of this from the ledger.
+    # Semantic binding (S3): metric/evidence/direction consistency, with
+    # outcome_basis persisted so the gate re-derives it from the ledger.
     binding_errors, outcome_basis = rl.evaluate_claim_binding(
         records, args.metric, args.direction, args.evidence
     )
-    if binding_errors:
-        raise ValueError("; ".join(binding_errors))
+    # R2a: the effect is INHERITED from the cited registrations (which must
+    # agree), never asserted free-text on the claim; effect_basis is persisted
+    # so the gate re-derives it.
+    effect_errors, effect, effect_basis = rl.derive_effect(records, args.evidence)
+    if binding_errors or effect_errors:
+        raise ValueError("; ".join(binding_errors + effect_errors))
 
-    # F2: persist each cited registration's preregistered direction so the
-    # gate re-derives the crossing; its presence marks this a post-F2 claim
-    # (field-presence grandfathering for pre-F2 records). F3: n plus its note.
+    # F2: persist each cited registration's preregistered direction so the gate
+    # re-derives the crossing; its presence marks a post-F2 claim (field-
+    # presence grandfathering for pre-F2 records). F3: n plus its note.
     direction_basis = [
         {"experiment_id": eid,
          "direction_if_supported": (rl.find_preregister(records, eid) or {}).get("direction_if_supported")}
@@ -241,13 +275,14 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         "record_type": rl.CLAIM,
         "claim_id": claim_id,
         "created_at": rl.stamp_utc(),
-        "effect": args.effect,
+        "effect": effect,
         "direction": args.direction,
         "metric": args.metric,
         "configurations": args.configuration,
         "evidence": args.evidence,
         "outcome_basis": outcome_basis,
         "direction_basis": direction_basis,
+        "effect_basis": effect_basis,
         "n_basis": n_basis,
         "sources": args.source or [],
         "n": n,
@@ -255,7 +290,6 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
     rl.chain_and_append(ledger_path, record)
     print(claim_id)
     return 0
-
 
 def cmd_render_claims(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     records = rl.load_research_records(ledger_path)
@@ -274,9 +308,7 @@ def cmd_render_claims(args: argparse.Namespace, repo_root: Path, ledger_path: Pa
     print(output.as_posix())
     return 0
 
-
 # --- CLI ---------------------------------------------------------------------
-
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Research OS runner.")
@@ -291,6 +323,10 @@ def build_parser() -> argparse.ArgumentParser:
     register.add_argument("--threshold", required=True)
     register.add_argument("--command", required=True)
     register.add_argument("--variation-axis", default="")
+    register.add_argument("--effect", default="",
+                          help="Preregistered effect inherited by any citing claim (R2a).")
+    register.add_argument("--no-effect-predicate", action="store_true",
+                          help="Disconfirm is an equivalence bound: supported = no effect (R2b).")
     register.add_argument(
         "--direction-if-supported",
         choices=("improves", "degrades", "none"),
@@ -308,7 +344,7 @@ def build_parser() -> argparse.ArgumentParser:
     explore.set_defaults(func=cmd_explore)
 
     claim = sub.add_parser("claim", help="Record a research claim.")
-    claim.add_argument("--effect", required=True)
+    # R2a: no --effect here; the effect is inherited from cited registrations.
     claim.add_argument("--direction", required=True, choices=rl.DIRECTIONS)
     claim.add_argument("--metric", required=True)
     claim.add_argument("--configuration", action="append", required=True, default=[])
@@ -326,7 +362,6 @@ def build_parser() -> argparse.ArgumentParser:
     render.set_defaults(func=cmd_render_claims)
     return parser
 
-
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -337,7 +372,6 @@ def main(argv: list[str] | None = None) -> int:
     except (ValueError, rl.LedgerError) as exc:
         print(f"research-run: {exc}", file=sys.stderr)
         return 1
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

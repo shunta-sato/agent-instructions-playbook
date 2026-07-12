@@ -32,7 +32,7 @@ Use this skill when any of these apply:
 
 5) On `promote`:
    - Verify claims first: `python3 scripts/check_research_evidence.py --check-ledger`.
-   - The promotion package must include a committed acknowledgment file under `.agents/promotions/` (see `.agents/promotions/README.md` for the required format: a `Scope:` line, claim IDs or `no research claims promoted`, and a `Covers:` path-prefix list — only covered findings downgrade) riding in the same diff as the promoted paths.
+   - The promotion package must include a committed acknowledgment file under `.agents/promotions/` (see `.agents/promotions/README.md` for the required format: a `Scope:` line, claim IDs or `no research claims promoted`, a `Covers:` path-prefix list, and `Delivery-run:` lines citing passed run records whose changed/allowed files contain the promoted paths — only covered, evidence-backed findings downgrade) riding in the same diff as the promoted paths.
    - Hand off to the delivery gates — `$dev-workflow` (risk routing + compat-mode) and `$quality-gate` — for re-implementation or hardening of the promoted candidate. Research code does not walk into a `runtime/` path unreviewed; the delivery gates own that path from here.
 
 ## Output expectation

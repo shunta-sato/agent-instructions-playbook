@@ -130,85 +130,8 @@ class ModeBindingTests(unittest.TestCase):
                 self.assertIn("safety-review-required: SECURITY/p.md", findings)
 
 
-# --- (S5) promotion acknowledgment -------------------------------------------
-
-
-def _write_valid_ack(repo_root: Path, ack_rel: str, covers: list[str]) -> None:
-    """F7: a conforming acknowledgment — Scope:, a claims line, and Covers:."""
-    ack_path = repo_root / ack_rel
-    ack_path.parent.mkdir(parents=True, exist_ok=True)
-    covers_lines = "\n".join(f"- {prefix}" for prefix in covers)
-    ack_path.write_text(
-        f"Scope: test coverage\nno research claims promoted\nCovers:\n{covers_lines}\n",
-        encoding="utf-8",
-    )
-
-
-class AcknowledgmentTests(unittest.TestCase):
-    POLICY = {"path_modes": {"experiments/": "research"}, "safety_paths": ["SECURITY/"]}
-    ACK = ".agents/promotions/2026-07-12-promote.md"
-
-    def test_ack_downgrades_promotion_to_note(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            _write_valid_ack(root, self.ACK, ["src/", ".agents/"])  # also covers itself
-            findings, notes = cre.evaluate_diff(["src/app.py", self.ACK], root, self.POLICY, "research")
-        self.assertEqual(
-            [f for f in findings if f.startswith("promotion-required:")], []
-        )
-        self.assertIn(f"promotion acknowledged: {self.ACK} covers src/app.py", notes)
-
-    def test_promotion_without_ack_still_blocks(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            findings, _ = cre.evaluate_diff(["src/app.py"], Path(tmp), self.POLICY, "research")
-        self.assertIn("promotion-required: src/app.py", findings)
-
-    def test_invalid_ack_downgrades_nothing(self) -> None:
-        # F7: an ack missing every required element (Scope/claims/Covers)
-        # must not launder the finding, and the gate must say why.
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / ".agents" / "promotions").mkdir(parents=True)
-            (root / self.ACK).write_text("not a real ack\n", encoding="utf-8")
-            findings, notes = cre.evaluate_diff(["src/app.py", self.ACK], root, self.POLICY, "research")
-        self.assertIn("promotion-required: src/app.py", findings)
-        self.assertTrue(any(n.startswith(f"invalid-acknowledgment: {self.ACK}") for n in notes), notes)
-
-    def test_partial_covers_leaves_uncovered_findings_blocking(self) -> None:
-        # F7: a valid ack only downgrades paths under its Covers prefixes;
-        # an uncovered delivery path stays blocking even with a valid ack.
-        policy = {"path_modes": {"experiments/": "research"}, "safety_paths": []}
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            _write_valid_ack(root, self.ACK, ["src/", ".agents/"])  # covers src/, not tools/
-            findings, notes = cre.evaluate_diff(
-                ["src/app.py", "tools/build.py", self.ACK], root, policy, "research"
-            )
-        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], ["promotion-required: tools/build.py"])
-        self.assertIn(f"promotion acknowledged: {self.ACK} covers src/app.py", notes)
-
-    def test_safety_not_downgraded_by_ack(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            _write_valid_ack(root, self.ACK, ["SECURITY/", ".agents/"])
-            findings, _ = cre.evaluate_diff(["SECURITY/policy.md", self.ACK], root, self.POLICY, "research")
-        # A safety path is never laundered by an acknowledgment, even a valid
-        # one whose Covers prefix matches it.
-        self.assertIn("safety-review-required: SECURITY/policy.md", findings)
-        self.assertEqual(
-            [f for f in findings if f.startswith("promotion-required:")], []
-        )
-
-    def test_readme_is_not_an_acknowledgment(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            findings, notes = cre.evaluate_diff(
-                ["src/app.py", ".agents/promotions/README.md"],
-                Path(tmp),
-                self.POLICY,
-                "research",
-            )
-        self.assertIn("promotion-required: src/app.py", findings)
-        self.assertEqual([n for n in notes if n.startswith("promotion acknowledged:")], [])
+# --- (S5) promotion-acknowledgment evidence binding (R4) lives in
+# tests/test_research_os_ack.py -----------------------------------------
 
 
 # --- (S5) end-to-end exit codes through run_diff_mode ------------------------
@@ -228,16 +151,6 @@ class DiffModeExitCodeTests(unittest.TestCase):
         (root / "research" / "note.md").write_text("r\n", encoding="utf-8")
         _commit_all(root, "base")
         return root, policy_path
-
-    def test_promotion_with_ack_in_diff_exits_zero(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root, policy_path = self._repo(tmp)
-            (root / "src" / "app.py").write_text("y\n", encoding="utf-8")
-            # Covers both the promoted path AND the ack's own .agents/ path.
-            _write_valid_ack(root, ".agents/promotions/2026-07-12-promote.md", ["src/", ".agents/"])
-            _commit_all(root, "promote")
-            rc = cre.run_diff_mode("HEAD~1..HEAD", policy_path, root, "research")
-        self.assertEqual(rc, 0)
 
     def test_promotion_without_ack_exits_one(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

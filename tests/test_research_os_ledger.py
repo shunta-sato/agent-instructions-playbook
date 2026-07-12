@@ -351,5 +351,44 @@ class NonFiniteMetricTests(unittest.TestCase):
                 )
 
 
+# --- (R1) non-finite thresholds ----------------------------------------------
+
+
+class NonFiniteThresholdTests(unittest.TestCase):
+    """R1: a NaN/±Inf disconfirm threshold is refused at registration and, if
+    forged into a record, flagged by the gate and fatal to any citing claim."""
+
+    def test_cli_refuses_non_finite_threshold(self) -> None:
+        # ``--threshold=<v>`` form so argparse does not treat ``-inf`` as a flag.
+        for bad in ("nan", "inf", "-inf"):
+            with tempfile.TemporaryDirectory() as tmp:
+                rc, _ = run_cli([
+                    "--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl"),
+                    "register", "--hypothesis", "h", "--metric", "err",
+                    "--comparator", "<", f"--threshold={bad}", "--command", "run",
+                ])
+            self.assertEqual(rc, 1, bad)
+
+    def test_forged_nan_threshold_record_flagged(self) -> None:
+        prereg = make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1")
+        prereg["disconfirm"] = {"metric": "err", "comparator": "<", "threshold": float("nan")}
+        result = make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.05})
+        records = build_chain([prereg, result])
+        with tempfile.TemporaryDirectory() as tmp:
+            findings = cre.check_ledger(records, Path(tmp))
+        self.assertTrue(any(f.startswith("predicate-invalid:") for f in findings), findings)
+
+    def test_claim_citing_non_finite_predicate_fails_binding(self) -> None:
+        prereg = make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1")
+        prereg["disconfirm"] = {"metric": "err", "comparator": "<", "threshold": float("inf")}
+        result = make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.05})
+        claim = make_claim("C-0001", ["E-0001"], 1, direction="mixed",
+                           basis=[{"experiment_id": "E-0001", "outcome": "disconfirmed"}])
+        records = build_chain([prereg, result, claim])
+        with tempfile.TemporaryDirectory() as tmp:
+            findings = cre.check_ledger(records, Path(tmp))
+        self.assertTrue(any("predicate is invalid" in f for f in findings), findings)
+
+
 if __name__ == "__main__":
     unittest.main()
