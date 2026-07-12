@@ -79,6 +79,62 @@
         ]
       }
     },
+    "research_exploration": {
+      "schema_version": 1,
+      "task_class": "research_exploration",
+      "capability_profile": "codebase_explorer",
+      "selection_profile": "codebase_explorer",
+      "prompt_detail": "compact",
+      "risk_gate": "low",
+      "default_effort": "low",
+      "selected": true,
+      "selected_model": "claude-sonnet-5",
+      "fallback_reasons": [],
+      "success_criteria": {
+        "required": [
+          "findings_reference_artifacts",
+          "no_unsupported_empirical_claims"
+        ]
+      }
+    },
+    "research_probe": {
+      "schema_version": 1,
+      "task_class": "research_probe",
+      "capability_profile": "focused_code_edit",
+      "selection_profile": "focused_code_edit",
+      "prompt_detail": "normal",
+      "risk_gate": "low",
+      "default_effort": "medium",
+      "selected": true,
+      "selected_model": "claude-sonnet-5",
+      "fallback_reasons": [],
+      "success_criteria": {
+        "required": [
+          "experiment_registered_before_execution",
+          "runner_recorded_result",
+          "no_unsupported_empirical_claims"
+        ]
+      }
+    },
+    "research_synthesis": {
+      "schema_version": 1,
+      "task_class": "research_synthesis",
+      "capability_profile": "high_reasoning_review",
+      "selection_profile": "high_reasoning_review",
+      "prompt_detail": "compact",
+      "risk_gate": "normal",
+      "default_effort": "high",
+      "selected": true,
+      "selected_model": "claude-opus-4-8",
+      "fallback_reasons": [],
+      "success_criteria": {
+        "required": [
+          "decision_is_one_of_continue_pivot_kill_promote",
+          "claims_cited_by_id",
+          "negative_results_recorded"
+        ]
+      }
+    },
     "unit_test_single_case": {
       "schema_version": 1,
       "task_class": "unit_test_single_case",

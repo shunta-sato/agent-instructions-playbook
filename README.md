@@ -119,6 +119,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `embedded-target-characterization` | Embedded target characterization | `.agents/skills/embedded-target-characterization/SKILL.md` |
 | `error-handling` | Boundary error handling | `.agents/skills/error-handling/SKILL.md` |
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
+| `experiment-loop` | Registered experiment evidence contract | `.agents/skills/experiment-loop/SKILL.md` |
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
@@ -135,6 +136,8 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `receiving-code-review` | Process review feedback safely | `.agents/skills/receiving-code-review/SKILL.md` |
 | `requesting-code-review` | Prepare focused review requests | `.agents/skills/requesting-code-review/SKILL.md` |
 | `requirements-engineering` | Requirements engineering | `.agents/skills/requirements-engineering/SKILL.md` |
+| `research-synthesis` | Research decision synthesis | `.agents/skills/research-synthesis/SKILL.md` |
+| `research-workflow` | Research-mode router | `.agents/skills/research-workflow/SKILL.md` |
 | `staged-lowering` | Staged lowering for constrained code | `.agents/skills/staged-lowering/SKILL.md` |
 | `test-driven-development` | Test-driven development workflow | `.agents/skills/test-driven-development/SKILL.md` |
 | `thread-safety-tooling` | Thread-safety verification | `.agents/skills/thread-safety-tooling/SKILL.md` |

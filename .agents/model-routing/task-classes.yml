@@ -83,6 +83,54 @@
           "unknowns_or_risks_recorded"
         ]
       }
+    },
+    "research_probe": {
+      "description": "Registered research experiment or exploration probe: small disposable implementation plus a runner-executed measurement.",
+      "profile": "focused_code_edit",
+      "prompt_detail": "normal",
+      "risk_gate": "low",
+      "default_effort": "medium",
+      "max_scope": {
+        "writable_files": 6,
+        "production_code": false
+      },
+      "escalation_profile": "coding_supervisor",
+      "success_criteria": {
+        "required": [
+          "experiment_registered_before_execution",
+          "runner_recorded_result",
+          "no_unsupported_empirical_claims"
+        ]
+      }
+    },
+    "research_exploration": {
+      "description": "Read-heavy research reconnaissance: artifact re-analysis, sweep triage, hypothesis material gathering.",
+      "profile": "codebase_explorer",
+      "prompt_detail": "compact",
+      "risk_gate": "low",
+      "default_effort": "low",
+      "escalation_profile": "coding_supervisor",
+      "success_criteria": {
+        "required": [
+          "findings_reference_artifacts",
+          "no_unsupported_empirical_claims"
+        ]
+      }
+    },
+    "research_synthesis": {
+      "description": "Cross-experiment synthesis and continue/pivot/kill/promote decisions from ledger evidence.",
+      "profile": "high_reasoning_review",
+      "prompt_detail": "compact",
+      "risk_gate": "normal",
+      "default_effort": "high",
+      "escalation_profile": "frontier_execution_supervisor",
+      "success_criteria": {
+        "required": [
+          "decision_is_one_of_continue_pivot_kill_promote",
+          "claims_cited_by_id",
+          "negative_results_recorded"
+        ]
+      }
     }
   }
 }

@@ -14,7 +14,7 @@ Explicit invocation differs by client:
 
 Before acting on software-development work, inspect the Agent Index and decide whether any skill applies.
 If the user explicitly names a skill, load it before acting.
-If the task changes code or tests, use `dev-workflow` before editing and `quality-gate` before reporting completion.
+Determine the epistemic mode first: explicit declaration > `.agents/project-policy.yml` path_modes > the policy's default_mode (this repository defaults to `delivery`). If the task changes code or tests in `delivery` mode, use `dev-workflow` before editing and `quality-gate` before reporting completion. In `research` mode, use `research-workflow` instead; evidence discipline (`scripts/check_research_evidence.py`) replaces the code-quality gates for probe code, and touching a delivery-mode path requires promotion through the delivery gates. Physical-safety, secrets, and destructive-operation rules apply in every mode.
 When loading a skill, also load every file listed in its frontmatter `metadata.requires` before executing it; a listed file that cannot be read is an error, not a skippable extra.
 For multi-step or delegatable work, create a task brief before invoking a subagent; the brief must name the task, allowed files, allowed commands, expected artifacts, and escalation conditions.
 
@@ -54,6 +54,7 @@ skill|embedded-system-familiarization|Principal embedded system familiarization|
 skill|embedded-target-characterization|Embedded target characterization|.agents/skills/embedded-target-characterization/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
+skill|experiment-loop|Registered experiment evidence contract|.agents/skills/experiment-loop/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
 skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
@@ -70,6 +71,8 @@ skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
 skill|receiving-code-review|Process review feedback safely|.agents/skills/receiving-code-review/SKILL.md
 skill|requesting-code-review|Prepare focused review requests|.agents/skills/requesting-code-review/SKILL.md
 skill|requirements-engineering|Requirements engineering|.agents/skills/requirements-engineering/SKILL.md
+skill|research-synthesis|Research decision synthesis|.agents/skills/research-synthesis/SKILL.md
+skill|research-workflow|Research-mode router|.agents/skills/research-workflow/SKILL.md
 skill|staged-lowering|Staged lowering for constrained code|.agents/skills/staged-lowering/SKILL.md
 skill|test-driven-development|Test-driven development workflow|.agents/skills/test-driven-development/SKILL.md
 skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-safety-tooling/SKILL.md
@@ -92,13 +95,15 @@ end|AGENT_INDEX_V1
 - Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol. Compatibility handling follows the recorded compat-mode: under `preserve`, callers keep working; under `staged`, temporary adapters require a ledger entry with a removal condition; under `break-allowed` (requester explicitly waived compatibility), delete — keeping old APIs, deprecated markers, aliases, or parallel old/new versions is a defect, not caution.
 - If runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable.
 
-## Mandatory workflow for code/test changes
+## Mandatory workflow for code/test changes (delivery mode)
 1) Apply the `dev-workflow` playbook end-to-end before editing (start with risk routing: low / normal / high, then execute trigger-based required branches only when applicable).
 2) Before finishing, apply the `quality-gate` playbook and address findings.
 
 Role split: `dev-workflow` decides required route/branches; `quality-gate` decides submit readiness via exit criteria.
 
 If work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`.
+
+In `research` mode this section is replaced by `research-workflow`; promotion back into delivery paths re-enters it in full.
 
 ## Verification commands
 Use the canonical commands in `COMMANDS.md` (build, format/lint, tests).

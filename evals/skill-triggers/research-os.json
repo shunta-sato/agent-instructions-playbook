@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "research-os-npu-op-degradation-probe",
+      "prompt": "Mode is research, working under experiments/npu-quant/. I want to investigate why INT4 quantization degrades accuracy more on the attention ops than the FFN ops on this NPU. Not setting a latency or power budget yet, just trying to understand the effect before we decide anything.",
+      "should_trigger": [
+        "research-workflow",
+        "experiment-loop"
+      ],
+      "should_not_trigger": [
+        "dev-workflow",
+        "quality-gate",
+        "embedded-nfr-design"
+      ],
+      "expected_decisions": [
+        "4-line frame written before probing: mode / question / decision / next_probe",
+        "probe selection follows the ordinal decision tree (falsifiable-within-an-hour and re-analysis-first outrank new implementation)"
+      ],
+      "notes": "No physical constraint claim yet - this is investigation, not budget-setting, so embedded-nfr-design does not fire even though the target is an NPU."
+    },
+    {
+      "id": "research-os-quantization-collapse-prefix16",
+      "prompt": "(mode: research) Which quantization scheme collapses first on prefix-16 sequences? Find out and register whatever you learn.",
+      "should_trigger": [
+        "research-workflow",
+        "experiment-loop"
+      ],
+      "should_not_trigger": [
+        "architecture-decision-analysis",
+        "requirements-engineering"
+      ],
+      "notes": "A benchmark-investigation question in research mode is not yet a cross-boundary architecture choice or a requirements-drafting task."
+    },
+    {
+      "id": "research-os-synthesize-accumulated-results",
+      "prompt": "We have 7 registered experiment results in the ledger from this week's quantization sweep and nothing has been synthesized yet. Time to decide what we do next.",
+      "should_trigger": [
+        "research-synthesis"
+      ],
+      "should_not_trigger": [
+        "execution-plans"
+      ],
+      "expected_decisions": [
+        "decision is exactly one of continue | pivot | kill | promote"
+      ],
+      "expected_evidence": [
+        "knowledge deltas stated as supported / falsified / still-open, tied to experiment IDs"
+      ],
+      "notes": "Cross-experiment synthesis and direction-setting from ledger evidence, not planning-artifact maintenance."
+    },
+    {
+      "id": "research-os-promote-winning-kernel",
+      "prompt": "The mixed-precision kernel from experiment E-0042 won the sweep. Promote it into runtime/ for the next release.",
+      "should_trigger": [
+        "research-synthesis",
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "experiment-loop"
+      ],
+      "expected_decisions": [
+        "promotion boundary recorded: what gets re-implemented for delivery vs. discarded as disposable probe code",
+        "claims verified via scripts/check_research_evidence.py --check-ledger before promotion"
+      ],
+      "notes": "Promotion into a delivery path re-enters the full delivery gate chain; experiment-loop does not fire here because no new experiment is being registered, only a prior result carried forward."
+    },
+    {
+      "id": "research-os-delivery-production-bugfix",
+      "prompt": "Production users are seeing intermittent 500s on the checkout endpoint since yesterday's deploy. Fix it.",
+      "should_trigger": [
+        "dev-workflow",
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "research-workflow"
+      ],
+      "notes": "Delivery-mode incident response; no research-mode declaration and no research/ or experiments/ path involved."
+    },
+    {
+      "id": "research-os-delivery-latency-target",
+      "prompt": "Make the /search endpoint fast: target p95 < 150ms, measured by our k6 load test suite.",
+      "should_trigger": [
+        "dev-workflow",
+        "requirements-engineering",
+        "performance-review"
+      ],
+      "should_not_trigger": [
+        "research-workflow"
+      ],
+      "notes": "A measurable delivery-mode NFR target (metric + target + measurement method) stays on the delivery gate chain even though it involves benchmarking."
+    }
+  ]
+}

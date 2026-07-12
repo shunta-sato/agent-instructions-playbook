@@ -256,6 +256,55 @@ def check_file(path: Path, args: argparse.Namespace) -> list[Finding]:
     return findings
 
 
+def load_structure_waivers(root: Path) -> list[tuple[str, str]]:
+    """Load structure_waivers from `.agents/project-policy.yml` at `root`.
+
+    Returns an empty list when the policy file is absent or unreadable, so
+    current behavior is unchanged for repos without a policy file.
+    """
+    policy_path = root / ".agents" / "project-policy.yml"
+    if not policy_path.is_file():
+        return []
+    try:
+        policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    waivers: list[tuple[str, str]] = []
+    for entry in policy.get("structure_waivers", []):
+        if not isinstance(entry, dict):
+            continue
+        path = entry.get("path")
+        reason = entry.get("reason", "")
+        if isinstance(path, str) and path:
+            waivers.append((path, reason))
+    return waivers
+
+
+def relative_display_path(path: Path, root: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def partition_waived_findings(
+    findings: list[Finding], root: Path, waivers: list[tuple[str, str]]
+) -> tuple[list[Finding], list[tuple[str, str]]]:
+    """Split findings into (kept, waived) by repo-relative path prefix match."""
+    if not waivers:
+        return findings, []
+    kept: list[Finding] = []
+    waived: list[tuple[str, str]] = []
+    for finding in findings:
+        rel = relative_display_path(Path(finding.path), root)
+        reason = next((r for prefix, r in waivers if rel.startswith(prefix)), None)
+        if reason is not None:
+            waived.append((rel, reason))
+        else:
+            kept.append(finding)
+    return kept, waived
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     files = collect_files(args.paths)
@@ -267,6 +316,10 @@ def main(argv: list[str] | None = None) -> int:
     for path in files:
         findings.extend(check_file(path, args))
 
+    root = Path.cwd()
+    waivers = load_structure_waivers(root)
+    findings, waived = partition_waived_findings(findings, root, waivers)
+
     if args.json:
         print(json.dumps([asdict(f) for f in findings], indent=2))
     else:
@@ -275,10 +328,18 @@ def main(argv: list[str] | None = None) -> int:
                 f"FINDING {finding.rule} {finding.path}: "
                 f"{finding.value} > {finding.limit} — {finding.action}"
             )
+        for rel, reason in waived:
+            print(f"waived {rel} ({reason})")
+        waived_suffix = f", {len(waived)} waived" if waived else ""
         if not findings:
-            print(f"structure-budget: pass ({len(files)} source files checked)")
+            print(
+                f"structure-budget: pass ({len(files)} source files checked{waived_suffix})"
+            )
         else:
-            print(f"structure-budget: {len(findings)} finding(s) in {len(files)} files")
+            print(
+                f"structure-budget: {len(findings)} finding(s) in {len(files)} "
+                f"files{waived_suffix}"
+            )
     return 1 if findings else 0
 
 

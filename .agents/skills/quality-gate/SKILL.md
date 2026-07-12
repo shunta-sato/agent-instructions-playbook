@@ -1,6 +1,6 @@
 ---
 name: quality-gate
-description: "Use before every submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
+description: "Use before every delivery-mode submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
 metadata:
   short-description: Final quality gate
   requires:
@@ -15,7 +15,7 @@ It answers one question: **is this change ready to submit now?**
 
 ## When to use
 
-Invoke this skill **before every submission**. It is mandatory.
+Invoke this skill **before every delivery-mode submission**. It is mandatory in delivery mode. Research probes are gated by `scripts/check_research_evidence.py` instead; promotion into delivery paths re-enters this gate in full.
 
 ## How to use
 

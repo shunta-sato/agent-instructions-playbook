@@ -43,6 +43,9 @@ jobs:
       - name: Validate model routing eval seeds
         run: python scripts/validate_model_routing_evals.py
 
+      - name: Check research evidence ledger
+        run: python scripts/check_research_evidence.py --check-ledger
+
       - name: Check skill inventory
         run: python scripts/report_skill_inventory.py --check --format text
 

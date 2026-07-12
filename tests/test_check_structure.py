@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,6 +9,8 @@ from pathlib import Path
 from scripts.check_structure import (
     check_file,
     is_entrypoint,
+    load_structure_waivers,
+    partition_waived_findings,
     rust_inline_test_line_indices,
 )
 
@@ -101,6 +104,49 @@ class CheckFileTests(unittest.TestCase):
                 rules,
                 ["entrypoint-logic-lines", "inline-test-lines", "source-file-lines"],
             )
+
+
+class StructureWaiverTests(unittest.TestCase):
+    def _write(self, tmp: str, name: str, text: str) -> Path:
+        path = Path(tmp) / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+        return path
+
+    def _write_policy(self, tmp: str, structure_waivers: list[dict]) -> None:
+        policy_path = Path(tmp) / ".agents" / "project-policy.yml"
+        policy_path.parent.mkdir(parents=True, exist_ok=True)
+        policy_path.write_text(
+            json.dumps({"schema_version": 1, "structure_waivers": structure_waivers}),
+            encoding="utf-8",
+        )
+
+    def test_waived_path_produces_no_finding(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_policy(
+                tmp, [{"path": "experiments/", "reason": "disposable probe code"}]
+            )
+            path = self._write(tmp, "experiments/probe.py", "x = 1\n" * 500)
+            findings = check_file(path, make_args())
+            waivers = load_structure_waivers(root)
+            kept, waived = partition_waived_findings(findings, root, waivers)
+            self.assertEqual(kept, [])
+            self.assertEqual(len(waived), 1)
+            self.assertEqual(waived[0], ("experiments/probe.py", "disposable probe code"))
+
+    def test_non_waived_path_still_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_policy(
+                tmp, [{"path": "experiments/", "reason": "disposable probe code"}]
+            )
+            path = self._write(tmp, "src/parser.py", "x = 1\n" * 500)
+            findings = check_file(path, make_args())
+            waivers = load_structure_waivers(root)
+            kept, waived = partition_waived_findings(findings, root, waivers)
+            self.assertEqual(len(kept), 1)
+            self.assertEqual(waived, [])
 
 
 if __name__ == "__main__":
