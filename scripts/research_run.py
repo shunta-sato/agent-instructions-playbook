@@ -78,6 +78,19 @@ def read_metrics(run_dir: Path) -> Any:
 # --- subcommands -------------------------------------------------------------
 
 
+def validate_variation_axis(axis: str, command: str) -> list[str]:
+    """F3: a declared axis must be ``key=value`` (non-empty parts) whose value
+    appears literally in the registered command, so ``n`` is not a free-text
+    label but a mechanically checkable configuration knob."""
+    parsed = rl._axis_key_value(axis)
+    if parsed is None:
+        return ["variation_axis must be key=value with non-empty key and value"]
+    _key, value = parsed
+    if value not in command:
+        return [f"variation_axis value {value!r} must appear literally in the command"]
+    return []
+
+
 def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     disconfirm = {
         "metric": args.metric,
@@ -85,6 +98,8 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
         "threshold": parse_number(args.threshold),
     }
     errors = rl.validate_predicate(disconfirm)
+    if args.variation_axis:
+        errors += validate_variation_axis(args.variation_axis, args.command)
     if errors:
         raise ValueError("; ".join(errors))
 
@@ -104,6 +119,8 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
         "command_digest": rl.command_digest(head, dirty, args.command),
         "git_head": head,
         "dirty_files": dirty,
+        # F2: the claimable direction is preregistered, never asserted post-hoc.
+        "direction_if_supported": args.direction_if_supported,
     }
     if args.variation_axis:
         record["variation_axis"] = args.variation_axis
@@ -209,6 +226,15 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
     if binding_errors:
         raise ValueError("; ".join(binding_errors))
 
+    # F2: persist each cited registration's preregistered direction so the
+    # gate re-derives the crossing; its presence marks this a post-F2 claim
+    # (field-presence grandfathering for pre-F2 records). F3: n plus its note.
+    direction_basis = [
+        {"experiment_id": eid,
+         "direction_if_supported": (rl.find_preregister(records, eid) or {}).get("direction_if_supported")}
+        for eid in args.evidence
+    ]
+    n, n_basis = rl.claim_n_and_note(records, args.evidence)
     claim_id = rl.next_counter(records, rl.CLAIM, "C")
     record = {
         "schema_version": rl.SCHEMA_VERSION,
@@ -221,8 +247,10 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         "configurations": args.configuration,
         "evidence": args.evidence,
         "outcome_basis": outcome_basis,
+        "direction_basis": direction_basis,
+        "n_basis": n_basis,
         "sources": args.source or [],
-        "n": rl.claim_n(records, args.evidence),
+        "n": n,
     }
     rl.chain_and_append(ledger_path, record)
     print(claim_id)
@@ -263,6 +291,12 @@ def build_parser() -> argparse.ArgumentParser:
     register.add_argument("--threshold", required=True)
     register.add_argument("--command", required=True)
     register.add_argument("--variation-axis", default="")
+    register.add_argument(
+        "--direction-if-supported",
+        choices=("improves", "degrades", "none"),
+        default="none",
+        help="Preregistered direction a 'supported' outcome would license (F2).",
+    )
     register.set_defaults(func=cmd_register)
 
     execute = sub.add_parser("execute", help="Execute a registered experiment.")

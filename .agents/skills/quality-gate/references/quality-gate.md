@@ -75,6 +75,7 @@ Confirm required evidence exists for each triggered branch:
 - If numeric production budgets are claimed, budget provenance exists, calibration artifacts are referenced, and calibration revisit conditions are not triggered.
 - If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
 - If compat-mode was `break-allowed`, no deprecated shim, re-export alias, or parallel old/new version survives — verified by the `scripts/check_api_removal.py` sweep, not by the agent's claim.
+- The boundary gate was run with the declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery`. `safety-review-required` findings are `no-submit` in every mode; notes about delivery-mode edits under research paths are informational.
 - Open risks or follow-ups are explicitly documented.
 
 If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:

@@ -29,6 +29,8 @@ Invoke this skill **before every delivery-mode submission**. It is mandatory in 
    - Any finding is `no-submit` until the split is applied in this submission, or an explicit bounded waiver (for example generated code) is recorded in the change brief.
    - This check is independent of which branches were triggered: a change that never triggered `design-balance` still fails here if a touched file breached the structure budget.
 
+1c) Run the boundary gate with the declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery`. `safety-review-required` findings are `no-submit` in every mode; notes about delivery-mode edits under research paths are informational.
+
 2) Validate required artifacts/evidence from triggered branches exist, including function-design evidence when triggered.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.
    - If the task touched public/cross-module APIs or was a rework/consolidation/deletion request, verify the compat-mode is recorded; `break-allowed` must quote the requester's waiver.

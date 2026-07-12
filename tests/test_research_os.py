@@ -33,7 +33,12 @@ def build_chain(records_data: list[dict]) -> list[dict]:
 
 
 def make_prereg(
-    eid: str, registered_at: str, digest: str, command: str = "run", axis: str = ""
+    eid: str,
+    registered_at: str,
+    digest: str,
+    command: str = "run",
+    axis: str = "",
+    direction: str = "",
 ) -> dict:
     record = {
         "schema_version": 1,
@@ -50,6 +55,8 @@ def make_prereg(
     }
     if axis:
         record["variation_axis"] = axis
+    if direction:  # omitted → pre-F2 grandfathered evidence
+        record["direction_if_supported"] = direction
     return record
 
 
@@ -77,6 +84,7 @@ def make_claim(
     direction: str = "improves",
     metric: str = "err",
     basis: list[dict] | None = None,
+    direction_basis: list[dict] | None = None,
 ) -> dict:
     record = {
         "schema_version": 1,
@@ -93,6 +101,8 @@ def make_claim(
     }
     if basis is not None:  # omitted → a grandfathered pre-S3 claim record
         record["outcome_basis"] = basis
+    if direction_basis is not None:  # present → a post-F2 claim (enforce direction)
+        record["direction_basis"] = direction_basis
     return record
 
 
@@ -161,11 +171,13 @@ class LaunderingTests(unittest.TestCase):
             base = ["--repo-root", tmp, "--ledger", str(ledger)]
             for _ in range(2):
                 # comparator ">" keeps err=0.05 from tripping the predicate, so
-                # both outcomes are "supported" and a direction=improves claim
-                # is valid under S3 binding while still exercising n-collapse.
+                # both outcomes are "supported"; the preregistered improves
+                # direction (F2) makes a direction=improves claim valid while
+                # still exercising n-collapse.
                 run_cli(base + [
                     "register", "--hypothesis", "h", "--metric", "err",
                     "--comparator", ">", "--threshold", "0.1", "--command", self.CMD,
+                    "--direction-if-supported", "improves",
                 ])
             run_cli(base + ["execute", "--experiment-id", "E-0001"])
             run_cli(base + ["execute", "--experiment-id", "E-0002"])
@@ -266,6 +278,41 @@ class ClaimNTests(unittest.TestCase):
     def test_duplicate_axis_values_collapse(self) -> None:
         records = self._pair("E-0001", "d1", "seed=1") + self._pair("E-0002", "d2", "seed=1")
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 1)
+
+    def test_mixed_axis_keys_collapse_to_one(self) -> None:
+        # Different knobs (seed vs batch) are not comparable configurations.
+        records = self._pair("E-0001", "d1", "seed=1") + self._pair("E-0002", "d2", "batch=2")
+        n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
+        self.assertEqual(n, 1)
+        self.assertIn("mixes axis keys", note)
+
+
+# --- (F3) register-time variation_axis verification --------------------------
+
+
+class RegisterAxisTests(unittest.TestCase):
+    def _register(self, tmp: str, axis: str, command: str) -> tuple[int, str]:
+        return run_cli([
+            "--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl"),
+            "register", "--hypothesis", "h", "--metric", "err",
+            "--comparator", "<", "--threshold", "0.1", "--command", command,
+            "--variation-axis", axis,
+        ])
+
+    def test_non_conforming_axis_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "no-equals-sign", "run --seed 7")
+        self.assertEqual(rc, 1)
+
+    def test_axis_value_absent_from_command_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "seed=42", "run --seed 7")
+        self.assertEqual(rc, 1)
+
+    def test_conforming_axis_present_in_command_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "seed=7", "run --seed=7")
+        self.assertEqual(rc, 0)
 
 
 if __name__ == "__main__":

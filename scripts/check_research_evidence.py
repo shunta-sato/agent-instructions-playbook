@@ -1,54 +1,17 @@
 #!/usr/bin/env python3
 """Mechanical gate for the Research OS ledger.
 
-Two modes:
-
-``--check-ledger`` (CI-safe): re-derives the entire research chain and
-fails on any inconsistency — broken hash links, results without a matching
-preregistration, HARKing (registered_at not before started_at), digest
-drift, malformed predicates, outcomes that do not re-derive, invalid or
-miscounted claim evidence, multiplicity drift, or a stale claims view.
-Empty/absent research records pass.
-
-``--diff-range A..B --policy <file>`` (R5): promotion, symlink-boundary,
-and safety-review findings over a changed-path set, with a default-deny
-(unmatched = delivery) path model.
-
-The boundary gate binds to a DECLARED mode, not to what the diff happens to
-touch. ``--mode research`` means "this session declared research work": any
-delivery-path change then needs promotion. ``--mode delivery`` means "this
-session declared delivery work": editing a research-only path is legitimate
-(delivery gates are stricter, and claims discipline is mode-independent), so
-it emits only a non-blocking ``NOTE mode:`` line and never changes the exit
-code. When ``--mode`` is omitted — the CI case, where per-session
-declarations are not knowable — the gate falls back to a mixing rule: a
-single diff that touches BOTH research-mode and delivery-mode paths requires
-promotion. Safety-path review is evaluated in every case.
-
-Promotion acknowledgment: when the diff both produces ``promotion-required``
-findings and adds/modifies an acknowledgment file under ``.agents/promotions/``
-(any ``*.md`` except ``README.md``), every ``promotion-required`` finding is
-downgraded to a non-blocking ``NOTE promotion acknowledged:`` line and the gate
-exits 0 — that file is the committed, reviewable record of the research→delivery
-crossing (research-synthesis's promote contract). ``safety-review-required`` is
-never downgraded. Residual risk, documented not hidden: a CI diff touching only
-delivery paths, or only research paths, cannot be distinguished from a
-correctly-declared session, so CI catches mixing but not a mis-declared
-single-mode session; the session-side ``--mode`` binding closes that gap.
-
-Threat model (scope, stated plainly). ``--check-ledger`` is
-tamper-EVIDENT for honest-but-buggy flows and accidental corruption — it
-catches mutated records, broken chain links, un-re-derivable outcomes,
-stale claims views, and forged/inconsistent claim records. It is NOT
-tamper-PROOF: an agent with write access to both the scripts and the ledger
-can forge a fully self-consistent chain that this gate accepts.
-Adversarial-grade anchoring (an externally published chain head, or a
-protected append-only writer outside the deriving party's control) is a
-documented follow-up, not a property this gate currently provides.
-
-Output follows ``check_structure.py`` / ``check_api_removal.py``: FINDING
-lines, a summary line, exit codes 0 (clean) / 1 (findings) / 2 (usage).
-Only Python stdlib is used.
+Three modes. ``--check-ledger`` re-derives the whole research chain and fails
+on any inconsistency — chain links, missing preregistration, HARKing, digest/
+outcome/n drift, malformed predicates, invalid claim evidence, or a stale view
+(empty/absent records pass). ``--diff-range A..B`` / ``--working-tree`` (F1)
+``--policy <file>`` emit promotion, symlink-boundary, and safety findings over
+a changed-path set (default-deny: unmatched = delivery) under a declared
+``--mode``; base-policy binding (F6) and acknowledgment downgrade (F7) live in
+``run_diff_mode`` / ``evaluate_diff`` / ``_parse_acknowledgment``. Tamper-
+EVIDENT, not tamper-PROOF (see ``research_ledger``'s threat model). Output
+follows ``check_structure.py``: FINDING lines, a summary, exit 0/1/2. Only
+Python stdlib is used.
 """
 
 from __future__ import annotations
@@ -56,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -65,9 +29,6 @@ try:  # direct execution: scripts/ is on sys.path[0]
     import research_ledger as rl
 except ModuleNotFoundError:  # imported as scripts.check_research_evidence (tests, -m)
     from scripts import research_ledger as rl
-
-
-# --- ledger mode -------------------------------------------------------------
 
 
 def _check_chain(records: list[dict[str, Any]], findings: list[str]) -> None:
@@ -135,24 +96,27 @@ def _check_claims(records: list[dict[str, Any]], findings: list[str]) -> None:
             elif not (prereg["registered_at"] < result["started_at"]):
                 findings.append(f"claim-evidence-harking: {cid}: {eid}")
 
-        # Semantic binding (S3), re-derived from the ledger so a hand-forged
-        # claim record cannot assert an inconsistent metric/direction pairing.
+        # S3/F2 binding, re-derived so a forged claim cannot assert an
+        # inconsistent metric/direction. F2's preregistered-direction rule is
+        # enforced only for post-F2 claims (carrying direction_basis); pre-F2
+        # records are grandfathered by field-presence, like outcome_basis.
+        enforce_direction = "direction_basis" in record
         binding_errors, derived_basis = rl.evaluate_claim_binding(
-            records, record.get("metric"), record.get("direction"), evidence
+            records, record.get("metric"), record.get("direction"), evidence,
+            enforce_direction=enforce_direction,
         )
         for error in binding_errors:
             findings.append(f"claim-binding: {cid}: {error}")
 
-        # Grandfathering: records written before outcome_basis existed
-        # (schema field absent) skip the basis comparison but still face every
-        # re-derived check above and the n check below. New records carry the
-        # basis and must match what the ledger re-derives.
+        # A record predating a basis field skips only that field's comparison.
         if "outcome_basis" in record and record.get("outcome_basis") != derived_basis:
             findings.append(f"claim-basis-mismatch: {cid}")
 
-        expected_n = rl.claim_n(records, evidence)
+        expected_n, expected_n_basis = rl.claim_n_and_note(records, evidence)
         if record.get("n") != expected_n:
             findings.append(f"claim-n-mismatch: {cid}: expected {expected_n}")
+        if "n_basis" in record and record.get("n_basis") != expected_n_basis:  # F3
+            findings.append(f"claim-n-basis-mismatch: {cid}")
 
 
 def _check_claims_view(
@@ -161,19 +125,11 @@ def _check_claims_view(
     ledger_path: Path | None,
     findings: list[str],
 ) -> None:
-    # The view belongs to the ledger being checked: research/claims.md for the
-    # canonical ledger, an adjacent claims.md for any other --ledger. When no
-    # ledger_path is supplied (legacy callers/tests), fall back to the
-    # canonical view. Freshness is only asserted if the view file exists.
-    if ledger_path is None:
-        view = repo_root / "research" / "claims.md"
-    else:
-        view = rl.claims_view_path(repo_root, ledger_path)
-    if not view.is_file():
-        return
-    if view.read_text(encoding="utf-8") != rl.render_claims(records):
-        rel = relative_display_path(view, repo_root)
-        findings.append(f"stale-claims-view: {rel}")
+    # Canonical ledger → research/claims.md, else an adjacent claims.md (no
+    # ledger_path falls back to canonical). Assert freshness only if it exists.
+    view = rl.claims_view_path(repo_root, ledger_path) if ledger_path else repo_root / "research" / "claims.md"
+    if view.is_file() and view.read_text(encoding="utf-8") != rl.render_claims(records):
+        findings.append(f"stale-claims-view: {relative_display_path(view, repo_root)}")
 
 
 def relative_display_path(path: Path, repo_root: Path) -> str:
@@ -194,168 +150,214 @@ def check_ledger(
     return findings
 
 
+def _emit(findings: list[str], pass_detail: str) -> int:
+    """Print FINDING lines + summary; exit 1 on findings, 0 (``pass``) clean."""
+    for finding in findings:
+        print(f"FINDING {finding}")
+    if findings:
+        print(f"research-evidence: {len(findings)} finding(s)")
+        return 1
+    print(f"research-evidence: pass ({pass_detail})")
+    return 0
+
+
+def _usage(msg: str) -> int:
+    print(f"research-evidence: error: {msg}", file=sys.stderr)
+    return 2
+
+
 def run_ledger_mode(ledger_path: Path, repo_root: Path) -> int:
     try:
         records = rl.load_research_records(ledger_path)
     except rl.LedgerError as exc:
-        print(f"FINDING ledger-parse: {exc}")
-        print("research-evidence: 1 finding(s)")
-        return 1
+        return _emit([f"ledger-parse: {exc}"], "")
     if not records:
-        print("research-evidence: pass (no research records)")
-        return 0
-    findings = check_ledger(records, repo_root, ledger_path)
-    if findings:
-        for finding in findings:
-            print(f"FINDING {finding}")
-        print(f"research-evidence: {len(findings)} finding(s)")
-        return 1
-    print(f"research-evidence: pass ({len(records)} research record(s) verified)")
-    return 0
+        return _emit([], "no research records")
+    return _emit(check_ledger(records, repo_root, ledger_path), f"{len(records)} research record(s) verified")
 
 
-# --- diff mode ---------------------------------------------------------------
+POLICY_REL = ".agents/project-policy.yml"
 
 
-def load_policy(policy_path: Path) -> dict[str, Any]:
-    if not policy_path.is_file():
-        raise FileNotFoundError(f"policy file is missing: {policy_path}")
-    payload = json.loads(policy_path.read_text(encoding="utf-8"))
+def _parse_policy(text: str) -> dict[str, Any]:
+    payload = json.loads(text)
     if not isinstance(payload, dict):
         raise ValueError("policy top-level value must be an object")
     return payload
 
 
+def load_policy(policy_path: Path) -> dict[str, Any]:
+    if not policy_path.is_file():
+        raise FileNotFoundError(f"policy file is missing: {policy_path}")
+    return _parse_policy(policy_path.read_text(encoding="utf-8"))
+
+
+def base_ref_of_range(diff_range: str) -> str:
+    """Left ref of ``A..B``/``A...B`` with trailing dots stripped (F6 base)."""
+    return diff_range.split("..", 1)[0].rstrip(".")
+
+
+def load_base_policy(repo_root: Path, base_ref: str) -> dict[str, Any] | None:
+    """The policy committed at ``base_ref``; ``None`` when absent there."""
+    completed = subprocess.run(["git", "-C", str(repo_root), "show", f"{base_ref}:{POLICY_REL}"], capture_output=True, text=True)
+    return _parse_policy(completed.stdout) if completed.returncode == 0 else None
+
+
 def resolve_mode(path: str, path_modes: dict[str, str]) -> str:
     """Longest-prefix match; unmatched paths default to delivery (default-deny)."""
-    best_prefix = ""
-    best_mode = "delivery"
+    best_prefix, best_mode = "", "delivery"
     for prefix, mode in path_modes.items():
-        if path == prefix or path.startswith(prefix):
-            if len(prefix) >= len(best_prefix):
-                best_prefix = prefix
-                best_mode = mode
+        if (path == prefix or path.startswith(prefix)) and len(prefix) >= len(best_prefix):
+            best_prefix, best_mode = prefix, mode
     return best_mode
 
 
-def _matches_safety(path: str, safety_paths: list[str]) -> bool:
-    return any(path == prefix or path.startswith(prefix) for prefix in safety_paths)
+PROMOTIONS_DIR = ".agents/promotions/"  # an acknowledgment is any *.md here except README.md
 
 
-PROMOTIONS_DIR = ".agents/promotions/"
+def _parse_acknowledgment(text: str) -> tuple[list[str], list[str]]:
+    """Validate an acknowledgment; return ``(covered_prefixes, missing)`` (F7):
+    a ``Scope:`` line, a ``C-<n>`` ref OR ``no research claims promoted``, and
+    a ``Covers:`` section of ``- `` prefix lines. Invalid → no prefixes
+    (downgrades nothing) and names of what's absent."""
+    lines = text.splitlines()
+    has_scope = any(ln.strip().lower().startswith("scope:") for ln in lines)
+    has_claim = bool(re.search(r"C-\d+", text)) or "no research claims promoted" in text.lower()
+    covers: list[str] = []
+    in_covers = False
+    for ln in lines:
+        stripped = ln.strip()
+        if stripped.lower().startswith("covers:"):
+            in_covers = True
+        elif in_covers and stripped.startswith("- ") and stripped[2:].strip():
+            covers.append(stripped[2:].strip())
+        elif in_covers and stripped:
+            break  # a non-blank, non-list line closes the Covers section
+    missing = [label for ok, label in (
+        (has_scope, "Scope:"),
+        (has_claim, "claim ref or 'no research claims promoted'"),
+        (bool(covers), "Covers: prefixes"),
+    ) if not ok]
+    return (covers, []) if not missing else ([], missing)
 
 
-def _is_acknowledgment(path: str) -> bool:
-    """A committed promotion-acknowledgment record: any ``*.md`` under
-    ``.agents/promotions/`` other than the directory's ``README.md``."""
-    return (
-        path.startswith(PROMOTIONS_DIR)
-        and path.endswith(".md")
-        and Path(path).name != "README.md"
-    )
-
-
-def evaluate_diff(
-    changed_paths: list[str],
-    repo_root: Path,
-    policy: dict[str, Any],
-    mode: str | None = None,
-) -> tuple[list[str], list[str]]:
-    """Boundary findings and notes for a changed-path set under a ``mode``.
-
-    Returns ``(findings, notes)``. Findings are blocking (exit 1); notes are
-    non-blocking (exit 0). ``mode`` binds the gate to what the session
-    declared rather than to what the diff infers:
-
-    * ``"research"``: any delivery-path change → ``promotion-required``.
-    * ``"delivery"``: a change under a research-only path is legitimate and
-      emits a non-blocking ``mode`` note (claims discipline still applies).
-    * ``None`` (CI, declarations unknowable): the mixing rule — promotion is
-      required only when the diff touches BOTH research and delivery paths.
-
-    Promotion acknowledgment: if the diff carries an acknowledgment file (see
-    ``_is_acknowledgment``), every ``promotion-required`` finding is emitted
-    as a ``promotion acknowledged`` note instead. ``safety-review-required``
-    is never downgraded. Symlink-boundary and safety findings are evaluated in
-    every case.
+def evaluate_diff(changed_paths: list[str], repo_root: Path, policy: dict[str, Any], mode: str | None = None) -> tuple[list[str], list[str]]:
+    """Boundary findings (blocking) and notes (non-blocking) for a changed-path
+    set under ``mode`` (see the module docstring). A ``promotion-required`` path
+    downgrades to a note only under a VALID acknowledgment's Covers prefix (F7);
+    safety and symlink-boundary findings are evaluated in every case.
     """
     path_modes = policy.get("path_modes", {}) or {}
     safety_paths = policy.get("safety_paths", []) or []
     modes = {path: resolve_mode(path, path_modes) for path in changed_paths}
-    has_research = any(m == "research" for m in modes.values())
-    has_delivery = any(m == "delivery" for m in modes.values())
 
     if mode == "research":
         promote_delivery = True
     elif mode == "delivery":
         promote_delivery = False
     else:  # CI: no session declaration — flag only genuine mixing.
-        promote_delivery = has_research and has_delivery
-
-    ack_files = sorted(path for path in changed_paths if _is_acknowledgment(path))
+        promote_delivery = "research" in modes.values() and "delivery" in modes.values()
 
     findings: list[str] = []
     notes: list[str] = []
+    # F7: only a VALID acknowledgment earns a downgrade, and only for paths
+    # under a prefix it explicitly Covers. Invalid acks downgrade nothing.
+    acks = [p for p in changed_paths if p.startswith(PROMOTIONS_DIR) and p.endswith(".md") and Path(p).name != "README.md"]
+    valid_acks: list[tuple[str, list[str]]] = []
+    for ack in sorted(acks):
+        ack_abs = repo_root / ack
+        text = ack_abs.read_text(encoding="utf-8") if ack_abs.is_file() else ""
+        prefixes, missing = _parse_acknowledgment(text)
+        if prefixes:
+            valid_acks.append((ack, prefixes))
+        else:
+            notes.append(f"invalid-acknowledgment: {ack} ({', '.join(missing)})")
+
     for path in sorted(changed_paths):
         if promote_delivery and modes[path] == "delivery":
-            if ack_files:
-                notes.append(f"promotion acknowledged: {ack_files[0]} covers {path}")
+            cover = next((a for a, prefixes in valid_acks if any(path.startswith(p) for p in prefixes)), None)
+            if cover:
+                notes.append(f"promotion acknowledged: {cover} covers {path}")
             else:
                 findings.append(f"promotion-required: {path}")
         if mode == "delivery" and modes[path] == "research":
-            notes.append(
-                f"mode: delivery-mode change under research path {path}"
-                " — claims discipline still applies"
-            )
+            notes.append(f"mode: delivery-mode change under research path {path} — claims discipline still applies")
 
         absolute = repo_root / path
         if absolute.is_symlink():
-            target = os.path.realpath(absolute)
             try:
-                target_rel = Path(target).resolve().relative_to(repo_root.resolve()).as_posix()
+                target_rel = Path(os.path.realpath(absolute)).resolve().relative_to(repo_root.resolve()).as_posix()
                 target_mode = resolve_mode(target_rel, path_modes)
             except ValueError:
                 target_mode = "delivery"
             if modes[path] == "research" or target_mode != modes[path]:
                 findings.append(f"symlink-boundary: {path}")
 
-        if _matches_safety(path, safety_paths):
+        if any(path == prefix or path.startswith(prefix) for prefix in safety_paths):
             findings.append(f"safety-review-required: {path}")
     return findings, notes
 
 
+def _git_output(repo_root: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", "-C", str(repo_root), *args], check=True, capture_output=True, text=True
+    ).stdout
+
+
 def changed_paths_from_range(repo_root: Path, diff_range: str) -> list[str]:
-    completed = subprocess.run(
-        ["git", "-C", str(repo_root), "diff", "--name-only", diff_range],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    out = _git_output(repo_root, "diff", "--name-only", diff_range)
+    return [line.strip() for line in out.splitlines() if line.strip()]
 
 
-def run_diff_mode(
-    diff_range: str, policy_path: Path, repo_root: Path, mode: str | None = None
-) -> int:
+def changed_paths_from_working_tree(repo_root: Path) -> list[str]:
+    """F1: staged + unstaged + untracked paths (git excludes ignored by default),
+    so a skill can invoke the gate with a declared mode before committing."""
+    paths: list[str] = []
+    for line in _git_output(repo_root, "status", "--porcelain").splitlines():
+        if not line.strip():
+            continue
+        entry = line[3:]  # strip the "XY " status prefix
+        if " -> " in entry:  # rename/copy: report the resulting path
+            entry = entry.split(" -> ", 1)[1]
+        paths.append(entry.strip())
+    return paths
+
+
+def _finish(changed_paths: list[str], repo_root: Path, policy: dict[str, Any], mode: str | None, pre_notes: list[str]) -> int:
+    findings, notes = evaluate_diff(changed_paths, repo_root, policy, mode)
+    for note in pre_notes + notes:
+        print(f"NOTE {note}")
+    return _emit(findings, f"{len(changed_paths)} changed path(s)")
+
+
+def run_diff_mode(diff_range: str, policy_path: Path, repo_root: Path, mode: str | None = None) -> int:
+    # F6: judge under the BASE policy so a head-side edit cannot weaken its own gate.
+    changed_paths = changed_paths_from_range(repo_root, diff_range)
+    pre_notes: list[str] = []
+    try:
+        policy = load_base_policy(repo_root, base_ref_of_range(diff_range))
+    except (ValueError, json.JSONDecodeError) as exc:
+        return _usage(str(exc))
+    if policy is None:
+        try:
+            policy = load_policy(policy_path)
+        except FileNotFoundError as exc:
+            return _usage(str(exc))
+        pre_notes.append("policy-bootstrap: no policy at base; evaluating with head policy")
+    elif POLICY_REL in changed_paths:
+        pre_notes.append("policy-change: evaluated with base policy; head policy takes effect after merge")
+    return _finish(changed_paths, repo_root, policy, mode, pre_notes)
+
+
+def run_working_tree_mode(policy_path: Path, repo_root: Path, mode: str | None = None) -> int:
+    """F1: same findings/notes/ack logic as diff mode, but over the working
+    tree and the checked-out policy (base-ref binding does not apply here)."""
     try:
         policy = load_policy(policy_path)
     except FileNotFoundError as exc:
-        print(f"research-evidence: error: {exc}", file=sys.stderr)
-        return 2
-    changed_paths = changed_paths_from_range(repo_root, diff_range)
-    findings, notes = evaluate_diff(changed_paths, repo_root, policy, mode)
-    for note in notes:
-        print(f"NOTE {note}")
-    if findings:
-        for finding in findings:
-            print(f"FINDING {finding}")
-        print(f"research-evidence: {len(findings)} finding(s)")
-        return 1
-    print(f"research-evidence: pass ({len(changed_paths)} changed path(s))")
-    return 0
-
-
-# --- CLI ---------------------------------------------------------------------
+        return _usage(str(exc))
+    changed_paths = changed_paths_from_working_tree(repo_root)
+    return _finish(changed_paths, repo_root, policy, mode, ["policy-source: working tree"])
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -364,13 +366,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--ledger", default="", help="Ledger path override.")
     parser.add_argument("--check-ledger", action="store_true", help="Verify the research chain.")
     parser.add_argument("--diff-range", default="", help="Git range A..B for promotion checks.")
-    parser.add_argument("--policy", default="", help="Policy file for diff-range mode.")
-    parser.add_argument(
-        "--mode",
-        choices=("research", "delivery"),
-        default="",
-        help="Declared session mode for diff-range binding; omit for CI mixing checks.",
-    )
+    parser.add_argument("--working-tree", action="store_true", help="F1: promotion checks over git status --porcelain.")
+    parser.add_argument("--policy", default="", help="Bootstrap-fallback (diff-range) or checked-out (working-tree) policy.")
+    parser.add_argument("--mode", choices=("research", "delivery"), default="", help="Declared session mode; omit for CI mixing checks.")
     return parser.parse_args(argv)
 
 
@@ -378,21 +376,24 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     repo_root = Path(args.repo_root).resolve() if args.repo_root else Path(__file__).resolve().parent.parent
 
-    if args.diff_range:
+    if args.diff_range and args.working_tree:
+        return _usage("choose only one of --diff-range or --working-tree")
+
+    if args.diff_range or args.working_tree:
         if not args.policy:
-            print("research-evidence: error: --diff-range requires --policy", file=sys.stderr)
-            return 2
+            return _usage("--diff-range/--working-tree requires --policy")
         policy_path = Path(args.policy)
         if not policy_path.is_absolute():
             policy_path = repo_root / policy_path
+        if args.working_tree:
+            return run_working_tree_mode(policy_path, repo_root, args.mode or None)
         return run_diff_mode(args.diff_range, policy_path, repo_root, args.mode or None)
 
     if args.check_ledger:
         ledger_path = Path(args.ledger).resolve() if args.ledger else (repo_root / rl.LEDGER_REL).resolve()
         return run_ledger_mode(ledger_path, repo_root)
 
-    print("research-evidence: error: choose --check-ledger or --diff-range", file=sys.stderr)
-    return 2
+    return _usage("choose --check-ledger, --diff-range, or --working-tree")
 
 
 if __name__ == "__main__":

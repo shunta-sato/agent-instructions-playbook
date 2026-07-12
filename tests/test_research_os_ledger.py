@@ -16,6 +16,7 @@ home for the claim/runner tests.
 from __future__ import annotations
 
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -291,6 +292,63 @@ class NonNumericMetricTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             findings = cre.check_ledger(records, Path(tmp))
         self.assertFalse(any(f.startswith("outcome-mismatch:") for f in findings), findings)
+
+
+# --- (F4) non-finite metrics are never evidence ------------------------------
+
+
+class NonFiniteMetricTests(unittest.TestCase):
+    """NaN/±Inf metric values are ``not-evaluable`` for EVERY comparator
+    (including ``==``) in the runner and checker re-derivation paths alike."""
+
+    def test_unit_derive_outcome_non_finite(self) -> None:
+        for value in (float("nan"), float("inf"), float("-inf")):
+            for comparator in ("<", "<=", ">", ">=", "=="):
+                disc = {"metric": "err", "comparator": comparator, "threshold": 0.1}
+                self.assertEqual(
+                    rl.derive_outcome(disc, {"err": value}), "not-evaluable", (value, comparator)
+                )
+
+    def _runner_outcome(self, value_expr: str, comparator: str) -> str:
+        # json.dump writes NaN/Infinity literally; read_metrics parses them back.
+        command = (
+            sys.executable + " -c \"import json,os,math;"
+            "json.dump({'err': " + value_expr + "},"
+            "open(os.path.join(os.environ['RESEARCH_RUN_DIR'],'result.json'),'w'))\""
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "l.jsonl"
+            base = ["--repo-root", tmp, "--ledger", str(ledger)]
+            run_cli(base + [
+                "register", "--hypothesis", "h", "--metric", "err",
+                "--comparator", comparator, "--threshold", "0.1", "--command", command,
+            ])
+            run_cli(base + ["execute", "--experiment-id", "E-0001"])
+            result = rl.find_result(rl.load_research_records(ledger), "E-0001")
+        return result["outcome"]
+
+    def test_runner_path_via_result_json(self) -> None:
+        for value_expr in ("math.nan", "math.inf", "-math.inf"):
+            for comparator in ("<", "=="):
+                self.assertEqual(
+                    self._runner_outcome(value_expr, comparator), "not-evaluable",
+                    (value_expr, comparator),
+                )
+
+    def test_checker_path_re_derives_not_evaluable(self) -> None:
+        for value in (float("nan"), float("inf")):
+            for comparator in ("<", "=="):
+                disc = {"metric": "err", "comparator": comparator, "threshold": 0.1}
+                prereg = make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1")
+                prereg["disconfirm"] = disc
+                result = make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": value})
+                result["outcome"] = "not-evaluable"
+                records = build_chain([prereg, result])
+                with tempfile.TemporaryDirectory() as tmp:
+                    findings = cre.check_ledger(records, Path(tmp))
+                self.assertFalse(
+                    any(f.startswith("outcome-mismatch:") for f in findings), (value, comparator, findings)
+                )
 
 
 if __name__ == "__main__":

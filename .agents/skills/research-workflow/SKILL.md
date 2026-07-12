@@ -39,9 +39,11 @@ Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-ga
 
 3) Any evidence-bearing experiment goes through `$experiment-loop`. Unregistered exploration is allowed for reconnaissance but is never citable as evidence until it is re-registered through `$experiment-loop` with a fresh confirmation.
 
-4) Periodically, or whenever more than 5 results remain unsynthesized, hand this cycle's results to `$research-synthesis`.
+4) Before reporting completion of any research task that changed files, run the boundary gate with your declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode research`, and include its output in your report. `promotion-required` findings are not failures — they route the affected paths to `$research-synthesis` (promote) and the delivery gates.
 
-5) Code-quality gates (`dev-workflow`, `quality-gate`) are waived for probe code under research-mode paths — disposable implementation is expected. Evidence discipline is **not** waived: every empirical claim still needs a registered experiment. Physical-safety, secrets, and destructive-operation rules never waive, in any mode.
+5) Periodically, or whenever more than 5 results remain unsynthesized, hand this cycle's results to `$research-synthesis`.
+
+6) Code-quality gates (`dev-workflow`, `quality-gate`) are waived for probe code under research-mode paths — disposable implementation is expected. Evidence discipline is **not** waived: every empirical claim still needs a registered experiment. Physical-safety, secrets, and destructive-operation rules never waive, in any mode.
 
 ## Hard rules
 
@@ -55,3 +57,4 @@ Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-ga
 - Current live hypotheses, in plain language.
 - Probes executed this cycle, each with its experiment ID or exploration ID.
 - Handoffs made this cycle (to `$experiment-loop`, `$research-synthesis`, or a promotion into delivery gates), or `none`.
+- Boundary gate output (declared mode).
