@@ -39,3 +39,12 @@ Covers:
 - plans/
 - .claude/
 - .agents/
+
+<!-- supervisor reviewed-files run to be appended -->
+<!-- The worker Delivery-runs above cover their own changed files. Under the
+round-4 gate, allowed_files no longer count as coverage and each cited run must
+carry a recorded quality_gate pass/submit, so the supervisor-integrated paths
+(README.md, CHANGELOG.md, route-lockfile.json, .claude/skills symlinks, plans/,
+evals/, .agents/skills text, .gitignore, Makefile, .github/workflows, AGENTS.md,
+...) are closed by a new supervisor run recorded with --reviewed-file AFTER
+these changes are final. -->

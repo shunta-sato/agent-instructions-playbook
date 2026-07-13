@@ -163,7 +163,9 @@ class RenderTests(unittest.TestCase):
         second = rl.render_claims(records)
         self.assertEqual(first, second)
         self.assertIn("ledger-head:", first)
-        self.assertIn("Observed once under configuration seed=42", first)
+        # R2a: the sentence is structural; a stored free-text effect is ignored.
+        self.assertIn("err improves — observed in a single configuration", first)
+        self.assertNotIn("faster", first)
 
     def test_fresh_view_passes_and_stale_view_fails(self) -> None:
         records = self._seed()

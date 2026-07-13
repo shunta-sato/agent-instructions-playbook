@@ -1,17 +1,21 @@
-"""R4 promotion-acknowledgment evidence-binding tests for the Research OS gate.
+"""R4 + Q3 promotion-acknowledgment evidence-binding tests for the Research OS
+gate.
 
-The F7 downgrade now binds to recorded ledger evidence, not syntax: a valid
-acknowledgment must cite ``Delivery-run:`` run_ids that resolve to green
-``agent_run`` records and any ``C-<n>`` claim that re-derives in the canonical
-ledger, and a promotion-required path is downgraded only when it is BOTH under
-a ``Covers:`` prefix AND spanned by the cited runs' ``changed_files`` ∪
-``allowed_files``. Mock ledgers here; the boundary/mode tests live in the
-sibling ``test_research_os_gate.py``.
+The downgrade binds to recorded ledger evidence, not syntax: a valid
+acknowledgment cites ``Delivery-run:`` run_ids that resolve to ``agent_run``
+records with passing validation COMMANDS and a recorded quality-gate pass (Q3c),
+plus any ``C-<n>`` claim that re-derives in the canonical ledger. A
+promotion-required path is downgraded only when it is BOTH under a ``Covers:``
+prefix AND spanned by a cited run's ``changed_files`` or a digest-verified
+``reviewed_files`` entry — never its ``allowed_files`` (Q3a/Q3b). Acknowledgment
+files and the run ledger are the promotion MECHANISM, never promotion-required
+(Q3d). Mock ledgers here; boundary/mode tests live in ``test_research_os_gate``.
 """
 
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import subprocess
@@ -26,14 +30,26 @@ POLICY = {"path_modes": {"experiments/": "research"}, "safety_paths": ["SECURITY
 ACK = ".agents/promotions/2026-07-13-promote.md"
 
 
-def _run(run_id: str, passed: bool = True, changed=None, allowed=None) -> dict:
-    return {
+def _run(run_id: str, passed: bool = True, changed=None, allowed=None, reviewed=None) -> dict:
+    # Q3c: delivery evidence needs recorded validation COMMANDS + a passing
+    # quality gate, not a caller boolean; a failing run flips both.
+    validation = (
+        {"commands": [{"cmd": "make test-unit", "exit_code": 0, "passed": True}],
+         "passed": True, "quality_gate": "pass"}
+        if passed else
+        {"commands": [{"cmd": "make test-unit", "exit_code": 1, "passed": False}],
+         "passed": False, "quality_gate": "no-submit"}
+    )
+    run = {
         "record_type": "agent_run",
         "run_id": run_id,
-        "validation": {"passed": passed},
+        "validation": validation,
         "changed_files": changed or [],
         "allowed_files": allowed or [],
     }
+    if reviewed is not None:
+        run["reviewed_files"] = reviewed
+    return run
 
 
 def _write_canonical_ledger(root: Path, records: list[dict]) -> None:
@@ -83,29 +99,43 @@ class AckEvidenceBindingTests(unittest.TestCase):
         self.assertIn("promotion-required: src/app.py", findings)
         self.assertTrue(any("did not pass validation" in n for n in notes), notes)
 
-    def test_outcome_validation_passed_shape_accepted(self) -> None:
-        # R4.2 accepts outcome.validation_passed as an alternative to validation.passed.
+    def test_caller_boolean_only_run_downgrades_nothing(self) -> None:
+        # Q3c inversion: a run asserting only outcome.validation_passed (no
+        # recorded validation commands or quality-gate pass) is NOT evidence.
         run = {"record_type": "agent_run", "run_id": "run-1",
                "outcome": {"validation_passed": True},
-               "changed_files": ["src/app.py"], "allowed_files": ["src/", ".agents/promotions/"]}
+               "changed_files": ["src/app.py"], "allowed_files": ["src/"]}
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _write_canonical_ledger(root, [run])
             _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
-            findings, _ = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
-        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
+            findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
+        self.assertIn("promotion-required: src/app.py", findings)
+        self.assertTrue(any("did not pass validation" in n for n in notes), notes)
 
-    def test_path_outside_run_union_stays_blocking(self) -> None:
-        # R4.3: even under a Covers prefix, a path not spanned by the cited runs'
-        # files stays blocking; a directory in the union covers its subtree.
+    def test_no_quality_gate_pass_downgrades_nothing(self) -> None:
+        # Q3c: passing validation commands but quality_gate=not_run is not enough.
+        run = _run("run-1", changed=["src/app.py"], allowed=["src/"])
+        run["validation"]["quality_gate"] = "not_run"
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            _write_canonical_ledger(root, [_run("run-1", changed=["src/app.py"], allowed=["src/", ".agents/promotions/"])])
+            _write_canonical_ledger(root, [run])
+            _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
+            findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
+        self.assertIn("promotion-required: src/app.py", findings)
+        self.assertTrue(any("quality gate not recorded as pass" in n for n in notes), notes)
+
+    def test_allowed_only_path_stays_blocking(self) -> None:
+        # Q3a inversion (round-3 test overturned): allowed_files is authorization
+        # scope, NOT coverage. Only changed_files (here src/app.py) cover; paths
+        # present merely in allowed_files (src/deep/x.py, tools/build.py) block.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _write_canonical_ledger(root, [_run("run-1", changed=["src/app.py"], allowed=["src/", "tools/"])])
             _write_ack(root, ACK, covers=["src/", "tools/", ".agents/promotions/"], run_ids=["run-1"])
-            findings, notes = cre.evaluate_diff(["src/deep/x.py", "tools/build.py", ACK], root, POLICY, "research")
-        # src/deep/x.py is under the "src/" directory in the union → downgraded.
-        self.assertIn(f"promotion acknowledged: {ACK} covers src/deep/x.py", notes)
-        # tools/build.py is under a Covers prefix but NOT in the run union → blocking.
+            findings, notes = cre.evaluate_diff(["src/app.py", "src/deep/x.py", "tools/build.py", ACK], root, POLICY, "research")
+        self.assertIn(f"promotion acknowledged: {ACK} covers src/app.py", notes)
+        self.assertIn("promotion-required: src/deep/x.py", findings)
         self.assertIn("promotion-required: tools/build.py", findings)
 
     def test_missing_delivery_run_is_structural_invalid(self) -> None:
@@ -160,6 +190,52 @@ class AckClaimBindingTests(unittest.TestCase):
             findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
         self.assertIn("promotion-required: src/app.py", findings)
         self.assertTrue(any("C-9999 does not resolve" in n for n in notes), notes)
+
+
+class AckReviewedFilesTests(unittest.TestCase):
+    """Q3b: a digest-verified ``reviewed_files`` entry covers a promoted path;
+    coverage union is ``changed_files`` ∪ reviewed_files, never allowed_files."""
+
+    def _digest(self, path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def test_reviewed_file_with_matching_digest_covers_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "docs").mkdir()
+            reviewed_path = root / "docs" / "guide.md"
+            reviewed_path.write_text("hello\n", encoding="utf-8")
+            run = _run("run-1", changed=[], allowed=[],
+                       reviewed=[{"path": "docs/guide.md", "sha256": self._digest(reviewed_path)}])
+            _write_canonical_ledger(root, [run])
+            _write_ack(root, ACK, covers=["docs/", ".agents/promotions/"], run_ids=["run-1"])
+            findings, notes = cre.evaluate_diff(["docs/guide.md", ACK], root, POLICY, "research")
+        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
+        self.assertIn(f"promotion acknowledged: {ACK} covers docs/guide.md", notes)
+
+    def test_reviewed_file_with_stale_digest_stays_blocking(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "docs").mkdir()
+            (root / "docs" / "guide.md").write_text("changed since the review\n", encoding="utf-8")
+            run = _run("run-1", changed=[], allowed=[],
+                       reviewed=[{"path": "docs/guide.md", "sha256": "0" * 64}])  # recorded digest drifted
+            _write_canonical_ledger(root, [run])
+            _write_ack(root, ACK, covers=["docs/", ".agents/promotions/"], run_ids=["run-1"])
+            findings, notes = cre.evaluate_diff(["docs/guide.md", ACK], root, POLICY, "research")
+        self.assertIn("promotion-required: docs/guide.md", findings)
+        self.assertIn("stale-review: docs/guide.md", notes)
+
+
+class MechanismPathTests(unittest.TestCase):
+    """Q3d: acknowledgment files and the run ledger are the promotion/recording
+    MECHANISM, not promoted content — never ``promotion-required``."""
+
+    def test_ack_and_ledger_paths_are_never_promotion_required(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            changed = [".agents/promotions/README.md", ".agents/runs/agent-runs.jsonl"]
+            findings, _ = cre.evaluate_diff(changed, Path(tmp), POLICY, "research")
+        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
 
 
 class AckDiffModeTests(unittest.TestCase):

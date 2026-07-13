@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import re
 import shutil
@@ -12,7 +13,6 @@ import subprocess
 import uuid
 from pathlib import Path
 from typing import Any
-
 
 SCHEMA_VERSION = 1
 RUN_RECORD_TYPE = "agent_run"
@@ -28,12 +28,10 @@ FAILING_QUALITY_GATES = {
     "rejected",
 }
 
-
 def repo_root_from_args(explicit_root: str) -> Path:
     if explicit_root:
         return Path(explicit_root).resolve()
     return Path(__file__).resolve().parent.parent
-
 
 def ledger_path_from_args(repo_root: Path, explicit_ledger: str) -> Path:
     if explicit_ledger:
@@ -42,7 +40,6 @@ def ledger_path_from_args(repo_root: Path, explicit_ledger: str) -> Path:
             ledger_path = repo_root / ledger_path
         return ledger_path.resolve()
     return (repo_root / DEFAULT_LEDGER_REL).resolve()
-
 
 def normalize_repo_path(raw_path: str, repo_root: Path) -> str:
     path = Path(raw_path)
@@ -58,10 +55,21 @@ def normalize_repo_path(raw_path: str, repo_root: Path) -> str:
         raise ValueError(f"path must be repo-relative and must not contain '..': {raw_path}")
     return relpath.as_posix()
 
-
 def unique_sorted(paths: list[str]) -> list[str]:
     return sorted(dict.fromkeys(paths))
 
+def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, str]]:
+    """Q3b: for each reviewed path the SCRIPT (never the caller) records the
+    sha256 of the file at record time, so the gate can later verify the digest
+    still matches the blob at the diff head before the review covers a finding."""
+    entries: list[dict[str, str]] = []
+    for raw in raw_paths or []:
+        rel = normalize_repo_path(raw, repo_root)
+        absolute = repo_root / rel
+        if not absolute.is_file():
+            raise ValueError(f"reviewed file is missing: {raw}")
+        entries.append({"path": rel, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()})
+    return sorted(entries, key=lambda entry: entry["path"])
 
 def issue_run_id(slug: str) -> str:
     safe_slug = re.sub(r"[^a-zA-Z0-9._-]+", "-", slug.strip()).strip("-._")
@@ -70,7 +78,6 @@ def issue_run_id(slug: str) -> str:
     timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     return f"{timestamp}-{safe_slug}-{uuid.uuid4().hex[:8]}"
 
-
 def parse_bool(value: str) -> bool:
     normalized = value.lower()
     if normalized in {"1", "true", "yes", "y"}:
@@ -78,7 +85,6 @@ def parse_bool(value: str) -> bool:
     if normalized in {"0", "false", "no", "n"}:
         return False
     raise argparse.ArgumentTypeError(f"expected boolean value, got {value!r}")
-
 
 def git_lines(repo_root: Path, args: list[str]) -> list[str]:
     try:
@@ -95,13 +101,11 @@ def git_lines(repo_root: Path, args: list[str]) -> list[str]:
         raise ValueError(f"git {' '.join(args)} failed: {detail}") from exc
     return [line.strip() for line in completed.stdout.splitlines() if line.strip()]
 
-
 def changed_files_from_git(repo_root: Path, include_untracked: bool) -> list[str]:
     paths = git_lines(repo_root, ["diff", "--name-only", "HEAD", "--"])
     if include_untracked:
         paths.extend(git_lines(repo_root, ["ls-files", "--others", "--exclude-standard"]))
     return unique_sorted([normalize_repo_path(path, repo_root) for path in paths])
-
 
 def copy_brief(source: Path, run_id: str, ledger_path: Path, repo_root: Path) -> str:
     if not source.is_file():
@@ -111,7 +115,6 @@ def copy_brief(source: Path, run_id: str, ledger_path: Path, repo_root: Path) ->
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, destination)
     return normalize_repo_path(destination, repo_root)
-
 
 def validation_commands(raw_results: list[list[str]] | None) -> list[dict[str, Any]]:
     commands: list[dict[str, Any]] = []
@@ -131,7 +134,6 @@ def validation_commands(raw_results: list[list[str]] | None) -> list[dict[str, A
         )
     return commands
 
-
 def validation_passed(validation: dict[str, Any]) -> bool:
     if validation.get("blocker"):
         return False
@@ -147,11 +149,9 @@ def validation_passed(validation: dict[str, Any]) -> bool:
         for command in commands
     )
 
-
 def quality_gate_allows_acceptance(value: Any) -> bool:
     normalized = str(value or "not_run").strip().lower()
     return normalized not in FAILING_QUALITY_GATES
-
 
 def evaluate_run_record(record: dict[str, Any]) -> dict[str, Any]:
     allowed_files = set(record.get("allowed_files", []))
@@ -185,7 +185,6 @@ def evaluate_run_record(record: dict[str, Any]) -> dict[str, Any]:
         "telemetry_status": telemetry_status,
     }
 
-
 def load_agent_run_records(ledger_path: Path) -> list[dict[str, Any]]:
     if not ledger_path.is_file():
         raise ValueError(f"ledger file is missing: {ledger_path}")
@@ -205,13 +204,11 @@ def load_agent_run_records(ledger_path: Path) -> list[dict[str, Any]]:
             records.append(payload)
     return records
 
-
 def append_jsonl(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as file:
         file.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
         file.write("\n")
-
 
 def telemetry_from_args(args: argparse.Namespace, repo_root: Path) -> dict[str, Any]:
     if not args.codex_jsonl:
@@ -223,7 +220,6 @@ def telemetry_from_args(args: argparse.Namespace, repo_root: Path) -> dict[str, 
     if not path.is_absolute():
         path = repo_root / path
     return extract_telemetry_from_file(path.resolve())
-
 
 def build_run_record(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
     repo_root = repo_root_from_args(args.repo_root)
@@ -269,9 +265,11 @@ def build_run_record(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
             "agent_completed": args.agent_completed,
         },
     }
+    reviewed_files = reviewed_files_from_args(args.reviewed_file, repo_root)
+    if reviewed_files:  # optional field: absent for the common no-review record
+        record["reviewed_files"] = reviewed_files
     record["outcome"].update(evaluate_run_record(record))
     return ledger_path, record
-
 
 def render_record_text(ledger_path: Path, record: dict[str, Any]) -> str:
     outcome = record["outcome"]
@@ -286,7 +284,6 @@ def render_record_text(ledger_path: Path, record: dict[str, Any]) -> str:
             f"telemetry_status: {outcome['telemetry_status']}",
         ]
     )
-
 
 def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     parser = subparsers.add_parser("record", help="Append one delegated agent run record.")
@@ -325,6 +322,11 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
         help="Add changed files from git diff against HEAD.",
     )
     parser.add_argument(
+        "--reviewed-file",
+        action="append",
+        help="File reviewed for this run; the script records its sha256 at record time. Repeat.",
+    )
+    parser.add_argument(
         "--include-untracked",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -353,7 +355,6 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
         help="Output format.",
     )
 
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Append lightweight delegated agent run records."
@@ -361,7 +362,6 @@ def parse_args() -> argparse.Namespace:
     subparsers = parser.add_subparsers(dest="command", required=True)
     add_record_parser(subparsers)
     return parser.parse_args()
-
 
 def main() -> int:
     args = parse_args()
@@ -379,7 +379,6 @@ def main() -> int:
     else:
         print(render_record_text(ledger_path, record))
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

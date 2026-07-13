@@ -98,90 +98,42 @@ class DirectionCheckerTests(unittest.TestCase):
         self.assertEqual(findings, [])
 
 
-# --- (R2a) effect inherited from registrations -------------------------------
-
-# LaunderingTests.CMD writes err=0.05; comparator ">" keeps it "supported".
-_REG_SUPPORTED = ["register", "--hypothesis", "h", "--metric", "err",
-                  "--comparator", ">", "--threshold", "0.1", "--command", LaunderingTests.CMD]
-
-
-class EffectInheritanceTests(unittest.TestCase):
-    def test_claim_inherits_preregistered_effect(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            ledger = Path(tmp) / "l.jsonl"
-            base = ["--repo-root", tmp, "--ledger", str(ledger)]
-            run_cli(base + _REG_SUPPORTED + ["--direction-if-supported", "improves", "--effect", "faster"])
-            run_cli(base + ["execute", "--experiment-id", "E-0001"])
-            rc, _ = run_cli(base + ["claim", "--direction", "improves", "--metric", "err",
-                                    "--configuration", "c", "--evidence", "E-0001"])
-            self.assertEqual(rc, 0)
-            claim = next(r for r in rl.load_research_records(ledger) if r["record_type"] == rl.CLAIM)
-            self.assertEqual(claim["effect"], "faster")
-            self.assertEqual(cre.run_ledger_mode(ledger, Path(tmp)), 0)
-
-    def test_disagreeing_registered_effects_refused(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
-            run_cli(base + _REG_SUPPORTED + ["--direction-if-supported", "improves", "--effect", "faster"])
-            run_cli(base + _REG_SUPPORTED + ["--direction-if-supported", "improves", "--effect", "slower"])
-            run_cli(base + ["execute", "--experiment-id", "E-0001"])
-            run_cli(base + ["execute", "--experiment-id", "E-0002"])
-            rc, _ = run_cli(base + ["claim", "--direction", "improves", "--metric", "err",
-                                    "--configuration", "c", "--evidence", "E-0001", "--evidence", "E-0002"])
-        self.assertEqual(rc, 1)
-
-    def test_checker_catches_forged_effect(self) -> None:
-        prereg = make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1", direction="improves")
-        result = make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.5})
-        claim = make_claim("C-0001", ["E-0001"], 1, direction="improves",
-                           basis=[{"experiment_id": "E-0001", "outcome": "supported"}],
-                           direction_basis=[{"experiment_id": "E-0001", "direction_if_supported": "improves"}])
-        # E-0001 has no preregistered effect, so the inherited effect is empty;
-        # the forged non-empty effect must be caught on re-derivation.
-        claim["effect"] = "fabricated"
-        claim["effect_basis"] = [{"experiment_id": "E-0001", "effect": "fabricated"}]
-        records = build_chain([prereg, result, claim])
-        with tempfile.TemporaryDirectory() as tmp:
-            findings = cre.check_ledger(records, Path(tmp))
-        self.assertTrue(any(f.startswith("claim-effect-mismatch:") for f in findings), findings)
-
-
-# --- (R2b) no-effect requires an equivalence predicate -----------------------
+# --- (R2b) no-effect requires an equivalence-bounds predicate ----------------
 
 
 class NoEffectPredicateTests(unittest.TestCase):
-    def _reg_exec(self, base: list[str], comparator: str, no_effect: bool) -> None:
-        args = ["register", "--hypothesis", "h", "--metric", "err", "--comparator", comparator,
-                "--threshold", "0.1", "--command", LaunderingTests.CMD]
-        if no_effect:
-            args.append("--no-effect-predicate")
-        run_cli(base + args)
+    # LaunderingTests.CMD writes err=0.05.
+    def _reg_exec(self, base: list[str], *predicate_args: str) -> None:
+        run_cli(base + ["register", "--hypothesis", "h", "--metric", "err",
+                        "--command", LaunderingTests.CMD, *predicate_args])
         run_cli(base + ["execute", "--experiment-id", "E-0001"])
 
     def _claim(self, base: list[str], direction: str) -> tuple[int, str]:
         return run_cli(base + ["claim", "--direction", direction, "--metric", "err",
                                "--configuration", "c", "--evidence", "E-0001"])
 
-    def test_no_effect_without_equivalence_flag_refused(self) -> None:
+    def test_threshold_predicate_cannot_license_no_effect(self) -> None:
+        # Reviewer point: a THRESHOLD predicate — even a supported one — must not
+        # license no-effect; only an equivalence-bounds predicate can.
         with tempfile.TemporaryDirectory() as tmp:
             base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
-            self._reg_exec(base, ">", no_effect=False)  # supported, but no flag
+            self._reg_exec(base, "--comparator", ">", "--threshold", "0.1")  # supported
             rc, _ = self._claim(base, "no-effect")
         self.assertEqual(rc, 1)
 
-    def test_no_effect_with_flag_and_supported_accepted(self) -> None:
+    def test_equivalence_within_bounds_supported_accepts_no_effect(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             ledger = Path(tmp) / "l.jsonl"
             base = ["--repo-root", tmp, "--ledger", str(ledger)]
-            self._reg_exec(base, ">", no_effect=True)  # supported = within bounds = no effect
+            self._reg_exec(base, "--equivalence-bounds", "0.0", "0.1")  # 0.05 within → supported
             rc, _ = self._claim(base, "no-effect")
             self.assertEqual(rc, 0)
             self.assertEqual(cre.run_ledger_mode(ledger, Path(tmp)), 0)
 
-    def test_disconfirmed_evidence_cannot_be_no_effect(self) -> None:
+    def test_equivalence_out_of_bounds_disconfirmed_cannot_be_no_effect(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
-            self._reg_exec(base, "<", no_effect=True)  # err=0.05 < 0.1 → disconfirmed
+            self._reg_exec(base, "--equivalence-bounds", "0.1", "0.2")  # 0.05 outside → disconfirmed
             rc, _ = self._claim(base, "no-effect")
         self.assertEqual(rc, 1)
 
@@ -189,7 +141,7 @@ class NoEffectPredicateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = Path(tmp) / "l.jsonl"
             base = ["--repo-root", tmp, "--ledger", str(ledger)]
-            self._reg_exec(base, "<", no_effect=False)  # disconfirmed
+            self._reg_exec(base, "--comparator", "<", "--threshold", "0.1")  # 0.05 < 0.1 → disconfirmed
             rc, _ = self._claim(base, "mixed")
             self.assertEqual(rc, 0)
             self.assertEqual(cre.run_ledger_mode(ledger, Path(tmp)), 0)

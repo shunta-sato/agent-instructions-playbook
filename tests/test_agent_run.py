@@ -1,8 +1,28 @@
 from __future__ import annotations
 
+import hashlib
+import tempfile
 import unittest
+from pathlib import Path
 
-from scripts.agent_run import evaluate_run_record, validation_passed
+from scripts.agent_run import evaluate_run_record, reviewed_files_from_args, validation_passed
+
+
+class ReviewedFilesTests(unittest.TestCase):
+    def test_records_script_computed_sha256(self) -> None:
+        # Q3b: the script hashes the file at record time (caller supplies no digest).
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "a.txt").write_text("payload\n", encoding="utf-8")
+            entries = reviewed_files_from_args(["a.txt"], root)
+        self.assertEqual(
+            entries, [{"path": "a.txt", "sha256": hashlib.sha256(b"payload\n").hexdigest()}]
+        )
+
+    def test_missing_reviewed_file_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(ValueError):
+                reviewed_files_from_args(["ghost.txt"], Path(tmp))
 
 
 class AgentRunValidationTests(unittest.TestCase):

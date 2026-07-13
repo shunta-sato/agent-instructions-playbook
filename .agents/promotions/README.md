@@ -9,7 +9,7 @@ To count as valid, the file must contain:
 1. A line beginning `Scope:` (case-insensitive) — a one-line description of the crossing.
 2. A claim reference matching `C-\d+` (e.g. `C-0002`) for each promoted research claim, **or** the literal phrase `no research claims promoted` when the diff is infrastructure-only.
 3. A `Covers:` section: a line beginning `Covers:` followed by one or more `- <path-prefix>` lines naming every delivery-path prefix this acknowledgment covers.
-4. One or more `Delivery-run:` lines (R4), each citing the `run_id` of an `agent_run` record in the canonical ledger (`.agents/runs/agent-runs.jsonl`) that produced the promoted work.
+4. One or more `Delivery-run:` lines (R4), each citing the `run_id` of an `agent_run` record in the canonical ledger (`.agents/runs/agent-runs.jsonl`) that produced or reviewed the promoted work. A cited run counts as evidence only when it recorded **passing validation commands** (`validation.commands` non-empty, all exit 0) **and** an explicit **`quality_gate` of `pass` or `submit`** — a caller-written `validation.passed`/`outcome.validation_passed` boolean is not sufficient.
 
 Example:
 
@@ -28,10 +28,11 @@ Covers:
 `scripts/check_research_evidence.py --diff-range` / `--working-tree` parses every acknowledgment file in the changed-path set and **binds it to recorded ledger evidence** (R4), not just to its own syntax:
 
 - Every cited `C-\d+` claim must resolve to a `research_claim` record that passes re-derivation in the canonical ledger.
-- Every cited `Delivery-run:` `run_id` must resolve to an `agent_run` record whose validation passed (`validation.passed` / `outcome.validation_passed`).
-- A `promotion-required` path is downgraded to a non-blocking `NOTE promotion acknowledged:` line only when it is **both** under one of the acknowledgment's `Covers:` prefixes **and** contained in the union of the cited runs' `changed_files` ∪ `allowed_files` (a listed directory covers its subtree). A delivery path not spanned by that union stays blocking.
+- Every cited `Delivery-run:` `run_id` must resolve to an `agent_run` record with passing validation commands and a recorded quality-gate pass (see requirement 4).
+- A `promotion-required` path is downgraded to a non-blocking `NOTE promotion acknowledged:` line only when it is **both** under one of the acknowledgment's `Covers:` prefixes **and** spanned by a cited run's **`changed_files`** (a listed directory covers its subtree) **or** a **digest-verified `reviewed_files`** entry. `allowed_files` is authorization scope, **not** evidence — it never covers a promoted path. A delivery path not spanned this way stays blocking.
+- `reviewed_files` entries carry a `path` and the `sha256` the recorder computed at record time (via `agent_run record --reviewed-file PATH`). Before a reviewed entry covers a path, the gate re-hashes the blob at the diff head (or the working-tree file) and compares; a drifted digest covers nothing and prints `NOTE stale-review: <path>`.
 
-An invalid acknowledgment — missing any required element, or citing an unresolved claim, an unknown run, or a run that did not pass validation — downgrades **nothing**: the gate prints `NOTE invalid-acknowledgment: <file> (<reason>)` and every `promotion-required` finding stays blocking. This includes the acknowledgment file's own path — list `.agents/promotions/` (or `.agents/`) in `Covers:` and make sure a cited run's files span it. `safety-review-required` is **never** downgraded, by any acknowledgment.
+An invalid acknowledgment — missing any required element, or citing an unresolved claim, an unknown run, a run without passing validation commands, or a run without a recorded quality-gate pass — downgrades **nothing**: the gate prints `NOTE invalid-acknowledgment: <file> (<reason>)` and every `promotion-required` finding stays blocking. Acknowledgment files under `.agents/promotions/` and the run ledger `.agents/runs/agent-runs.jsonl` are the promotion/recording **mechanism**, not promoted content, so they are never themselves `promotion-required` (they need no self-coverage). `safety-review-required` is **never** downgraded, by any acknowledgment.
 
 ## Scope and honest limitation
 

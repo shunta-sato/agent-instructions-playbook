@@ -302,6 +302,16 @@ class ClaimNTests(unittest.TestCase):
         self.assertEqual(n, 1)
         self.assertIn("mixes axis keys", note)
 
+    def test_forged_axis_value_under_other_option_collapses_to_one(self) -> None:
+        # Q2 reviewer bypass, hand-forged into the ledger: axes seed=1/seed=2 but
+        # the values are bound to --output, not --seed. The seed-key template
+        # blanks nothing, so the two commands stay distinct → n=1, not n=2.
+        records = (self._pair("E-0001", "d1", "seed=1", "python p.py --seed=0 --output=1")
+                   + self._pair("E-0002", "d2", "seed=2", "python p.py --seed=0 --output=2"))
+        n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
+        self.assertEqual(n, 1)
+        self.assertIn("non-axis position", note)
+
 
 # --- (F3) register-time variation_axis verification --------------------------
 
@@ -341,6 +351,22 @@ class RegisterAxisTests(unittest.TestCase):
         # R3: the value as its own argv token also qualifies.
         with tempfile.TemporaryDirectory() as tmp:
             rc, _ = self._register(tmp, "seed=7", "run --seed 7")
+        self.assertEqual(rc, 0)
+
+    def test_value_bound_to_other_option_refused(self) -> None:
+        # Q2 reviewer bypass: axis seed=1/seed=2 whose value 1/2 is bound to
+        # --output, not --seed. Registration must refuse both — the value is not
+        # bound to the axis key even though it is a whole token elsewhere.
+        for axis, command in (("seed=1", "python p.py --seed=0 --output=1"),
+                              ("seed=2", "python p.py --seed=0 --output=2")):
+            with tempfile.TemporaryDirectory() as tmp:
+                rc, _ = self._register(tmp, axis, command)
+            self.assertEqual(rc, 1, (axis, command))
+
+    def test_true_seed_binding_accepted(self) -> None:
+        # The genuine variation the bypass imitates is accepted.
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "seed=1", "python p.py --seed=1 --output=out")
         self.assertEqual(rc, 0)
 
 

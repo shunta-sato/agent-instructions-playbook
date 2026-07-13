@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Research OS runner — the only writer of research records. Appends
 preregister/exploration/result/claim records to the shared JSONL ledger;
-every timestamp, id, digest, outcome, effect, and ``n`` is computed here or in
-``research_ledger`` (never from the caller) so the gate re-derives them.
+every timestamp, id, digest, predicate, outcome, and ``n`` is computed here or
+in ``research_ledger`` (never from the caller) so the gate re-derives them.
 Subcommands: register, execute, explore, claim, render-claims. Stdlib only."""
 
 from __future__ import annotations
@@ -112,23 +112,36 @@ def dirty_input_files(repo_root: Path, ledger_path: Path | None = None) -> list[
 # --- subcommands -------------------------------------------------------------
 
 def validate_variation_axis(axis: str, command: str) -> list[str]:
-    """F3/R3: a declared axis must be ``key=value`` (non-empty parts) whose
-    value appears as a WHOLE token of the command, so ``n`` is a mechanically
-    checkable configuration knob, not a free-text label or bare substring."""
+    """F3/R3: a declared axis must be ``key=value`` (non-empty parts) whose value
+    is BOUND to option ``key`` in the command (``--key=value``/``key=value``, or
+    ``--key``/``-key`` followed by ``value``), so ``n`` is a mechanically checkable
+    configuration knob — not a free-text label, a bare substring, or a value that
+    merely happens to sit under a different option."""
     parsed = rl._axis_key_value(axis)
     if parsed is None:
         return ["variation_axis must be key=value with non-empty key and value"]
-    _key, value = parsed
-    if not rl.axis_value_in_command(value, command):
-        return [f"variation_axis value {value!r} must appear as a whole token in the command"]
+    key, value = parsed
+    if not rl.axis_key_bound_in_command(key, value, command):
+        return [f"variation_axis value {value!r} must be bound to option {key!r} in the command"]
     return []
 
+def build_disconfirm(args: argparse.Namespace) -> dict[str, Any]:
+    """The runner constructs the disconfirm predicate — threshold (comparator +
+    threshold) or the structured equivalence bounds (R2b) — so a claim's
+    predicate shape is derived from flags, never asserted free-text."""
+    if args.equivalence_bounds is not None:
+        if args.comparator or args.threshold is not None:
+            raise ValueError("--equivalence-bounds cannot be combined with --comparator/--threshold")
+        lower, upper = args.equivalence_bounds
+        return {"type": rl.PREDICATE_EQUIVALENCE, "metric": args.metric,
+                "lower": parse_number(lower), "upper": parse_number(upper)}
+    if not args.comparator or args.threshold is None:
+        raise ValueError("register requires either --comparator with --threshold, or --equivalence-bounds LOWER UPPER")
+    return {"type": rl.PREDICATE_THRESHOLD, "metric": args.metric,
+            "comparator": args.comparator, "threshold": parse_number(args.threshold)}
+
 def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
-    disconfirm = {
-        "metric": args.metric,
-        "comparator": args.comparator,
-        "threshold": parse_number(args.threshold),
-    }
+    disconfirm = build_disconfirm(args)
     errors = rl.validate_predicate(disconfirm)
     if args.variation_axis:
         errors += validate_variation_axis(args.variation_axis, args.command)
@@ -156,10 +169,6 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
     }
     if args.variation_axis:
         record["variation_axis"] = args.variation_axis
-    if args.effect:  # R2a: the claimable effect is preregistered here, inherited by claims.
-        record["effect"] = args.effect
-    if args.no_effect_predicate:  # R2b: disconfirm is an equivalence bound (supported = no effect).
-        record["no_effect_predicate"] = True
     rl.chain_and_append(ledger_path, record)
     print(experiment_id)
     return 0
@@ -253,12 +262,8 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
     binding_errors, outcome_basis = rl.evaluate_claim_binding(
         records, args.metric, args.direction, args.evidence
     )
-    # R2a: the effect is INHERITED from the cited registrations (which must
-    # agree), never asserted free-text on the claim; effect_basis is persisted
-    # so the gate re-derives it.
-    effect_errors, effect, effect_basis = rl.derive_effect(records, args.evidence)
-    if binding_errors or effect_errors:
-        raise ValueError("; ".join(binding_errors + effect_errors))
+    if binding_errors:
+        raise ValueError("; ".join(binding_errors))
 
     # F2: persist each cited registration's preregistered direction so the gate
     # re-derives the crossing; its presence marks a post-F2 claim (field-
@@ -275,14 +280,12 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         "record_type": rl.CLAIM,
         "claim_id": claim_id,
         "created_at": rl.stamp_utc(),
-        "effect": effect,
         "direction": args.direction,
         "metric": args.metric,
         "configurations": args.configuration,
         "evidence": args.evidence,
         "outcome_basis": outcome_basis,
         "direction_basis": direction_basis,
-        "effect_basis": effect_basis,
         "n_basis": n_basis,
         "sources": args.source or [],
         "n": n,
@@ -319,14 +322,15 @@ def build_parser() -> argparse.ArgumentParser:
     register = sub.add_parser("register", help="Preregister an experiment.")
     register.add_argument("--hypothesis", required=True)
     register.add_argument("--metric", required=True)
-    register.add_argument("--comparator", required=True, choices=rl.COMPARATORS)
-    register.add_argument("--threshold", required=True)
+    # A threshold predicate (--comparator + --threshold) OR the structured
+    # equivalence predicate (--equivalence-bounds LOWER UPPER, R2b); exactly one.
+    register.add_argument("--comparator", choices=rl.COMPARATORS, default="")
+    register.add_argument("--threshold", default=None)
+    register.add_argument("--equivalence-bounds", nargs=2, metavar=("LOWER", "UPPER"), default=None,
+                          help="Equivalence bounds: disconfirmed OUTSIDE [LOWER, UPPER]; "
+                          "supported = within bounds = no effect (R2b).")
     register.add_argument("--command", required=True)
     register.add_argument("--variation-axis", default="")
-    register.add_argument("--effect", default="",
-                          help="Preregistered effect inherited by any citing claim (R2a).")
-    register.add_argument("--no-effect-predicate", action="store_true",
-                          help="Disconfirm is an equivalence bound: supported = no effect (R2b).")
     register.add_argument(
         "--direction-if-supported",
         choices=("improves", "degrades", "none"),
@@ -344,7 +348,8 @@ def build_parser() -> argparse.ArgumentParser:
     explore.set_defaults(func=cmd_explore)
 
     claim = sub.add_parser("claim", help="Record a research claim.")
-    # R2a: no --effect here; the effect is inherited from cited registrations.
+    # R2a: a claim carries no free-text effect; its sentence is rendered purely
+    # from structured fields (metric/direction/n/axis-key).
     claim.add_argument("--direction", required=True, choices=rl.DIRECTIONS)
     claim.add_argument("--metric", required=True)
     claim.add_argument("--configuration", action="append", required=True, default=[])
