@@ -24,6 +24,21 @@ class ReviewedFilesTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 reviewed_files_from_args(["ghost.txt"], Path(tmp))
 
+    def test_symlink_hashes_readlink_target_string(self) -> None:
+        # Supervisor follow-up: a git-tracked symlink (e.g. the .claude/skills
+        # mirror, which points at a DIRECTORY) must not be rejected as missing,
+        # and must hash the readlink target string — the same content git
+        # stores as the symlink's blob — not the resolved target's bytes.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "real_dir").mkdir()
+            (root / "link").symlink_to("real_dir")
+            entries = reviewed_files_from_args(["link"], root)
+        self.assertEqual(
+            entries,
+            [{"path": "link", "sha256": hashlib.sha256(b"real_dir").hexdigest()}],
+        )
+
 
 class AgentRunValidationTests(unittest.TestCase):
     def test_validation_passed_requires_command_evidence(self) -> None:

@@ -226,6 +226,72 @@ class AckReviewedFilesTests(unittest.TestCase):
         self.assertIn("promotion-required: docs/guide.md", findings)
         self.assertIn("stale-review: docs/guide.md", notes)
 
+    def test_symlink_reviewed_file_matches_on_disk(self) -> None:
+        # Supervisor follow-up: a reviewed path that is a git-tracked SYMLINK to
+        # a directory (e.g. .claude/skills/<name>) must be covered by its
+        # readlink-target digest, not rejected/mismatched by following it.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "real_dir").mkdir()
+            (root / "link").symlink_to("real_dir")
+            run = _run("run-1", changed=[], allowed=[],
+                       reviewed=[{"path": "link", "sha256": hashlib.sha256(b"real_dir").hexdigest()}])
+            _write_canonical_ledger(root, [run])
+            _write_ack(root, ACK, covers=["link", ".agents/promotions/"], run_ids=["run-1"])
+            findings, notes = cre.evaluate_diff(["link", ACK], root, POLICY, "research")
+        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
+        self.assertIn(f"promotion acknowledged: {ACK} covers link", notes)
+
+
+class AckSymlinkHeadBlobTests(unittest.TestCase):
+    """Q3b follow-up: the gate's ``--diff-range`` verification hashes the
+    ``git show <head>:<path>`` blob, which for a symlink IS its readlink target
+    string — match and mismatch/stale, exercised through ``run_diff_mode``."""
+
+    def _capture(self, fn, *args) -> tuple[int, str]:
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            rc = fn(*args)
+        return rc, buf.getvalue()
+
+    def _git(self, root: Path, *args) -> None:
+        subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+
+    def _repo_with_committed_symlink(self, tmp: str, reviewed_sha256: str) -> tuple[Path, Path]:
+        root = Path(tmp)
+        for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
+            self._git(root, *args)
+        policy = root / "policy.json"
+        policy.write_text(json.dumps(POLICY), encoding="utf-8")
+        _write_canonical_ledger(root, [_run(
+            "run-1", changed=[], allowed=[],
+            reviewed=[{"path": "link", "sha256": reviewed_sha256}],
+        )])
+        self._git(root, "add", "-A")
+        self._git(root, "commit", "-qm", "base")
+        (root / "target_dir").mkdir()
+        (root / "link").symlink_to("target_dir")  # tracked symlink to a DIRECTORY
+        _write_ack(root, ACK, covers=["link", ".agents/promotions/"], run_ids=["run-1"])
+        self._git(root, "add", "-A")
+        self._git(root, "commit", "-qm", "promote")
+        return root, policy
+
+    def test_matching_symlink_digest_downgrades_at_head(self) -> None:
+        correct = hashlib.sha256(b"target_dir").hexdigest()  # readlink target, no newline
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = self._repo_with_committed_symlink(tmp, correct)
+            rc, output = self._capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 0)
+        self.assertIn(f"NOTE promotion acknowledged: {ACK} covers link", output)
+
+    def test_mismatched_symlink_digest_stays_blocking_and_stale(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = self._repo_with_committed_symlink(tmp, "0" * 64)  # recorded digest drifted
+            rc, output = self._capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING promotion-required: link", output)
+        self.assertIn("NOTE stale-review: link", output)
+
 
 class MechanismPathTests(unittest.TestCase):
     """Q3d: acknowledgment files and the run ledger are the promotion/recording

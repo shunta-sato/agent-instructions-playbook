@@ -12,17 +12,6 @@ no research claims promoted
 
 **Delivery-run evidence** (R4): the accepted worker `agent_run` records whose changed/allowed files produced this delivery surface.
 
-Delivery-run: 20260712T151808Z-focused_code_change-641da0ad
-Delivery-run: 20260712T092212Z-focused_code_change-106d2efe
-Delivery-run: 20260712T045229Z-focused_code_change-61aa6c48
-Delivery-run: 20260712T050939Z-focused_code_change-cddbc1d0
-Delivery-run: 20260712T044653Z-focused_code_change-5d7fa694
-Delivery-run: 20260712T044900Z-focused_code_change-2a21efab
-Delivery-run: 20260712T075307Z-focused_code_change-5043231d
-Delivery-run: 20260705T130846Z-focused_code_change-70a7eadf
-Delivery-run: 20260712T083111Z-focused_code_change-e9dbecbf
-Delivery-run: 20260712T084343Z-research_probe-da7af946
-Delivery-run: 20260712T050309Z-research_probe-76ff117e
 Delivery-run: 20260712T165226Z-focused_code_change-19e96118
 Delivery-run: 20260712T165530Z-focused_code_change-a87e54f5
 
@@ -40,11 +29,4 @@ Covers:
 - .claude/
 - .agents/
 
-<!-- supervisor reviewed-files run to be appended -->
-<!-- The worker Delivery-runs above cover their own changed files. Under the
-round-4 gate, allowed_files no longer count as coverage and each cited run must
-carry a recorded quality_gate pass/submit, so the supervisor-integrated paths
-(README.md, CHANGELOG.md, route-lockfile.json, .claude/skills symlinks, plans/,
-evals/, .agents/skills text, .gitignore, Makefile, .github/workflows, AGENTS.md,
-...) are closed by a new supervisor run recorded with --reviewed-file AFTER
-these changes are final. -->
+Delivery-run: 20260713T024148Z-focused_code_change-891e05c1

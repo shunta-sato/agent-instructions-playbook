@@ -7,6 +7,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -58,6 +59,15 @@ def normalize_repo_path(raw_path: str, repo_root: Path) -> str:
 def unique_sorted(paths: list[str]) -> list[str]:
     return sorted(dict.fromkeys(paths))
 
+def _sha256_reviewed_path(path: Path) -> str:
+    """A symlink hashes its readlink TARGET STRING — git stores a symlink as a
+    blob whose content IS that string (no trailing newline), so this matches
+    the gate's ``git show <head>:<path>`` verification byte-for-byte. A regular
+    file hashes its bytes, unchanged."""
+    if path.is_symlink():
+        return hashlib.sha256(os.readlink(path).encode("utf-8")).hexdigest()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
 def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, str]]:
     """Q3b: for each reviewed path the SCRIPT (never the caller) records the
     sha256 of the file at record time, so the gate can later verify the digest
@@ -66,9 +76,9 @@ def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> li
     for raw in raw_paths or []:
         rel = normalize_repo_path(raw, repo_root)
         absolute = repo_root / rel
-        if not absolute.is_file():
+        if not (absolute.is_symlink() or absolute.is_file()):
             raise ValueError(f"reviewed file is missing: {raw}")
-        entries.append({"path": rel, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()})
+        entries.append({"path": rel, "sha256": _sha256_reviewed_path(absolute)})
     return sorted(entries, key=lambda entry: entry["path"])
 
 def issue_run_id(slug: str) -> str:

@@ -198,13 +198,21 @@ def _valid_canonical_claim_ids(repo_root: Path) -> set[str]:
 # --- reviewed-file digest binding (Q3b) --------------------------------------
 
 def _disk_digest(repo_root: Path, path: str) -> str | None:
-    """sha256 of ``path`` on disk (working-tree/default resolver), or ``None``."""
+    """sha256 of ``path`` on disk (working-tree/default resolver), or ``None``.
+    A symlink hashes its readlink TARGET STRING, matching ``agent_run``'s
+    recorder and git's own blob content for a symlink, rather than being
+    followed to the resolved target's content."""
     absolute = repo_root / path
+    if absolute.is_symlink():
+        return hashlib.sha256(os.readlink(absolute).encode("utf-8")).hexdigest()
     return rl.sha256_file(absolute) if absolute.is_file() else None
 
 def _git_blob_digest(repo_root: Path, head_ref: str, path: str) -> str | None:
-    """sha256 of ``path`` as committed at ``head_ref`` (matches ``agent_run``'s
-    recorded ``sha256_file``); ``None`` when the blob is absent there."""
+    """sha256 of ``path`` as committed at ``head_ref``. ``git show`` yields the
+    raw blob for either shape — file bytes, or (for a symlink) the readlink
+    target string with no trailing newline — so hashing ``stdout`` as-is
+    already matches ``agent_run``'s symlink-aware recorded digest. ``None``
+    when the blob is absent there."""
     completed = subprocess.run(
         ["git", "-C", str(repo_root), "show", f"{head_ref}:{path}"], capture_output=True
     )
