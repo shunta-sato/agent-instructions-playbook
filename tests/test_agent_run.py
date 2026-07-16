@@ -192,9 +192,9 @@ class ReviewChangedFlagTests(unittest.TestCase):
 
 
 class ReviewedDeletedTests(unittest.TestCase):
-    """(c): ``--reviewed-deleted`` tombstones a path with the sha256 of its
-    blob at current HEAD (before the delete commit lands), since there is no
-    head blob left to hash once the deletion is committed."""
+    """(c)/M2: ``--reviewed-deleted`` tombstones a path with the sha256 AND
+    git-mode of its blob at current HEAD (before the delete commit lands),
+    since there is no head blob left to hash once the deletion is committed."""
 
     def _base_argv(self, root: Path, brief: Path, *extra: str) -> list[str]:
         return [
@@ -221,7 +221,8 @@ class ReviewedDeletedTests(unittest.TestCase):
             _, record = build_run_record(args)
         self.assertEqual(
             record["reviewed_files"],
-            [{"path": "src/old.py", "deleted": True, "base_sha256": hashlib.sha256(b"legacy\n").hexdigest()}],
+            [{"path": "src/old.py", "deleted": True,
+              "base_sha256": hashlib.sha256(b"legacy\n").hexdigest(), "mode": "100644"}],
         )
 
     def test_reviewed_deleted_missing_at_head_is_rejected(self) -> None:

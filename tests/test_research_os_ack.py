@@ -305,48 +305,90 @@ class MechanismPathTests(unittest.TestCase):
 
 
 class AckDeletionCoverageTests(unittest.TestCase):
-    """(c): a DELETED path (absent at head, present at base) is covered only
-    by a matching tombstone's ``base_sha256`` — a normal digest entry never
-    covers a deletion, and a tombstone never covers a live file. The real-git
-    ``run_diff_mode`` wiring for this lives in ``test_research_os_gate``."""
+    """(c)/M2/M5: a DELETED path (absent at head, present at base) is covered
+    only by a matching tombstone's (base_sha256, mode) AT THE RANGE BASE — a
+    normal digest entry never covers a deletion, and a tombstone never covers
+    a live file. The real-git ``run_diff_mode`` wiring lives in
+    ``test_research_os_gate``/``test_research_os_mode``."""
 
     BASE_DIGEST = hashlib.sha256(b"legacy\n").hexdigest()
+    BASE_MODE = "100644"
 
-    def _eval(self, reviewed, blob_digest):
+    def _eval(self, reviewed, identity):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             run = _run("run-1", changed=["src/old.py"], allowed=["src/old.py", ".agents/promotions/"],
                        reviewed=reviewed)
-            return _diff(root, run, ["src/old.py"],
-                         blob_digest=blob_digest, base_blob_digest=lambda p: self.BASE_DIGEST)
+            return _diff(root, run, ["src/old.py"], identity=identity,
+                         base_identity=lambda p: (self.BASE_DIGEST, self.BASE_MODE))
 
     def test_deletion_coverage_matrix(self) -> None:
         # tombstone matches -> downgrade; absent/mismatched/wrong-kind -> blocking.
         cases = {
             "matching-tombstone-downgrades": ([{"path": "src/old.py", "deleted": True,
-                                                 "base_sha256": self.BASE_DIGEST}], True, None),
+                                                 "base_sha256": self.BASE_DIGEST, "mode": self.BASE_MODE}], True, None),
             "missing-tombstone-blocks": ([], False, None),
-            "mismatched-tombstone-is-stale": ([{"path": "src/old.py", "deleted": True,
-                                                 "base_sha256": "0" * 64}], False, "stale-tombstone"),
+            "mismatched-digest-tombstone-is-blocking": ([{"path": "src/old.py", "deleted": True,
+                                                 "base_sha256": "0" * 64, "mode": self.BASE_MODE}],
+                                                 False, "tombstone-base-mismatch"),
+            "mismatched-mode-tombstone-is-blocking": ([{"path": "src/old.py", "deleted": True,
+                                                 "base_sha256": self.BASE_DIGEST, "mode": "100755"}],
+                                                 False, "tombstone-base-mismatch"),
+            "unbound-mode-tombstone-grandfathers": ([{"path": "src/old.py", "deleted": True,
+                                                 "base_sha256": self.BASE_DIGEST}], True, None),
             "normal-entry-never-covers-deletion": ([{"path": "src/old.py",
-                                                      "sha256": self.BASE_DIGEST}], False, None),
+                                                      "sha256": self.BASE_DIGEST, "mode": self.BASE_MODE}], False, None),
         }
         for label, (reviewed, covered, stale) in cases.items():
             with self.subTest(label):
-                findings, notes = self._eval(reviewed, blob_digest=lambda p: None)
+                findings, notes = self._eval(reviewed, identity=lambda p: (None, None))
                 required = [f for f in findings if f.startswith("promotion-required:")]
                 self.assertEqual(required, [] if covered else ["promotion-required: src/old.py"])
                 if stale:
-                    self.assertIn(f"{stale}: src/old.py", notes)
+                    self.assertTrue(any(n.startswith(f"{stale}: src/old.py") for n in notes), notes)
 
     def test_tombstone_never_covers_a_live_file(self) -> None:
-        # src/old.py is LIVE (head blob == base blob) — a tombstone entry for
-        # it, even with a matching digest, must not cover.
+        # src/old.py is LIVE (head identity == base identity) — a tombstone
+        # entry for it, even with a matching (digest, mode), must not cover.
         findings, _ = self._eval(
-            [{"path": "src/old.py", "deleted": True, "base_sha256": self.BASE_DIGEST}],
-            blob_digest=lambda p: self.BASE_DIGEST,
+            [{"path": "src/old.py", "deleted": True, "base_sha256": self.BASE_DIGEST, "mode": self.BASE_MODE}],
+            identity=lambda p: (self.BASE_DIGEST, self.BASE_MODE),
         )
         self.assertIn("promotion-required: src/old.py", findings)
+
+
+class LiveModeBindingTests(unittest.TestCase):
+    """M2: a LIVE promoted path binds to (digest, git-mode), not bytes alone —
+    a reviewed regular file cannot be covered by a same-bytes symlink (or
+    100644 by a 100755), and a pre-M2 mode-less entry grandfathers in."""
+
+    DIGEST = "d" * 64
+
+    def _eval(self, entry_mode, current_mode):
+        reviewed = [{"path": "src/app.py", "sha256": self.DIGEST, **({"mode": entry_mode} if entry_mode else {})}]
+        with tempfile.TemporaryDirectory() as tmp:
+            run = _run("run-1", changed=[], allowed=[], reviewed=reviewed)
+            return _diff(Path(tmp), run, ["src/app.py"], covers=["src/", ".agents/promotions/"],
+                         identity=lambda p: (self.DIGEST, current_mode))
+
+    def test_mode_mismatch_does_not_cover(self) -> None:
+        findings, notes = self._eval(entry_mode="100644", current_mode="100755")
+        self.assertIn("promotion-required: src/app.py", findings)
+        self.assertTrue(any(n.startswith("stale-review: src/app.py") for n in notes), notes)
+
+    def test_symlink_mode_does_not_cover_a_reviewed_regular_file(self) -> None:
+        findings, _ = self._eval(entry_mode="100644", current_mode="120000")
+        self.assertIn("promotion-required: src/app.py", findings)
+
+    def test_matching_digest_and_mode_covers(self) -> None:
+        findings, notes = self._eval(entry_mode="100644", current_mode="100644")
+        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
+        self.assertIn(f"promotion acknowledged: {ACK} covers src/app.py", notes)
+
+    def test_no_stored_mode_grandfathers_with_note(self) -> None:
+        findings, notes = self._eval(entry_mode=None, current_mode="100755")
+        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
+        self.assertIn("unbound-mode: src/app.py", notes)
 
 
 if __name__ == "__main__":

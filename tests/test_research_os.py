@@ -315,11 +315,13 @@ class ClaimNTests(unittest.TestCase):
 
     def test_forged_axis_value_under_other_option_collapses_to_one(self) -> None:
         # Q2 reviewer bypass, hand-forged: axes seed=1/seed=2 are bound to --output, not --seed.
+        # F4: axis_binding now catches this per-entry via the structural contract (the axis value
+        # is never bound to --seed at all) rather than via the pairwise non-axis-position check.
         records = (self._pair("E-0001", "d1", "seed=1", "python p.py --seed=0 --output=1")
                    + self._pair("E-0002", "d2", "seed=2", "python p.py --seed=0 --output=2"))
         n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
         self.assertEqual(n, 1)
-        self.assertIn("non-axis position", note)
+        self.assertIn("not structurally bound", note)
 
 # --- (F3) register-time variation_axis verification --------------------------
 class RegisterAxisTests(unittest.TestCase):

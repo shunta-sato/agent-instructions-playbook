@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import operator
+import re
 import shlex
 from pathlib import Path
 from typing import Any
@@ -21,16 +22,12 @@ EXPLORATION = "experiment_exploration"
 RESULT = "experiment_result"
 CLAIM = "research_claim"
 RESEARCH_TYPES = (PREREGISTER, EXPLORATION, RESULT, CLAIM)
-
 COMPARATORS = ("<", "<=", ">", ">=", "==")
 
-# B1: a claim's category is machine-derived (see ``derive_claim_category``), never caller-supplied.
-CATEGORY_SUPPORTED = "supported"
+CATEGORY_SUPPORTED = "supported"  # B1: a claim's category is machine-derived, never caller-supplied.
 CATEGORY_WITHIN_BOUNDS = "within-bounds"
 CATEGORY_DISCONFIRMED = "disconfirmed"
 CATEGORY_MIXED = "mixed"
-CLAIM_CATEGORIES = (CATEGORY_SUPPORTED, CATEGORY_WITHIN_BOUNDS, CATEGORY_DISCONFIRMED, CATEGORY_MIXED)
-
 PREDICATE_THRESHOLD = "threshold"  # R2b; legacy records with no ``type`` read as threshold.
 PREDICATE_EQUIVALENCE = "equivalence"
 
@@ -41,20 +38,13 @@ def canonical_json(obj: Any) -> str:
     """Deterministic JSON serialization (sorted keys, compact separators)."""
     return json.dumps(obj, sort_keys=True, separators=(",", ":"))
 
-def sha256_text(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+def sha256_text(text: str) -> str: return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(65536), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def sha256_file(path: Path) -> str: return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def compute_hash(record: dict[str, Any]) -> str:
     """Hash a record's canonical JSON with the ``chain.hash`` field absent."""
-    chain = dict(record.get("chain") or {})
-    chain.pop("hash", None)
+    chain = {k: v for k, v in (record.get("chain") or {}).items() if k != "hash"}
     return sha256_text(canonical_json({**record, "chain": chain}))
 
 def stamp_utc() -> str:
@@ -88,23 +78,18 @@ def chain_and_append(ledger_path: Path, record: dict[str, Any]) -> dict[str, Any
     existing = load_research_records(ledger_path)
     record["chain"] = {"prev": existing[-1]["chain"]["hash"] if existing else None}
     record["chain"]["hash"] = compute_hash(record)
-    append_jsonl(ledger_path, record)
-    return record
+    append_jsonl(ledger_path, record); return record
 
 def next_counter(records: list[dict[str, Any]], record_type: str, prefix: str) -> str:
     return f"{prefix}-{sum(1 for r in records if r.get('record_type') == record_type) + 1:04d}"
 
-def _find(records: list[dict[str, Any]], rtype: str, eid: str) -> dict[str, Any] | None:
-    return next((r for r in records if r.get("record_type") == rtype and r.get("experiment_id") == eid), None)
-
 def find_preregister(records: list[dict[str, Any]], experiment_id: str) -> dict[str, Any] | None:
-    return _find(records, PREREGISTER, experiment_id)
+    return next((r for r in records if r.get("record_type") == PREREGISTER and r.get("experiment_id") == experiment_id), None)
 
 def find_result(records: list[dict[str, Any]], experiment_id: str) -> dict[str, Any] | None:
-    return _find(records, RESULT, experiment_id)
+    return next((r for r in records if r.get("record_type") == RESULT and r.get("experiment_id") == experiment_id), None)
 
-def _is_number(value: Any) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool)
+def _is_number(value: Any) -> bool: return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 def predicate_type(disconfirm: Any) -> str:
     """A disconfirm's predicate shape; legacy (no ``type``) records are ``threshold``."""
@@ -163,15 +148,12 @@ def derive_outcome(disconfirm: dict[str, Any], metrics: Any) -> str:
     return "disconfirmed" if apply_comparator(comparator, value, disconfirm["threshold"]) else "supported"
 
 def command_digest(git_head: str, dirty_files: list[dict[str, str]], command: str) -> str:
-    parts = [git_head]
-    parts += [f"{e['path']}\x00{e['sha256']}" for e in sorted(dirty_files, key=lambda e: (e["path"], e["sha256"]))]
-    parts.append(command)
-    return sha256_text("\n".join(parts))
+    dirty = [f"{e['path']}\x00{e['sha256']}" for e in sorted(dirty_files, key=lambda e: (e["path"], e["sha256"]))]
+    return sha256_text("\n".join([git_head] + dirty + [command]))
 
 def multiplicity(prior_records: list[dict[str, Any]], digest: str) -> int:
     """Count prior exploration + result records sharing a command digest."""
-    return sum(1 for r in prior_records
-               if r.get("record_type") in (EXPLORATION, RESULT) and r.get("command_digest") == digest)
+    return sum(1 for r in prior_records if r.get("record_type") in (EXPLORATION, RESULT) and r.get("command_digest") == digest)
 
 SHELL_METACHARACTERS = ";&|<>`$()\n"
 
@@ -221,12 +203,49 @@ def _templatize_command(command: str, key: str, value: str) -> str:
             out.append(AXIS_PLACEHOLDER)
     return " ".join(out)
 
-AXIS_EFFECTIVE_KEY = "axis_effective"
+_ENV_ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")  # F4: structured axis-command contract
+_SHORT_OPT_RE = re.compile(r"^-[A-Za-z]+$")
+_WRAPPER_FLAG_CHARS = {"sh": "c", "bash": "c", "zsh": "c", "dash": "c", "ksh": "c",  # -c runs a script
+                        "python": "ce", "python3": "ce", "perl": "ce", "ruby": "ce"}  # -c/-e do too
 
+def parse_axis_command(command: str) -> tuple[list[tuple[str, str]], list[str]] | None:
+    """Peel leading NAME=VALUE / transparent ``env`` tokens; the rest is the real exec argv."""
+    tokens = _tokenize(command)
+    index = 0
+    while index < len(tokens) and (_ENV_ASSIGNMENT_RE.match(tokens[index]) or Path(tokens[index]).name == "env"):
+        index += 1
+    env_assignments = [tuple(t.split("=", 1)) for t in tokens[:index] if "=" in t]
+    exec_argv = tokens[index:]
+    return (env_assignments, exec_argv) if exec_argv else None
+
+def axis_binding_errors(axis: str, command: str) -> list[str]:
+    """F4: structural validity of ``variation_axis`` against ``command``'s REAL executable argv; shared by write-time validation + checker re-derivation."""
+    parsed = _axis_key_value(axis)
+    if parsed is None:
+        return ["variation_axis must be key=value with non-empty key and value"]
+    key, value = parsed
+    if not command_is_simple(command):
+        return ["axis-bearing experiments require a simple command; register without an axis or split it"]
+    binding = parse_axis_command(command)
+    if binding is None:
+        return ["variation_axis command has no executable argv"]
+    argv = binding[1]
+    flags = _WRAPPER_FLAG_CHARS.get(Path(argv[0]).name, "") if argv else ""
+    if flags and any(_SHORT_OPT_RE.match(t) and set(t[1:]) & set(flags) for t in argv[1:] if not t.startswith("--")):
+        return [f"variation_axis cannot bind through wrapper {argv[0]!r} (-c/-e consumes argv)"]
+    if sum(1 for t in argv if t in {f"--{key}", f"-{key}"} or t.startswith((f"--{key}=", f"{key}="))) > 1:
+        return [f"variation_axis key {key!r} appears more than once; the axis value must be unambiguous"]
+    positions = _bound_value_positions(argv, key, value)
+    if not positions:
+        return [f"variation_axis value {value!r} must be bound to option {key!r} in the command"]
+    if "--" in argv and all(p > argv.index("--") for p in positions):
+        return [f"variation_axis value {value!r} is stranded after a bare '--' terminator"]
+    return []
+
+AXIS_EFFECTIVE_KEY = "axis_effective"
 def axis_effective_mismatch(metrics: Any, declared_value: str) -> bool:
     """B4: True when ``metrics["axis_effective"]`` disagrees with the declared axis value."""
-    present = isinstance(metrics, dict) and AXIS_EFFECTIVE_KEY in metrics
-    return present and str(metrics[AXIS_EFFECTIVE_KEY]) != str(declared_value)
+    return isinstance(metrics, dict) and AXIS_EFFECTIVE_KEY in metrics and str(metrics[AXIS_EFFECTIVE_KEY]) != str(declared_value)
 
 def final_outcome(prereg: dict[str, Any], metrics: Any) -> str:
     """B4 parity: derive_outcome + the SAME axis_effective override, shared by runner + checker."""
@@ -235,66 +254,57 @@ def final_outcome(prereg: dict[str, Any], metrics: Any) -> str:
         return "not-evaluable"
     return derive_outcome(prereg["disconfirm"], metrics)
 
-def claim_n_and_note(records: list[dict[str, Any]], evidence_ids: list[str]) -> tuple[int, str]:
-    """Conservative multiplicity + note (R3): n = pairwise-distinct axis values over one common template."""
-    keys_seen: set[str] = set()
-    entries: list[tuple[str, str]] = []  # (axis value, registered command)
+def axis_binding(records: list[dict[str, Any]], evidence_ids: list[str]) -> dict[str, Any]:
+    """F3: ONE shared axis derivation (n, labels, note, valid) for writer/checker/renderer, so
+    n and labels never disagree; invalid/legacy axis -> n=1, "unverified configuration" (grandfathered)."""
+    def _bad(note: str) -> dict[str, Any]:
+        return {"n": 1, "labels": ["unverified configuration"], "note": note, "valid": False}
+
+    pairs: list[tuple[str, str, str]] = []  # (axis key, axis value, registered command)
     for eid in evidence_ids:
-        prereg = find_preregister(records, eid)
-        result = find_result(records, eid)
+        prereg, result = find_preregister(records, eid), find_result(records, eid)
         if prereg is None or result is None:
             continue
-        parsed = _axis_key_value(prereg.get("variation_axis"))
+        axis, cmd = prereg.get("variation_axis"), prereg.get("command", "")
+        parsed = _axis_key_value(axis)
         if parsed is None:
             continue
-        key, value = parsed
-        cmd = prereg.get("command", "")
         if not command_is_simple(cmd):  # forged-ledger defense: no exception, n=1
-            return 1, "n=1: axis on non-simple command"
-        if axis_effective_mismatch(result.get("metrics"), value):
-            return 1, f"n=1: {eid} axis_effective does not match declared axis value"
-        keys_seen.add(key)
-        entries.append((value, cmd))
-    if not keys_seen:
-        return 1, "n=1: no conforming variation axis"
-    if len(keys_seen) > 1:
-        return 1, f"n=1: evidence mixes axis keys {sorted(keys_seen)}"
-    (key,) = tuple(keys_seen)
-    templates = {_templatize_command(cmd, key, val) for val, cmd in entries}
-    if len(templates) != 1:
-        return 1, f"n=1: axis {key!r} substitution leaves commands differing at a non-axis position"
-    n = len({val for val, _cmd in entries})
-    return n, f"n={n}: distinct values on axis key {key!r} over a common command template"
+            return _bad("n=1: axis on non-simple command")
+        if axis_binding_errors(axis, cmd):  # F4: structural re-derivation, not just text-matching
+            return _bad(f"n=1: {eid} variation_axis is not structurally bound to the command")
+        if axis_effective_mismatch(result.get("metrics"), parsed[1]):
+            return _bad(f"n=1: {eid} axis_effective does not match declared axis value")
+        pairs.append((parsed[0], parsed[1], cmd))
+    if not pairs:
+        return {"n": 1, "labels": ["single configuration"], "note": "n=1: no conforming variation axis", "valid": False}
+    keys = {k for k, _v, _c in pairs}
+    if len(keys) > 1:
+        return _bad(f"n=1: evidence mixes axis keys {sorted(keys)}")
+    (key,) = keys
+    if len({_templatize_command(c, key, v) for _k, v, c in pairs}) != 1:
+        return _bad(f"n=1: axis {key!r} substitution leaves commands differing at a non-axis position")
+    values = sorted({v for _k, v, _c in pairs}); n = len(values)
+    labels = [f"{key}={v}" for v in values] if n > 1 else ["single configuration"]
+    return {"n": n, "labels": labels, "valid": True,
+            "note": f"n={n}: distinct values on axis key {key!r} over a common command template"}
 
-def claim_n(records: list[dict[str, Any]], evidence_ids: list[str]) -> int:
-    """The integer multiplicity only; see ``claim_n_and_note`` for the basis."""
-    return claim_n_and_note(records, evidence_ids)[0]
+def claim_n_and_note(records: list[dict[str, Any]], evidence_ids: list[str]) -> tuple[int, str]:
+    binding = axis_binding(records, evidence_ids)
+    return binding["n"], binding["note"]
 
-def claim_axis_key(records: list[dict[str, Any]], evidence_ids: list[str]) -> str | None:
-    """The single variation-axis KEY shared by the cited evidence, or ``None`` if none/mixed."""
-    parsed = (_axis_key_value((find_preregister(records, eid) or {}).get("variation_axis")) for eid in evidence_ids)
-    keys = {p[0] for p in parsed if p is not None}
-    return next(iter(keys)) if len(keys) == 1 else None
-
-def claim_configuration_labels(records: list[dict[str, Any]], evidence_ids: list[str]) -> list[str]:
-    """S6: configuration identity derived from evidence only, never free text (axis key=value pairs, or "single configuration")."""
-    key = claim_axis_key(records, evidence_ids)
-    if key is None:
-        return ["single configuration"]
-    pairs = (_axis_key_value((find_preregister(records, eid) or {}).get("variation_axis")) for eid in evidence_ids)
-    return [f"{key}={v}" for v in sorted({p[1] for p in pairs if p and p[0] == key})]
+def claim_n(records: list[dict[str, Any]], evidence_ids: list[str]) -> int: return axis_binding(records, evidence_ids)["n"]
 
 def normalized_predicate(disconfirm: dict[str, Any]) -> tuple[Any, ...]:
-    """S5: normalize a VALID disconfirm for cross-registration identity comparison."""
+    """S5: normalize a VALID disconfirm for identity comparison. F1: no float() cast — two large ints differing by 1 never collapse via rounding."""
     ptype, metric = predicate_type(disconfirm), disconfirm.get("metric")
     if ptype == PREDICATE_EQUIVALENCE:
-        return (ptype, metric, float(disconfirm.get("lower")), float(disconfirm.get("upper")))
-    return (ptype, metric, disconfirm.get("comparator"), float(disconfirm.get("threshold")))
+        return (ptype, metric, disconfirm.get("lower"), disconfirm.get("upper"))
+    return (ptype, metric, disconfirm.get("comparator"), disconfirm.get("threshold"))
 
 def predicate_identity_errors(records: list[dict[str, Any]], evidence_ids: list[str]) -> list[str]:
     """S5: a claim's cited registrations must share ONE normalized predicate (invalid ones skip; see validate_predicate)."""
-    baseline: tuple[Any, ...] | None = None
-    baseline_eid = ""
+    baseline, baseline_eid = None, ""
     errors: list[str] = []
     for eid in evidence_ids:
         disconfirm = (find_preregister(records, eid) or {}).get("disconfirm")
@@ -311,11 +321,9 @@ def evaluate_claim_binding(
     records: list[dict[str, Any]], metric: str, evidence_ids: list[str]
 ) -> tuple[list[str], list[dict[str, str]]]:
     """Re-derive binding -> (errors, outcome_basis): metric/predicate match + real evidence (R1)."""
-    errors: list[str] = []
-    basis: list[dict[str, str]] = []
+    errors, basis = [], []
     for eid in evidence_ids:
-        prereg = find_preregister(records, eid)
-        result = find_result(records, eid)
+        prereg, result = find_preregister(records, eid), find_result(records, eid)
         if prereg is None or result is None:
             errors.append(f"{eid}: no completed experiment result")
             continue
@@ -334,11 +342,9 @@ def evaluate_claim_binding(
 
 def derive_claim_category(records: list[dict[str, Any]], evidence_ids: list[str]) -> str:
     """B1/B5: category from cited-evidence outcomes + predicate shapes only, never asserted."""
-    outcomes: list[str] = []
-    types: set[str] = set()
+    outcomes, types = [], set()
     for eid in evidence_ids:
-        prereg = find_preregister(records, eid)
-        result = find_result(records, eid)
+        prereg, result = find_preregister(records, eid), find_result(records, eid)
         if prereg is None or result is None:
             continue
         outcomes.append(result.get("outcome"))
@@ -356,16 +362,17 @@ def claims_view_path(repo_root: Path, ledger_path: Path) -> Path:
     return ledger_path.parent / "claims.md"
 
 def render_claims(records: list[dict[str, Any]]) -> str:
-    """Deterministic claims view; category + configuration identity are ALWAYS re-derived, never a stored free-text field."""
+    """Deterministic claims view; category + configuration identity (``axis_binding``, F3) are ALWAYS re-derived; sources are never rendered (F2)."""
     head = records[-1]["chain"]["hash"] if records else "none"
     lines = ["# Research claims", "", f"ledger-head: {head}", ""]
     claims = sorted((r for r in records if r.get("record_type") == CLAIM), key=lambda r: r["claim_id"])
     for claim in claims:
-        n, metric, evidence = claim["n"], claim["metric"], claim["evidence"]
+        metric, evidence = claim["metric"], claim["evidence"]
         category = derive_claim_category(records, evidence)
-        axis_key = claim_axis_key(records, evidence)
-        # predicate_identity_errors (S5) guarantees every non-mixed citation shares ONE normalized
-        # predicate, so the first cited registration stands in as the representative fact.
+        binding = axis_binding(records, evidence)
+        n = binding["n"]
+        axis_key = binding["labels"][0].split("=", 1)[0] if n > 1 else None  # n>1 => labels are key=value
+        # (S5) guarantees every non-mixed citation shares ONE predicate, so evidence[0] stands in as the representative fact.
         disconfirm = (find_preregister(records, evidence[0]) or {}).get("disconfirm") or {}
         tail = ("observed in a single configuration" if n == 1 else
                 f"observed across {n} distinct {axis_key or 'variation-axis'} configurations")
@@ -382,16 +389,12 @@ def render_claims(records: list[dict[str, Any]]) -> str:
                         f"{disconfirm.get('comparator')} {disconfirm.get('threshold')} — {tail}.")
         else:
             sentence = f"{metric} remained within [{disconfirm.get('lower')}, {disconfirm.get('upper')}] — {tail}."
-        lines.append(f"## {claim['claim_id']}")
-        lines.append(sentence)
-        lines.append(f"configurations: {', '.join(claim_configuration_labels(records, evidence))}")
-        lines.append(f"evidence: {', '.join(evidence)}")
+        lines += [f"## {claim['claim_id']}", sentence,
+                  f"configurations: {', '.join(binding['labels'])}", f"evidence: {', '.join(evidence)}"]
         if claim.get("outcome_basis"):
             basis = ", ".join(f"{b['experiment_id']}={b['outcome']}" for b in claim["outcome_basis"])
             lines.append(f"outcome-basis: {basis}")
         if claim.get("n_basis"):
             lines.append(f"n-basis: {claim['n_basis']}")
-        if claim.get("sources"):
-            lines.append(f"sources: {', '.join(claim['sources'])}")
         lines.append("")
     return "\n".join(lines).rstrip("\n") + "\n"

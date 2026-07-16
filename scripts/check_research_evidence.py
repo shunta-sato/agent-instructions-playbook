@@ -19,13 +19,16 @@ from typing import Any
 try:  # direct execution: scripts/ is on sys.path[0]
     import research_ledger as rl
     import research_gate as rg
+    import research_run as rr  # F2: validate_source lives at the CLI/writer layer (no ledger traversal)
 except ModuleNotFoundError:  # imported as scripts.check_research_evidence (tests, -m)
     from scripts import research_ledger as rl
     from scripts import research_gate as rg
+    from scripts import research_run as rr
 
 # Re-export the boundary-gate API so existing callers/tests keep the ``cre.``
 # names after the split (the CLI, the Makefile, and CI invoke the same flags).
 evaluate_diff = rg.evaluate_diff
+resolve_mode = rg.resolve_mode
 run_diff_mode = rg.run_diff_mode
 run_working_tree_mode = rg.run_working_tree_mode
 changed_paths_from_range = rg.changed_paths_from_range
@@ -116,11 +119,17 @@ def _check_claims(records: list[dict[str, Any]], findings: list[str]) -> None:
         if "derived_category" in record and record.get("derived_category") != expected_category:
             findings.append(f"claim-category-mismatch: {cid}")
 
-        expected_n, expected_n_basis = rl.claim_n_and_note(records, evidence)
-        if record.get("n") != expected_n:
-            findings.append(f"claim-n-mismatch: {cid}: expected {expected_n}")
-        if "n_basis" in record and record.get("n_basis") != expected_n_basis:  # F3
+        binding = rl.axis_binding(records, evidence)  # F3: ONE shared n/label/note derivation
+        if record.get("n") != binding["n"]:
+            findings.append(f"claim-n-mismatch: {cid}: expected {binding['n']}")
+        if "n_basis" in record and record.get("n_basis") != binding["note"]:
             findings.append(f"claim-n-basis-mismatch: {cid}")
+
+        # F2: re-validate every stored source (belt+suspenders — a forged record that bypassed
+        # the CLI, e.g. an embedded newline/Markdown heading, is still caught here).
+        for source in record.get("sources") or []:
+            for error in rr.validate_source(source):
+                findings.append(f"claim-source-invalid: {cid}: {error}")
 
 def _check_claims_view(
     records: list[dict[str, Any]],

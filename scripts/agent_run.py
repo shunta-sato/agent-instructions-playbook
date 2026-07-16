@@ -64,9 +64,16 @@ def _sha256_head_blob(repo_root: Path, rel_path: str) -> str:
         raise ValueError(f"reviewed-deleted path does not exist at HEAD: {rel_path}")
     return hashlib.sha256(completed.stdout).hexdigest()
 
+def _git_mode(repo_root: Path, rel_path: str) -> str | None:
+    """M2: git mode (100644/100755/120000); ``None`` when untracked/no repo."""
+    completed = subprocess.run(
+        ["git", "-C", str(repo_root), "ls-files", "--stage", "--", rel_path], capture_output=True, text=True,
+    )
+    line = completed.stdout.strip()
+    return line.split()[0] if line else None
+
 def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, str]]:
-    """Q3b: the SCRIPT (never the caller) records each reviewed path's sha256
-    at record time, deduped by normalized repo-relative path."""
+    """Q3b/M2: the SCRIPT records each reviewed path's (sha256, git-mode)."""
     entries: dict[str, dict[str, str]] = {}
     for raw in raw_paths or []:
         rel = normalize_repo_path(raw, repo_root)
@@ -76,16 +83,22 @@ def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> li
         if not (absolute.is_symlink() or absolute.is_file()):
             raise ValueError(f"reviewed file is missing: {raw}")
         entries[rel] = {"path": rel, "sha256": _sha256_reviewed_path(absolute)}
+        mode = _git_mode(repo_root, rel)
+        if mode:
+            entries[rel]["mode"] = mode
     return sorted(entries.values(), key=lambda entry: entry["path"])
 
 def reviewed_deletions_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, Any]]:
-    """(c): a repeatable ``--reviewed-deleted PATH`` tombstones a path that has
-    no head blob to hash AFTER its deletion lands, by hashing it now instead."""
+    """(c)/M2: ``--reviewed-deleted PATH`` tombstones a path (base_sha256 +
+    base/HEAD git-mode), hashed now since deletion leaves no head blob later."""
     entries: dict[str, dict[str, Any]] = {}
     for raw in raw_paths or []:
         rel = normalize_repo_path(raw, repo_root)
         if rel not in entries:
             entries[rel] = {"path": rel, "deleted": True, "base_sha256": _sha256_head_blob(repo_root, rel)}
+            mode = _git_mode(repo_root, rel)
+            if mode:
+                entries[rel]["mode"] = mode
     return sorted(entries.values(), key=lambda entry: entry["path"])
 
 def issue_run_id(slug: str) -> str:
@@ -152,6 +165,7 @@ def validation_commands(raw_results: list[list[str]] | None) -> list[dict[str, A
     return commands
 
 def validation_passed(validation: dict[str, Any]) -> bool:
+    """M4: exact types, not truthiness — a bool exit_code/non-True passed is rejected."""
     if validation.get("blocker"):
         return False
     commands = validation.get("commands", [])
@@ -161,7 +175,7 @@ def validation_passed(validation: dict[str, Any]) -> bool:
         isinstance(command, dict)
         and isinstance(command.get("cmd"), str)
         and bool(command["cmd"].strip())
-        and isinstance(command.get("exit_code"), int)
+        and type(command.get("exit_code")) is int  # excludes bool: type(True) is bool, not int
         and command.get("exit_code") == 0  # every command's own exit code, not just a caller-set flag
         and command.get("passed") is True
         for command in commands
@@ -181,7 +195,8 @@ def evaluate_run_record(record: dict[str, Any]) -> dict[str, Any]:
     quality_gate = validation.get("quality_gate", "not_run") if isinstance(validation, dict) else "not_run"
 
     outcome = record.get("outcome", {})
-    agent_completed = bool(outcome.get("agent_completed")) if isinstance(outcome, dict) else False
+    # M4: identity, not truthiness — bool("false") is True, so a forged string must not pass.
+    agent_completed = outcome.get("agent_completed") is True if isinstance(outcome, dict) else False
     scope_compliant = not outside_allowed_files
     accepted = (
         agent_completed
@@ -274,6 +289,7 @@ def build_run_record(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
         "resolver_lock_version": args.resolver_lock_version or None,
         "prompt_detail": args.prompt_detail,
         "effort": args.effort or None,
+        "declared_mode": args.declared_mode or None,  # M1: research/delivery epistemic-mode evidence
         "brief_path": copy_brief(Path(args.brief_source).resolve(), run_id, ledger_path, repo_root),
         "allowed_files": allowed_files,
         "changed_files": changed_files,
@@ -319,13 +335,11 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
     parser.add_argument("--requested-model", default="", help="Requested model, when supplied by current routing.")
     parser.add_argument("--resolved-model", default="", help="Resolved model, when known from current routing.")
     parser.add_argument("--resolver-lock-version", default="", help="Resolver lock/catalog version, when known.")
-    parser.add_argument(
-        "--prompt-detail",
-        required=True,
-        choices=("compact", "normal", "strict"),
-        help="Prompt detail level from model routing.",
-    )
+    parser.add_argument("--prompt-detail", required=True, choices=("compact", "normal", "strict"),
+                         help="Prompt detail level from model routing.")
     parser.add_argument("--effort", default="", help="Effort setting, when applicable.")
+    parser.add_argument("--declared-mode", default="", choices=("", "research", "delivery"),
+                         help="M1: declared epistemic mode for this run, persisted as top-level declared_mode.")
     parser.add_argument("--brief-source", required=True, help="Task brief file to copy into the run directory.")
     parser.add_argument("--allowed-file", action="append", required=True,
                          help="Allowed edit file. Repeat for multiple files.")
@@ -337,8 +351,7 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
     parser.add_argument("--review-changed", action="store_true",
                          help="Also add every --changed-file path to reviewed_files with a script-computed digest.")
     parser.add_argument("--reviewed-deleted", action="append",
-                         help="Path deleted in this change; records a tombstone (base_sha256 of its HEAD blob, "
-                              "hashed now since deletion leaves no head blob to hash later). Repeat.")
+                         help="Path deleted in this change; records a tombstone (base_sha256+mode of its HEAD blob). Repeat.")
     parser.add_argument("--include-untracked", action=argparse.BooleanOptionalAction, default=True,
                          help="Include untracked files when using --changed-from-git.")
     parser.add_argument(

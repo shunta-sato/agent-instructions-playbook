@@ -58,6 +58,11 @@ jobs:
 
       # Runs LAST among validator steps: it judges the whole PR's file set,
       # so every other structural/content check must have already run.
+      # M1: no --mode is passed here on purpose — this CI invocation derives
+      # research-effectiveness itself from the base-ref policy's default_mode
+      # (plus any changed path that resolves to research), and fails closed
+      # with `mode-undeclared` unless the ledger carries a matching
+      # `declared_mode: research` agent_run record for this change.
       - name: Check research promotion/safety boundary (PR only)
         if: github.event_name == 'pull_request'
         run: python scripts/check_research_evidence.py --diff-range "origin/${{ github.base_ref }}...HEAD" --policy .agents/project-policy.yml

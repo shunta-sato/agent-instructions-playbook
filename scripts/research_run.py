@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import shlex
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -49,14 +49,21 @@ def make_run_dir(repo_root: Path, identifier: str) -> tuple[Path, str]:
     return absolute, rel
 
 def run_command(command: str, repo_root: Path, run_dir: Path, use_argv: bool = False) -> int:
-    """Execute the registered/explored command. B(c): the ``shlex.split`` + ``shell=False`` argv path
-    is used ONLY when ``use_argv`` (an axis-bearing execute, where the parsed argv the axis binds to
-    must BE the process argv); axis-less register/execute and explore always use the shell path, so
-    env-var prefixes, globs, and shell builtins (``cd``) keep working."""
+    """Execute the registered/explored command. B(c)/F4: the ``shell=False`` argv path is used
+    ONLY when ``use_argv`` (an axis-bearing execute); the command is parsed with
+    ``rl.parse_axis_command`` so a leading env-assignment prefix (e.g. ``CUDA_VISIBLE_DEVICES=0``)
+    reaches the child's environment instead of being mistaken for the executable (argv[0]).
+    Axis-less register/execute and explore always use the shell path, so env-var prefixes,
+    globs, and shell builtins (``cd``) keep working."""
     env = dict(os.environ)
     env["RESEARCH_RUN_DIR"] = str(run_dir)
     if use_argv:
-        completed = subprocess.run(shlex.split(command), shell=False, cwd=str(repo_root), env=env)
+        binding = rl.parse_axis_command(command)
+        if binding is None:
+            raise ValueError(f"axis-bearing command has no executable argv: {command!r}")
+        env_assignments, exec_argv = binding
+        env.update(env_assignments)
+        completed = subprocess.run(exec_argv, shell=False, cwd=str(repo_root), env=env)
     else:
         completed = subprocess.run(command, shell=True, cwd=str(repo_root), env=env)
     return completed.returncode
@@ -119,44 +126,26 @@ def dirty_input_files(repo_root: Path, ledger_path: Path | None = None) -> list[
 
 # --- subcommands -------------------------------------------------------------
 
-# B(b): a shell/interpreter invoked with an inline script consumes later argv as its own
-# ($0/-c script), not the wrapped program's argv, so a token bound there is not a real knob.
-_SHELL_WRAPPERS = {"sh", "bash", "zsh", "dash", "ksh"}
-_SCRIPT_WRAPPERS = {"python", "python3", "perl", "ruby"}
-
-def _wrapper_denies_axis(tokens: list[str]) -> bool:
-    if not tokens:
-        return False
-    name = Path(tokens[0]).name
-    flags = {"-c"} if name in _SHELL_WRAPPERS else {"-c", "-e"} if name in _SCRIPT_WRAPPERS else set()
-    return bool(flags) and any(tok in flags for tok in tokens[1:])
-
-def _bound_after_terminator(tokens: list[str], positions: list[int]) -> bool:
-    """The only key-bound occurrence(s) sit after a bare ``--`` terminator (positional, not the option)."""
-    return "--" in tokens and bool(positions) and all(p > tokens.index("--") for p in positions)
-
 def validate_variation_axis(axis: str, command: str) -> list[str]:
-    """F3/R3/B(b): a declared axis must be ``key=value`` (non-empty parts) whose value is BOUND to
-    option ``key`` in the command's real argv — not a shell/interpreter wrapper's own -c/-e args and
-    not stranded after a bare ``--`` terminator — so ``n`` is a mechanically checkable knob."""
-    parsed = rl._axis_key_value(axis)
-    if parsed is None:
-        return ["variation_axis must be key=value with non-empty key and value"]
-    key, value = parsed
-    if not rl.command_is_simple(command):  # B2: no flat-argv binding over a shell pipeline
-        return ["axis-bearing experiments require a simple command (no shell metacharacters); "
-                "register without an axis or split the command"]
-    tokens = rl._tokenize(command)
-    if _wrapper_denies_axis(tokens):
-        return [f"variation_axis cannot bind through wrapper {tokens[0]!r} (-c/-e consumes argv); "
-                "run the probe directly instead of via a shell/interpreter wrapper"]
-    positions = rl._bound_value_positions(tokens, key, value)
-    if not positions:
-        return [f"variation_axis value {value!r} must be bound to option {key!r} in the command"]
-    if _bound_after_terminator(tokens, positions):
-        return [f"variation_axis value {value!r} is bound to {key!r} only after a bare '--' "
-                "terminator; run the probe directly instead of passing it through '--'"]
-    return []
+    """F4: structural axis/command validity — see ``rl.axis_binding_errors`` (the SAME check
+    the checker/claim re-derivation uses, so a hand-forged ledger cannot bypass it)."""
+    return rl.axis_binding_errors(axis, command)
+
+# F2: pure argument-shape validation (no ledger-record traversal), so it lives at the CLI/writer
+# layer rather than in research_ledger.py's ledger primitives; check_research_evidence imports it
+# for re-derivation (belt+suspenders — the renderer also never emits sources at all).
+_SOURCE_URL_RE = re.compile(r"^https?://\S+$")
+_SOURCE_PATH_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_./-]*$")
+
+def validate_source(source: Any) -> list[str]:
+    """F2: a claim ``--source`` must be a bare repo-relative path or http(s) URL, never free
+    text, so a forged value cannot inject rendered Markdown structure into ``claims.md``."""
+    if not isinstance(source, str) or any(ord(ch) < 0x20 or ord(ch) == 0x7f for ch in source):
+        return [f"source {source!r} must not contain control characters or newlines"]
+    if _SOURCE_URL_RE.match(source) or _SOURCE_PATH_RE.match(source):
+        return []
+    return [f"source {source!r} must be a repo-relative path or http(s):// URL "
+            "(no whitespace, no leading '#'/'-'/'*')"]
 
 def build_disconfirm(args: argparse.Namespace) -> dict[str, Any]:
     """The runner constructs the disconfirm predicate — threshold (comparator +
@@ -278,6 +267,9 @@ def cmd_explore(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
     return 0
 
 def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
+    source_errors = [e for source in (args.source or []) for e in validate_source(source)]  # F2
+    if source_errors:
+        raise ValueError("; ".join(source_errors))
     records = rl.load_research_records(ledger_path)
     for eid in args.evidence:
         prereg = rl.find_preregister(records, eid)
@@ -299,7 +291,7 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
     claim_id = rl.next_counter(records, rl.CLAIM, "C")
     record = {
         # S6: no caller-supplied "configurations" free text — the rendered view derives
-        # configuration identity from evidence (rl.claim_configuration_labels).
+        # configuration identity from evidence (rl.axis_binding, F3).
         "schema_version": rl.SCHEMA_VERSION,
         "record_type": rl.CLAIM,
         "claim_id": claim_id,
