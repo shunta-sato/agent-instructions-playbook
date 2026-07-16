@@ -138,7 +138,7 @@ Record:
 
 - Default lane outputs:
 - Branches executed:
-- Structure watch result (`scripts/check_structure.py` on touched files; findings + applied splits, or pass):
+- Structure watch result (`scripts/check_structure.py` on touched files; findings + applied splits, accepted debt against a recorded `.agents/structure-baseline.json`, or pass):
 - Verification commands executed:
 - Live discovery evidence captured (or `not applicable`):
 - Remaining known gaps before gate (if any):
