@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
-"""Boundary-gate half of the Research OS evidence checker, split out of
-``check_research_evidence`` (which keeps the ledger-chain half + CLI) so each
-stays within the structure budget. Evaluates a changed-path set under a declared
-``--mode`` for promotion, symlink-boundary, and safety findings (default-deny),
-loads the policy with base-ref binding (F6), and binds promotion acknowledgments
-to recorded ``agent_run`` evidence (R4). Coverage is EVIDENCE, not authorization,
-and requires CONTENT identity: a promoted path downgrades only when a
-digest-verified ``reviewed_files`` entry spans it — never a cited run's
-``changed_files`` (a changed-path listing has no content guarantee against a
-LATER edit of the same path, B3) or ``allowed_files`` (Q3a/Q3b). Acknowledgment
-files and the run ledger are the promotion MECHANISM, never promotion-required
-(Q3d). A run's recorded validation-command strings and ``quality_gate: pass``
-are corroborating SELF-REPORTS, not executed proof (B3); the EXECUTED evidence
-for a delivery gate is the CI workflow itself at the reviewed head, whose
-validator step order is asserted by test — a trusted execute-and-record
-wrapper remains the documented follow-up. Tamper-EVIDENT, not tamper-PROOF.
-Stdlib only."""
+"""Boundary-gate half of the Research OS evidence checker (ledger-chain half +
+CLI live in ``check_research_evidence``, split for the structure budget).
+Evaluates a changed-path set under a declared ``--mode`` for promotion,
+symlink-boundary, and safety findings (default-deny); loads the policy with
+base-ref binding (F6); binds acknowledgments to ``agent_run`` evidence (R4)
+whose OWN outcome re-derives as accepted. Coverage is EVIDENCE not
+authorization and requires CONTENT identity: a LIVE path needs a
+digest-verified ``reviewed_files`` entry (never ``changed_files``/B3 or
+``allowed_files``/Q3a-b); a DELETED path (present at base, absent at head)
+needs a tombstone entry (``deleted: true`` + matching ``base_sha256``) — the
+two entry kinds never cover each other's path kind. Ack files + the run
+ledger are the promotion MECHANISM, never promotion-required (Q3d). Recorded
+validation/quality-gate fields are SELF-REPORTS, not executed proof; the CI
+workflow at the reviewed head is the EXECUTED evidence. Tamper-EVIDENT, not
+tamper-PROOF. Stdlib only."""
 
 from __future__ import annotations
 
@@ -76,8 +74,7 @@ def base_ref_of_range(diff_range: str) -> str:
     return diff_range.split("..", 1)[0].rstrip(".")
 
 def head_ref_of_range(diff_range: str) -> str:
-    """Right ref of ``A..B``/``A...B`` — the diff head whose blobs a
-    reviewed_files digest is verified against (Q3b)."""
+    """Right ref of ``A..B``/``A...B`` — the diff head reviewed_files digests verify against (Q3b)."""
     return re.split(r"\.\.\.?", diff_range)[-1] or "HEAD"
 
 def load_base_policy(repo_root: Path, base_ref: str) -> dict[str, Any] | None:
@@ -113,24 +110,25 @@ def load_agent_runs(repo_root: Path) -> dict[str, dict[str, Any]]:
     return runs
 
 def _run_is_delivery_evidence(run: dict[str, Any]) -> tuple[bool, str]:
-    """Q3c: a cited Delivery-run counts as evidence only when it recorded passing
-    validation COMMANDS (reusing ``agent_run.validation_passed``) AND an explicit
-    passing quality gate — caller booleans (``validation.passed`` /
-    ``outcome.validation_passed``) alone do not. Returns ``(ok, reason)``."""
+    """Q3c: evidence only with passing validation COMMANDS + an explicit
+    passing quality gate + the run's own re-derived ``evaluate_run_record``
+    acceptance (agent_completed + in-scope changes) — never a stored boolean."""
     validation = run.get("validation")
     if not isinstance(validation, dict) or not ar.validation_passed(validation):
         return False, "did not pass validation"
     gate = str(validation.get("quality_gate", "")).strip().lower()
     if gate not in QUALITY_GATE_PASS:
         return False, "quality gate not recorded as pass"
+    if ar.evaluate_run_record(run)["accepted"] is not True:
+        return False, "run outcome was not accepted"
     return True, ""
 
 def ack_evidence_gaps(
     claim_ids: list[str], run_ids: list[str], valid_claims: set[str], runs: dict[str, dict[str, Any]]
 ) -> list[str]:
     """R4.1/R4.2 + Q3c: reasons an otherwise-structural acknowledgment fails to
-    bind to ledger evidence (unresolved claim, unknown run, run without passing
-    validation commands, or run without a recorded quality-gate pass)."""
+    bind to ledger evidence (unresolved claim, unknown run, or a run that
+    didn't pass validation / quality-gate / its own acceptance re-derivation)."""
     gaps = [f"claim {cid} does not resolve in the canonical ledger"
             for cid in claim_ids if cid not in valid_claims]
     for rid in run_ids:
@@ -147,11 +145,10 @@ def ack_evidence_gaps(
 # --- acknowledgment parsing --------------------------------------------------
 
 def _parse_acknowledgment(text: str) -> tuple[list[str], list[str], list[str], list[str]]:
-    """Structural parse → ``(covers, run_ids, claim_ids, missing)`` (F7/R4).
-    Requires a ``Scope:`` line, a ``C-<n>`` ref OR ``no research claims
-    promoted``, a ``Covers:`` section of ``- `` prefixes, and >=1
-    ``Delivery-run:`` run_id. Any structural gap → empty covers/run_ids
-    (downgrades nothing) plus the names of what is absent."""
+    """Structural parse → ``(covers, run_ids, claim_ids, missing)`` (F7/R4): a
+    ``Scope:`` line, a ``C-<n>`` ref or ``no research claims promoted``, a
+    ``Covers:`` section of ``- `` prefixes, and >=1 ``Delivery-run:`` id. Any
+    gap → empty covers/run_ids (downgrades nothing) plus what is absent."""
     lines = text.splitlines()
     has_scope = any(ln.strip().lower().startswith("scope:") for ln in lines)
     claim_ids = re.findall(r"C-\d+", text)
@@ -196,24 +193,20 @@ def _valid_canonical_claim_ids(repo_root: Path) -> set[str]:
 # --- reviewed-file digest binding (Q3b) --------------------------------------
 
 def _disk_digest(repo_root: Path, path: str) -> str | None:
-    """sha256 of ``path`` on disk (working-tree/default resolver), or ``None``.
-    A symlink hashes its readlink TARGET STRING, matching ``agent_run``'s
-    recorder and git's own blob content for a symlink, rather than being
-    followed to the resolved target's content."""
+    """sha256 of ``path`` on disk (working-tree/default HEAD-side resolver), or
+    ``None`` when absent. A symlink hashes its readlink TARGET STRING, matching
+    ``agent_run``'s recorder and git's own blob content for a symlink."""
     absolute = repo_root / path
     if absolute.is_symlink():
         return hashlib.sha256(os.readlink(absolute).encode("utf-8")).hexdigest()
     return rl.sha256_file(absolute) if absolute.is_file() else None
 
-def _git_blob_digest(repo_root: Path, head_ref: str, path: str) -> str | None:
-    """sha256 of ``path`` as committed at ``head_ref``. ``git show`` yields the
-    raw blob for either shape — file bytes, or (for a symlink) the readlink
-    target string with no trailing newline — so hashing ``stdout`` as-is
-    already matches ``agent_run``'s symlink-aware recorded digest. ``None``
-    when the blob is absent there."""
-    completed = subprocess.run(
-        ["git", "-C", str(repo_root), "show", f"{head_ref}:{path}"], capture_output=True
-    )
+def _git_blob_digest(repo_root: Path, ref: str, path: str) -> str | None:
+    """sha256 of ``path`` as committed at ``ref`` (``git show`` yields the raw
+    blob either way — file bytes, or a symlink's readlink target string — so
+    hashing ``stdout`` as-is matches ``agent_run``'s recorded digest). ``None``
+    when the blob is absent there — the signal a deleted/nonexistent path uses."""
+    completed = subprocess.run(["git", "-C", str(repo_root), "show", f"{ref}:{path}"], capture_output=True)
     return hashlib.sha256(completed.stdout).hexdigest() if completed.returncode == 0 else None
 
 # --- diff evaluation ---------------------------------------------------------
@@ -227,9 +220,9 @@ def _is_mechanism_path(path: str) -> bool:
 def _valid_acknowledgments(
     changed_paths: list[str], repo_root: Path, notes: list[str]
 ) -> list[tuple[str, list[str], list[dict[str, str]]]]:
-    """Parse + evidence-bind each acknowledgment in the changed set. A valid ack
-    yields ``(ack, covers, reviewed_entries)``; an invalid one downgrades
-    nothing and appends an ``invalid-acknowledgment`` note (F7/R4)."""
+    """Parse + evidence-bind each acknowledgment in the changed set (F7/R4). A
+    valid ack yields ``(ack, covers, reviewed_entries)``; an invalid one
+    downgrades nothing and appends an ``invalid-acknowledgment`` note."""
     acks = [p for p in changed_paths if p.startswith(PROMOTIONS_DIR) and p.endswith(".md") and Path(p).name != "README.md"]
     if not acks:
         return []
@@ -252,24 +245,26 @@ def _ack_coverage(
     path: str,
     valid_acks: list[tuple[str, list[str], list[dict[str, str]]]],
     blob_digest: Callable[[str], str | None],
+    base_blob_digest: Callable[[str], str | None],
 ) -> tuple[str | None, str | None]:
-    """Coverage for one promoted ``path`` → ``(covering ack, stale path)``. A
-    path is covered only when a valid ack Covers it AND a ``reviewed_files``
-    entry names it with a recorded sha256 that still equals the blob at the
-    diff head — never by mere presence in a cited run's ``changed_files``
-    (content identity, not a changed-path listing, is what counts as evidence,
-    B3). A matching reviewed entry with a drifted digest yields the stale path
-    so the finding stays blocking (Q3b)."""
+    """Coverage for one promoted ``path`` -> ``(covering ack, stale note)``. A
+    LIVE path needs a non-tombstone entry whose sha256 matches the head blob;
+    a DELETED one (no head blob, one at base) needs a tombstone entry whose
+    base_sha256 matches the BASE blob — the wrong-kind entry never covers the
+    other. A same-kind entry with a drifted digest yields a stale note."""
+    head_digest = blob_digest(path)
+    deleted = head_digest is None and base_blob_digest(path) is not None
+    current = base_blob_digest(path) if deleted else head_digest
     stale: str | None = None
     for ack, covers, reviewed in valid_acks:
         if not any(path.startswith(prefix) for prefix in covers):
             continue
         for entry in reviewed:
-            if entry.get("path") != path:
+            if entry.get("path") != path or bool(entry.get("deleted")) != deleted:
                 continue
-            if blob_digest(path) == entry.get("sha256"):
+            if current == (entry.get("base_sha256") if deleted else entry.get("sha256")):
                 return ack, None
-            stale = path
+            stale = f"stale-tombstone: {path}" if deleted else f"stale-review: {path}"
     return None, stale
 
 def evaluate_diff(
@@ -278,12 +273,18 @@ def evaluate_diff(
     policy: dict[str, Any],
     mode: str | None = None,
     blob_digest: Callable[[str], str | None] | None = None,
+    base_blob_digest: Callable[[str], str | None] | None = None,
 ) -> tuple[list[str], list[str]]:
     """Boundary findings (blocking) and notes (non-blocking) for a changed-path
     set under ``mode`` (see the module docstring). ``blob_digest`` resolves the
-    diff-head sha256 of a reviewed file (defaults to the working-tree disk hash)."""
+    diff-head sha256 of a path (defaults to the working-tree disk hash);
+    ``base_blob_digest`` resolves its BASE-side sha256 for deletion-tombstone
+    matching (defaults to "unknown", so callers that never exercise deletions
+    are unaffected)."""
     if blob_digest is None:
         blob_digest = lambda p: _disk_digest(repo_root, p)
+    if base_blob_digest is None:
+        base_blob_digest = lambda p: None
     path_modes = policy.get("path_modes", {}) or {}
     safety_paths = policy.get("safety_paths", []) or []
     modes = {path: resolve_mode(path, path_modes) for path in changed_paths}
@@ -301,12 +302,12 @@ def evaluate_diff(
 
     for path in sorted(changed_paths):
         if promote_delivery and modes[path] == "delivery" and not _is_mechanism_path(path):
-            cover, stale = _ack_coverage(path, valid_acks, blob_digest)
+            cover, stale = _ack_coverage(path, valid_acks, blob_digest, base_blob_digest)
             if cover:
                 notes.append(f"promotion acknowledged: {cover} covers {path}")
             else:
                 if stale:
-                    notes.append(f"stale-review: {stale}")
+                    notes.append(stale)
                 findings.append(f"promotion-required: {path}")
         if mode == "delivery" and modes[path] == "research":
             notes.append(f"mode: delivery-mode change under research path {path} — claims discipline still applies")
@@ -356,8 +357,9 @@ def _finish(
     mode: str | None,
     pre_notes: list[str],
     blob_digest: Callable[[str], str | None] | None = None,
+    base_blob_digest: Callable[[str], str | None] | None = None,
 ) -> int:
-    findings, notes = evaluate_diff(changed_paths, repo_root, policy, mode, blob_digest)
+    findings, notes = evaluate_diff(changed_paths, repo_root, policy, mode, blob_digest, base_blob_digest)
     for note in pre_notes + notes:
         print(f"NOTE {note}")
     return _emit(findings, f"{len(changed_paths)} changed path(s)")
@@ -366,8 +368,9 @@ def run_diff_mode(diff_range: str, policy_path: Path, repo_root: Path, mode: str
     # F6: judge under the BASE policy so a head-side edit cannot weaken its own gate.
     changed_paths = changed_paths_from_range(repo_root, diff_range)
     pre_notes: list[str] = []
+    base = base_ref_of_range(diff_range)
     try:
-        policy = load_base_policy(repo_root, base_ref_of_range(diff_range))
+        policy = load_base_policy(repo_root, base)
     except (ValueError, json.JSONDecodeError) as exc:
         return _usage(str(exc))
     if policy is None:
@@ -380,14 +383,17 @@ def run_diff_mode(diff_range: str, policy_path: Path, repo_root: Path, mode: str
         pre_notes.append("policy-change: evaluated with base policy; head policy takes effect after merge")
     head = head_ref_of_range(diff_range)
     return _finish(changed_paths, repo_root, policy, mode, pre_notes,
-                   lambda p: _git_blob_digest(repo_root, head, p))
+                   lambda p: _git_blob_digest(repo_root, head, p),
+                   lambda p: _git_blob_digest(repo_root, base, p))
 
 def run_working_tree_mode(policy_path: Path, repo_root: Path, mode: str | None = None) -> int:
     """F1: same findings/notes/ack logic as diff mode, but over the working tree
-    and the checked-out policy; reviewed_files digests hash the file on disk."""
+    and the checked-out policy; reviewed_files digests hash the file on disk,
+    against a HEAD-committed base (so an uncommitted delete can tombstone)."""
     try:
         policy = load_policy(policy_path)
     except FileNotFoundError as exc:
         return _usage(str(exc))
     changed_paths = changed_paths_from_working_tree(repo_root)
-    return _finish(changed_paths, repo_root, policy, mode, ["policy-source: working tree"])
+    return _finish(changed_paths, repo_root, policy, mode, ["policy-source: working tree"],
+                   base_blob_digest=lambda p: _git_blob_digest(repo_root, "HEAD", p))

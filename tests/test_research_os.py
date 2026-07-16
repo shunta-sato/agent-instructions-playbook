@@ -15,10 +15,7 @@ from scripts import research_run
 
 DISCONFIRM = {"metric": "err", "comparator": "<", "threshold": 0.1}
 
-
 # --- builders ----------------------------------------------------------------
-
-
 def build_chain(records_data: list[dict]) -> list[dict]:
     """Attach a valid research hash chain over a list of record bodies."""
     out: list[dict] = []
@@ -117,17 +114,14 @@ def run_cli(argv: list[str]) -> tuple[int, str]:
         rc = research_run.main(argv)
     return rc, out.getvalue()
 
-
 # --- (C) claim citing nonexistent / incomplete experiment --------------------
-
-
 class ClaimIntegrityTests(unittest.TestCase):
     def test_claim_subcommand_refuses_unknown_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             ledger = Path(tmp) / "ledger.jsonl"
             rc, _ = run_cli([
                 "--repo-root", tmp, "--ledger", str(ledger), "claim", "--metric", "err",
-                "--configuration", "c", "--evidence", "E-9999",
+                "--evidence", "E-9999",
             ])
         self.assertEqual(rc, 1)
 
@@ -137,10 +131,7 @@ class ClaimIntegrityTests(unittest.TestCase):
             findings = cre.check_ledger(records, Path(tmp))
         self.assertTrue(any(f.startswith("claim-evidence-invalid:") for f in findings), findings)
 
-
 # --- (F) laundering ----------------------------------------------------------
-
-
 class LaunderingTests(unittest.TestCase):
     CMD = (
         sys.executable
@@ -178,7 +169,7 @@ class LaunderingTests(unittest.TestCase):
             run_cli(base + ["execute", "--experiment-id", "E-0001"])
             run_cli(base + ["execute", "--experiment-id", "E-0002"])
             rc, out = run_cli(base + [
-                "claim", "--metric", "err", "--configuration", "seed=42",
+                "claim", "--metric", "err",
                 "--evidence", "E-0001", "--evidence", "E-0002",
             ])
             records = rl.load_research_records(ledger)
@@ -188,9 +179,11 @@ class LaunderingTests(unittest.TestCase):
         self.assertEqual(claim["n"], 1)
         self.assertEqual(gate, 0)
 
-    # B2: a paren-free command runs via shell=False + shlex.split; parens live in the probe file below.
+    # B2: a paren-free command runs via shell=False + shlex.split; parens live in the probe below.
+    # Also emits a matching axis_effective (B4): proves a matching value counts normally.
     SEED_PROBE = ("import sys, os, json\nv = int(sys.argv[1].split('=')[1])\n"
-                  "open(os.environ['RESEARCH_RUN_DIR'] + '/result.json', 'w').write(json.dumps({'seed': v}))\n")
+                  "open(os.environ['RESEARCH_RUN_DIR'] + '/result.json', 'w')."
+                  "write(json.dumps({'seed': v, 'axis_effective': v}))\n")
 
     def test_genuine_seed_pair_yields_n_two_via_true_argv(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -207,7 +200,7 @@ class LaunderingTests(unittest.TestCase):
                 run_cli(base + ["execute", "--experiment-id", f"E-000{seed}"])
             records = rl.load_research_records(ledger)
             metrics = [rl.find_result(records, f"E-000{s}")["metrics"] for s in (1, 2)]
-        self.assertEqual(metrics, [{"seed": 1}, {"seed": 2}])
+        self.assertEqual(metrics, [{"seed": 1, "axis_effective": 1}, {"seed": 2, "axis_effective": 2}])
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 2)
 
     def test_axis_less_compound_command_still_registers_and_executes(self) -> None:
@@ -219,18 +212,12 @@ class LaunderingTests(unittest.TestCase):
             rc, _ = run_cli(base + ["execute", "--experiment-id", "E-0001"])
         self.assertEqual(rc, 0)
 
-
 # --- shared git helper (also imported by test_research_os_ledger) -----------
-
-
 def _git_init(root: Path) -> None:
     for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
         subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
 
-
 # --- (S3) semantic claim binding ---------------------------------------------
-
-
 class ClaimBindingTests(unittest.TestCase):
     def _register_execute(self, base, metric, comparator) -> None:
         run_cli(base + [
@@ -240,10 +227,7 @@ class ClaimBindingTests(unittest.TestCase):
         run_cli(base + ["execute", "--experiment-id", "E-0001"])
 
     def _claim(self, base, metric):
-        return run_cli(base + [
-            "claim", "--metric", metric,
-            "--configuration", "c", "--evidence", "E-0001",
-        ])
+        return run_cli(base + ["claim", "--metric", metric, "--evidence", "E-0001"])
 
     def test_metric_mismatch_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -259,9 +243,9 @@ class ClaimBindingTests(unittest.TestCase):
             rc, _ = self._claim(base, "ghost")
         self.assertEqual(rc, 1)
 
-    def test_disconfirmed_evidence_now_accepted_as_mixed(self) -> None:
-        # B1: no caller-supplied direction to reject against disconfirmed evidence —
-        # the claim is accepted and machine-derives category "mixed".
+    def test_disconfirmed_evidence_now_accepted_as_disconfirmed(self) -> None:
+        # B1/B5: no caller-supplied direction to reject against disconfirmed evidence —
+        # the claim is accepted and machine-derives category "disconfirmed" (all-disconfirmed).
         with tempfile.TemporaryDirectory() as tmp:
             ledger = Path(tmp) / "l.jsonl"
             base = ["--repo-root", tmp, "--ledger", str(ledger)]
@@ -269,7 +253,7 @@ class ClaimBindingTests(unittest.TestCase):
             rc, _ = self._claim(base, "err")
             self.assertEqual(rc, 0)
             claim = next(r for r in rl.load_research_records(ledger) if r["record_type"] == rl.CLAIM)
-        self.assertEqual(claim["derived_category"], rl.CATEGORY_MIXED)
+        self.assertEqual(claim["derived_category"], rl.CATEGORY_DISCONFIRMED)
 
     def test_checker_catches_forged_basis(self) -> None:
         # Result is disconfirmed, but the forged claim's outcome_basis fabricates "supported".
@@ -282,10 +266,7 @@ class ClaimBindingTests(unittest.TestCase):
             findings = cre.check_ledger(records, Path(tmp))
         self.assertTrue(any(f.startswith("claim-basis-mismatch:") for f in findings), findings)
 
-
 # --- (S4) conservative claim n from variation axes ---------------------------
-
-
 class ClaimNTests(unittest.TestCase):
     def _pair(self, eid, digest, axis="", command="run"):
         return [
@@ -317,6 +298,13 @@ class ClaimNTests(unittest.TestCase):
                    + self._pair("E-0002", "d2", "seed=1", "run --seed=1"))
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 1)
 
+    def test_whitespace_and_quoting_variant_same_value_collapses_to_one(self) -> None:
+        # (a): raw-command noise (extra space / quoting) must not inflate n — only
+        # distinct AXIS VALUES count, regardless of raw-command differences.
+        records = (self._pair("E-0001", "d1", "seed=1", "python p.py --seed=1")
+                   + self._pair("E-0002", "d2", "seed=1", "python  p.py --seed='1'"))
+        self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 1)
+
     def test_mixed_axis_keys_collapse_to_one(self) -> None:
         # Different knobs (seed vs batch) are not comparable configurations.
         records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1")
@@ -333,10 +321,7 @@ class ClaimNTests(unittest.TestCase):
         self.assertEqual(n, 1)
         self.assertIn("non-axis position", note)
 
-
 # --- (F3) register-time variation_axis verification --------------------------
-
-
 class RegisterAxisTests(unittest.TestCase):
     def _register(self, tmp: str, axis: str, command: str) -> tuple[int, str]:
         return run_cli([
@@ -390,6 +375,18 @@ class RegisterAxisTests(unittest.TestCase):
         # B2: an axis value bound only inside a shell-metacharacter tail (a real separate command).
         for axis, command in (("seed=1", "python p.py --seed=0; echo --seed=1"),
                               ("seed=2", "python p.py --seed=0; echo --seed=2")):
+            with tempfile.TemporaryDirectory() as tmp:
+                rc, _ = self._register(tmp, axis, command)
+            self.assertEqual(rc, 1, (axis, command))
+
+    def test_wrapper_and_terminator_bypass_refused(self) -> None:
+        # B(b): a shell/interpreter -c/-e wrapper consumes the token as its own arg ($0/script),
+        # and a token stranded after a bare '--' terminator is positional — refuse both.
+        for axis, command in (
+            ("seed=1", "bash -c ./probe --seed=1"),
+            ("seed=1", "python3 -c 'pass' --seed=1"),
+            ("seed=1", "probe -- --seed=1"),
+        ):
             with tempfile.TemporaryDirectory() as tmp:
                 rc, _ = self._register(tmp, axis, command)
             self.assertEqual(rc, 1, (axis, command))

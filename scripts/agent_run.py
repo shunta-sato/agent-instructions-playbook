@@ -18,16 +18,7 @@ from typing import Any
 SCHEMA_VERSION = 1
 RUN_RECORD_TYPE = "agent_run"
 DEFAULT_LEDGER_REL = ".agents/runs/agent-runs.jsonl"
-FAILING_QUALITY_GATES = {
-    "blocked",
-    "error",
-    "fail",
-    "failed",
-    "no-submit",
-    "no_submit",
-    "reject",
-    "rejected",
-}
+FAILING_QUALITY_GATES = {"blocked", "error", "fail", "failed", "no-submit", "no_submit", "reject", "rejected"}
 
 def repo_root_from_args(explicit_root: str) -> Path:
     if explicit_root:
@@ -60,20 +51,22 @@ def unique_sorted(paths: list[str]) -> list[str]:
     return sorted(dict.fromkeys(paths))
 
 def _sha256_reviewed_path(path: Path) -> str:
-    """A symlink hashes its readlink TARGET STRING — git stores a symlink as a
-    blob whose content IS that string (no trailing newline), so this matches
-    the gate's ``git show <head>:<path>`` verification byte-for-byte. A regular
-    file hashes its bytes, unchanged."""
+    """A symlink hashes its readlink TARGET STRING (git's own blob content for
+    it); a regular file hashes its bytes."""
     if path.is_symlink():
         return hashlib.sha256(os.readlink(path).encode("utf-8")).hexdigest()
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def _sha256_head_blob(repo_root: Path, rel_path: str) -> str:
+    """sha256 of ``rel_path``'s git blob at current HEAD; raises if absent there."""
+    completed = subprocess.run(["git", "-C", str(repo_root), "show", f"HEAD:{rel_path}"], capture_output=True)
+    if completed.returncode != 0:
+        raise ValueError(f"reviewed-deleted path does not exist at HEAD: {rel_path}")
+    return hashlib.sha256(completed.stdout).hexdigest()
+
 def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, str]]:
-    """Q3b: for each reviewed path the SCRIPT (never the caller) records the
-    sha256 of the file at record time, so the gate can later verify the digest
-    still matches the blob at the diff head before the review covers a finding.
-    Deduped by normalized repo-relative path (e.g. ``--review-changed`` naming
-    a path already given via ``--reviewed-file``)."""
+    """Q3b: the SCRIPT (never the caller) records each reviewed path's sha256
+    at record time, deduped by normalized repo-relative path."""
     entries: dict[str, dict[str, str]] = {}
     for raw in raw_paths or []:
         rel = normalize_repo_path(raw, repo_root)
@@ -83,6 +76,16 @@ def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> li
         if not (absolute.is_symlink() or absolute.is_file()):
             raise ValueError(f"reviewed file is missing: {raw}")
         entries[rel] = {"path": rel, "sha256": _sha256_reviewed_path(absolute)}
+    return sorted(entries.values(), key=lambda entry: entry["path"])
+
+def reviewed_deletions_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, Any]]:
+    """(c): a repeatable ``--reviewed-deleted PATH`` tombstones a path that has
+    no head blob to hash AFTER its deletion lands, by hashing it now instead."""
+    entries: dict[str, dict[str, Any]] = {}
+    for raw in raw_paths or []:
+        rel = normalize_repo_path(raw, repo_root)
+        if rel not in entries:
+            entries[rel] = {"path": rel, "deleted": True, "base_sha256": _sha256_head_blob(repo_root, rel)}
     return sorted(entries.values(), key=lambda entry: entry["path"])
 
 def issue_run_id(slug: str) -> str:
@@ -159,6 +162,7 @@ def validation_passed(validation: dict[str, Any]) -> bool:
         and isinstance(command.get("cmd"), str)
         and bool(command["cmd"].strip())
         and isinstance(command.get("exit_code"), int)
+        and command.get("exit_code") == 0  # every command's own exit code, not just a caller-set flag
         and command.get("passed") is True
         for command in commands
     )
@@ -283,8 +287,9 @@ def build_run_record(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
     if args.review_changed:  # B3: content-identity review, not just a changed-path listing
         reviewed_paths += args.changed_file or []
     reviewed_files = reviewed_files_from_args(reviewed_paths, repo_root)
+    reviewed_files += reviewed_deletions_from_args(args.reviewed_deleted, repo_root)
     if reviewed_files:  # optional field: absent for the common no-review record
-        record["reviewed_files"] = reviewed_files
+        record["reviewed_files"] = sorted(reviewed_files, key=lambda e: e["path"])
     record["outcome"].update(evaluate_run_record(record))
     return ledger_path, record
 
@@ -322,31 +327,20 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
     )
     parser.add_argument("--effort", default="", help="Effort setting, when applicable.")
     parser.add_argument("--brief-source", required=True, help="Task brief file to copy into the run directory.")
-    parser.add_argument(
-        "--allowed-file",
-        action="append",
-        required=True,
-        help="Allowed edit file. Repeat for multiple files.",
-    )
-    parser.add_argument(
-        "--changed-file",
-        action="append",
-        help="Changed file to record. Repeat for multiple files.",
-    )
+    parser.add_argument("--allowed-file", action="append", required=True,
+                         help="Allowed edit file. Repeat for multiple files.")
+    parser.add_argument("--changed-file", action="append",
+                         help="Changed file to record. Repeat for multiple files.")
     parser.add_argument("--changed-from-git", action="store_true", help="Add changed files from git diff against HEAD.")
-    parser.add_argument(
-        "--reviewed-file",
-        action="append",
-        help="File reviewed for this run; the script records its sha256 at record time. Repeat.",
-    )
+    parser.add_argument("--reviewed-file", action="append",
+                         help="File reviewed for this run; the script records its sha256 at record time. Repeat.")
     parser.add_argument("--review-changed", action="store_true",
                          help="Also add every --changed-file path to reviewed_files with a script-computed digest.")
-    parser.add_argument(
-        "--include-untracked",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Include untracked files when using --changed-from-git.",
-    )
+    parser.add_argument("--reviewed-deleted", action="append",
+                         help="Path deleted in this change; records a tombstone (base_sha256 of its HEAD blob, "
+                              "hashed now since deletion leaves no head blob to hash later). Repeat.")
+    parser.add_argument("--include-untracked", action=argparse.BooleanOptionalAction, default=True,
+                         help="Include untracked files when using --changed-from-git.")
     parser.add_argument(
         "--validation-result",
         action="append",
@@ -356,19 +350,10 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
     )
     parser.add_argument("--validation-blocker", default="", help="Reason validation could not run.")
     parser.add_argument("--quality-gate", default="not_run", help="quality-gate result, when known.")
-    parser.add_argument(
-        "--agent-completed",
-        type=parse_bool,
-        default=True,
-        help="Whether the delegated agent completed execution.",
-    )
+    parser.add_argument("--agent-completed", type=parse_bool, default=True,
+                         help="Whether the delegated agent completed execution.")
     parser.add_argument("--codex-jsonl", default="", help="Optional Codex CLI JSONL to extract token usage from.")
-    parser.add_argument(
-        "--format",
-        choices=("json", "text"),
-        default="text",
-        help="Output format.",
-    )
+    parser.add_argument("--format", choices=("json", "text"), default="text", help="Output format.")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(

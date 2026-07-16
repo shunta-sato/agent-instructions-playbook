@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -13,6 +14,16 @@ from scripts.agent_run import (
     reviewed_files_from_args,
     validation_passed,
 )
+
+
+def _git_init(root: Path) -> None:
+    for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
+        subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+
+
+def _commit_all(root: Path, message: str) -> None:
+    subprocess.run(["git", "-C", str(root), "add", "-A"], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(root), "commit", "-qm", message], check=True, capture_output=True)
 
 
 def _record_args(argv: list[str]) -> argparse.Namespace:
@@ -86,6 +97,39 @@ class AgentRunValidationTests(unittest.TestCase):
         self.assertFalse(judgment["validation_passed"])
         self.assertFalse(judgment["accepted"])
 
+    def test_validation_passed_rejects_nonzero_exit_with_passed_forced_true(self) -> None:
+        # (b): a contradictory record — "cmd" 1 with passed forced true — must
+        # not pass; every command's own exit_code must be 0, not just its flag.
+        self.assertFalse(
+            validation_passed(
+                {"commands": [{"cmd": "make test-unit", "exit_code": 1, "passed": True}], "passed": True}
+            )
+        )
+
+    def test_validation_passed_requires_every_command_to_exit_zero(self) -> None:
+        self.assertFalse(
+            validation_passed(
+                {
+                    "commands": [
+                        {"cmd": "make test-unit", "exit_code": 0, "passed": True},
+                        {"cmd": "make lint", "exit_code": 1, "passed": True},
+                    ],
+                    "passed": True,
+                }
+            )
+        )
+        self.assertTrue(
+            validation_passed(
+                {
+                    "commands": [
+                        {"cmd": "make test-unit", "exit_code": 0, "passed": True},
+                        {"cmd": "make lint", "exit_code": 0, "passed": True},
+                    ],
+                    "passed": True,
+                }
+            )
+        )
+
 
 class ReviewChangedFlagTests(unittest.TestCase):
     """B3: ``--review-changed`` gives content-identity evidence for changed
@@ -145,6 +189,53 @@ class ReviewChangedFlagTests(unittest.TestCase):
             args = _record_args(self._base_argv(root, brief, "--changed-file", "src/app.py"))
             _, record = build_run_record(args)
         self.assertNotIn("reviewed_files", record)
+
+
+class ReviewedDeletedTests(unittest.TestCase):
+    """(c): ``--reviewed-deleted`` tombstones a path with the sha256 of its
+    blob at current HEAD (before the delete commit lands), since there is no
+    head blob left to hash once the deletion is committed."""
+
+    def _base_argv(self, root: Path, brief: Path, *extra: str) -> list[str]:
+        return [
+            "--repo-root", str(root),
+            "--harness", "test-harness",
+            "--task-class", "focused_code_change",
+            "--capability-profile", "focused_code_edit",
+            "--prompt-detail", "strict",
+            "--brief-source", str(brief),
+            "--allowed-file", "src/old.py",
+            *extra,
+        ]
+
+    def test_reviewed_deleted_records_tombstone_from_head_blob(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            (root / "src").mkdir()
+            (root / "src" / "old.py").write_text("legacy\n", encoding="utf-8")
+            _commit_all(root, "base")
+            brief = root / "brief.md"
+            brief.write_text("brief\n", encoding="utf-8")
+            args = _record_args(self._base_argv(root, brief, "--reviewed-deleted", "src/old.py"))
+            _, record = build_run_record(args)
+        self.assertEqual(
+            record["reviewed_files"],
+            [{"path": "src/old.py", "deleted": True, "base_sha256": hashlib.sha256(b"legacy\n").hexdigest()}],
+        )
+
+    def test_reviewed_deleted_missing_at_head_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            (root / "src").mkdir()
+            (root / "src" / "keep.py").write_text("x\n", encoding="utf-8")
+            _commit_all(root, "base")
+            brief = root / "brief.md"
+            brief.write_text("brief\n", encoding="utf-8")
+            args = _record_args(self._base_argv(root, brief, "--reviewed-deleted", "src/ghost.py"))
+            with self.assertRaises(ValueError):
+                build_run_record(args)
 
 
 if __name__ == "__main__":

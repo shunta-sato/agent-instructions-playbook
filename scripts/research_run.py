@@ -48,13 +48,14 @@ def make_run_dir(repo_root: Path, identifier: str) -> tuple[Path, str]:
     absolute.mkdir(parents=True, exist_ok=True)
     return absolute, rel
 
-def run_command(command: str, repo_root: Path, run_dir: Path) -> int:
-    """Execute the registered/explored command. B2: for a simple command (no shell
-    metacharacters) the parsed argv the axis binds to IS the process argv, by construction, so it
-    runs via ``shlex.split`` + ``shell=False``; a compound command keeps the shell execution path."""
+def run_command(command: str, repo_root: Path, run_dir: Path, use_argv: bool = False) -> int:
+    """Execute the registered/explored command. B(c): the ``shlex.split`` + ``shell=False`` argv path
+    is used ONLY when ``use_argv`` (an axis-bearing execute, where the parsed argv the axis binds to
+    must BE the process argv); axis-less register/execute and explore always use the shell path, so
+    env-var prefixes, globs, and shell builtins (``cd``) keep working."""
     env = dict(os.environ)
     env["RESEARCH_RUN_DIR"] = str(run_dir)
-    if rl.command_is_simple(command):
+    if use_argv:
         completed = subprocess.run(shlex.split(command), shell=False, cwd=str(repo_root), env=env)
     else:
         completed = subprocess.run(command, shell=True, cwd=str(repo_root), env=env)
@@ -118,12 +119,26 @@ def dirty_input_files(repo_root: Path, ledger_path: Path | None = None) -> list[
 
 # --- subcommands -------------------------------------------------------------
 
+# B(b): a shell/interpreter invoked with an inline script consumes later argv as its own
+# ($0/-c script), not the wrapped program's argv, so a token bound there is not a real knob.
+_SHELL_WRAPPERS = {"sh", "bash", "zsh", "dash", "ksh"}
+_SCRIPT_WRAPPERS = {"python", "python3", "perl", "ruby"}
+
+def _wrapper_denies_axis(tokens: list[str]) -> bool:
+    if not tokens:
+        return False
+    name = Path(tokens[0]).name
+    flags = {"-c"} if name in _SHELL_WRAPPERS else {"-c", "-e"} if name in _SCRIPT_WRAPPERS else set()
+    return bool(flags) and any(tok in flags for tok in tokens[1:])
+
+def _bound_after_terminator(tokens: list[str], positions: list[int]) -> bool:
+    """The only key-bound occurrence(s) sit after a bare ``--`` terminator (positional, not the option)."""
+    return "--" in tokens and bool(positions) and all(p > tokens.index("--") for p in positions)
+
 def validate_variation_axis(axis: str, command: str) -> list[str]:
-    """F3/R3: a declared axis must be ``key=value`` (non-empty parts) whose value
-    is BOUND to option ``key`` in the command (``--key=value``/``key=value``, or
-    ``--key``/``-key`` followed by ``value``), so ``n`` is a mechanically checkable
-    configuration knob — not a free-text label, a bare substring, or a value that
-    merely happens to sit under a different option."""
+    """F3/R3/B(b): a declared axis must be ``key=value`` (non-empty parts) whose value is BOUND to
+    option ``key`` in the command's real argv — not a shell/interpreter wrapper's own -c/-e args and
+    not stranded after a bare ``--`` terminator — so ``n`` is a mechanically checkable knob."""
     parsed = rl._axis_key_value(axis)
     if parsed is None:
         return ["variation_axis must be key=value with non-empty key and value"]
@@ -131,8 +146,16 @@ def validate_variation_axis(axis: str, command: str) -> list[str]:
     if not rl.command_is_simple(command):  # B2: no flat-argv binding over a shell pipeline
         return ["axis-bearing experiments require a simple command (no shell metacharacters); "
                 "register without an axis or split the command"]
-    if not rl.axis_key_bound_in_command(key, value, command):
+    tokens = rl._tokenize(command)
+    if _wrapper_denies_axis(tokens):
+        return [f"variation_axis cannot bind through wrapper {tokens[0]!r} (-c/-e consumes argv); "
+                "run the probe directly instead of via a shell/interpreter wrapper"]
+    positions = rl._bound_value_positions(tokens, key, value)
+    if not positions:
         return [f"variation_axis value {value!r} must be bound to option {key!r} in the command"]
+    if _bound_after_terminator(tokens, positions):
+        return [f"variation_axis value {value!r} is bound to {key!r} only after a bare '--' "
+                "terminator; run the probe directly instead of passing it through '--'"]
     return []
 
 def build_disconfirm(args: argparse.Namespace) -> dict[str, Any]:
@@ -201,10 +224,12 @@ def cmd_execute(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
 
     run_dir_abs, run_dir_rel = make_run_dir(repo_root, args.experiment_id)
     started_at = rl.stamp_utc()
-    exit_code = run_command(command, repo_root, run_dir_abs)
+    axis = rl._axis_key_value(prereg.get("variation_axis"))
+    use_argv = axis is not None and rl.command_is_simple(command)  # B(c): only axis-bearing executes
+    exit_code = run_command(command, repo_root, run_dir_abs, use_argv=use_argv)
     finished_at = rl.stamp_utc()
     metrics = read_metrics(run_dir_abs)
-    outcome = rl.derive_outcome(prereg["disconfirm"], metrics)
+    outcome = rl.final_outcome(prereg, metrics)  # B4 parity: axis_effective override shared with the checker
     mult = rl.multiplicity(records, digest)
 
     record = {
@@ -266,18 +291,20 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
     # persisted so the gate re-derives it from the ledger. B1: the claim's
     # category is machine-derived below, never a caller-supplied direction.
     binding_errors, outcome_basis = rl.evaluate_claim_binding(records, args.metric, args.evidence)
+    binding_errors += rl.predicate_identity_errors(records, args.evidence)  # S5
     if binding_errors:
         raise ValueError("; ".join(binding_errors))
 
     n, n_basis = rl.claim_n_and_note(records, args.evidence)
     claim_id = rl.next_counter(records, rl.CLAIM, "C")
     record = {
+        # S6: no caller-supplied "configurations" free text — the rendered view derives
+        # configuration identity from evidence (rl.claim_configuration_labels).
         "schema_version": rl.SCHEMA_VERSION,
         "record_type": rl.CLAIM,
         "claim_id": claim_id,
         "created_at": rl.stamp_utc(),
         "metric": args.metric,
-        "configurations": args.configuration,
         "evidence": args.evidence,
         "outcome_basis": outcome_basis,
         "derived_category": rl.derive_claim_category(records, args.evidence),
@@ -337,11 +364,10 @@ def build_parser() -> argparse.ArgumentParser:
     explore.set_defaults(func=cmd_explore)
 
     claim = sub.add_parser("claim", help="Record a research claim.")
-    # R2a/B1: a claim carries no free-text effect and no caller-supplied
-    # direction; its sentence is rendered purely from structured fields
-    # (metric/derived-category/n/axis-key).
+    # R2a/B1/S6: a claim carries no free-text effect, no caller-supplied direction, and no
+    # caller-supplied configuration text; its sentence + configuration identity are rendered
+    # purely from structured fields (metric/derived-category/n/axis-key/axis-values).
     claim.add_argument("--metric", required=True)
-    claim.add_argument("--configuration", action="append", required=True, default=[])
     claim.add_argument("--evidence", action="append", required=True, default=[])
     claim.add_argument("--source", action="append", default=[])
     claim.set_defaults(func=cmd_claim)

@@ -1,15 +1,14 @@
 """Boundary-gate tests for the Research OS diff-range and working-tree modes.
-
-Covers ``check_research_evidence.evaluate_diff`` / ``run_diff_mode`` /
-``run_working_tree_mode``: promotion, safety, symlink-boundary, declared-mode
-binding, the non-blocking mode note, the promotion-acknowledgment downgrade
-(F7), base-policy binding (F6), working-tree mode (F1), and CI wiring.
-Ledger, runner, and claim tests live in the sibling ``test_research_os.py``.
-"""
+Covers ``evaluate_diff``/``run_diff_mode``/``run_working_tree_mode``:
+promotion, safety, symlink-boundary, declared-mode binding, the
+promotion-acknowledgment downgrade (F7), base-policy binding (F6),
+working-tree mode (F1), and CI wiring. Ledger/runner/claim tests live in the
+sibling ``test_research_os.py``."""
 
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import re
@@ -19,6 +18,7 @@ import unittest
 from pathlib import Path
 
 from scripts import check_research_evidence as cre
+from tests.test_research_os_ack import ACK, POLICY as ACK_POLICY, _run, _sha256, _write_ack, _write_canonical_ledger
 
 _STEP_NAME_RE = re.compile(r"^ {6}- name: (.+)$")
 _STEP_RUN_RE = re.compile(r"^ {8}run: (.+)$")
@@ -26,9 +26,8 @@ _VALIDATOR_WORDS = ("validate", "check", "report", "generate")
 
 
 def _workflow_step_order(text: str) -> list[tuple[str, str | None]]:
-    """``[(step name, run command or None)]`` in file order for a single-job
-    GitHub Actions workflow (stdlib-only line scan; no YAML parser needed for
-    this file's regular ``- name: ...`` / ``run: ...`` shape)."""
+    """``[(step name, run command or None)]`` in file order (line scan over
+    this workflow's regular ``- name: ...`` / ``run: ...`` shape)."""
     steps: list[tuple[str, str | None]] = []
     pending_name: str | None = None
     for line in text.splitlines():
@@ -73,17 +72,13 @@ class PromotionTests(unittest.TestCase):
 
     def test_unmatched_path_under_research_declaration_requires_promotion(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            findings, _ = cre.evaluate_diff(
-                ["experiments/e1/run.py", "src/app.py"], Path(tmp), self.POLICY
-            )
+            findings, _ = cre.evaluate_diff(["experiments/e1/run.py", "src/app.py"], Path(tmp), self.POLICY)
         self.assertIn("promotion-required: src/app.py", findings)
         self.assertNotIn("promotion-required: experiments/e1/run.py", findings)
 
     def test_research_only_diff_passes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            findings, notes = cre.evaluate_diff(
-                ["experiments/e1/run.py"], Path(tmp), self.POLICY
-            )
+            findings, notes = cre.evaluate_diff(["experiments/e1/run.py"], Path(tmp), self.POLICY)
         self.assertEqual(findings, [])
         self.assertEqual(notes, [])
 
@@ -129,24 +124,16 @@ class ModeBindingTests(unittest.TestCase):
         self.assertIn("promotion-required: src/app.py", findings)
 
     def test_delivery_mode_research_path_is_note_only(self) -> None:
+        # A delivery-mode edit to a research path is legitimate: no finding, just a reminder note.
         with tempfile.TemporaryDirectory() as tmp:
-            findings, notes = cre.evaluate_diff(
-                ["experiments/e1/run.py"], Path(tmp), self.POLICY, "delivery"
-            )
-        # Delivery-mode edits to research paths are legitimate: no finding
-        # (exit 0), just a claims-discipline reminder note.
+            findings, notes = cre.evaluate_diff(["experiments/e1/run.py"], Path(tmp), self.POLICY, "delivery")
         self.assertEqual(findings, [])
-        self.assertIn(
-            "mode: delivery-mode change under research path experiments/e1/run.py"
-            " — claims discipline still applies",
-            notes,
-        )
+        self.assertIn("mode: delivery-mode change under research path experiments/e1/run.py"
+                       " — claims discipline still applies", notes)
 
     def test_no_mode_mixing_requires_promotion(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            findings, _ = cre.evaluate_diff(
-                ["experiments/e1/run.py", "src/app.py"], Path(tmp), self.POLICY, None
-            )
+            findings, _ = cre.evaluate_diff(["experiments/e1/run.py", "src/app.py"], Path(tmp), self.POLICY, None)
         self.assertIn("promotion-required: src/app.py", findings)
         self.assertNotIn("promotion-required: experiments/e1/run.py", findings)
 
@@ -157,8 +144,107 @@ class ModeBindingTests(unittest.TestCase):
                 self.assertIn("safety-review-required: SECURITY/p.md", findings)
 
 
-# --- (S5) promotion-acknowledgment evidence binding (R4) lives in
-# tests/test_research_os_ack.py -----------------------------------------
+# --- (S5) ack evidence-BINDING (mock ledgers) lives in test_research_os_ack;
+# the real-git ``run_diff_mode`` end-to-end proofs for it live here. --------
+
+
+def _ack_repo(tmp: str) -> tuple[Path, Path]:
+    root = Path(tmp)
+    _git_init(root)
+    policy = root / "policy.json"
+    policy.write_text(json.dumps(ACK_POLICY), encoding="utf-8")
+    return root, policy
+
+
+class AckSymlinkHeadBlobTests(unittest.TestCase):
+    """Q3b follow-up: ``--diff-range`` hashes the ``git show <head>:<path>``
+    blob, which for a symlink IS its readlink target string."""
+
+    def _repo_with_committed_symlink(self, tmp: str, reviewed_sha256: str) -> tuple[Path, Path]:
+        root, policy = _ack_repo(tmp)
+        _write_canonical_ledger(root, [_run(
+            "run-1", changed=[], allowed=[], reviewed=[{"path": "link", "sha256": reviewed_sha256}],
+        )])
+        _commit_all(root, "base")
+        (root / "target_dir").mkdir()
+        (root / "link").symlink_to("target_dir")  # tracked symlink to a DIRECTORY
+        _write_ack(root, ACK, covers=["link", ".agents/promotions/"], run_ids=["run-1"])
+        _commit_all(root, "promote")
+        return root, policy
+
+    def test_matching_symlink_digest_downgrades_at_head(self) -> None:
+        correct = hashlib.sha256(b"target_dir").hexdigest()  # readlink target, no newline
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = self._repo_with_committed_symlink(tmp, correct)
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 0)
+        self.assertIn(f"NOTE promotion acknowledged: {ACK} covers link", output)
+
+    def test_mismatched_symlink_digest_stays_blocking_and_stale(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = self._repo_with_committed_symlink(tmp, "0" * 64)  # recorded digest drifted
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING promotion-required: link", output)
+        self.assertIn("NOTE stale-review: link", output)
+
+
+class AckDiffModeTests(unittest.TestCase):
+    """R4 end-to-end through ``run_diff_mode`` over a real git range."""
+
+    def test_changed_files_citation_of_a_later_edit_stays_blocking(self) -> None:
+        # B3: run-1 saw "x\n"; promote LATER edits to "y\n" — a changed_files listing alone must not bless this.
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = _ack_repo(tmp)
+            (root / "src").mkdir()
+            (root / "src" / "app.py").write_text("x\n", encoding="utf-8")
+            _write_canonical_ledger(root, [_run("run-1", changed=["src/app.py"], allowed=["src/", ".agents/promotions/"])])
+            _commit_all(root, "base")
+            (root / "src" / "app.py").write_text("y\n", encoding="utf-8")
+            _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
+            _commit_all(root, "promote")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING promotion-required: src/app.py", output)
+
+    def test_reviewed_digest_of_final_content_exits_zero(self) -> None:  # a run reviewing the FINAL content covers
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = _ack_repo(tmp)
+            (root / "src").mkdir()
+            app = root / "src" / "app.py"
+            app.write_text("x\n", encoding="utf-8")
+            _commit_all(root, "base")
+            app.write_text("y\n", encoding="utf-8")
+            run = _run("run-1", changed=["src/app.py"], allowed=["src/app.py", ".agents/promotions/"],
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}])
+            _write_canonical_ledger(root, [run])
+            _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
+            _commit_all(root, "promote")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 0)
+        self.assertIn(f"NOTE promotion acknowledged: {ACK} covers src/app.py", output)
+
+
+class AckDeletionDiffModeTests(unittest.TestCase):
+    """(c): a real git deletion, covered by a ``--reviewed-deleted`` tombstone recorded before the delete commit."""
+
+    def test_deletion_covered_by_tombstone_at_diff_range(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root, policy = _ack_repo(tmp)
+            (root / "src").mkdir()
+            old = root / "src" / "old.py"
+            old.write_text("legacy\n", encoding="utf-8")
+            base_digest = hashlib.sha256(b"legacy\n").hexdigest()
+            run = _run("run-1", changed=["src/old.py"], allowed=["src/old.py", ".agents/promotions/"],
+                       reviewed=[{"path": "src/old.py", "deleted": True, "base_sha256": base_digest}])
+            _write_canonical_ledger(root, [run])
+            _commit_all(root, "base")
+            old.unlink()
+            _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
+            _commit_all(root, "delete")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 0)
+        self.assertIn(f"NOTE promotion acknowledged: {ACK} covers src/old.py", output)
 
 
 # --- (S5) end-to-end exit codes through run_diff_mode ------------------------
@@ -200,8 +286,7 @@ class DiffModeExitCodeTests(unittest.TestCase):
 
 
 class BasePolicyBindingTests(unittest.TestCase):
-    """F6: the gate judges a PR under the policy committed at the range's BASE
-    ref, so a head-side policy edit cannot weaken its own gate."""
+    """F6: the gate judges a PR under the BASE-committed policy, so a head-side edit cannot weaken its own gate."""
 
     def _repo_with_base_policy(self, tmp: str, policy: dict) -> Path:
         root = Path(tmp)
@@ -217,8 +302,7 @@ class BasePolicyBindingTests(unittest.TestCase):
         base_policy = {"path_modes": {}, "safety_paths": ["SECURITY/"]}
         with tempfile.TemporaryDirectory() as tmp:
             root = self._repo_with_base_policy(tmp, base_policy)
-            # HEAD removes the safety_paths entry AND touches the safety file;
-            # if the gate used this weakened head policy it would pass.
+            # HEAD weakens the policy AND touches the safety file — would pass if the gate used it.
             weakened = {"path_modes": {}, "safety_paths": []}
             (root / ".agents" / "project-policy.yml").write_text(json.dumps(weakened), encoding="utf-8")
             (root / "SECURITY" / "policy.md").write_text("s2\n", encoding="utf-8")
@@ -292,37 +376,24 @@ class WiringTests(unittest.TestCase):
         self.assertIn("check_research_evidence.py --check-ledger", lint_block)
 
     def test_workflow_runs_diff_range_boundary_gate(self) -> None:
-        # S1: the promotion/safety gate must actually be wired into CI, not
-        # merely available as a script — mirror the Makefile chain test.
-        workflow = (
-            Path(__file__).resolve().parent.parent
-            / ".github" / "workflows" / "agent-index.yml"
-        )
+        # S1/B3: the gate must be wired into CI and run AFTER every other
+        # validator step (it judges the whole PR's changed-path set, so a
+        # later step could otherwise still fail on files it already blessed).
+        workflow = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "agent-index.yml"
         text = workflow.read_text(encoding="utf-8")
         self.assertIn("check_research_evidence.py --diff-range", text)
         self.assertIn("github.event_name == 'pull_request'", text)
 
-        # B3: the boundary gate judges the whole PR's changed-path set, so it
-        # must run AFTER every other validator step, not interleaved with them
-        # — otherwise a later validator step could still fail on files the
-        # boundary gate already blessed as promoted/reviewed.
         steps = _workflow_step_order(text)
-        boundary_indices = [
-            i for i, (_, run) in enumerate(steps) if run and "--diff-range" in run
-        ]
+        boundary_indices = [i for i, (_, run) in enumerate(steps) if run and "--diff-range" in run]
         self.assertEqual(len(boundary_indices), 1, steps)
         boundary_index = boundary_indices[0]
-        other_validator_indices = [
-            i for i, (name, _) in enumerate(steps)
-            if i != boundary_index and any(word in name.lower() for word in _VALIDATOR_WORDS)
-        ]
+        other_validator_indices = [i for i, (name, _) in enumerate(steps)
+                                    if i != boundary_index and any(w in name.lower() for w in _VALIDATOR_WORDS)]
         self.assertTrue(other_validator_indices, steps)
-        self.assertTrue(
-            all(i < boundary_index for i in other_validator_indices),
-            f"boundary-gate step (index {boundary_index}) must run after every "
-            f"other validator step; out-of-order indices: "
-            f"{[i for i in other_validator_indices if i > boundary_index]} in {steps}",
-        )
+        self.assertTrue(all(i < boundary_index for i in other_validator_indices),
+                         f"boundary-gate step (index {boundary_index}) must run after every other validator step: "
+                         f"{[i for i in other_validator_indices if i > boundary_index]} in {steps}")
 
 
 if __name__ == "__main__":

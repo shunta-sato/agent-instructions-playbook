@@ -68,7 +68,7 @@ def _check_results(records: list[dict[str, Any]], findings: list[str]) -> None:
             if prereg["command_digest"] != record["command_digest"]:
                 findings.append(f"digest-mismatch: {eid}")
             if not _check_predicate(prereg, findings):
-                expected = rl.derive_outcome(prereg["disconfirm"], record.get("metrics"))
+                expected = rl.final_outcome(prereg, record.get("metrics"))  # B4 parity with the runner
                 if expected != record.get("outcome"):
                     findings.append(f"outcome-mismatch: {eid}: expected {expected}")
 
@@ -99,6 +99,12 @@ def _check_claims(records: list[dict[str, Any]], findings: list[str]) -> None:
         binding_errors, derived_basis = rl.evaluate_claim_binding(records, record.get("metric"), evidence)
         for error in binding_errors:
             findings.append(f"claim-binding: {cid}: {error}")
+
+        # S5: cited registrations must share ONE normalized predicate (item1); a distinct
+        # finding prefix so a forged aggregate (differing comparator/threshold/bounds) is
+        # never conflated with an ordinary binding error.
+        for error in rl.predicate_identity_errors(records, evidence):
+            findings.append(f"claim-predicate-mismatch: {cid}: {error}")
 
         # A record predating a basis field skips only that field's comparison.
         if "outcome_basis" in record and record.get("outcome_basis") != derived_basis:
