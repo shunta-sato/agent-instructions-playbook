@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -48,9 +49,15 @@ def make_run_dir(repo_root: Path, identifier: str) -> tuple[Path, str]:
     return absolute, rel
 
 def run_command(command: str, repo_root: Path, run_dir: Path) -> int:
+    """Execute the registered/explored command. B2: for a simple command (no shell
+    metacharacters) the parsed argv the axis binds to IS the process argv, by construction, so it
+    runs via ``shlex.split`` + ``shell=False``; a compound command keeps the shell execution path."""
     env = dict(os.environ)
     env["RESEARCH_RUN_DIR"] = str(run_dir)
-    completed = subprocess.run(command, shell=True, cwd=str(repo_root), env=env)
+    if rl.command_is_simple(command):
+        completed = subprocess.run(shlex.split(command), shell=False, cwd=str(repo_root), env=env)
+    else:
+        completed = subprocess.run(command, shell=True, cwd=str(repo_root), env=env)
     return completed.returncode
 
 def read_metrics(run_dir: Path) -> Any:
@@ -121,6 +128,9 @@ def validate_variation_axis(axis: str, command: str) -> list[str]:
     if parsed is None:
         return ["variation_axis must be key=value with non-empty key and value"]
     key, value = parsed
+    if not rl.command_is_simple(command):  # B2: no flat-argv binding over a shell pipeline
+        return ["axis-bearing experiments require a simple command (no shell metacharacters); "
+                "register without an axis or split the command"]
     if not rl.axis_key_bound_in_command(key, value, command):
         return [f"variation_axis value {value!r} must be bound to option {key!r} in the command"]
     return []
@@ -164,8 +174,6 @@ def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -
         "command_digest": rl.command_digest(head, dirty, args.command),
         "git_head": head,
         "dirty_files": dirty,
-        # F2: the claimable direction is preregistered, never asserted post-hoc.
-        "direction_if_supported": args.direction_if_supported,
     }
     if args.variation_axis:
         record["variation_axis"] = args.variation_axis
@@ -245,9 +253,6 @@ def cmd_explore(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
     return 0
 
 def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
-    if args.direction not in rl.DIRECTIONS:
-        raise ValueError(f"direction must be one of {list(rl.DIRECTIONS)}")
-
     records = rl.load_research_records(ledger_path)
     for eid in args.evidence:
         prereg = rl.find_preregister(records, eid)
@@ -257,22 +262,13 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         if not (prereg["registered_at"] < result["started_at"]):
             raise ValueError(f"evidence {eid}: registered_at is not before started_at")
 
-    # Semantic binding (S3): metric/evidence/direction consistency, with
-    # outcome_basis persisted so the gate re-derives it from the ledger.
-    binding_errors, outcome_basis = rl.evaluate_claim_binding(
-        records, args.metric, args.direction, args.evidence
-    )
+    # Semantic binding (S3): metric/evidence consistency, with outcome_basis
+    # persisted so the gate re-derives it from the ledger. B1: the claim's
+    # category is machine-derived below, never a caller-supplied direction.
+    binding_errors, outcome_basis = rl.evaluate_claim_binding(records, args.metric, args.evidence)
     if binding_errors:
         raise ValueError("; ".join(binding_errors))
 
-    # F2: persist each cited registration's preregistered direction so the gate
-    # re-derives the crossing; its presence marks a post-F2 claim (field-
-    # presence grandfathering for pre-F2 records). F3: n plus its note.
-    direction_basis = [
-        {"experiment_id": eid,
-         "direction_if_supported": (rl.find_preregister(records, eid) or {}).get("direction_if_supported")}
-        for eid in args.evidence
-    ]
     n, n_basis = rl.claim_n_and_note(records, args.evidence)
     claim_id = rl.next_counter(records, rl.CLAIM, "C")
     record = {
@@ -280,12 +276,11 @@ def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> i
         "record_type": rl.CLAIM,
         "claim_id": claim_id,
         "created_at": rl.stamp_utc(),
-        "direction": args.direction,
         "metric": args.metric,
         "configurations": args.configuration,
         "evidence": args.evidence,
         "outcome_basis": outcome_basis,
-        "direction_basis": direction_basis,
+        "derived_category": rl.derive_claim_category(records, args.evidence),
         "n_basis": n_basis,
         "sources": args.source or [],
         "n": n,
@@ -328,15 +323,9 @@ def build_parser() -> argparse.ArgumentParser:
     register.add_argument("--threshold", default=None)
     register.add_argument("--equivalence-bounds", nargs=2, metavar=("LOWER", "UPPER"), default=None,
                           help="Equivalence bounds: disconfirmed OUTSIDE [LOWER, UPPER]; "
-                          "supported = within bounds = no effect (R2b).")
+                          "supported = within bounds (B1: claim category 'within-bounds').")
     register.add_argument("--command", required=True)
     register.add_argument("--variation-axis", default="")
-    register.add_argument(
-        "--direction-if-supported",
-        choices=("improves", "degrades", "none"),
-        default="none",
-        help="Preregistered direction a 'supported' outcome would license (F2).",
-    )
     register.set_defaults(func=cmd_register)
 
     execute = sub.add_parser("execute", help="Execute a registered experiment.")
@@ -348,9 +337,9 @@ def build_parser() -> argparse.ArgumentParser:
     explore.set_defaults(func=cmd_explore)
 
     claim = sub.add_parser("claim", help="Record a research claim.")
-    # R2a: a claim carries no free-text effect; its sentence is rendered purely
-    # from structured fields (metric/direction/n/axis-key).
-    claim.add_argument("--direction", required=True, choices=rl.DIRECTIONS)
+    # R2a/B1: a claim carries no free-text effect and no caller-supplied
+    # direction; its sentence is rendered purely from structured fields
+    # (metric/derived-category/n/axis-key).
     claim.add_argument("--metric", required=True)
     claim.add_argument("--configuration", action="append", required=True, default=[])
     claim.add_argument("--evidence", action="append", required=True, default=[])

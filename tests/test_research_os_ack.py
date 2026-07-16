@@ -1,15 +1,15 @@
-"""R4 + Q3 promotion-acknowledgment evidence-binding tests for the Research OS
-gate.
-
-The downgrade binds to recorded ledger evidence, not syntax: a valid
-acknowledgment cites ``Delivery-run:`` run_ids that resolve to ``agent_run``
-records with passing validation COMMANDS and a recorded quality-gate pass (Q3c),
-plus any ``C-<n>`` claim that re-derives in the canonical ledger. A
-promotion-required path is downgraded only when it is BOTH under a ``Covers:``
-prefix AND spanned by a cited run's ``changed_files`` or a digest-verified
-``reviewed_files`` entry — never its ``allowed_files`` (Q3a/Q3b). Acknowledgment
-files and the run ledger are the promotion MECHANISM, never promotion-required
-(Q3d). Mock ledgers here; boundary/mode tests live in ``test_research_os_gate``.
+"""R4 + Q3 + B3 promotion-acknowledgment evidence-binding tests for the
+Research OS gate. The downgrade binds to recorded ledger evidence, not
+syntax: a valid acknowledgment cites ``Delivery-run:`` run_ids resolving to
+``agent_run`` records with passing validation COMMANDS + a recorded
+quality-gate pass (Q3c), plus any ``C-<n>`` claim re-deriving in the
+canonical ledger. A promotion-required path downgrades only when it is BOTH
+under a ``Covers:`` prefix AND spanned by a digest-verified ``reviewed_files``
+entry naming that exact path — never by mere presence in a cited run's
+``changed_files`` (no content guarantee against a LATER edit of the same
+path, B3) or its ``allowed_files`` (Q3a). Ack files/the run ledger are the
+promotion MECHANISM, never promotion-required (Q3d). Mock ledgers here;
+boundary/mode tests live in ``test_research_os_gate``.
 """
 
 from __future__ import annotations
@@ -31,8 +31,7 @@ ACK = ".agents/promotions/2026-07-13-promote.md"
 
 
 def _run(run_id: str, passed: bool = True, changed=None, allowed=None, reviewed=None) -> dict:
-    # Q3c: delivery evidence needs recorded validation COMMANDS + a passing
-    # quality gate, not a caller boolean; a failing run flips both.
+    # Q3c: delivery evidence needs recorded validation COMMANDS + a passing quality gate.
     validation = (
         {"commands": [{"cmd": "make test-unit", "exit_code": 0, "passed": True}],
          "passed": True, "quality_gate": "pass"}
@@ -52,6 +51,26 @@ def _run(run_id: str, passed: bool = True, changed=None, allowed=None, reviewed=
     return run
 
 
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _capture(fn, *args) -> tuple[int, str]:
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = fn(*args)
+    return rc, buf.getvalue()
+
+
+def _git(root: Path, *args: str) -> None:
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+
+
+def _git_init(root: Path) -> None:
+    for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
+        _git(root, *args)
+
+
 def _write_canonical_ledger(root: Path, records: list[dict]) -> None:
     path = root / ".agents" / "runs" / "agent-runs.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -67,14 +86,31 @@ def _write_ack(root: Path, ack_rel: str, covers, run_ids, claim_line="no researc
 
 
 class AckEvidenceBindingTests(unittest.TestCase):
-    # A run whose union spans the ack's own path AND the promoted delivery path.
+    # A Q3c-passing run citing src/app.py only via changed_files (B3: no content guarantee).
     def _good_run(self, run_id="run-1"):
         return _run(run_id, passed=True, changed=["src/app.py"], allowed=["src/", ".agents/promotions/"])
 
-    def test_happy_path_downgrades_with_green_run_evidence(self) -> None:
+    def test_changed_only_evidence_does_not_downgrade(self) -> None:
+        # B3 (round-5 finding): a changed_files listing must not cover on its
+        # own, or a run that changed src/app.py blesses ANY later edit of it.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _write_canonical_ledger(root, [self._good_run()])
+            _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
+            findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
+        self.assertIn("promotion-required: src/app.py", findings)
+        self.assertFalse(any(n.startswith("promotion acknowledged:") for n in notes), notes)
+
+    def test_reviewed_digest_of_same_path_downgrades_with_green_run_evidence(self) -> None:
+        # The B3 fix: the SAME path, digest-reviewed against its content, DOES cover.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "src").mkdir()
+            app = root / "src" / "app.py"
+            app.write_text("payload\n", encoding="utf-8")
+            run = _run("run-1", passed=True, changed=["src/app.py"], allowed=["src/", ".agents/promotions/"],
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}])
+            _write_canonical_ledger(root, [run])
             _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
             findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
         self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
@@ -100,8 +136,7 @@ class AckEvidenceBindingTests(unittest.TestCase):
         self.assertTrue(any("did not pass validation" in n for n in notes), notes)
 
     def test_caller_boolean_only_run_downgrades_nothing(self) -> None:
-        # Q3c inversion: a run asserting only outcome.validation_passed (no
-        # recorded validation commands or quality-gate pass) is NOT evidence.
+        # Q3c: a run asserting only outcome.validation_passed is NOT evidence.
         run = {"record_type": "agent_run", "run_id": "run-1",
                "outcome": {"validation_passed": True},
                "changed_files": ["src/app.py"], "allowed_files": ["src/"]}
@@ -114,7 +149,7 @@ class AckEvidenceBindingTests(unittest.TestCase):
         self.assertTrue(any("did not pass validation" in n for n in notes), notes)
 
     def test_no_quality_gate_pass_downgrades_nothing(self) -> None:
-        # Q3c: passing validation commands but quality_gate=not_run is not enough.
+        # Q3c: passing commands but quality_gate=not_run is not enough.
         run = _run("run-1", changed=["src/app.py"], allowed=["src/"])
         run["validation"]["quality_gate"] = "not_run"
         with tempfile.TemporaryDirectory() as tmp:
@@ -125,13 +160,29 @@ class AckEvidenceBindingTests(unittest.TestCase):
         self.assertIn("promotion-required: src/app.py", findings)
         self.assertTrue(any("quality gate not recorded as pass" in n for n in notes), notes)
 
-    def test_allowed_only_path_stays_blocking(self) -> None:
-        # Q3a inversion (round-3 test overturned): allowed_files is authorization
-        # scope, NOT coverage. Only changed_files (here src/app.py) cover; paths
-        # present merely in allowed_files (src/deep/x.py, tools/build.py) block.
+    def test_allowed_and_changed_only_paths_stay_blocking(self) -> None:
+        # Q3a/B3: allowed_files and changed_files are NEITHER coverage; none
+        # of these three paths is digest-reviewed, so all stay blocking.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _write_canonical_ledger(root, [_run("run-1", changed=["src/app.py"], allowed=["src/", "tools/"])])
+            _write_ack(root, ACK, covers=["src/", "tools/", ".agents/promotions/"], run_ids=["run-1"])
+            findings, notes = cre.evaluate_diff(["src/app.py", "src/deep/x.py", "tools/build.py", ACK], root, POLICY, "research")
+        self.assertIn("promotion-required: src/app.py", findings)
+        self.assertIn("promotion-required: src/deep/x.py", findings)
+        self.assertIn("promotion-required: tools/build.py", findings)
+        self.assertFalse(any(n.startswith("promotion acknowledged:") for n in notes), notes)
+
+    def test_reviewed_digest_path_covers_but_allowed_only_paths_still_block(self) -> None:
+        # Q3a: a digest-reviewed path covers; allowed_files-only paths don't.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "src").mkdir()
+            app = root / "src" / "app.py"
+            app.write_text("payload\n", encoding="utf-8")
+            run = _run("run-1", changed=[], allowed=["src/", "tools/"],
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}])
+            _write_canonical_ledger(root, [run])
             _write_ack(root, ACK, covers=["src/", "tools/", ".agents/promotions/"], run_ids=["run-1"])
             findings, notes = cre.evaluate_diff(["src/app.py", "src/deep/x.py", "tools/build.py", ACK], root, POLICY, "research")
         self.assertIn(f"promotion acknowledged: {ACK} covers src/app.py", notes)
@@ -142,8 +193,7 @@ class AckEvidenceBindingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _write_canonical_ledger(root, [self._good_run()])
-            # No Delivery-run line at all.
-            (root / ".agents" / "promotions").mkdir(parents=True, exist_ok=True)
+            (root / ".agents" / "promotions").mkdir(parents=True, exist_ok=True)  # no Delivery-run line at all
             (root / ACK).write_text("Scope: t\nno research claims promoted\nCovers:\n- src/\n", encoding="utf-8")
             findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
         self.assertIn("promotion-required: src/app.py", findings)
@@ -176,7 +226,13 @@ class AckClaimBindingTests(unittest.TestCase):
     def test_resolving_claim_id_allows_downgrade(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            self._ledger_with_claim(root, _run("run-1", changed=["src/app.py"], allowed=["src/", ".agents/promotions/"]))
+            (root / "src").mkdir()
+            app = root / "src" / "app.py"
+            app.write_text("payload\n", encoding="utf-8")
+            self._ledger_with_claim(root, _run(
+                "run-1", changed=["src/app.py"], allowed=["src/", ".agents/promotions/"],
+                reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}],
+            ))
             _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"], claim_line="promotes C-0001")
             findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
         self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
@@ -193,11 +249,9 @@ class AckClaimBindingTests(unittest.TestCase):
 
 
 class AckReviewedFilesTests(unittest.TestCase):
-    """Q3b: a digest-verified ``reviewed_files`` entry covers a promoted path;
-    coverage union is ``changed_files`` ∪ reviewed_files, never allowed_files."""
-
-    def _digest(self, path: Path) -> str:
-        return hashlib.sha256(path.read_bytes()).hexdigest()
+    """Q3b/B3: a digest-verified ``reviewed_files`` entry covers a promoted
+    path; this is the ONLY coverage source — never changed_files, never
+    allowed_files."""
 
     def test_reviewed_file_with_matching_digest_covers_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -206,7 +260,7 @@ class AckReviewedFilesTests(unittest.TestCase):
             reviewed_path = root / "docs" / "guide.md"
             reviewed_path.write_text("hello\n", encoding="utf-8")
             run = _run("run-1", changed=[], allowed=[],
-                       reviewed=[{"path": "docs/guide.md", "sha256": self._digest(reviewed_path)}])
+                       reviewed=[{"path": "docs/guide.md", "sha256": _sha256(reviewed_path)}])
             _write_canonical_ledger(root, [run])
             _write_ack(root, ACK, covers=["docs/", ".agents/promotions/"], run_ids=["run-1"])
             findings, notes = cre.evaluate_diff(["docs/guide.md", ACK], root, POLICY, "research")
@@ -248,46 +302,36 @@ class AckSymlinkHeadBlobTests(unittest.TestCase):
     ``git show <head>:<path>`` blob, which for a symlink IS its readlink target
     string — match and mismatch/stale, exercised through ``run_diff_mode``."""
 
-    def _capture(self, fn, *args) -> tuple[int, str]:
-        buf = io.StringIO()
-        with contextlib.redirect_stdout(buf):
-            rc = fn(*args)
-        return rc, buf.getvalue()
-
-    def _git(self, root: Path, *args) -> None:
-        subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
-
     def _repo_with_committed_symlink(self, tmp: str, reviewed_sha256: str) -> tuple[Path, Path]:
         root = Path(tmp)
-        for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
-            self._git(root, *args)
+        _git_init(root)
         policy = root / "policy.json"
         policy.write_text(json.dumps(POLICY), encoding="utf-8")
         _write_canonical_ledger(root, [_run(
             "run-1", changed=[], allowed=[],
             reviewed=[{"path": "link", "sha256": reviewed_sha256}],
         )])
-        self._git(root, "add", "-A")
-        self._git(root, "commit", "-qm", "base")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-qm", "base")
         (root / "target_dir").mkdir()
         (root / "link").symlink_to("target_dir")  # tracked symlink to a DIRECTORY
         _write_ack(root, ACK, covers=["link", ".agents/promotions/"], run_ids=["run-1"])
-        self._git(root, "add", "-A")
-        self._git(root, "commit", "-qm", "promote")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-qm", "promote")
         return root, policy
 
     def test_matching_symlink_digest_downgrades_at_head(self) -> None:
         correct = hashlib.sha256(b"target_dir").hexdigest()  # readlink target, no newline
         with tempfile.TemporaryDirectory() as tmp:
             root, policy = self._repo_with_committed_symlink(tmp, correct)
-            rc, output = self._capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
         self.assertEqual(rc, 0)
         self.assertIn(f"NOTE promotion acknowledged: {ACK} covers link", output)
 
     def test_mismatched_symlink_digest_stays_blocking_and_stale(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root, policy = self._repo_with_committed_symlink(tmp, "0" * 64)  # recorded digest drifted
-            rc, output = self._capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
         self.assertEqual(rc, 1)
         self.assertIn("FINDING promotion-required: link", output)
         self.assertIn("NOTE stale-review: link", output)
@@ -307,33 +351,49 @@ class MechanismPathTests(unittest.TestCase):
 class AckDiffModeTests(unittest.TestCase):
     """R4 end-to-end through ``run_diff_mode`` over a real git range."""
 
-    def _capture(self, fn, *args) -> tuple[int, str]:
-        buf = io.StringIO()
-        with contextlib.redirect_stdout(buf):
-            rc = fn(*args)
-        return rc, buf.getvalue()
-
-    def _git(self, root: Path, *args) -> None:
-        subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
-
-    def test_promotion_with_evidence_bound_ack_exits_zero(self) -> None:
+    def test_changed_files_citation_of_a_later_edit_stays_blocking(self) -> None:
+        # B3: run-1 saw src/app.py as "x\n"; promote LATER edits it to "y\n" —
+        # content the run never saw. changed_files alone must not bless this.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
-                self._git(root, *args)
+            _git_init(root)
             policy = root / "policy.json"
             policy.write_text(json.dumps(POLICY), encoding="utf-8")
             (root / "src").mkdir()
             (root / "src" / "app.py").write_text("x\n", encoding="utf-8")
             _write_canonical_ledger(root, [_run("run-1", changed=["src/app.py"], allowed=["src/", ".agents/promotions/"])])
-            self._git(root, "add", "-A")
-            self._git(root, "commit", "-qm", "base")
+            _git(root, "add", "-A")
+            _git(root, "commit", "-qm", "base")
             (root / "src" / "app.py").write_text("y\n", encoding="utf-8")
             _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
-            self._git(root, "add", "-A")
-            self._git(root, "commit", "-qm", "promote")
-            rc, _ = self._capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+            _git(root, "add", "-A")
+            _git(root, "commit", "-qm", "promote")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING promotion-required: src/app.py", output)
+
+    def test_reviewed_digest_of_final_content_exits_zero(self) -> None:
+        # The fix in practice: a run reviewing the FINAL content covers at head.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            policy = root / "policy.json"
+            policy.write_text(json.dumps(POLICY), encoding="utf-8")
+            (root / "src").mkdir()
+            app = root / "src" / "app.py"
+            app.write_text("x\n", encoding="utf-8")
+            _git(root, "add", "-A")
+            _git(root, "commit", "-qm", "base")
+            app.write_text("y\n", encoding="utf-8")
+            run = _run("run-1", changed=["src/app.py"], allowed=["src/", ".agents/promotions/"],
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}])
+            _write_canonical_ledger(root, [run])
+            _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"])
+            _git(root, "add", "-A")
+            _git(root, "commit", "-qm", "promote")
+            rc, output = _capture(cre.run_diff_mode, "HEAD~1..HEAD", policy, root, "research")
         self.assertEqual(rc, 0)
+        self.assertIn(f"NOTE promotion acknowledged: {ACK} covers src/app.py", output)
 
 
 if __name__ == "__main__":

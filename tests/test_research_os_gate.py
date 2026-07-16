@@ -12,12 +12,39 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import re
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts import check_research_evidence as cre
+
+_STEP_NAME_RE = re.compile(r"^ {6}- name: (.+)$")
+_STEP_RUN_RE = re.compile(r"^ {8}run: (.+)$")
+_VALIDATOR_WORDS = ("validate", "check", "report", "generate")
+
+
+def _workflow_step_order(text: str) -> list[tuple[str, str | None]]:
+    """``[(step name, run command or None)]`` in file order for a single-job
+    GitHub Actions workflow (stdlib-only line scan; no YAML parser needed for
+    this file's regular ``- name: ...`` / ``run: ...`` shape)."""
+    steps: list[tuple[str, str | None]] = []
+    pending_name: str | None = None
+    for line in text.splitlines():
+        name_match = _STEP_NAME_RE.match(line)
+        if name_match:
+            if pending_name is not None:
+                steps.append((pending_name, None))
+            pending_name = name_match.group(1).strip()
+            continue
+        run_match = _STEP_RUN_RE.match(line)
+        if run_match and pending_name is not None:
+            steps.append((pending_name, run_match.group(1).strip()))
+            pending_name = None
+    if pending_name is not None:
+        steps.append((pending_name, None))
+    return steps
 
 
 def _capture(fn, *args) -> tuple[int, str]:
@@ -274,6 +301,28 @@ class WiringTests(unittest.TestCase):
         text = workflow.read_text(encoding="utf-8")
         self.assertIn("check_research_evidence.py --diff-range", text)
         self.assertIn("github.event_name == 'pull_request'", text)
+
+        # B3: the boundary gate judges the whole PR's changed-path set, so it
+        # must run AFTER every other validator step, not interleaved with them
+        # — otherwise a later validator step could still fail on files the
+        # boundary gate already blessed as promoted/reviewed.
+        steps = _workflow_step_order(text)
+        boundary_indices = [
+            i for i, (_, run) in enumerate(steps) if run and "--diff-range" in run
+        ]
+        self.assertEqual(len(boundary_indices), 1, steps)
+        boundary_index = boundary_indices[0]
+        other_validator_indices = [
+            i for i, (name, _) in enumerate(steps)
+            if i != boundary_index and any(word in name.lower() for word in _VALIDATOR_WORDS)
+        ]
+        self.assertTrue(other_validator_indices, steps)
+        self.assertTrue(
+            all(i < boundary_index for i in other_validator_indices),
+            f"boundary-gate step (index {boundary_index}) must run after every "
+            f"other validator step; out-of-order indices: "
+            f"{[i for i in other_validator_indices if i > boundary_index]} in {steps}",
+        )
 
 
 if __name__ == "__main__":

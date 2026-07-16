@@ -4,11 +4,18 @@
 stays within the structure budget. Evaluates a changed-path set under a declared
 ``--mode`` for promotion, symlink-boundary, and safety findings (default-deny),
 loads the policy with base-ref binding (F6), and binds promotion acknowledgments
-to recorded ``agent_run`` evidence (R4). Coverage is EVIDENCE, not authorization:
-a promoted path downgrades only when a cited run's ``changed_files`` or a
-digest-verified ``reviewed_files`` entry spans it — never its ``allowed_files``
-(Q3a/Q3b). Acknowledgment files and the run ledger are the promotion MECHANISM,
-never promotion-required (Q3d). Tamper-EVIDENT, not tamper-PROOF. Stdlib only."""
+to recorded ``agent_run`` evidence (R4). Coverage is EVIDENCE, not authorization,
+and requires CONTENT identity: a promoted path downgrades only when a
+digest-verified ``reviewed_files`` entry spans it — never a cited run's
+``changed_files`` (a changed-path listing has no content guarantee against a
+LATER edit of the same path, B3) or ``allowed_files`` (Q3a/Q3b). Acknowledgment
+files and the run ledger are the promotion MECHANISM, never promotion-required
+(Q3d). A run's recorded validation-command strings and ``quality_gate: pass``
+are corroborating SELF-REPORTS, not executed proof (B3); the EXECUTED evidence
+for a delivery gate is the CI workflow itself at the reviewed head, whose
+validator step order is asserted by test — a trusted execute-and-record
+wrapper remains the documented follow-up. Tamper-EVIDENT, not tamper-PROOF.
+Stdlib only."""
 
 from __future__ import annotations
 
@@ -137,15 +144,6 @@ def ack_evidence_gaps(
                         else f"Delivery-run {rid} {reason}")
     return gaps
 
-def union_covers(path: str, union: set[str]) -> bool:
-    """Is ``path`` in a run's ``changed_files`` union? A listed dir (``dir/`` or
-    ``dir/**``) covers its subtree; a trailing ``(via ... only)`` note is ignored."""
-    for entry in union:
-        base = entry.split(" ", 1)[0].rstrip("*")
-        if base and (path == base or path.startswith(base if base.endswith("/") else base + "/")):
-            return True
-    return False
-
 # --- acknowledgment parsing --------------------------------------------------
 
 def _parse_acknowledgment(text: str) -> tuple[list[str], list[str], list[str], list[str]]:
@@ -228,16 +226,16 @@ def _is_mechanism_path(path: str) -> bool:
 
 def _valid_acknowledgments(
     changed_paths: list[str], repo_root: Path, notes: list[str]
-) -> list[tuple[str, list[str], set[str], list[dict[str, str]]]]:
+) -> list[tuple[str, list[str], list[dict[str, str]]]]:
     """Parse + evidence-bind each acknowledgment in the changed set. A valid ack
-    yields ``(ack, covers, changed_union, reviewed_entries)``; an invalid one
-    downgrades nothing and appends an ``invalid-acknowledgment`` note (F7/R4)."""
+    yields ``(ack, covers, reviewed_entries)``; an invalid one downgrades
+    nothing and appends an ``invalid-acknowledgment`` note (F7/R4)."""
     acks = [p for p in changed_paths if p.startswith(PROMOTIONS_DIR) and p.endswith(".md") and Path(p).name != "README.md"]
     if not acks:
         return []
     agent_runs = load_agent_runs(repo_root)
     valid_claims = _valid_canonical_claim_ids(repo_root)
-    valid: list[tuple[str, list[str], set[str], list[dict[str, str]]]] = []
+    valid: list[tuple[str, list[str], list[dict[str, str]]]] = []
     for ack in sorted(acks):
         ack_abs = repo_root / ack
         text = ack_abs.read_text(encoding="utf-8") if ack_abs.is_file() else ""
@@ -246,31 +244,26 @@ def _valid_acknowledgments(
         if reasons:
             notes.append(f"invalid-acknowledgment: {ack} ({', '.join(reasons)})")
             continue
-        changed_union: set[str] = set()
-        reviewed: list[dict[str, str]] = []
-        for rid in run_ids:
-            run = agent_runs[rid]
-            changed_union |= set(run.get("changed_files", []))
-            reviewed += [e for e in run.get("reviewed_files", []) if isinstance(e, dict)]
-        valid.append((ack, covers, changed_union, reviewed))
+        reviewed = [e for rid in run_ids for e in agent_runs[rid].get("reviewed_files", []) if isinstance(e, dict)]
+        valid.append((ack, covers, reviewed))
     return valid
 
 def _ack_coverage(
     path: str,
-    valid_acks: list[tuple[str, list[str], set[str], list[dict[str, str]]]],
+    valid_acks: list[tuple[str, list[str], list[dict[str, str]]]],
     blob_digest: Callable[[str], str | None],
 ) -> tuple[str | None, str | None]:
     """Coverage for one promoted ``path`` → ``(covering ack, stale path)``. A
-    path is covered when a valid ack Covers it AND it is in a cited run's
-    ``changed_files``, or matched by a ``reviewed_files`` entry whose recorded
-    sha256 still equals the blob at the diff head. A matching reviewed entry with
-    a drifted digest yields the stale path so the finding stays blocking (Q3b)."""
+    path is covered only when a valid ack Covers it AND a ``reviewed_files``
+    entry names it with a recorded sha256 that still equals the blob at the
+    diff head — never by mere presence in a cited run's ``changed_files``
+    (content identity, not a changed-path listing, is what counts as evidence,
+    B3). A matching reviewed entry with a drifted digest yields the stale path
+    so the finding stays blocking (Q3b)."""
     stale: str | None = None
-    for ack, covers, changed_union, reviewed in valid_acks:
+    for ack, covers, reviewed in valid_acks:
         if not any(path.startswith(prefix) for prefix in covers):
             continue
-        if union_covers(path, changed_union):
-            return ack, None
         for entry in reviewed:
             if entry.get("path") != path:
                 continue

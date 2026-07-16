@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Shared primitives for the Research OS ledger — the single source of truth
-the producer (``research_run``) and the checker (``check_research_evidence`` +
-``research_gate``) agree on (hashing, chain, digests, threshold/equivalence
-predicate + outcome, claim binding/direction/n, axis-key binding, claims view),
-so the validator re-derives exactly what the runner wrote. Records chain over
-their own subsequence of the shared JSONL. Tamper-EVIDENT, NOT tamper-PROOF
-(adversarial anchoring is a follow-up). Stdlib only."""
+"""Shared primitives for the Research OS ledger — the single source of truth the producer
+(``research_run``) and the checker (``check_research_evidence`` + ``research_gate``) agree on
+(hashing, chain, digests, threshold/equivalence predicate + outcome, claim binding/category/n,
+axis-key binding, simple-command classification, claims view), so the validator re-derives
+exactly what the runner wrote. Records chain over their own subsequence of the shared JSONL. A
+future directional ("improves") claim needs a baseline/control + measured delta + explicit
+polarity field (B1 follow-up, not emitted here). Tamper-EVIDENT, NOT tamper-PROOF. Stdlib only."""
 
 from __future__ import annotations
 
@@ -30,7 +30,12 @@ CLAIM = "research_claim"
 RESEARCH_TYPES = (PREREGISTER, EXPLORATION, RESULT, CLAIM)
 
 COMPARATORS = ("<", "<=", ">", ">=", "==")
-DIRECTIONS = ("improves", "degrades", "no-effect", "mixed")
+
+# B1: a claim's category is machine-derived (see ``derive_claim_category``), never caller-supplied.
+CATEGORY_SUPPORTED = "supported"
+CATEGORY_WITHIN_BOUNDS = "within-bounds"
+CATEGORY_MIXED = "mixed"
+CLAIM_CATEGORIES = (CATEGORY_SUPPORTED, CATEGORY_WITHIN_BOUNDS, CATEGORY_MIXED)
 
 # Disconfirm-predicate shapes (R2b). Legacy records carry no ``type`` and are
 # read as ``threshold``; ``equivalence`` is the structured no-effect predicate.
@@ -123,10 +128,8 @@ def predicate_type(disconfirm: Any) -> str:
     return PREDICATE_THRESHOLD
 
 def validate_predicate(disconfirm: Any) -> list[str]:
-    """Well-formedness errors for a disconfirm predicate (threshold or
-    equivalence). R1: a non-finite bound (NaN/±Inf) is ill-defined, so it is
-    refused at registration, re-flagged by the gate, and fails any citing claim;
-    an equivalence predicate also needs lower < upper for a real interval."""
+    """Well-formedness errors for a disconfirm predicate. R1: a non-finite bound is refused at
+    registration and fails any citing claim; equivalence also needs lower < upper."""
     errors: list[str] = []
     if not isinstance(disconfirm, dict):
         return ["disconfirm must be an object"]
@@ -164,9 +167,8 @@ def apply_comparator(comparator: str, lhs: Any, rhs: Any) -> bool:
         raise LedgerError(f"unknown comparator: {comparator}") from exc
 
 def derive_outcome(disconfirm: dict[str, Any], metrics: Any) -> str:
-    """Disconfirm predicate → disconfirmed/supported/not-evaluable. Threshold:
-    the comparator holds. Equivalence: value OUTSIDE ``[lower, upper]`` (supported
-    == within bounds == no effect). ``not-evaluable`` if metric missing/non-finite/non-numeric."""
+    """Disconfirm predicate → disconfirmed/supported/not-evaluable. Threshold: comparator holds.
+    Equivalence: value OUTSIDE ``[lower, upper]``. ``not-evaluable`` if metric missing/non-finite."""
     metric = disconfirm.get("metric")
     if not isinstance(metrics, dict) or metric not in metrics:
         return "not-evaluable"
@@ -196,6 +198,14 @@ def multiplicity(prior_records: list[dict[str, Any]], digest: str) -> int:
     return sum(1 for r in prior_records
                if r.get("record_type") in (EXPLORATION, RESULT) and r.get("command_digest") == digest)
 
+SHELL_METACHARACTERS = ";&|<>`$()\n"
+
+def command_is_simple(command: str) -> bool:
+    """True when ``command`` has no shell metacharacters (sequencing/pipes/
+    redirection/substitution/subshells): its ``shlex.split`` tokens are then
+    exactly the argv a ``shell=False`` process receives, by construction."""
+    return not any(ch in command for ch in SHELL_METACHARACTERS)
+
 def _axis_key_value(axis: Any) -> tuple[str, str] | None:
     """Parse ``variation_axis`` into ``(key, value)`` (split on first ``=``,
     both parts non-empty); absent/non-conforming axes return ``None``."""
@@ -217,10 +227,8 @@ def _tokenize(command: str) -> list[str]:
         return command.split()
 
 def _bound_value_positions(tokens: list[str], key: str, value: str) -> list[int]:
-    """R3: token indices where ``value`` is bound to option ``key`` — an inline
-    ``--key=value``/``key=value`` token, or a ``--key``/``-key`` flag followed by
-    ``value``. A bare ``value`` under a different option (the ``1`` in
-    ``--output=1`` for key ``seed``) is NOT a position."""
+    """R3: indices where ``value`` is bound to option ``key`` — inline ``--key=value``/``key=value``,
+    or ``--key``/``-key`` followed by ``value``. A ``value`` under a different option is NOT bound."""
     inline = {f"--{key}={value}", f"{key}={value}"}
     flags = {f"--{key}", f"-{key}"}
     positions: list[int] = []
@@ -236,9 +244,8 @@ def axis_key_bound_in_command(key: str, value: str, command: str) -> bool:
     return bool(_bound_value_positions(_tokenize(command), key, value))
 
 def _templatize_command(command: str, key: str, value: str) -> str:
-    """Blank ONLY the key-bound occurrences of ``value`` (keeping any ``--key=``
-    prefix) so commands differing solely in the axis value share a template; a
-    same-valued token under a different option is left intact (R3)."""
+    """Blank ONLY the key-bound occurrences of ``value`` (keeping any ``--key=`` prefix) so commands
+    differing solely in the axis value share a template (R3)."""
     tokens = _tokenize(command)
     positions = set(_bound_value_positions(tokens, key, value))
     out: list[str] = []
@@ -252,10 +259,9 @@ def _templatize_command(command: str, key: str, value: str) -> str:
     return " ".join(out)
 
 def claim_n_and_note(records: list[dict[str, Any]], evidence_ids: list[str]) -> tuple[int, str]:
-    """Conservative multiplicity + note (R3): ``n>1`` needs cited evidence to
-    share one axis KEY and, after blanking axis-value tokens, identical command
-    templates over pairwise-distinct raw commands; any binding failure
-    conservatively yields n=1 + note, never an error."""
+    """Conservative multiplicity + note (R3): ``n>1`` needs cited evidence to share one axis KEY
+    and, after blanking axis-value tokens, identical command templates over pairwise-distinct raw
+    commands; any binding failure (incl. a non-simple command, B2) conservatively yields n=1 + note."""
     keys_seen: set[str] = set()
     entries: list[tuple[str, str]] = []  # (axis value, registered command)
     for eid in evidence_ids:
@@ -267,8 +273,11 @@ def claim_n_and_note(records: list[dict[str, Any]], evidence_ids: list[str]) -> 
         if parsed is None:
             continue
         key, value = parsed
+        cmd = prereg.get("command", "")
+        if not command_is_simple(cmd):  # forged-ledger defense: no exception, n=1
+            return 1, "n=1: axis on non-simple command"
         keys_seen.add(key)
-        entries.append((value, prereg.get("command", "")))
+        entries.append((value, cmd))
     if not keys_seen:
         return 1, "n=1: no conforming variation axis"
     if len(keys_seen) > 1:
@@ -300,18 +309,11 @@ def claim_axis_key(records: list[dict[str, Any]], evidence_ids: list[str]) -> st
 def evaluate_claim_binding(
     records: list[dict[str, Any]],
     metric: str,
-    direction: str,
     evidence_ids: list[str],
-    enforce_direction: bool = True,
 ) -> tuple[list[str], list[dict[str, str]]]:
-    """Re-derive a claim's binding → ``(errors, outcome_basis)``: (a) claim
-    metric == every cited prereg's metric with a valid predicate (R1); (b) each
-    result is real evidence (exit 0, supported/disconfirmed); (c) direction
-    agrees — improves/degrades all supported (F2: matching preregistered
-    direction under ``enforce_direction``); no-effect all supported AND every
-    cited registration using an equivalence-bounds predicate (R2b); disconfirmed
-    → ``mixed`` only. Grandfathered/threshold evidence backs only ``mixed``;
-    pre-F2 claims skip F2."""
+    """Re-derive a claim's binding → ``(errors, outcome_basis)``: claim metric matches every cited
+    prereg's valid predicate (R1) and each result is real evidence (exit 0, supported/disconfirmed).
+    B1: category is derived separately by ``derive_claim_category``; no direction rule lives here."""
     errors: list[str] = []
     basis: list[dict[str, str]] = []
     for eid in evidence_ids:
@@ -331,31 +333,24 @@ def evaluate_claim_binding(
         if outcome not in ("supported", "disconfirmed"):
             errors.append(f"{eid}: outcome {outcome!r} is not evidence")
         basis.append({"experiment_id": eid, "outcome": outcome})
-    outcomes = [b["outcome"] for b in basis]
-    if outcomes:
-        if direction in ("improves", "degrades"):
-            if not all(o == "supported" for o in outcomes):
-                errors.append(f"direction {direction} requires all evidence outcomes supported")
-            elif enforce_direction:
-                for eid in evidence_ids:
-                    pre_dir = (find_preregister(records, eid) or {}).get("direction_if_supported")
-                    if pre_dir != direction:
-                        errors.append(
-                            f"{eid}: preregistered direction {pre_dir!r} != claim {direction!r}"
-                            " (grandfathered evidence backs only no-effect/mixed)"
-                        )
-        elif direction == "no-effect":
-            if not all(o == "supported" for o in outcomes):
-                errors.append("direction no-effect requires all evidence outcomes supported")
-            elif not all(
-                predicate_type((find_preregister(records, e) or {}).get("disconfirm")) == PREDICATE_EQUIVALENCE
-                for e in evidence_ids
-            ):
-                errors.append(
-                    "direction no-effect requires every registration to use an"
-                    " --equivalence-bounds predicate (grandfathered/threshold evidence backs only mixed)"
-                )
     return errors, basis
+
+def derive_claim_category(records: list[dict[str, Any]], evidence_ids: list[str]) -> str:
+    """B1: claim category, derived purely from cited-evidence outcomes + predicate shapes, never
+    asserted. All ``supported`` + all ``threshold`` -> ``supported``; all ``supported`` + all
+    ``equivalence`` -> ``within-bounds``; else (a ``disconfirmed``, a predicate mix, or none) -> ``mixed``."""
+    outcomes: list[str] = []
+    types: set[str] = set()
+    for eid in evidence_ids:
+        prereg = find_preregister(records, eid)
+        result = find_result(records, eid)
+        if prereg is None or result is None:
+            continue
+        outcomes.append(result.get("outcome"))
+        types.add(predicate_type(prereg.get("disconfirm")))
+    if not outcomes or any(o != "supported" for o in outcomes) or len(types) != 1:
+        return CATEGORY_MIXED
+    return CATEGORY_SUPPORTED if types == {PREDICATE_THRESHOLD} else CATEGORY_WITHIN_BOUNDS
 
 def claims_view_path(repo_root: Path, ledger_path: Path) -> Path:
     """Canonical ledger → ``research/claims.md``; any other → adjacent ``claims.md``."""
@@ -364,7 +359,9 @@ def claims_view_path(repo_root: Path, ledger_path: Path) -> Path:
     return ledger_path.parent / "claims.md"
 
 def render_claims(records: list[dict[str, Any]]) -> str:
-    """Deterministic, template-generated claims view (no timestamps in body)."""
+    """Deterministic, template-generated claims view (no timestamps). B1: a sentence states ONLY
+    the machine-derived predicate fact (never improves/degrades/better/worse/no-effect); category
+    is ALWAYS re-derived here, ignoring a stored ``derived_category``/legacy ``direction`` field."""
     head = records[-1]["chain"]["hash"] if records else "none"
     lines = ["# Research claims", "", f"ledger-head: {head}", ""]
     claims = sorted(
@@ -372,26 +369,29 @@ def render_claims(records: list[dict[str, Any]]) -> str:
         key=lambda r: r["claim_id"],
     )
     for claim in claims:
-        n = claim["n"]
-        # R2a: the claim sentence is built EXCLUSIVELY from structured fields
-        # (metric/direction/n/axis-key); a grandfathered ``effect`` is ignored.
-        metric, direction = claim["metric"], claim["direction"]
-        if n == 1:
-            sentence = f"{metric} {direction} — observed in a single configuration."
+        n, metric, evidence = claim["n"], claim["metric"], claim["evidence"]
+        category = derive_claim_category(records, evidence)
+        tail = ("observed in a single configuration" if n == 1 else
+                f"observed across {n} distinct {claim_axis_key(records, evidence) or 'variation-axis'} configurations")
+        if category == CATEGORY_MIXED:
+            sentence = f"{metric} evidence is mixed — {tail}."
         else:
-            axis_key = claim_axis_key(records, claim["evidence"]) or "variation-axis"
-            sentence = f"{metric} {direction} — observed across {n} distinct {axis_key} configurations."
+            # Representative predicate for the sentence: the axis sweep (if any) varies the
+            # command, not the disconfirm shape, so the first cited registration stands in.
+            disconfirm = (find_preregister(records, evidence[0]) or {}).get("disconfirm") or {}
+            if category == CATEGORY_SUPPORTED:
+                fact = f"stayed on the non-disconfirming side of {disconfirm.get('comparator')} {disconfirm.get('threshold')}"
+            else:
+                fact = f"remained within [{disconfirm.get('lower')}, {disconfirm.get('upper')}]"
+            sentence = f"{metric} {fact} — {tail}."
         lines.append(f"## {claim['claim_id']}")
         lines.append(sentence)
         if claim.get("configurations"):
             lines.append(f"configurations: {', '.join(claim['configurations'])}")
-        lines.append(f"evidence: {', '.join(claim['evidence'])}")
+        lines.append(f"evidence: {', '.join(evidence)}")
         if claim.get("outcome_basis"):
             basis = ", ".join(f"{b['experiment_id']}={b['outcome']}" for b in claim["outcome_basis"])
             lines.append(f"outcome-basis: {basis}")
-        if claim.get("direction_basis"):
-            db = ", ".join(f"{b['experiment_id']}={b['direction_if_supported']}" for b in claim["direction_basis"])
-            lines.append(f"direction-basis: {db}")
         if claim.get("n_basis"):
             lines.append(f"n-basis: {claim['n_basis']}")
         if claim.get("sources"):

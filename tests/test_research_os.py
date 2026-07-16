@@ -126,8 +126,7 @@ class ClaimIntegrityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = Path(tmp) / "ledger.jsonl"
             rc, _ = run_cli([
-                "--repo-root", tmp, "--ledger", str(ledger), "claim",
-                "--direction", "improves", "--metric", "err",
+                "--repo-root", tmp, "--ledger", str(ledger), "claim", "--metric", "err",
                 "--configuration", "c", "--evidence", "E-9999",
             ])
         self.assertEqual(rc, 1)
@@ -170,20 +169,16 @@ class LaunderingTests(unittest.TestCase):
             ledger = Path(tmp) / "ledger.jsonl"
             base = ["--repo-root", tmp, "--ledger", str(ledger)]
             for _ in range(2):
-                # comparator ">" keeps err=0.05 from tripping the predicate, so
-                # both outcomes are "supported"; the preregistered improves
-                # direction (F2) makes a direction=improves claim valid while
-                # still exercising n-collapse.
+                # comparator ">" keeps err=0.05 "supported"; byte-identical registrations exercise
+                # the n-collapse regardless of claim category.
                 run_cli(base + [
                     "register", "--hypothesis", "h", "--metric", "err",
                     "--comparator", ">", "--threshold", "0.1", "--command", self.CMD,
-                    "--direction-if-supported", "improves",
                 ])
             run_cli(base + ["execute", "--experiment-id", "E-0001"])
             run_cli(base + ["execute", "--experiment-id", "E-0002"])
             rc, out = run_cli(base + [
-                "claim", "--direction", "improves",
-                "--metric", "err", "--configuration", "seed=42",
+                "claim", "--metric", "err", "--configuration", "seed=42",
                 "--evidence", "E-0001", "--evidence", "E-0002",
             ])
             records = rl.load_research_records(ledger)
@@ -192,6 +187,37 @@ class LaunderingTests(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertEqual(claim["n"], 1)
         self.assertEqual(gate, 0)
+
+    # B2: a paren-free command runs via shell=False + shlex.split; parens live in the probe file below.
+    SEED_PROBE = ("import sys, os, json\nv = int(sys.argv[1].split('=')[1])\n"
+                  "open(os.environ['RESEARCH_RUN_DIR'] + '/result.json', 'w').write(json.dumps({'seed': v}))\n")
+
+    def test_genuine_seed_pair_yields_n_two_via_true_argv(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            (root / "probe.py").write_text(self.SEED_PROBE, encoding="utf-8")
+            ledger = root / "ledger.jsonl"
+            base = ["--repo-root", str(root), "--ledger", str(ledger)]
+            for seed in (1, 2):
+                run_cli(base + [
+                    "register", "--hypothesis", "h", "--metric", "seed", "--comparator", ">=",
+                    "--threshold", "0", "--command", f"{sys.executable} probe.py --seed={seed}",
+                    "--variation-axis", f"seed={seed}"])
+                run_cli(base + ["execute", "--experiment-id", f"E-000{seed}"])
+            records = rl.load_research_records(ledger)
+            metrics = [rl.find_result(records, f"E-000{s}")["metrics"] for s in (1, 2)]
+        self.assertEqual(metrics, [{"seed": 1}, {"seed": 2}])
+        self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 2)
+
+    def test_axis_less_compound_command_still_registers_and_executes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.jsonl"
+            base = ["--repo-root", tmp, "--ledger", str(ledger)]
+            run_cli(base + ["register", "--hypothesis", "h", "--metric", "err", "--comparator", "<",
+                            "--threshold", "0.1", "--command", self.CMD + " && echo done"])
+            rc, _ = run_cli(base + ["execute", "--experiment-id", "E-0001"])
+        self.assertEqual(rc, 0)
 
 
 # --- shared git helper (also imported by test_research_os_ledger) -----------
@@ -213,9 +239,9 @@ class ClaimBindingTests(unittest.TestCase):
         ])
         run_cli(base + ["execute", "--experiment-id", "E-0001"])
 
-    def _claim(self, base, metric, direction):
+    def _claim(self, base, metric):
         return run_cli(base + [
-            "claim", "--direction", direction, "--metric", metric,
+            "claim", "--metric", metric,
             "--configuration", "c", "--evidence", "E-0001",
         ])
 
@@ -223,37 +249,37 @@ class ClaimBindingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
             self._register_execute(base, "err", ">")  # err=0.05 !> 0.1 → supported
-            rc, _ = self._claim(base, "latency", "improves")
+            rc, _ = self._claim(base, "latency")
         self.assertEqual(rc, 1)
 
     def test_not_evaluable_evidence_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
             self._register_execute(base, "ghost", "<")  # ghost absent → not-evaluable
-            rc, _ = self._claim(base, "ghost", "mixed")
+            rc, _ = self._claim(base, "ghost")
         self.assertEqual(rc, 1)
 
-    def test_improves_with_disconfirmed_rejected(self) -> None:
+    def test_disconfirmed_evidence_now_accepted_as_mixed(self) -> None:
+        # B1: no caller-supplied direction to reject against disconfirmed evidence —
+        # the claim is accepted and machine-derives category "mixed".
         with tempfile.TemporaryDirectory() as tmp:
-            base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
+            ledger = Path(tmp) / "l.jsonl"
+            base = ["--repo-root", tmp, "--ledger", str(ledger)]
             self._register_execute(base, "err", "<")  # err=0.05 < 0.1 → disconfirmed
-            rc, _ = self._claim(base, "err", "improves")
-        self.assertEqual(rc, 1)
+            rc, _ = self._claim(base, "err")
+            self.assertEqual(rc, 0)
+            claim = next(r for r in rl.load_research_records(ledger) if r["record_type"] == rl.CLAIM)
+        self.assertEqual(claim["derived_category"], rl.CATEGORY_MIXED)
 
-    def test_checker_catches_forged_inconsistent_claim(self) -> None:
-        # Result outcome is disconfirmed, but the forged claim asserts
-        # improves and stores a fabricated supported basis.
+    def test_checker_catches_forged_basis(self) -> None:
+        # Result is disconfirmed, but the forged claim's outcome_basis fabricates "supported".
         records = build_chain([
             make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1"),
             make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.05}),
-            make_claim(
-                "C-0001", ["E-0001"], 1, direction="improves",
-                basis=[{"experiment_id": "E-0001", "outcome": "supported"}],
-            ),
+            make_claim("C-0001", ["E-0001"], 1, basis=[{"experiment_id": "E-0001", "outcome": "supported"}]),
         ])
         with tempfile.TemporaryDirectory() as tmp:
             findings = cre.check_ledger(records, Path(tmp))
-        self.assertTrue(any(f.startswith("claim-binding:") for f in findings), findings)
         self.assertTrue(any(f.startswith("claim-basis-mismatch:") for f in findings), findings)
 
 
@@ -272,16 +298,13 @@ class ClaimNTests(unittest.TestCase):
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 1)
 
     def test_true_seed_variation_counts_two(self) -> None:
-        # R3: commands identical except the seed token → one template, distinct
-        # raw commands, distinct values → n=2.
+        # R3: commands identical except the seed token → one template, distinct values → n=2.
         records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1")
                    + self._pair("E-0002", "d2", "seed=2", "run --seed=2"))
         self.assertEqual(rl.claim_n(records, ["E-0001", "E-0002"]), 2)
 
     def test_reviewer_counterexample_non_axis_diff_collapses_to_one(self) -> None:
-        # R3: the axes claim seed=1/seed=2 but the commands ALSO differ at a
-        # non-axis position (--output run1/run2), so the templates are not
-        # byte-identical → collapse to n=1 with a note.
+        # R3: axes seed=1/seed=2 but commands ALSO differ at a non-axis position → collapse to n=1.
         records = (self._pair("E-0001", "d1", "seed=1", "run --seed=1 --output run1.json")
                    + self._pair("E-0002", "d2", "seed=2", "run --seed=2 --output run2.json"))
         n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
@@ -303,9 +326,7 @@ class ClaimNTests(unittest.TestCase):
         self.assertIn("mixes axis keys", note)
 
     def test_forged_axis_value_under_other_option_collapses_to_one(self) -> None:
-        # Q2 reviewer bypass, hand-forged into the ledger: axes seed=1/seed=2 but
-        # the values are bound to --output, not --seed. The seed-key template
-        # blanks nothing, so the two commands stay distinct → n=1, not n=2.
+        # Q2 reviewer bypass, hand-forged: axes seed=1/seed=2 are bound to --output, not --seed.
         records = (self._pair("E-0001", "d1", "seed=1", "python p.py --seed=0 --output=1")
                    + self._pair("E-0002", "d2", "seed=2", "python p.py --seed=0 --output=2"))
         n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
@@ -341,8 +362,7 @@ class RegisterAxisTests(unittest.TestCase):
         self.assertEqual(rc, 0)
 
     def test_short_value_accidental_substring_refused(self) -> None:
-        # R3: "7" is a substring of the token "77" but not a whole token, so the
-        # old substring match no longer accepts it.
+        # R3: "7" is a substring of token "77" but not a whole token, so it is not accepted.
         with tempfile.TemporaryDirectory() as tmp:
             rc, _ = self._register(tmp, "seed=7", "run --seed 77")
         self.assertEqual(rc, 1)
@@ -354,20 +374,25 @@ class RegisterAxisTests(unittest.TestCase):
         self.assertEqual(rc, 0)
 
     def test_value_bound_to_other_option_refused(self) -> None:
-        # Q2 reviewer bypass: axis seed=1/seed=2 whose value 1/2 is bound to
-        # --output, not --seed. Registration must refuse both — the value is not
-        # bound to the axis key even though it is a whole token elsewhere.
+        # Q2 reviewer bypass: axis seed=1/seed=2 whose value 1/2 is bound to --output, not --seed.
         for axis, command in (("seed=1", "python p.py --seed=0 --output=1"),
                               ("seed=2", "python p.py --seed=0 --output=2")):
             with tempfile.TemporaryDirectory() as tmp:
                 rc, _ = self._register(tmp, axis, command)
             self.assertEqual(rc, 1, (axis, command))
 
-    def test_true_seed_binding_accepted(self) -> None:
-        # The genuine variation the bypass imitates is accepted.
+    def test_true_seed_binding_accepted(self) -> None:  # the genuine variation the bypass imitates
         with tempfile.TemporaryDirectory() as tmp:
             rc, _ = self._register(tmp, "seed=1", "python p.py --seed=1 --output=out")
         self.assertEqual(rc, 0)
+
+    def test_shell_metacharacter_bypass_refused(self) -> None:
+        # B2: an axis value bound only inside a shell-metacharacter tail (a real separate command).
+        for axis, command in (("seed=1", "python p.py --seed=0; echo --seed=1"),
+                              ("seed=2", "python p.py --seed=0; echo --seed=2")):
+            with tempfile.TemporaryDirectory() as tmp:
+                rc, _ = self._register(tmp, axis, command)
+            self.assertEqual(rc, 1, (axis, command))
 
 
 if __name__ == "__main__":

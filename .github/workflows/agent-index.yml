@@ -50,12 +50,14 @@ jobs:
       - name: Check research evidence ledger
         run: python scripts/check_research_evidence.py --check-ledger
 
-      - name: Check research promotion/safety boundary (PR only)
-        if: github.event_name == 'pull_request'
-        run: python scripts/check_research_evidence.py --diff-range "origin/${{ github.base_ref }}...HEAD" --policy .agents/project-policy.yml
-
       - name: Check skill inventory
         run: python scripts/report_skill_inventory.py --check --format text
 
       - name: Check AGENTS.md index is up to date
         run: python scripts/generate_agent_index.py --check
+
+      # Runs LAST among validator steps: it judges the whole PR's file set,
+      # so every other structural/content check must have already run.
+      - name: Check research promotion/safety boundary (PR only)
+        if: github.event_name == 'pull_request'
+        run: python scripts/check_research_evidence.py --diff-range "origin/${{ github.base_ref }}...HEAD" --policy .agents/project-policy.yml

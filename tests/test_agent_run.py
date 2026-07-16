@@ -1,11 +1,25 @@
 from __future__ import annotations
 
+import argparse
 import hashlib
 import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.agent_run import evaluate_run_record, reviewed_files_from_args, validation_passed
+from scripts.agent_run import (
+    add_record_parser,
+    build_run_record,
+    evaluate_run_record,
+    reviewed_files_from_args,
+    validation_passed,
+)
+
+
+def _record_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    add_record_parser(subparsers)
+    return parser.parse_args(["record", *argv])
 
 
 class ReviewedFilesTests(unittest.TestCase):
@@ -71,6 +85,66 @@ class AgentRunValidationTests(unittest.TestCase):
 
         self.assertFalse(judgment["validation_passed"])
         self.assertFalse(judgment["accepted"])
+
+
+class ReviewChangedFlagTests(unittest.TestCase):
+    """B3: ``--review-changed`` gives content-identity evidence for changed
+    paths too, by also hashing them into ``reviewed_files``."""
+
+    def _base_argv(self, root: Path, brief: Path, *extra: str) -> list[str]:
+        return [
+            "--repo-root", str(root),
+            "--harness", "test-harness",
+            "--task-class", "focused_code_change",
+            "--capability-profile", "focused_code_edit",
+            "--prompt-detail", "strict",
+            "--brief-source", str(brief),
+            "--allowed-file", "src/app.py",
+            *extra,
+        ]
+
+    def test_review_changed_adds_changed_file_to_reviewed_with_digest(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "src").mkdir()
+            (root / "src" / "app.py").write_text("payload\n", encoding="utf-8")
+            brief = root / "brief.md"
+            brief.write_text("brief\n", encoding="utf-8")
+            args = _record_args(self._base_argv(
+                root, brief, "--changed-file", "src/app.py", "--review-changed",
+            ))
+            _, record = build_run_record(args)
+        self.assertEqual(
+            record["reviewed_files"],
+            [{"path": "src/app.py", "sha256": hashlib.sha256(b"payload\n").hexdigest()}],
+        )
+
+    def test_review_changed_dedupes_against_explicit_reviewed_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "src").mkdir()
+            (root / "src" / "app.py").write_text("payload\n", encoding="utf-8")
+            brief = root / "brief.md"
+            brief.write_text("brief\n", encoding="utf-8")
+            args = _record_args(self._base_argv(
+                root, brief,
+                "--changed-file", "src/app.py",
+                "--reviewed-file", "src/app.py",
+                "--review-changed",
+            ))
+            _, record = build_run_record(args)
+        self.assertEqual(len(record["reviewed_files"]), 1)
+
+    def test_without_review_changed_flag_reviewed_files_is_absent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "src").mkdir()
+            (root / "src" / "app.py").write_text("payload\n", encoding="utf-8")
+            brief = root / "brief.md"
+            brief.write_text("brief\n", encoding="utf-8")
+            args = _record_args(self._base_argv(root, brief, "--changed-file", "src/app.py"))
+            _, record = build_run_record(args)
+        self.assertNotIn("reviewed_files", record)
 
 
 if __name__ == "__main__":

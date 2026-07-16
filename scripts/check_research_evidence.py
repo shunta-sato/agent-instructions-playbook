@@ -93,21 +93,22 @@ def _check_claims(records: list[dict[str, Any]], findings: list[str]) -> None:
             elif not (prereg["registered_at"] < result["started_at"]):
                 findings.append(f"claim-evidence-harking: {cid}: {eid}")
 
-        # S3/F2/R2b binding, re-derived so a forged claim cannot assert an
-        # inconsistent metric/direction/no-effect predicate. The direction rule
-        # fires only for claims carrying the basis field (field-presence
-        # grandfathering).
-        enforce_direction = "direction_basis" in record
-        binding_errors, derived_basis = rl.evaluate_claim_binding(
-            records, record.get("metric"), record.get("direction"), evidence,
-            enforce_direction=enforce_direction,
-        )
+        # S3/B1 binding, re-derived so a forged claim cannot assert an
+        # inconsistent metric or claim category. A legacy ``direction``/
+        # ``direction_basis`` field is tolerated but never read here.
+        binding_errors, derived_basis = rl.evaluate_claim_binding(records, record.get("metric"), evidence)
         for error in binding_errors:
             findings.append(f"claim-binding: {cid}: {error}")
 
         # A record predating a basis field skips only that field's comparison.
         if "outcome_basis" in record and record.get("outcome_basis") != derived_basis:
             findings.append(f"claim-basis-mismatch: {cid}")
+
+        # B1: a record predating ``derived_category`` skips the comparison
+        # (grandfathering); a present-but-wrong value is a forged/stale claim.
+        expected_category = rl.derive_claim_category(records, evidence)
+        if "derived_category" in record and record.get("derived_category") != expected_category:
+            findings.append(f"claim-category-mismatch: {cid}")
 
         expected_n, expected_n_basis = rl.claim_n_and_note(records, evidence)
         if record.get("n") != expected_n:

@@ -71,15 +71,19 @@ def _sha256_reviewed_path(path: Path) -> str:
 def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, str]]:
     """Q3b: for each reviewed path the SCRIPT (never the caller) records the
     sha256 of the file at record time, so the gate can later verify the digest
-    still matches the blob at the diff head before the review covers a finding."""
-    entries: list[dict[str, str]] = []
+    still matches the blob at the diff head before the review covers a finding.
+    Deduped by normalized repo-relative path (e.g. ``--review-changed`` naming
+    a path already given via ``--reviewed-file``)."""
+    entries: dict[str, dict[str, str]] = {}
     for raw in raw_paths or []:
         rel = normalize_repo_path(raw, repo_root)
+        if rel in entries:
+            continue
         absolute = repo_root / rel
         if not (absolute.is_symlink() or absolute.is_file()):
             raise ValueError(f"reviewed file is missing: {raw}")
-        entries.append({"path": rel, "sha256": _sha256_reviewed_path(absolute)})
-    return sorted(entries, key=lambda entry: entry["path"])
+        entries[rel] = {"path": rel, "sha256": _sha256_reviewed_path(absolute)}
+    return sorted(entries.values(), key=lambda entry: entry["path"])
 
 def issue_run_id(slug: str) -> str:
     safe_slug = re.sub(r"[^a-zA-Z0-9._-]+", "-", slug.strip()).strip("-._")
@@ -275,7 +279,10 @@ def build_run_record(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
             "agent_completed": args.agent_completed,
         },
     }
-    reviewed_files = reviewed_files_from_args(args.reviewed_file, repo_root)
+    reviewed_paths = list(args.reviewed_file or [])
+    if args.review_changed:  # B3: content-identity review, not just a changed-path listing
+        reviewed_paths += args.changed_file or []
+    reviewed_files = reviewed_files_from_args(reviewed_paths, repo_root)
     if reviewed_files:  # optional field: absent for the common no-review record
         record["reviewed_files"] = reviewed_files
     record["outcome"].update(evaluate_run_record(record))
@@ -326,16 +333,14 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
         action="append",
         help="Changed file to record. Repeat for multiple files.",
     )
-    parser.add_argument(
-        "--changed-from-git",
-        action="store_true",
-        help="Add changed files from git diff against HEAD.",
-    )
+    parser.add_argument("--changed-from-git", action="store_true", help="Add changed files from git diff against HEAD.")
     parser.add_argument(
         "--reviewed-file",
         action="append",
         help="File reviewed for this run; the script records its sha256 at record time. Repeat.",
     )
+    parser.add_argument("--review-changed", action="store_true",
+                         help="Also add every --changed-file path to reviewed_files with a script-computed digest.")
     parser.add_argument(
         "--include-untracked",
         action=argparse.BooleanOptionalAction,

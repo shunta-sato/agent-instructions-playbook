@@ -1,17 +1,11 @@
-"""Ledger-chain integrity tests for the Research OS.
-
-Covers ``check_research_evidence.check_ledger`` / ``run_ledger_mode`` and
-``research_ledger`` predicate/render helpers: HARKing, chain tampering,
-predicate evaluation, claims-view rendering/staleness, empty-ledger,
-untracked-probe digest participation, per-ledger claims-view freshness, and
-non-numeric metrics. Runner/claim/promotion-boundary tests live in the
-sibling ``test_research_os.py`` and ``test_research_os_gate.py``.
-
-Builders (``build_chain``, ``make_prereg``, ``make_result``, ``make_claim``,
-``write_ledger``, ``run_cli``, ``DISCONFIRM``, ``_git_init``) are shared from
-``test_research_os`` rather than duplicated, since they live there as the
-home for the claim/runner tests.
-"""
+"""Ledger-chain integrity tests for the Research OS. Covers ``check_research_evidence.check_ledger``
+/ ``run_ledger_mode`` and ``research_ledger`` predicate/render helpers: HARKing, chain tampering,
+predicate evaluation, claims-view rendering/staleness, empty-ledger, untracked-probe digest
+participation, per-ledger claims-view freshness, non-numeric metrics, and B2 axis/non-simple-command
+forgery. Runner/claim/promotion-boundary tests live in the sibling ``test_research_os.py`` and
+``test_research_os_gate.py``. Builders (``build_chain``, ``make_prereg``, ``make_result``,
+``make_claim``, ``write_ledger``, ``run_cli``, ``DISCONFIRM``, ``_git_init``) are shared from
+``test_research_os`` rather than duplicated, since they live there as the home for the claim/runner tests."""
 
 from __future__ import annotations
 
@@ -78,15 +72,9 @@ class ChainTamperTests(unittest.TestCase):
 
 
 class SelfInvalidatingDigestTests(unittest.TestCase):
-    """Regression: a tracked, dirty ledger must not invalidate its own digest.
-
-    ``register`` appends to the ledger, so before the exclusion the ledger was
-    a dirty tracked file whose sha256 fed ``command_digest``. ``execute`` then
-    recomputed the digest over the now-larger ledger and rejected the pair with
-    "command_digest ... changed since registration". The recording medium (and
-    ``research/runs/`` outputs) are excluded so the digest fingerprints only
-    experiment inputs.
-    """
+    """Regression: a tracked, dirty ledger must not invalidate its own digest. ``register`` appends
+    to the ledger, so before the exclusion its sha256 fed ``command_digest`` and ``execute`` then
+    recomputed a changed digest; the recording medium and ``research/runs/`` outputs are excluded."""
 
     def test_register_then_execute_succeeds_with_tracked_dirty_ledger(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -149,8 +137,7 @@ class PredicateTests(unittest.TestCase):
 
 class RenderTests(unittest.TestCase):
     def _seed(self) -> list[dict]:
-        # err=0.5 does not trip err<0.1, so the outcome is "supported", which
-        # is consistent with a direction=improves claim under S3 binding.
+        # err=0.5 does not trip err<0.1 (threshold predicate) → outcome/category "supported".
         return build_chain([
             make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1"),
             make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.5}),
@@ -163,9 +150,10 @@ class RenderTests(unittest.TestCase):
         second = rl.render_claims(records)
         self.assertEqual(first, second)
         self.assertIn("ledger-head:", first)
-        # R2a: the sentence is structural; a stored free-text effect is ignored.
-        self.assertIn("err improves — observed in a single configuration", first)
+        # R2a/B1: the sentence is structural; a stored free-text effect + grandfathered direction are ignored.
+        self.assertIn("err stayed on the non-disconfirming side of < 0.1 — observed in a single configuration", first)
         self.assertNotIn("faster", first)
+        self.assertNotIn("improves", first)
 
     def test_fresh_view_passes_and_stale_view_fails(self) -> None:
         records = self._seed()
@@ -300,8 +288,7 @@ class NonNumericMetricTests(unittest.TestCase):
 
 
 class NonFiniteMetricTests(unittest.TestCase):
-    """NaN/±Inf metric values are ``not-evaluable`` for EVERY comparator
-    (including ``==``) in the runner and checker re-derivation paths alike."""
+    """NaN/±Inf metric values are ``not-evaluable`` for EVERY comparator (incl. ``==``), runner + checker."""
 
     def test_unit_derive_outcome_non_finite(self) -> None:
         for value in (float("nan"), float("inf"), float("-inf")):
@@ -357,8 +344,7 @@ class NonFiniteMetricTests(unittest.TestCase):
 
 
 class NonFiniteThresholdTests(unittest.TestCase):
-    """R1: a NaN/±Inf disconfirm threshold is refused at registration and, if
-    forged into a record, flagged by the gate and fatal to any citing claim."""
+    """R1: a NaN/±Inf disconfirm threshold is refused at registration and, if forged, flagged."""
 
     def test_cli_refuses_non_finite_threshold(self) -> None:
         # ``--threshold=<v>`` form so argparse does not treat ``-inf`` as a flag.
@@ -390,6 +376,24 @@ class NonFiniteThresholdTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             findings = cre.check_ledger(records, Path(tmp))
         self.assertTrue(any("predicate is invalid" in f for f in findings), findings)
+
+
+# --- (B2) axis forged onto a non-simple (shell-metacharacter) command --------
+
+
+class AxisNonSimpleCommandTests(unittest.TestCase):
+    def test_axis_on_compound_command_collapses_to_one(self) -> None:
+        # Reviewer bypass, hand-forged into the ledger: axis seed=1/2 binds under flat shlex parsing.
+        cmd1, cmd2 = "python p.py --seed=0; echo --seed=1", "python p.py --seed=0; echo --seed=2"
+        records = build_chain([
+            make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1", command=cmd1, axis="seed=1"),
+            make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.5}),
+            make_prereg("E-0002", "2026-01-03T00:00:00+00:00", "d2", command=cmd2, axis="seed=2"),
+            make_result("E-0002", "2026-01-04T00:00:00+00:00", "d2", {"err": 0.5}),
+        ])
+        n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
+        self.assertEqual(n, 1)
+        self.assertIn("axis on non-simple command", note)
 
 
 if __name__ == "__main__":
