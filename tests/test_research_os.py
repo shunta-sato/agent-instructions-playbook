@@ -269,9 +269,11 @@ class ClaimBindingTests(unittest.TestCase):
 # --- (S4) conservative claim n from variation axes ---------------------------
 class ClaimNTests(unittest.TestCase):
     def _pair(self, eid, digest, axis="", command="run"):
+        # A1: a genuine axis-bearing pair must confirm axis_effective, or n>1 collapses to n=1.
+        metrics = {"err": 0.5, "axis_effective": axis.split("=", 1)[1]} if axis else {"err": 0.5}
         return [
             make_prereg(eid, "2026-01-01T00:00:00+00:00", digest, command=command, axis=axis),
-            make_result(eid, "2026-01-02T00:00:00+00:00", digest, {"err": 0.5}),
+            make_result(eid, "2026-01-02T00:00:00+00:00", digest, metrics),
         ]
 
     def test_distinct_digests_without_axis_collapse_to_one(self) -> None:

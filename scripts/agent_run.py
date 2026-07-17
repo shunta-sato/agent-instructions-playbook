@@ -65,12 +65,21 @@ def _sha256_head_blob(repo_root: Path, rel_path: str) -> str:
     return hashlib.sha256(completed.stdout).hexdigest()
 
 def _git_mode(repo_root: Path, rel_path: str) -> str | None:
-    """M2: git mode (100644/100755/120000); ``None`` when untracked/no repo."""
+    """M2/G3: git mode (100644/100755/120000) from the index; an untracked
+    path (ls-files --stage empty) derives it from the filesystem instead, so
+    every new reviewed entry still carries a mode (no unbound-mode gap)."""
     completed = subprocess.run(
         ["git", "-C", str(repo_root), "ls-files", "--stage", "--", rel_path], capture_output=True, text=True,
     )
     line = completed.stdout.strip()
-    return line.split()[0] if line else None
+    if line:
+        return line.split()[0]
+    absolute = repo_root / rel_path
+    if absolute.is_symlink():
+        return "120000"
+    if absolute.is_file():
+        return "100755" if os.access(absolute, os.X_OK) else "100644"
+    return None
 
 def reviewed_files_from_args(raw_paths: list[str] | None, repo_root: Path) -> list[dict[str, str]]:
     """Q3b/M2: the SCRIPT records each reviewed path's (sha256, git-mode)."""
@@ -185,10 +194,19 @@ def quality_gate_allows_acceptance(value: Any) -> bool:
     normalized = str(value or "not_run").strip().lower()
     return normalized not in FAILING_QUALITY_GATES
 
+def _string_list_or_none(value: Any) -> list[str] | None:
+    """G5: allowed_files/changed_files must be a LIST of strings — a bare
+    string would otherwise iterate as one-character paths. Malformed input
+    fails closed (``None``), never silently degrading to per-character scope."""
+    if isinstance(value, list) and all(isinstance(item, str) for item in value):
+        return value
+    return None
+
 def evaluate_run_record(record: dict[str, Any]) -> dict[str, Any]:
-    allowed_files = set(record.get("allowed_files", []))
-    changed_files = set(record.get("changed_files", []))
-    outside_allowed_files = sorted(changed_files - allowed_files)
+    allowed_raw = _string_list_or_none(record.get("allowed_files", []))
+    changed_raw = _string_list_or_none(record.get("changed_files", []))
+    schema_ok = allowed_raw is not None and changed_raw is not None
+    outside_allowed_files = sorted(set(changed_raw) - set(allowed_raw)) if schema_ok else ["schema-invalid: allowed_files/changed_files must be lists of strings"]
 
     validation = record.get("validation", {})
     validation_ok = validation_passed(validation if isinstance(validation, dict) else {})
@@ -197,13 +215,8 @@ def evaluate_run_record(record: dict[str, Any]) -> dict[str, Any]:
     outcome = record.get("outcome", {})
     # M4: identity, not truthiness — bool("false") is True, so a forged string must not pass.
     agent_completed = outcome.get("agent_completed") is True if isinstance(outcome, dict) else False
-    scope_compliant = not outside_allowed_files
-    accepted = (
-        agent_completed
-        and validation_ok
-        and scope_compliant
-        and quality_gate_allows_acceptance(quality_gate)
-    )
+    scope_compliant = schema_ok and not outside_allowed_files
+    accepted = agent_completed and validation_ok and scope_compliant and quality_gate_allows_acceptance(quality_gate)
 
     telemetry = record.get("telemetry", {})
     telemetry_status = telemetry.get("status", "not_collected") if isinstance(telemetry, dict) else "not_collected"
@@ -335,43 +348,26 @@ def add_record_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPa
     parser.add_argument("--requested-model", default="", help="Requested model, when supplied by current routing.")
     parser.add_argument("--resolved-model", default="", help="Resolved model, when known from current routing.")
     parser.add_argument("--resolver-lock-version", default="", help="Resolver lock/catalog version, when known.")
-    parser.add_argument("--prompt-detail", required=True, choices=("compact", "normal", "strict"),
-                         help="Prompt detail level from model routing.")
+    parser.add_argument("--prompt-detail", required=True, choices=("compact", "normal", "strict"), help="Prompt detail level from model routing.")
     parser.add_argument("--effort", default="", help="Effort setting, when applicable.")
-    parser.add_argument("--declared-mode", default="", choices=("", "research", "delivery"),
-                         help="M1: declared epistemic mode for this run, persisted as top-level declared_mode.")
+    parser.add_argument("--declared-mode", default="", choices=("", "research", "delivery"), help="M1: declared epistemic mode for this run, persisted as top-level declared_mode.")
     parser.add_argument("--brief-source", required=True, help="Task brief file to copy into the run directory.")
-    parser.add_argument("--allowed-file", action="append", required=True,
-                         help="Allowed edit file. Repeat for multiple files.")
-    parser.add_argument("--changed-file", action="append",
-                         help="Changed file to record. Repeat for multiple files.")
+    parser.add_argument("--allowed-file", action="append", required=True, help="Allowed edit file. Repeat for multiple files.")
+    parser.add_argument("--changed-file", action="append", help="Changed file to record. Repeat for multiple files.")
     parser.add_argument("--changed-from-git", action="store_true", help="Add changed files from git diff against HEAD.")
-    parser.add_argument("--reviewed-file", action="append",
-                         help="File reviewed for this run; the script records its sha256 at record time. Repeat.")
-    parser.add_argument("--review-changed", action="store_true",
-                         help="Also add every --changed-file path to reviewed_files with a script-computed digest.")
-    parser.add_argument("--reviewed-deleted", action="append",
-                         help="Path deleted in this change; records a tombstone (base_sha256+mode of its HEAD blob). Repeat.")
-    parser.add_argument("--include-untracked", action=argparse.BooleanOptionalAction, default=True,
-                         help="Include untracked files when using --changed-from-git.")
-    parser.add_argument(
-        "--validation-result",
-        action="append",
-        nargs=2,
-        metavar=("CMD", "EXIT_CODE"),
-        help="Validation command and exit code. Repeat for multiple commands.",
-    )
+    parser.add_argument("--reviewed-file", action="append", help="File reviewed for this run; the script records its sha256 at record time. Repeat.")
+    parser.add_argument("--review-changed", action="store_true", help="Also add every --changed-file path to reviewed_files with a script-computed digest.")
+    parser.add_argument("--reviewed-deleted", action="append", help="Path deleted in this change; records a tombstone (base_sha256+mode of its HEAD blob). Repeat.")
+    parser.add_argument("--include-untracked", action=argparse.BooleanOptionalAction, default=True, help="Include untracked files when using --changed-from-git.")
+    parser.add_argument("--validation-result", action="append", nargs=2, metavar=("CMD", "EXIT_CODE"), help="Validation command and exit code. Repeat for multiple commands.")
     parser.add_argument("--validation-blocker", default="", help="Reason validation could not run.")
     parser.add_argument("--quality-gate", default="not_run", help="quality-gate result, when known.")
-    parser.add_argument("--agent-completed", type=parse_bool, default=True,
-                         help="Whether the delegated agent completed execution.")
+    parser.add_argument("--agent-completed", type=parse_bool, default=True, help="Whether the delegated agent completed execution.")
     parser.add_argument("--codex-jsonl", default="", help="Optional Codex CLI JSONL to extract token usage from.")
     parser.add_argument("--format", choices=("json", "text"), default="text", help="Output format.")
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Append lightweight delegated agent run records."
-    )
+    parser = argparse.ArgumentParser(description="Append lightweight delegated agent run records.")
     subparsers = parser.add_subparsers(dest="command", required=True)
     add_record_parser(subparsers)
     return parser.parse_args()

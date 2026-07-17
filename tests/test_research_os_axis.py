@@ -1,8 +1,8 @@
-"""Round-7 measurement-binding regressions (threads 3595822872 + 3595823226): F1 predicate
-integer precision, F2 claim --source injection, F3 the unified axis_binding n/label/note
-primitive, and F4 the structured axis-command parser that replaces the argv[0]/exact-"-c"
-denylist. Pre-authorized sibling test file (test_research_os(_ledger/_claims).py were at/near
-the 400-line structure budget). Shared builders imported from test_research_os."""
+"""Round-7 (threads 3595822872/3595823226): F1 predicate integer precision, F2 claim --source
+injection, F3 the unified axis_binding n/label/note primitive, F4 the structured axis-command
+parser. Round-8 (threads 3604143957/3604144113): A1 axis_effective required for n>1, A2
+env-dash-option grammar + exec robustness, A3 metric-name injection, A4 big-int overflow.
+Sibling files were at/near the 400-line budget; shared builders imported from test_research_os."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from scripts import check_research_evidence as cre
 from scripts import research_ledger as rl
 from scripts import research_run as rr
 from tests.test_research_os import (
-    _git_init, build_chain, make_prereg, make_result, run_cli,
+    _git_init, build_chain, make_claim, make_prereg, make_result, run_cli,
 )
 
 
@@ -149,11 +149,31 @@ class RegistrationRefusesShellBypassesTests(unittest.TestCase):
             rc, _ = self._register(tmp, "seed=1", "run --seed=1 --seed=2")
         self.assertEqual(rc, 1)
 
+    def test_env_dash_option_refused_at_registration(self) -> None:
+        # A2 (thread 4113 P2): ``env -u UNUSED ...`` must not silently become argv[0]="-u".
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = self._register(tmp, "seed=1", "env -u UNUSED /usr/bin/python3 probe.py --seed=1")
+        self.assertEqual(rc, 1)
+
 
 class ForgedLedgerBypassCollapsesToOneTests(unittest.TestCase):
     def test_env_bash_c_forged_ledger_collapses_to_n_one(self) -> None:
         cmd1 = "env bash -c 'python3 probe.py' --seed=1"
         cmd2 = "env bash -c 'python3 probe.py' --seed=2"
+        records = build_chain([
+            make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1", command=cmd1, axis="seed=1"),
+            make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.5}),
+            make_prereg("E-0002", "2026-01-03T00:00:00+00:00", "d2", command=cmd2, axis="seed=2"),
+            make_result("E-0002", "2026-01-04T00:00:00+00:00", "d2", {"err": 0.5}),
+        ])
+        n, note = rl.claim_n_and_note(records, ["E-0001", "E-0002"])
+        self.assertEqual(n, 1)
+        self.assertIn("not structurally bound", note)
+
+    def test_env_dash_option_forged_ledger_collapses_to_n_one(self) -> None:
+        # A2: hand-forged past the (now-refusing) CLI, the same command still can't bind an axis.
+        cmd1 = "env -u UNUSED /usr/bin/python3 probe.py --seed=1"
+        cmd2 = "env -u UNUSED /usr/bin/python3 probe.py --seed=2"
         records = build_chain([
             make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1", command=cmd1, axis="seed=1"),
             make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"err": 0.5}),
@@ -256,6 +276,123 @@ class RealLedgersRerenderTests(unittest.TestCase):
             records = rl.load_research_records(ledger)
             findings = cre.check_ledger(records, repo_root, ledger)
             self.assertEqual(findings, [], (ledger_rel, findings))
+
+# --- (A2) exec-setup failure is a clean recorded failure, never a traceback --
+class ExecSetupErrorTests(unittest.TestCase):
+    def test_exec_setup_error_is_clean_not_a_traceback(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ledger = root / "l.jsonl"
+            base = ["--repo-root", str(root), "--ledger", str(ledger)]
+            cmd = "/nonexistent/binary --seed=1"
+            rc_reg, _ = run_cli(base + [
+                "register", "--hypothesis", "h", "--metric", "seed", "--comparator", ">=",
+                "--threshold", "0", "--command", cmd, "--variation-axis", "seed=1"])
+            self.assertEqual(rc_reg, 0)
+            rc_exec, _ = run_cli(base + ["execute", "--experiment-id", "E-0001"])
+            result = rl.find_result(rl.load_research_records(ledger), "E-0001")
+        self.assertEqual(rc_exec, 0)  # the CLI subcommand itself completes cleanly, no traceback
+        self.assertNotEqual(result["exit_code"], 0)  # but the recorded execution failed
+        self.assertEqual(result["outcome"], "not-evaluable")
+
+# --- (A1) axis_effective is REQUIRED for n>1 ----------------------------------
+class AxisEffectiveRequiredForNGreaterThanOneTests(unittest.TestCase):
+    """thread 4113 P1: a probe that ignores argv must NOT inflate n; axis_effective must confirm."""
+    IGNORES_ARGV_PROBE = ("import os, json\n"
+                           "open(os.environ['RESEARCH_RUN_DIR'] + '/result.json', 'w')."
+                           "write(json.dumps({'score': 1}))\n")
+
+    def test_reviewer_repro_two_seeds_no_axis_effective_collapses_to_one(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            (root / "probe.py").write_text(self.IGNORES_ARGV_PROBE, encoding="utf-8")
+            ledger = root / "l.jsonl"
+            base = ["--repo-root", str(root), "--ledger", str(ledger)]
+            for seed in (1, 2):
+                run_cli(base + [
+                    "register", "--hypothesis", "h", "--metric", "score", "--comparator", ">=",
+                    "--threshold", "0", "--command", f"{sys.executable} probe.py --seed={seed}",
+                    "--variation-axis", f"seed={seed}"])
+                run_cli(base + ["execute", "--experiment-id", f"E-000{seed}"])
+            run_cli(base + ["claim", "--metric", "score", "--evidence", "E-0001", "--evidence", "E-0002"])
+            records = rl.load_research_records(ledger)
+            claim = next(r for r in records if r["record_type"] == rl.CLAIM)
+            rendered = rl.render_claims(records)
+            gate = cre.run_ledger_mode(ledger, root)
+        self.assertEqual(claim["n"], 1)
+        self.assertIn("configurations: unverified configuration", rendered)
+        self.assertEqual(gate, 0)  # genuinely n=1, not forged — the ledger stays valid
+
+    def test_forged_n_two_claim_without_axis_effective_flagged(self) -> None:
+        prereg1 = make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1", command="run --seed=1", axis="seed=1")
+        prereg1["disconfirm"] = {"metric": "score", "comparator": ">=", "threshold": 0}
+        result1 = make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {"score": 1}); result1["outcome"] = "supported"
+        prereg2 = make_prereg("E-0002", "2026-01-03T00:00:00+00:00", "d2", command="run --seed=2", axis="seed=2")
+        prereg2["disconfirm"] = {"metric": "score", "comparator": ">=", "threshold": 0}
+        result2 = make_result("E-0002", "2026-01-04T00:00:00+00:00", "d2", {"score": 1}); result2["outcome"] = "supported"
+        claim = make_claim("C-0001", ["E-0001", "E-0002"], 2, metric="score",
+                            basis=[{"experiment_id": "E-0001", "outcome": "supported"},
+                                   {"experiment_id": "E-0002", "outcome": "supported"}])
+        records = build_chain([prereg1, result1, prereg2, result2, claim])
+        with tempfile.TemporaryDirectory() as tmp:
+            findings = cre.check_ledger(records, Path(tmp))
+        self.assertTrue(any(f.startswith("claim-n-mismatch:") for f in findings), findings)
+
+# --- (A3) metric name is the last free-text render channel -------------------
+class MetricInjectionTests(unittest.TestCase):
+    INJECTION = "x\n\n## C-FAKE\nmodel improved 99%"
+
+    def test_injection_refused_at_register_and_claim(self) -> None:
+        from tests.test_research_os import LaunderingTests
+        with tempfile.TemporaryDirectory() as tmp:
+            base = ["--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl")]
+            rc_reg, _ = run_cli(base + ["register", "--hypothesis", "h", "--metric", self.INJECTION,
+                                        "--comparator", "<", "--threshold", "0.1", "--command", "run"])
+            run_cli(base + ["register", "--hypothesis", "h", "--metric", "err",
+                            "--comparator", "<", "--threshold", "0.1", "--command", LaunderingTests.CMD])
+            run_cli(base + ["execute", "--experiment-id", "E-0001"])
+            rc_claim, _ = run_cli(base + ["claim", "--metric", self.INJECTION, "--evidence", "E-0001"])
+        self.assertEqual(rc_reg, 1)
+        self.assertEqual(rc_claim, 1)
+        self.assertTrue(rl.validate_metric_name(self.INJECTION))
+        self.assertEqual(rl.validate_metric_name("dominant_is_seen_requests"), [])
+
+    def test_forged_ledger_flagged_and_legit_render_backticked(self) -> None:
+        prereg = make_prereg("E-0001", "2026-01-01T00:00:00+00:00", "d1")
+        prereg["disconfirm"]["metric"] = self.INJECTION
+        result = make_result("E-0001", "2026-01-02T00:00:00+00:00", "d1", {self.INJECTION: 0.05})
+        with tempfile.TemporaryDirectory() as tmp:
+            findings = cre.check_ledger(build_chain([prereg, result]), Path(tmp))
+        self.assertTrue(any(f.startswith("metric-invalid:") for f in findings), findings)
+        rendered = rl.render_claims(build_chain([
+            make_prereg("E-0002", "2026-01-01T00:00:00+00:00", "d2"),
+            make_result("E-0002", "2026-01-02T00:00:00+00:00", "d2", {"err": 0.5}),
+            make_claim("C-0001", ["E-0002"], 1),
+        ]))
+        self.assertIn("`err`", rendered)
+        self.assertNotIn("## C-FAKE", rendered)
+
+# --- (A4) validate_predicate must never OverflowError on huge ints -----------
+class BigIntPredicateOverflowTests(unittest.TestCase):
+    """thread 3957 P2: ``math.isfinite(10**400)`` raises OverflowError — isfinite must run on floats only."""
+    HUGE = 10 ** 400
+
+    def test_huge_int_threshold_and_equivalence_register_and_evaluate(self) -> None:
+        threshold_d = {"metric": "err", "comparator": "<", "threshold": self.HUGE}
+        equiv_d = {"type": rl.PREDICATE_EQUIVALENCE, "metric": "err", "lower": 0, "upper": self.HUGE}
+        self.assertEqual(rl.validate_predicate(threshold_d), [])
+        self.assertEqual(rl.validate_predicate(equiv_d), [])
+        self.assertEqual(rl.derive_outcome(threshold_d, {"err": 5}), "disconfirmed")
+        self.assertTrue(rl.validate_predicate({"metric": "err", "comparator": "<", "threshold": float("inf")}))
+
+    def test_register_cli_accepts_huge_int_threshold(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, _ = run_cli([
+                "--repo-root", tmp, "--ledger", str(Path(tmp) / "l.jsonl"),
+                "register", "--hypothesis", "h", "--metric", "err", "--comparator", "<",
+                "--threshold", str(self.HUGE), "--command", "run"])
+        self.assertEqual(rc, 0)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Boundary-gate half of the Research OS evidence checker (ledger-chain half +
-CLI in ``check_research_evidence``, split for the structure budget). Evaluates
-a changed-path set under a declared/derived mode for promotion, symlink, and
-safety findings; binds acknowledgments to ``agent_run`` evidence (R4) whose
-own outcome re-derives. Coverage needs (digest, git-mode) identity: LIVE at
-HEAD, DELETED via a tombstone at the RANGE BASE (M2/M5). A CI diff with no
-``--mode`` derives research-effectiveness from the policy and fails closed
-without a ledger ``declared_mode: research`` record (M1)."""
+"""Boundary-gate half of the Research OS evidence checker (ledger-chain half + CLI in
+``check_research_evidence``, split for the structure budget). Evaluates a changed-path set under a
+declared/derived mode for promotion, symlink, and safety findings; binds acknowledgments to ``agent_run``
+evidence (R4) whose own outcome re-derives. Coverage needs (digest, git-mode) identity: LIVE at HEAD, DELETED
+via a tombstone at the RANGE BASE (M2/M5). A CI diff with no ``--mode`` selects the effective mode from
+declared_mode run records NEW IN THE RANGE — STRICTEST WINS on mixed values (research if any, with a NOTE,
+never a block) — falling back to policy-derived research-effectiveness and failing closed without one (M1/G1)."""
 
 from __future__ import annotations
 
@@ -84,13 +83,9 @@ def resolve_mode(path: str, path_modes: dict[str, str], default_mode: str) -> st
 
 # --- agent-run evidence (R4 / Q3) --------------------------------------------
 
-def load_agent_runs(repo_root: Path) -> dict[str, dict[str, Any]]:
-    """Canonical ``agent_run`` records indexed by run_id (empty if absent)."""
-    path = repo_root / rl.LEDGER_REL
+def _parse_agent_runs(text: str) -> dict[str, dict[str, Any]]:
     runs: dict[str, dict[str, Any]] = {}
-    if not path.is_file():
-        return runs
-    for raw in path.read_text(encoding="utf-8").splitlines():
+    for raw in text.splitlines():
         if not raw.strip():
             continue
         try:
@@ -100,6 +95,21 @@ def load_agent_runs(repo_root: Path) -> dict[str, dict[str, Any]]:
         if isinstance(rec, dict) and rec.get("record_type") == AGENT_RUN and rec.get("run_id"):
             runs[rec["run_id"]] = rec
     return runs
+
+def load_agent_runs(repo_root: Path) -> dict[str, dict[str, Any]]:
+    """Canonical ``agent_run`` records indexed by run_id (empty if absent)."""
+    path = repo_root / rl.LEDGER_REL
+    return _parse_agent_runs(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+def agent_runs_at_ref(repo_root: Path, ref: str) -> dict[str, dict[str, Any]]:
+    """G1: ``agent_run`` records at an arbitrary ref (empty when the ledger is absent there)."""
+    completed = subprocess.run(["git", "-C", str(repo_root), "show", f"{ref}:{rl.LEDGER_REL}"], capture_output=True, text=True)
+    return _parse_agent_runs(completed.stdout) if completed.returncode == 0 else {}
+
+def new_declared_modes(repo_root: Path, head: str, base: str) -> set[str]:
+    """G1: declared_mode values NEW in the range (by run_id, present at head/absent at base) — stale/base declarations never count."""
+    head_runs, base_ids = agent_runs_at_ref(repo_root, head), set(agent_runs_at_ref(repo_root, base).keys())
+    return {rec["declared_mode"] for run_id, rec in head_runs.items() if run_id not in base_ids and rec.get("declared_mode") in ("research", "delivery")}
 
 def _run_is_delivery_evidence(run: dict[str, Any]) -> tuple[bool, str]:
     """Q3c: passing validation commands + a passing quality gate + re-derived acceptance."""
@@ -152,10 +162,8 @@ def _parse_acknowledgment(text: str) -> tuple[list[str], list[str], list[str], l
         elif in_covers and stripped:
             in_covers = False  # a non-blank, non-list line closes the Covers section
     missing = [label for ok, label in (
-        (has_scope, "Scope:"),
-        (has_claim, "claim ref or 'no research claims promoted'"),
-        (bool(covers), "Covers: prefixes"),
-        (bool(run_ids), "Delivery-run: run_ids"),
+        (has_scope, "Scope:"), (has_claim, "claim ref or 'no research claims promoted'"),
+        (bool(covers), "Covers: prefixes"), (bool(run_ids), "Delivery-run: run_ids"),
     ) if not ok]
     return (covers, run_ids, sorted(set(claim_ids)), []) if not missing else ([], [], [], missing)
 
@@ -218,21 +226,17 @@ def _valid_acknowledgments(changed_paths: list[str], repo_root: Path, notes: lis
         valid.append((ack, covers, reviewed))
     return valid
 
-def _ack_coverage(
-    path: str,
-    valid_acks: list[tuple[str, list[str], list[dict[str, str]]]],
-    identity: Callable[[str], tuple[str | None, str | None]],
-    base_identity: Callable[[str], tuple[str | None, str | None]],
-) -> tuple[str | None, list[str]]:
-    """Coverage for ``path`` -> ``(covering ack, extra notes)``: LIVE needs a
-    (digest, mode) match at HEAD, DELETED a tombstone match at the RANGE BASE
-    (wrong-kind never covers the other); no stored mode grandfathers in."""
+def _ack_coverage(path: str, valid_acks: list[tuple[str, list[str], list[dict[str, str]]]],
+                   identity: Callable[[str], tuple[str | None, str | None]],
+                   base_identity: Callable[[str], tuple[str | None, str | None]]) -> tuple[str | None, list[str]]:
+    """Coverage for ``path`` -> ``(covering ack, extra notes)``: LIVE needs a (digest, mode) match at HEAD,
+    DELETED a tombstone match at the RANGE BASE (wrong-kind never covers the other); G3: a mode-less entry
+    never covers — no grandfather path."""
     head_digest, head_mode = identity(path)
     base_digest, base_mode = base_identity(path)
     deleted = head_digest is None and base_digest is not None
     current_digest, current_mode = (base_digest, base_mode) if deleted else (head_digest, head_mode)
-    mismatch_note = (f"tombstone-base-mismatch: {path} (record a tombstone against the range base)"
-                      if deleted else f"stale-review: {path}")
+    mismatch_note = f"tombstone-base-mismatch: {path} (record a tombstone against the range base)" if deleted else f"stale-review: {path}"
     notes: list[str] = []
     for ack, covers, reviewed in valid_acks:
         if not any(path.startswith(prefix) for prefix in covers):
@@ -240,26 +244,22 @@ def _ack_coverage(
         for entry in reviewed:
             if entry.get("path") != path or bool(entry.get("deleted")) != deleted:
                 continue
-            entry_digest = entry.get("base_sha256") if deleted else entry.get("sha256")
             entry_mode = entry.get("mode")
-            if current_digest != entry_digest or (entry_mode is not None and entry_mode != current_mode):
+            if entry_mode is None:
+                notes.append(f"unbound-mode: {path} (mode-less reviewed entry never covers)")
+                continue
+            entry_digest = entry.get("base_sha256") if deleted else entry.get("sha256")
+            if current_digest != entry_digest or entry_mode != current_mode:
                 notes.append(mismatch_note)
                 continue
-            if entry_mode is None:
-                notes.append(f"unbound-mode: {path}")
             return ack, notes
     return None, notes
 
-def evaluate_diff(
-    changed_paths: list[str],
-    repo_root: Path,
-    policy: dict[str, Any],
-    mode: str | None = None,
-    identity: Callable[[str], tuple[str | None, str | None]] | None = None,
-    base_identity: Callable[[str], tuple[str | None, str | None]] | None = None,
-) -> tuple[list[str], list[str]]:
-    """Boundary findings (blocking) + notes (non-blocking) under ``mode``;
-    ``identity``/``base_identity`` resolve (sha256, git-mode) at head/base."""
+def evaluate_diff(changed_paths: list[str], repo_root: Path, policy: dict[str, Any], mode: str | None = None,
+                   identity: Callable[[str], tuple[str | None, str | None]] | None = None,
+                   base_identity: Callable[[str], tuple[str | None, str | None]] | None = None,
+                   ) -> tuple[list[str], list[str]]:
+    """Boundary findings (blocking) + notes (non-blocking) under ``mode``; ``identity``/``base_identity`` resolve (sha256, git-mode) at head/base."""
     if identity is None:
         identity = lambda p: _disk_identity(repo_root, p)
     if base_identity is None:
@@ -317,17 +317,19 @@ def _git_output_z(repo_root: Path, *args: str) -> list[str]:
     return [p.decode("utf-8", "surrogateescape") for p in out.split(b"\0") if p]
 
 def changed_paths_from_range(repo_root: Path, diff_range: str) -> list[str]:
-    return _git_output_z(repo_root, "diff", "--name-only", "-z", diff_range)
+    """G2: ``--no-renames`` so a rename's ORIGIN appears as its own (deleted) path, not collapsed into the
+    destination alone — a research-path or safety-path origin must still be evaluated."""
+    return _git_output_z(repo_root, "diff", "--no-renames", "--name-only", "-z", diff_range)
 
 def changed_paths_from_working_tree(repo_root: Path) -> list[str]:
-    """F1/M3: staged+unstaged+untracked paths (porcelain -z; a rename/copy's second bare ORIG_PATH token is
-    skipped). ``--untracked-files=all`` is required so a file inside a brand-new untracked DIRECTORY is listed
-    individually rather than collapsed to the directory's own path (which would silently evade safety/promotion
-    matching on the file's real path)."""
+    """F1/M3/G2: staged+unstaged+untracked paths (porcelain -z; a rename/copy's second bare token is the ORIG_PATH
+    — kept, not skipped, so the origin is evaluated same as the destination). ``--untracked-files=all`` lists a
+    file inside a brand-new untracked DIRECTORY individually, not collapsed to the directory's own path."""
     paths: list[str] = []
     skip_next = False
     for token in _git_output_z(repo_root, "status", "--porcelain", "-z", "--untracked-files=all"):
         if skip_next:
+            paths.append(token)  # G2: rename/copy ORIG_PATH
             skip_next = False
             continue
         status, path = token[:2], token[3:]
@@ -335,16 +337,10 @@ def changed_paths_from_working_tree(repo_root: Path) -> list[str]:
         skip_next = "R" in status or "C" in status
     return paths
 
-def _finish(
-    changed_paths: list[str],
-    repo_root: Path,
-    policy: dict[str, Any],
-    mode: str | None,
-    pre_notes: list[str],
-    identity: Callable[[str], tuple[str | None, str | None]] | None = None,
-    base_identity: Callable[[str], tuple[str | None, str | None]] | None = None,
-    extra_findings: list[str] | None = None,
-) -> int:
+def _finish(changed_paths: list[str], repo_root: Path, policy: dict[str, Any], mode: str | None, pre_notes: list[str],
+            identity: Callable[[str], tuple[str | None, str | None]] | None = None,
+            base_identity: Callable[[str], tuple[str | None, str | None]] | None = None,
+            extra_findings: list[str] | None = None) -> int:
     findings, notes = evaluate_diff(changed_paths, repo_root, policy, mode, identity, base_identity)
     findings = list(extra_findings or []) + findings
     for note in pre_notes + notes:
@@ -370,22 +366,27 @@ def run_diff_mode(diff_range: str, policy_path: Path, repo_root: Path, mode: str
         pre_notes.append("policy-change: evaluated with base policy; head policy takes effect after merge")
     head = head_ref_of_range(diff_range)
 
-    # M1: CI (no --mode) derives research-effectiveness; fails closed w/o declared_mode evidence.
+    # M1/G1: CI (no --mode) selects the effective mode from declarations NEW IN THE RANGE first,
+    # falling back to path/default research-effectiveness only when there are none.
     default_mode = policy.get("default_mode", "delivery")
     path_modes = policy.get("path_modes", {}) or {}
-    research_effective = default_mode == "research" or any(
-        resolve_mode(p, path_modes, default_mode) == "research" for p in changed_paths
-    )
+    research_effective = default_mode == "research" or any(resolve_mode(p, path_modes, default_mode) == "research" for p in changed_paths)
     effective_mode, extra_findings = mode, []
-    if mode is None and research_effective:
-        effective_mode = "research"
-        declared = any(r.get("declared_mode") == "research" for r in load_agent_runs(repo_root).values())
-        if not declared:
+    if mode is None:
+        declarations = new_declared_modes(repo_root, head, base)
+        if len(declarations) > 1:
+            # G1: mixing per-task delivery declarations with a change-level research one is
+            # normal multi-agent shape, not a conflict. STRICTEST WINS below: ambiguity only
+            # ever resolves toward MORE gating — a later delivery declaration cannot downgrade.
+            pre_notes.append(f"mode-declarations: {', '.join(sorted(declarations))}")
+        if declarations:
+            effective_mode = "research" if "research" in declarations else "delivery"
+        elif research_effective:
+            effective_mode = "research"
             extra_findings.append("mode-undeclared: research-effective diff has no declared_mode: research run record")
 
     return _finish(changed_paths, repo_root, policy, effective_mode, pre_notes,
-                   lambda p: _git_identity(repo_root, head, p),
-                   lambda p: _git_identity(repo_root, base, p),
+                   lambda p: _git_identity(repo_root, head, p), lambda p: _git_identity(repo_root, base, p),
                    extra_findings=extra_findings)
 
 def run_working_tree_mode(policy_path: Path, repo_root: Path, mode: str | None = None) -> int:

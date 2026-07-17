@@ -115,7 +115,7 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertIn("ledger-head:", first)
         # R2a/B1: the sentence is structural; a stored free-text effect + grandfathered direction are ignored.
-        self.assertIn("err stayed on the non-disconfirming side of < 0.1 — observed in a single configuration", first)
+        self.assertIn("`err` stayed on the non-disconfirming side of < 0.1 — observed in a single configuration", first)
         self.assertNotIn("faster", first)
         self.assertNotIn("improves", first)
 

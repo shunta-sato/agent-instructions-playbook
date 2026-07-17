@@ -24,22 +24,18 @@ CLAIM = "research_claim"
 RESEARCH_TYPES = (PREREGISTER, EXPLORATION, RESULT, CLAIM)
 COMPARATORS = ("<", "<=", ">", ">=", "==")
 
-CATEGORY_SUPPORTED = "supported"  # B1: a claim's category is machine-derived, never caller-supplied.
-CATEGORY_WITHIN_BOUNDS = "within-bounds"
-CATEGORY_DISCONFIRMED = "disconfirmed"
-CATEGORY_MIXED = "mixed"
+CATEGORY_SUPPORTED, CATEGORY_WITHIN_BOUNDS, CATEGORY_DISCONFIRMED, CATEGORY_MIXED = (
+    "supported", "within-bounds", "disconfirmed", "mixed")  # B1: machine-derived, never caller-supplied.
 PREDICATE_THRESHOLD = "threshold"  # R2b; legacy records with no ``type`` read as threshold.
 PREDICATE_EQUIVALENCE = "equivalence"
 
 class LedgerError(Exception):
     """Raised when the ledger cannot be parsed or a record is malformed."""
-
 def canonical_json(obj: Any) -> str:
     """Deterministic JSON serialization (sorted keys, compact separators)."""
     return json.dumps(obj, sort_keys=True, separators=(",", ":"))
 
 def sha256_text(text: str) -> str: return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
 def sha256_file(path: Path) -> str: return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def compute_hash(record: dict[str, Any]) -> str:
@@ -82,15 +78,13 @@ def chain_and_append(ledger_path: Path, record: dict[str, Any]) -> dict[str, Any
 
 def next_counter(records: list[dict[str, Any]], record_type: str, prefix: str) -> str:
     return f"{prefix}-{sum(1 for r in records if r.get('record_type') == record_type) + 1:04d}"
-
 def find_preregister(records: list[dict[str, Any]], experiment_id: str) -> dict[str, Any] | None:
     return next((r for r in records if r.get("record_type") == PREREGISTER and r.get("experiment_id") == experiment_id), None)
-
 def find_result(records: list[dict[str, Any]], experiment_id: str) -> dict[str, Any] | None:
     return next((r for r in records if r.get("record_type") == RESULT and r.get("experiment_id") == experiment_id), None)
 
 def _is_number(value: Any) -> bool: return isinstance(value, (int, float)) and not isinstance(value, bool)
-
+def _is_finite_number(value: Any) -> bool: return _is_number(value) and (isinstance(value, int) or math.isfinite(value))  # A4: isfinite() ONLY on floats — a non-bool int is always finite (avoids OverflowError on e.g. 10**400)
 def predicate_type(disconfirm: Any) -> str:
     """A disconfirm's predicate shape; legacy (no ``type``) records are ``threshold``."""
     valid = isinstance(disconfirm, dict) and disconfirm.get("type") == PREDICATE_EQUIVALENCE
@@ -108,9 +102,9 @@ def validate_predicate(disconfirm: Any) -> list[str]:
         for name, value in (("lower", lower), ("upper", upper)):
             if not _is_number(value):
                 errors.append(f"disconfirm.{name} must be a number")
-            elif not math.isfinite(value):
+            elif not _is_finite_number(value):
                 errors.append(f"disconfirm.{name} must be finite (not NaN/Inf)")
-        if _is_number(lower) and _is_number(upper) and math.isfinite(lower) and math.isfinite(upper) and not lower < upper:
+        if _is_finite_number(lower) and _is_finite_number(upper) and not lower < upper:
             errors.append("disconfirm.lower must be < disconfirm.upper")
         return errors
     if disconfirm.get("comparator") not in COMPARATORS:
@@ -118,12 +112,18 @@ def validate_predicate(disconfirm: Any) -> list[str]:
     threshold = disconfirm.get("threshold")
     if not _is_number(threshold):
         errors.append("disconfirm.threshold must be a number")
-    elif not math.isfinite(threshold):
+    elif not _is_finite_number(threshold):
         errors.append("disconfirm.threshold must be finite (not NaN/Inf)")
     return errors
 
-_COMPARATOR_OPS = {"<": operator.lt, "<=": operator.le, ">": operator.gt, ">=": operator.ge, "==": operator.eq}
+_METRIC_NAME_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.:\-]*$")
+_METRIC_NAME_MAX_LEN = 100
+def validate_metric_name(metric: Any) -> list[str]:
+    """A3: shared by register/claim/checker — the metric is the last free-text render channel."""
+    ok = isinstance(metric, str) and len(metric) <= _METRIC_NAME_MAX_LEN and bool(_METRIC_NAME_RE.match(metric))
+    return [] if ok else [f"metric {metric!r} must match {_METRIC_NAME_RE.pattern!r} (max {_METRIC_NAME_MAX_LEN} chars)"]
 
+_COMPARATOR_OPS = {"<": operator.lt, "<=": operator.le, ">": operator.gt, ">=": operator.ge, "==": operator.eq}
 def apply_comparator(comparator: str, lhs: Any, rhs: Any) -> bool:
     try:
         return bool(_COMPARATOR_OPS[comparator](lhs, rhs))
@@ -136,7 +136,7 @@ def derive_outcome(disconfirm: dict[str, Any], metrics: Any) -> str:
     if not isinstance(metrics, dict) or metric not in metrics:
         return "not-evaluable"
     value = metrics[metric]
-    if _is_number(value) and not math.isfinite(value):
+    if _is_number(value) and not _is_finite_number(value):
         return "not-evaluable"
     if predicate_type(disconfirm) == PREDICATE_EQUIVALENCE:
         if not _is_number(value):  # bounds are ordered comparisons
@@ -156,7 +156,6 @@ def multiplicity(prior_records: list[dict[str, Any]], digest: str) -> int:
     return sum(1 for r in prior_records if r.get("record_type") in (EXPLORATION, RESULT) and r.get("command_digest") == digest)
 
 SHELL_METACHARACTERS = ";&|<>`$()\n"
-
 def command_is_simple(command: str) -> bool:
     """No shell metacharacters: ``shlex.split`` tokens are then exactly the argv a ``shell=False`` process receives."""
     return not any(ch in command for ch in SHELL_METACHARACTERS)
@@ -169,7 +168,6 @@ def _axis_key_value(axis: Any) -> tuple[str, str] | None:
     return (key, value) if key and value else None
 
 AXIS_PLACEHOLDER = "\x00AXIS\x00"
-
 def _tokenize(command: str) -> list[str]:
     """shlex tokenization, falling back to whitespace split on an unbalanced quote."""
     try:
@@ -205,14 +203,16 @@ def _templatize_command(command: str, key: str, value: str) -> str:
 
 _ENV_ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")  # F4: structured axis-command contract
 _SHORT_OPT_RE = re.compile(r"^-[A-Za-z]+$")
-_WRAPPER_FLAG_CHARS = {"sh": "c", "bash": "c", "zsh": "c", "dash": "c", "ksh": "c",  # -c runs a script
-                        "python": "ce", "python3": "ce", "perl": "ce", "ruby": "ce"}  # -c/-e do too
+_WRAPPER_FLAG_CHARS = {"sh": "c", "bash": "c", "zsh": "c", "dash": "c", "ksh": "c", "python": "ce", "python3": "ce", "perl": "ce", "ruby": "ce"}  # -c/-e consume argv
 
 def parse_axis_command(command: str) -> tuple[list[tuple[str, str]], list[str]] | None:
-    """Peel leading NAME=VALUE / transparent ``env`` tokens; the rest is the real exec argv."""
+    """Peel leading NAME=VALUE / transparent ``env`` tokens; the rest is the real exec argv.
+    A2: ``env`` + a dash-option (e.g. ``env -u X``) is refused (None), never mistaken for argv[0]."""
     tokens = _tokenize(command)
     index = 0
     while index < len(tokens) and (_ENV_ASSIGNMENT_RE.match(tokens[index]) or Path(tokens[index]).name == "env"):
+        if Path(tokens[index]).name == "env" and index + 1 < len(tokens) and tokens[index + 1].startswith("-"):
+            return None
         index += 1
     env_assignments = [tuple(t.split("=", 1)) for t in tokens[:index] if "=" in t]
     exec_argv = tokens[index:]
@@ -255,12 +255,12 @@ def final_outcome(prereg: dict[str, Any], metrics: Any) -> str:
     return derive_outcome(prereg["disconfirm"], metrics)
 
 def axis_binding(records: list[dict[str, Any]], evidence_ids: list[str]) -> dict[str, Any]:
-    """F3: ONE shared axis derivation (n, labels, note, valid) for writer/checker/renderer, so
-    n and labels never disagree; invalid/legacy axis -> n=1, "unverified configuration" (grandfathered)."""
+    """F3: ONE shared axis derivation (n/labels/note) for writer/checker/renderer; invalid/legacy -> n=1
+    "unverified configuration" (grandfathered). A1: n>1 requires every result's axis_effective to confirm."""
     def _bad(note: str) -> dict[str, Any]:
         return {"n": 1, "labels": ["unverified configuration"], "note": note, "valid": False}
 
-    pairs: list[tuple[str, str, str]] = []  # (axis key, axis value, registered command)
+    pairs: list[tuple[str, str, str, bool]] = []  # (axis key, axis value, registered command, axis_effective-confirmed)
     for eid in evidence_ids:
         prereg, result = find_preregister(records, eid), find_result(records, eid)
         if prereg is None or result is None:
@@ -273,18 +273,20 @@ def axis_binding(records: list[dict[str, Any]], evidence_ids: list[str]) -> dict
             return _bad("n=1: axis on non-simple command")
         if axis_binding_errors(axis, cmd):  # F4: structural re-derivation, not just text-matching
             return _bad(f"n=1: {eid} variation_axis is not structurally bound to the command")
-        if axis_effective_mismatch(result.get("metrics"), parsed[1]):
-            return _bad(f"n=1: {eid} axis_effective does not match declared axis value")
-        pairs.append((parsed[0], parsed[1], cmd))
+        metrics = result.get("metrics")
+        confirmed = isinstance(metrics, dict) and AXIS_EFFECTIVE_KEY in metrics and str(metrics[AXIS_EFFECTIVE_KEY]) == str(parsed[1])
+        pairs.append((parsed[0], parsed[1], cmd, confirmed))
     if not pairs:
         return {"n": 1, "labels": ["single configuration"], "note": "n=1: no conforming variation axis", "valid": False}
-    keys = {k for k, _v, _c in pairs}
+    keys = {k for k, _v, _c, _f in pairs}
     if len(keys) > 1:
         return _bad(f"n=1: evidence mixes axis keys {sorted(keys)}")
     (key,) = keys
-    if len({_templatize_command(c, key, v) for _k, v, c in pairs}) != 1:
+    if len({_templatize_command(c, key, v) for _k, v, c, _f in pairs}) != 1:
         return _bad(f"n=1: axis {key!r} substitution leaves commands differing at a non-axis position")
-    values = sorted({v for _k, v, _c in pairs}); n = len(values)
+    values = sorted({v for _k, v, _c, _f in pairs}); n = len(values)
+    if n > 1 and not all(confirmed for *_, confirmed in pairs):  # A1: n>1 needs every result axis_effective-confirmed
+        return _bad("n=1: axis not confirmed by axis_effective")
     labels = [f"{key}={v}" for v in values] if n > 1 else ["single configuration"]
     return {"n": n, "labels": labels, "valid": True,
             "note": f"n={n}: distinct values on axis key {key!r} over a common command template"}
@@ -292,7 +294,6 @@ def axis_binding(records: list[dict[str, Any]], evidence_ids: list[str]) -> dict
 def claim_n_and_note(records: list[dict[str, Any]], evidence_ids: list[str]) -> tuple[int, str]:
     binding = axis_binding(records, evidence_ids)
     return binding["n"], binding["note"]
-
 def claim_n(records: list[dict[str, Any]], evidence_ids: list[str]) -> int: return axis_binding(records, evidence_ids)["n"]
 
 def normalized_predicate(disconfirm: dict[str, Any]) -> tuple[Any, ...]:
@@ -317,9 +318,7 @@ def predicate_identity_errors(records: list[dict[str, Any]], evidence_ids: list[
             errors.append(f"{eid}: predicate does not match {baseline_eid}")
     return errors
 
-def evaluate_claim_binding(
-    records: list[dict[str, Any]], metric: str, evidence_ids: list[str]
-) -> tuple[list[str], list[dict[str, str]]]:
+def evaluate_claim_binding(records: list[dict[str, Any]], metric: str, evidence_ids: list[str]) -> tuple[list[str], list[dict[str, str]]]:
     """Re-derive binding -> (errors, outcome_basis): metric/predicate match + real evidence (R1)."""
     errors, basis = [], []
     for eid in evidence_ids:
@@ -368,6 +367,7 @@ def render_claims(records: list[dict[str, Any]]) -> str:
     claims = sorted((r for r in records if r.get("record_type") == CLAIM), key=lambda r: r["claim_id"])
     for claim in claims:
         metric, evidence = claim["metric"], claim["evidence"]
+        metric = "`" + metric.replace("`", "") + "`"  # A3: defense-in-depth — always backticked, backticks stripped
         category = derive_claim_category(records, evidence)
         binding = axis_binding(records, evidence)
         n = binding["n"]

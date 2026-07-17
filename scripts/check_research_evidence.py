@@ -48,9 +48,14 @@ def _check_chain(records: list[dict[str, Any]], findings: list[str]) -> None:
             findings.append(f"chain-hash-mismatch: {rid}")
 
 def _check_predicate(record: dict[str, Any], findings: list[str]) -> list[str]:
-    errors = rl.validate_predicate(record.get("disconfirm"))
+    disconfirm = record.get("disconfirm")
+    errors = rl.validate_predicate(disconfirm)
     for error in errors:
         findings.append(f"predicate-invalid: {record.get('experiment_id')}: {error}")
+    # A3: re-validate the metric name even when the rest of the predicate is well-formed.
+    metric = disconfirm.get("metric") if isinstance(disconfirm, dict) else None
+    for error in rl.validate_metric_name(metric):
+        findings.append(f"metric-invalid: {record.get('experiment_id')}: {error}")
     return errors
 
 def _check_results(records: list[dict[str, Any]], findings: list[str]) -> None:
@@ -88,6 +93,8 @@ def _check_claims(records: list[dict[str, Any]], findings: list[str]) -> None:
             continue
         cid = record.get("claim_id")
         evidence = record.get("evidence", [])
+        for error in rl.validate_metric_name(record.get("metric")):  # A3
+            findings.append(f"metric-invalid: {cid}: {error}")
         for eid in evidence:
             prereg = rl.find_preregister(records, eid)
             result = rl.find_result(records, eid)

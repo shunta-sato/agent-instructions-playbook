@@ -70,7 +70,7 @@ class ReviewerBypassScenarioTests(unittest.TestCase):
 
             rendered = rl.render_claims(records)
         self.assertIn(
-            "latency stayed on the non-disconfirming side of < 100 — observed in a single"
+            "`latency` stayed on the non-disconfirming side of < 100 — observed in a single"
             " configuration.",
             rendered,
         )
@@ -108,7 +108,7 @@ class ClaimCategoryDerivationTests(unittest.TestCase):
             self.assertEqual(self._derived_category(ledger), rl.CATEGORY_WITHIN_BOUNDS)
             rendered = rl.render_claims(rl.load_research_records(ledger))
         self.assertIn(
-            "err remained within [0.0, 0.1] — observed in a single configuration.", rendered
+            "`err` remained within [0.0, 0.1] — observed in a single configuration.", rendered
         )
 
     def test_all_disconfirmed_evidence_yields_disconfirmed_category(self) -> None:
@@ -124,7 +124,7 @@ class ClaimCategoryDerivationTests(unittest.TestCase):
             self.assertEqual(rc, 0)
             self.assertEqual(self._derived_category(ledger), rl.CATEGORY_DISCONFIRMED)
             rendered = rl.render_claims(rl.load_research_records(ledger))
-        self.assertIn("err met the disconfirm predicate < 0.1 in the configuration.", rendered)
+        self.assertIn("`err` met the disconfirm predicate < 0.1 in the configuration.", rendered)
 
     def test_mixed_predicate_types_refused_at_claim_time(self) -> None:
         # S5/item1: a threshold citation + an equivalence citation on the same metric no longer

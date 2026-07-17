@@ -36,12 +36,13 @@ def _record_args(argv: list[str]) -> argparse.Namespace:
 class ReviewedFilesTests(unittest.TestCase):
     def test_records_script_computed_sha256(self) -> None:
         # Q3b: the script hashes the file at record time (caller supplies no digest).
+        # G3: untracked (no repo here) -> mode is filesystem-derived, not omitted.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "a.txt").write_text("payload\n", encoding="utf-8")
             entries = reviewed_files_from_args(["a.txt"], root)
         self.assertEqual(
-            entries, [{"path": "a.txt", "sha256": hashlib.sha256(b"payload\n").hexdigest()}]
+            entries, [{"path": "a.txt", "sha256": hashlib.sha256(b"payload\n").hexdigest(), "mode": "100644"}]
         )
 
     def test_missing_reviewed_file_is_rejected(self) -> None:
@@ -61,8 +62,30 @@ class ReviewedFilesTests(unittest.TestCase):
             entries = reviewed_files_from_args(["link"], root)
         self.assertEqual(
             entries,
-            [{"path": "link", "sha256": hashlib.sha256(b"real_dir").hexdigest()}],
+            [{"path": "link", "sha256": hashlib.sha256(b"real_dir").hexdigest(), "mode": "120000"}],
         )
+
+    def test_untracked_executable_file_derives_executable_mode(self) -> None:
+        # G3: the writer half of the unbound-mode fix — an untracked path
+        # (ls-files --stage empty) derives its mode from the filesystem so
+        # every new reviewed entry carries one (no unbound-mode gap at write time).
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            script = root / "run.sh"
+            script.write_text("#!/bin/sh\n", encoding="utf-8")
+            script.chmod(0o755)
+            entries = reviewed_files_from_args(["run.sh"], root)
+        self.assertEqual(entries[0]["mode"], "100755")
+
+    def test_untracked_file_in_real_git_repo_derives_mode(self) -> None:
+        # Same fix, but inside an actual (empty-index) git repo, matching the
+        # real agent_run CLI path rather than a bare tempdir with no .git.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            (root / "new.py").write_text("v\n", encoding="utf-8")  # untracked: never committed
+            entries = reviewed_files_from_args(["new.py"], root)
+        self.assertEqual(entries[0]["mode"], "100644")
 
 
 class AgentRunValidationTests(unittest.TestCase):
@@ -105,6 +128,24 @@ class AgentRunValidationTests(unittest.TestCase):
                 {"commands": [{"cmd": "make test-unit", "exit_code": 1, "passed": True}], "passed": True}
             )
         )
+
+    def test_string_valued_allowed_files_fails_closed(self) -> None:
+        # G5: a STRING value for allowed_files/changed_files iterates as
+        # one-character paths in Python — malformed input must fail closed,
+        # not silently accept a per-character "scope."
+        judgment = evaluate_run_record(
+            {
+                "record_type": "agent_run",
+                "run_id": "poc-string-valued-scope",
+                "allowed_files": "scripts/agent_run.py",  # bare string, not a list
+                "changed_files": ["scripts/agent_run.py"],
+                "outcome": {"agent_completed": True},
+                "validation": {"commands": [{"cmd": "make test-unit", "exit_code": 0, "passed": True}],
+                                "passed": True, "quality_gate": "pass"},
+            }
+        )
+        self.assertFalse(judgment["scope_compliant"])
+        self.assertFalse(judgment["accepted"])
 
     def test_validation_passed_requires_every_command_to_exit_zero(self) -> None:
         self.assertFalse(
@@ -160,7 +201,7 @@ class ReviewChangedFlagTests(unittest.TestCase):
             _, record = build_run_record(args)
         self.assertEqual(
             record["reviewed_files"],
-            [{"path": "src/app.py", "sha256": hashlib.sha256(b"payload\n").hexdigest()}],
+            [{"path": "src/app.py", "sha256": hashlib.sha256(b"payload\n").hexdigest(), "mode": "100644"}],
         )
 
     def test_review_changed_dedupes_against_explicit_reviewed_file(self) -> None:

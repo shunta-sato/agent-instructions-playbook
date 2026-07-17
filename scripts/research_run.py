@@ -63,7 +63,11 @@ def run_command(command: str, repo_root: Path, run_dir: Path, use_argv: bool = F
             raise ValueError(f"axis-bearing command has no executable argv: {command!r}")
         env_assignments, exec_argv = binding
         env.update(env_assignments)
-        completed = subprocess.run(exec_argv, shell=False, cwd=str(repo_root), env=env)
+        try:  # A2: a bad argv[0] (or other exec-setup failure) is a clean recorded failure, never a traceback
+            completed = subprocess.run(exec_argv, shell=False, cwd=str(repo_root), env=env)
+        except OSError as exc:
+            print(f"research-run: exec failed for {exec_argv!r}: {exc}", file=sys.stderr)
+            return 127
     else:
         completed = subprocess.run(command, shell=True, cwd=str(repo_root), env=env)
     return completed.returncode
@@ -165,6 +169,7 @@ def build_disconfirm(args: argparse.Namespace) -> dict[str, Any]:
 def cmd_register(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     disconfirm = build_disconfirm(args)
     errors = rl.validate_predicate(disconfirm)
+    errors += rl.validate_metric_name(args.metric)  # A3
     if args.variation_axis:
         errors += validate_variation_axis(args.variation_axis, args.command)
     if errors:
@@ -268,6 +273,7 @@ def cmd_explore(args: argparse.Namespace, repo_root: Path, ledger_path: Path) ->
 
 def cmd_claim(args: argparse.Namespace, repo_root: Path, ledger_path: Path) -> int:
     source_errors = [e for source in (args.source or []) for e in validate_source(source)]  # F2
+    source_errors += rl.validate_metric_name(args.metric)  # A3
     if source_errors:
         raise ValueError("; ".join(source_errors))
     records = rl.load_research_records(ledger_path)

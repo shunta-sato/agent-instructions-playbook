@@ -98,7 +98,7 @@ class AckEvidenceBindingTests(unittest.TestCase):
             app = root / "src" / "app.py"
             app.write_text("payload\n", encoding="utf-8")
             run = _run("run-1", passed=True, changed=["src/app.py"], allowed=["src/app.py", ".agents/promotions/"],
-                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}])
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app), "mode": "100644"}])
             findings, notes = _diff(root, run, ["src/app.py"])
         self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
         self.assertIn(f"promotion acknowledged: {ACK} covers src/app.py", notes)
@@ -156,7 +156,7 @@ class AckEvidenceBindingTests(unittest.TestCase):
             app = root / "src" / "app.py"
             app.write_text("payload\n", encoding="utf-8")
             run = _run("run-1", changed=[], allowed=["src/", "tools/"],
-                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}])
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app), "mode": "100644"}])
             findings, notes = _diff(root, run, ["src/app.py", "src/deep/x.py", "tools/build.py"],
                                      covers=["src/", "tools/", ".agents/promotions/"])
         self.assertIn(f"promotion acknowledged: {ACK} covers src/app.py", notes)
@@ -191,7 +191,7 @@ class RunAcceptanceEvidenceTests(unittest.TestCase):
             app = root / "src" / "app.py"
             app.write_text("payload\n", encoding="utf-8")
             run = _run("run-1", allowed=["src/app.py", ".agents/promotions/"],
-                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}], **run_kwargs)
+                       reviewed=[{"path": "src/app.py", "sha256": _sha256(app), "mode": "100644"}], **run_kwargs)
             return _diff(root, run, ["src/app.py"])
 
     def test_not_accepted_runs_downgrade_nothing(self) -> None:
@@ -237,7 +237,7 @@ class AckClaimBindingTests(unittest.TestCase):
             app.write_text("payload\n", encoding="utf-8")
             self._ledger_with_claim(root, _run(
                 "run-1", changed=["src/app.py"], allowed=["src/app.py", ".agents/promotions/"],
-                reviewed=[{"path": "src/app.py", "sha256": _sha256(app)}],
+                reviewed=[{"path": "src/app.py", "sha256": _sha256(app), "mode": "100644"}],
             ))
             _write_ack(root, ACK, covers=["src/", ".agents/promotions/"], run_ids=["run-1"], claim_line="promotes C-0001")
             findings, notes = cre.evaluate_diff(["src/app.py", ACK], root, POLICY, "research")
@@ -270,7 +270,7 @@ class AckReviewedFilesTests(unittest.TestCase):
                     guide.write_text(content, encoding="utf-8")
                     digest = forced_digest or _sha256(guide)  # forced -> drifted from disk content
                     run = _run("run-1", changed=[], allowed=[],
-                               reviewed=[{"path": "docs/guide.md", "sha256": digest}])
+                               reviewed=[{"path": "docs/guide.md", "sha256": digest, "mode": "100644"}])
                     findings, notes = _diff(root, run, ["docs/guide.md"], covers=["docs/", ".agents/promotions/"])
                 if forced_digest:
                     self.assertIn("promotion-required: docs/guide.md", findings)
@@ -287,7 +287,7 @@ class AckReviewedFilesTests(unittest.TestCase):
             (root / "real_dir").mkdir()
             (root / "link").symlink_to("real_dir")
             run = _run("run-1", changed=[], allowed=[],
-                       reviewed=[{"path": "link", "sha256": hashlib.sha256(b"real_dir").hexdigest()}])
+                       reviewed=[{"path": "link", "sha256": hashlib.sha256(b"real_dir").hexdigest(), "mode": "120000"}])
             findings, notes = _diff(root, run, ["link"], covers=["link", ".agents/promotions/"])
         self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
         self.assertIn(f"promotion acknowledged: {ACK} covers link", notes)
@@ -334,8 +334,8 @@ class AckDeletionCoverageTests(unittest.TestCase):
             "mismatched-mode-tombstone-is-blocking": ([{"path": "src/old.py", "deleted": True,
                                                  "base_sha256": self.BASE_DIGEST, "mode": "100755"}],
                                                  False, "tombstone-base-mismatch"),
-            "unbound-mode-tombstone-grandfathers": ([{"path": "src/old.py", "deleted": True,
-                                                 "base_sha256": self.BASE_DIGEST}], True, None),
+            "unbound-mode-tombstone-never-covers": ([{"path": "src/old.py", "deleted": True,
+                                                 "base_sha256": self.BASE_DIGEST}], False, "unbound-mode"),
             "normal-entry-never-covers-deletion": ([{"path": "src/old.py",
                                                       "sha256": self.BASE_DIGEST, "mode": self.BASE_MODE}], False, None),
         }
@@ -358,9 +358,9 @@ class AckDeletionCoverageTests(unittest.TestCase):
 
 
 class LiveModeBindingTests(unittest.TestCase):
-    """M2: a LIVE promoted path binds to (digest, git-mode), not bytes alone —
-    a reviewed regular file cannot be covered by a same-bytes symlink (or
-    100644 by a 100755), and a pre-M2 mode-less entry grandfathers in."""
+    """M2/G3: a LIVE promoted path binds to (digest, git-mode), not bytes
+    alone — a reviewed regular file cannot be covered by a same-bytes symlink
+    (or 100644 by a 100755), and a mode-less entry never covers (no grandfather)."""
 
     DIGEST = "d" * 64
 
@@ -385,10 +385,11 @@ class LiveModeBindingTests(unittest.TestCase):
         self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
         self.assertIn(f"promotion acknowledged: {ACK} covers src/app.py", notes)
 
-    def test_no_stored_mode_grandfathers_with_note(self) -> None:
+    def test_no_stored_mode_never_covers(self) -> None:
+        # G3: the grandfather path is removed — a mode-less entry blocks, it no longer downgrades.
         findings, notes = self._eval(entry_mode=None, current_mode="100755")
-        self.assertEqual([f for f in findings if f.startswith("promotion-required:")], [])
-        self.assertIn("unbound-mode: src/app.py", notes)
+        self.assertIn("promotion-required: src/app.py", findings)
+        self.assertTrue(any(n.startswith("unbound-mode: src/app.py") for n in notes), notes)
 
 
 if __name__ == "__main__":
