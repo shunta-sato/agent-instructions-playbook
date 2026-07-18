@@ -2,6 +2,16 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.18.0
+
+### Added
+- Added the **Research OS v0**: a second epistemic mode (`research`) beside `delivery`, resolved via explicit declaration > `.agents/project-policy.yml` path_modes > repo default (default-deny: unmatched paths are delivery). Research mode waives code-quality gates for probe paths while **strengthening** evidence discipline: `scripts/research_run.py` is the sole writer of hash-chained experiment records (runner-stamped preregistration → execution → structured claims with template-generated prose and rerun-multiplicity disclosure), and `scripts/check_research_evidence.py` mechanically verifies chain integrity, preregistration-before-execution, machine-evaluable disconfirm predicates, mode-independent claim binding, and the promotion boundary (research work touching delivery paths re-enters dev-workflow + quality-gate).
+- Added three research skills — `research-workflow` (router; continue|pivot|kill|promote; ordinal probe-selection rules), `experiment-loop` (three-input evidence contract: hypothesis, disconfirm predicate, command), `research-synthesis` (knowledge-state synthesis and promotion boundary) — plus research task classes and trigger evals.
+
+### Changed
+- The dev-workflow / quality-gate mandate is now **delivery-mode-conditional** in all six locations that stated it (AGENTS.md ×2, both SKILL frontmatter+bodies, using-playbook.md, custom agent contracts). Physical-safety, secrets, and destructive-operation rules apply in every mode.
+- `scripts/check_structure.py` honors policy-file structure waivers (probe paths visible-but-waived, not silent).
+
 ## v4.17.0
 
 ### Added

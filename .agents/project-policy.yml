@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "notes": "Per-repo epistemic mode policy. Mode resolution precedence: explicit task declaration > path_modes longest-prefix match > default_mode. Paths not matched by path_modes resolve to delivery (default-deny). Consumed by scripts/check_research_evidence.py and scripts/check_structure.py.",
+  "default_mode": "delivery",
+  "path_modes": {
+    "experiments/": "research",
+    "research/": "research"
+  },
+  "structure_waivers": [
+    { "path": "experiments/", "reason": "disposable research probe code" },
+    { "path": "research/runs/", "reason": "runner-generated experiment artifacts" }
+  ],
+  "safety_paths": []
+}

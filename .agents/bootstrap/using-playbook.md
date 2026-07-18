@@ -9,7 +9,7 @@ Rules that must always apply belong in `AGENTS.md`; this file explains how to ap
 1. Inspect the Agent Index in `AGENTS.md`.
 2. Decide which skills apply before starting software-development work.
 3. If the user explicitly names a skill, read that skill before responding or editing.
-4. For code or test changes, enter through `dev-workflow` and finish through `quality-gate`.
+4. For delivery-mode code or test changes, enter through `dev-workflow` and finish through `quality-gate`; research-mode work enters through `research-workflow` with ledger-based evidence discipline (mode: `.agents/project-policy.yml`).
 5. For complex or long-running work, create or update an ExecPlan under `plans/`.
 
 ## Skill Selection

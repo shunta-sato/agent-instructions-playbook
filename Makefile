@@ -39,6 +39,7 @@ lint:
 	$(PYTHON) scripts/validate_function_design_protocol.py
 	$(PYTHON) scripts/validate_model_routing.py
 	$(PYTHON) scripts/validate_model_routing_evals.py
+	$(PYTHON) scripts/check_research_evidence.py --check-ledger
 
 analysis:
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
@@ -56,6 +57,7 @@ test-integration:
 	$(PYTHON) scripts/validate_function_design_protocol.py
 	$(PYTHON) scripts/validate_model_routing.py
 	$(PYTHON) scripts/validate_model_routing_evals.py
+	$(PYTHON) scripts/check_research_evidence.py --check-ledger
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 	$(PYTHON) scripts/generate_agent_index.py --check
 	git diff --check

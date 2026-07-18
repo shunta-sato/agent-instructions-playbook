@@ -1,6 +1,6 @@
 ---
 name: quality-gate
-description: "Use before every submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
+description: "Use before every delivery-mode submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
 metadata:
   short-description: Final quality gate
   requires:
@@ -15,7 +15,7 @@ It answers one question: **is this change ready to submit now?**
 
 ## When to use
 
-Invoke this skill **before every submission**. It is mandatory.
+Invoke this skill **before every delivery-mode submission**. It is mandatory in delivery mode. Research probes are gated by `scripts/check_research_evidence.py` instead; promotion into delivery paths re-enters this gate in full.
 
 ## How to use
 
@@ -28,6 +28,8 @@ Invoke this skill **before every submission**. It is mandatory.
 1b) Run the structural exit check: `python scripts/check_structure.py <touched source files>`.
    - Any finding is `no-submit` until the split is applied in this submission, or an explicit bounded waiver (for example generated code) is recorded in the change brief.
    - This check is independent of which branches were triggered: a change that never triggered `design-balance` still fails here if a touched file breached the structure budget.
+
+1c) Run the boundary gate with the declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery`. `safety-review-required` findings are `no-submit` in every mode; notes about delivery-mode edits under research paths are informational.
 
 2) Validate required artifacts/evidence from triggered branches exist, including function-design evidence when triggered.
    - Examples: Bug Report, UI Visual Verification Report, staged-lowering log, concurrency verification evidence, ExecPlan updates.

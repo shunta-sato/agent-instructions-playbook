@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: "Use for any task that changes code or tests. Routes implementation work by risk and applicable branch skills before editing."
+description: "Use for any delivery-mode task that changes code or tests. Routes implementation work by risk and applicable branch skills before editing."
 metadata:
   short-description: Risk-routed dev workflow
   requires:
@@ -15,7 +15,7 @@ It decides **which branch workflows are required** for the current task.
 
 ## When to use
 
-Use this skill **for any task that changes code and/or tests**. It is mandatory.
+Use this skill **for any delivery-mode task that changes code and/or tests**. It is mandatory in delivery mode. In research mode (see `.agents/project-policy.yml`), route through `$research-workflow` instead; promotion of research results into delivery paths re-enters this skill.
 
 ## How to use
 
