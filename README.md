@@ -122,11 +122,13 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
 | `experiment-loop` | Registered experiment evidence contract | `.agents/skills/experiment-loop/SKILL.md` |
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
+| `hardening-workflow` | Measure-tier-stop hardening lane | `.agents/skills/hardening-workflow/SKILL.md` |
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
 | `japanese-tech-writing` | Japanese technical writing conventions | `.agents/skills/japanese-tech-writing/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
+| `poc-workflow` | PoC construction on the research substrate | `.agents/skills/poc-workflow/SKILL.md` |
 | `preflight-api-compat` | Public API compatibility preflight | `.agents/skills/preflight-api-compat/SKILL.md` |
 | `preflight-auth-session` | Auth/session preflight | `.agents/skills/preflight-auth-session/SKILL.md` |
 | `preflight-db-migration` | DB migration preflight | `.agents/skills/preflight-db-migration/SKILL.md` |
@@ -136,6 +138,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `project-structure` | Physical code layout and structure budget | `.agents/skills/project-structure/SKILL.md` |
 | `quality-gate` | Final quality gate | `.agents/skills/quality-gate/SKILL.md` |
 | `receiving-code-review` | Process review feedback safely | `.agents/skills/receiving-code-review/SKILL.md` |
+| `refactor-workflow` | Behavior-preserving refactor lane | `.agents/skills/refactor-workflow/SKILL.md` |
 | `requesting-code-review` | Prepare focused review requests | `.agents/skills/requesting-code-review/SKILL.md` |
 | `requirements-engineering` | Requirements engineering | `.agents/skills/requirements-engineering/SKILL.md` |
 | `research-synthesis` | Research decision synthesis | `.agents/skills/research-synthesis/SKILL.md` |

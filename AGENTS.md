@@ -57,11 +57,13 @@ skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
 skill|experiment-loop|Registered experiment evidence contract|.agents/skills/experiment-loop/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
+skill|hardening-workflow|Measure-tier-stop hardening lane|.agents/skills/hardening-workflow/SKILL.md
 skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
 skill|japanese-tech-writing|Japanese technical writing conventions|.agents/skills/japanese-tech-writing/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
+skill|poc-workflow|PoC construction on the research substrate|.agents/skills/poc-workflow/SKILL.md
 skill|preflight-api-compat|Public API compatibility preflight|.agents/skills/preflight-api-compat/SKILL.md
 skill|preflight-auth-session|Auth/session preflight|.agents/skills/preflight-auth-session/SKILL.md
 skill|preflight-db-migration|DB migration preflight|.agents/skills/preflight-db-migration/SKILL.md
@@ -71,6 +73,7 @@ skill|project-initialization|Initialize canonical verify commands|.agents/skills
 skill|project-structure|Physical code layout and structure budget|.agents/skills/project-structure/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
 skill|receiving-code-review|Process review feedback safely|.agents/skills/receiving-code-review/SKILL.md
+skill|refactor-workflow|Behavior-preserving refactor lane|.agents/skills/refactor-workflow/SKILL.md
 skill|requesting-code-review|Prepare focused review requests|.agents/skills/requesting-code-review/SKILL.md
 skill|requirements-engineering|Requirements engineering|.agents/skills/requirements-engineering/SKILL.md
 skill|research-synthesis|Research decision synthesis|.agents/skills/research-synthesis/SKILL.md

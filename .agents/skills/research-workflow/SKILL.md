@@ -39,6 +39,8 @@ Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-ga
 
 3) Any evidence-bearing experiment goes through `$experiment-loop`. Unregistered exploration is allowed for reconnaissance but is never citable as evidence until it is re-registered through `$experiment-loop` with a fresh confirmation.
 
+3b) PoC, demo, or feasibility CONSTRUCTION — building the demo/feasibility artifact itself, not a registered probe — routes to `$poc-workflow`, which owns construction on this mode's substrate.
+
 4) Before reporting completion of any research task that changed files, run the boundary gate with your declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode research`, and include its output in your report. `promotion-required` findings are not failures — they route the affected paths to `$research-synthesis` (promote) and the delivery gates.
 
 5) Periodically, or whenever more than 5 results remain unsynthesized, hand this cycle's results to `$research-synthesis`.

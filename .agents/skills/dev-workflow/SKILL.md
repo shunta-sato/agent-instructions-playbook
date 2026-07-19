@@ -24,6 +24,13 @@ Use this skill **for any delivery-mode task that changes code and/or tests**. It
 1) Route by risk first (`low` | `normal` | `high`) and record why.
    - The output of this step is: required planning depth + required verification depth.
 
+1a) Declare the work-intent and record it like compat-mode: `feature` (default) | `poc` | `refactor` | `hardening`.
+   - `poc` (prototype/demo/feasibility construction): this is research-mode work — the PoC boundary must be a research-mode path or a declared research mode; route `$poc-workflow` and stop here (dev-workflow's remaining steps are delivery mandates). A PoC built on delivery paths in delivery mode gets no exemptions.
+   - `refactor` (structural change, behavior preserved as the task's purpose): run the `$refactor-workflow` lane; its stages call back into this skill's parts (1b compat-mode, `$function-boundary-governor`, `$design-balance`, `$destructive-refactor`). The lane subsumes step 2's default implementation lane — after it, resume at step 6; do not re-run 1a–2 and do not seed a Test List (the lane forbids new tests for moved-but-unchanged behavior). The in-feature preparatory refactor stays step 2b — do not reroute it.
+   - `hardening` (quality improvement of existing behavior as the task's purpose): run the `$hardening-workflow` lane. The lane subsumes step 2 — after it, resume at step 6; do not re-run 1a–2.
+   - `feature`: continue unchanged.
+   - Tie-break: intent is about the task's PURPOSE — a feature that happens to refactor en route stays `feature` (step 2b); a task whose deliverable IS the structural change or the quality delta takes the dedicated intent. Refactor-vs-hardening tie-break: a measured quality delta as the deliverable (coverage, smell count, flaky count, latency metric) → `hardening`; a specific structural transformation with no target metric → `refactor`; a behavior-preserving cleanup that names a measurable quality dimension defaults to `hardening` (the lanes gate differently — hardening requires a baseline).
+
 1b) Record the compat-mode whenever the task touches public or cross-module APIs, or is a rework/consolidation/deletion request:
    - `preserve` (default): existing callers must keep working.
    - `staged`: temporary adapters allowed, each with a ledger entry naming its removal condition.
