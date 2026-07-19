@@ -53,6 +53,7 @@ Use this skill **for any delivery-mode task that changes code and/or tests**. It
    - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → route by the embedded NFR table below
    - strict-constraint low-level code or repeated compile/test loops → `$staged-lowering`
    - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
+   - unit tests being added, changed, or reviewed; deciding test cases, boundaries, coverage, or mock use → `$unit-test-design`
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
    - C++ headers touched → `$code-readability` (Doxygen gate)
    - adding or editing implementation comments, commit-message content decisions, or test names/descriptions → `$comment-discipline`

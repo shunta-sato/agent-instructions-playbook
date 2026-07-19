@@ -84,6 +84,7 @@ skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/sk
 skill|uidesign-orchestrator|Explicit UI evidence orchestration|.agents/skills/uidesign-orchestrator/SKILL.md
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md
 skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.agents/skills/uiux-flow-preview/SKILL.md
+skill|unit-test-design|Risk-tiered unit test design|.agents/skills/unit-test-design/SKILL.md
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md
 skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md
 end|AGENT_INDEX_V1

@@ -25,7 +25,7 @@ Use this skill when:
 
 0) Open `references/test-driven-development.md`. Start from the template.
 
-1) Write a Test List first (3–10 items). Seed it from acceptance criteria or Definition of Done when available. Pick the smallest item.
+1) Write a Test List first (3–10 items). Seed it from acceptance criteria or Definition of Done when available, and seed/bound the case list with `$unit-test-design` (risk tier, partitions/boundaries, stop criteria). Pick the smallest item.
 
 2) Red: write the failing test with a clear name and intent.
    - Place the test where `$project-structure` conventions put it (unit test beside its module, integration test in the test directory). Never accumulate tests in an entrypoint file such as `main.rs`.
