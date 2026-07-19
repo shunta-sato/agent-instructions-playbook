@@ -46,6 +46,8 @@ Write comments to fill gaps that are not obvious from reading the code. Do not r
 
 Comments get stale. Do not justify unclear code with comments—first make the code clearer. A wrong comment is worse than no comment.
 
+Implementation comments follow the Why-not channel rule in `comment-discipline`: keep only what code, tests, and commit messages cannot express. Documentation-gate comments (Doxygen headers, public-API docstrings — §4.4) are contract documentation and are exempt from that rule.
+
 ### 4.1 What to write
 
 - **Intent**: why this approach, why this order, why this condition.

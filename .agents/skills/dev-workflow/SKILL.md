@@ -55,6 +55,7 @@ Use this skill **for any delivery-mode task that changes code and/or tests**. It
    - legacy/no reliable tests/nondeterminism → `$working-with-legacy-code`
    - UI change → `$visual-regression-testing` + matching platform visual skill(s)
    - C++ headers touched → `$code-readability` (Doxygen gate)
+   - adding or editing implementation comments, commit-message content decisions, or test names/descriptions → `$comment-discipline`
 
 4) Resolve overlaps with the routing precedence table. Walk the rows top-down; the **first matching row wins** and that skill runs before implementation. Later rows may still be triggered branches, but the winning row decides what runs first.
 

@@ -36,6 +36,7 @@ skill|branch-completion|Finish branch and PR lifecycle|.agents/skills/branch-com
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
 skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/skills/code-smells-and-antipatterns/SKILL.md
+skill|comment-discipline|Comment channel discipline|.agents/skills/comment-discipline/SKILL.md
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md
@@ -57,6 +58,7 @@ skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execu
 skill|experiment-loop|Registered experiment evidence contract|.agents/skills/experiment-loop/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
 skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
+skill|japanese-tech-writing|Japanese technical writing conventions|.agents/skills/japanese-tech-writing/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md

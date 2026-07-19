@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "japanese-tech-writing-pr-body-japanese",
+      "prompt": "このPRの説明文を日本語で書いて",
+      "should_trigger": [
+        "japanese-tech-writing"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "expected_decisions": [
+        "PR body uses ordinary Markdown paragraphs, not one-sentence-per-line",
+        "Argument rigor, redundancy removal, and no-LLM-phrasing rules still apply"
+      ],
+      "notes": "requesting-code-review may legitimately co-trigger for a review request package; only the unrelated performance-review skill is asserted absent."
+    },
+    {
+      "id": "japanese-tech-writing-plans-doc-revision",
+      "prompt": "plans/ 配下の日本語の設計文書を推敲して",
+      "should_trigger": [
+        "japanese-tech-writing"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "expected_decisions": [
+        "One-sentence-per-line formatting applies to plans/ Markdown docs",
+        "Argument rigor and LLM-ish phrasing checks are prioritized on a revision pass"
+      ],
+      "notes": "Revising a Japanese doc under plans/ is a direct scope match."
+    },
+    {
+      "id": "japanese-tech-writing-negative-english-pr-body",
+      "prompt": "Write the PR description in English",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "japanese-tech-writing"
+      ],
+      "expected_decisions": [
+        "English-language prose is out of scope for this skill"
+      ],
+      "notes": "The skill applies only to Japanese technical prose, not English documents."
+    },
+    {
+      "id": "japanese-tech-writing-negative-commit-message-convention",
+      "prompt": "日本語のコミットメッセージ規約を教えて",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "japanese-tech-writing"
+      ],
+      "expected_decisions": [
+        "Commit messages stay English by existing repository convention and are out of scope"
+      ],
+      "notes": "Even though the prompt is in Japanese, commit-message convention is an explicit out-of-scope area."
+    }
+  ]
+}

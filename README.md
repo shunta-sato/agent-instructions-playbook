@@ -101,6 +101,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `bug-investigation-and-rca` | Bug investigation & RCA | `.agents/skills/bug-investigation-and-rca/SKILL.md` |
 | `code-readability` | Code readability | `.agents/skills/code-readability/SKILL.md` |
 | `code-smells-and-antipatterns` | Diff-focused maintainability review | `.agents/skills/code-smells-and-antipatterns/SKILL.md` |
+| `comment-discipline` | Comment channel discipline | `.agents/skills/comment-discipline/SKILL.md` |
 | `concurrency-android` | Android concurrency and background work | `.agents/skills/concurrency-android/SKILL.md` |
 | `concurrency-core` | Concurrency design patterns and planning | `.agents/skills/concurrency-core/SKILL.md` |
 | `concurrency-ros2` | ROS 2 concurrency patterns | `.agents/skills/concurrency-ros2/SKILL.md` |
@@ -122,6 +123,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `experiment-loop` | Registered experiment evidence contract | `.agents/skills/experiment-loop/SKILL.md` |
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
+| `japanese-tech-writing` | Japanese technical writing conventions | `.agents/skills/japanese-tech-writing/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "comment-discipline-cleanup-ai-comments-diff",
+      "prompt": "This diff has a bunch of AI-generated comments like '// now handles the new discount case' and '// added retry here' that just narrate the code. Clean up the redundant comments before we merge.",
+      "should_trigger": [
+        "comment-discipline"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "notes": "Cleaning up diff-narration comments is the core positive trigger for the skill."
+    },
+    {
+      "id": "comment-discipline-ja-comment-vs-commit-message",
+      "prompt": "この変更について、コードコメントに書くべき内容とコミットメッセージに書くべき内容の違いを教えてください。",
+      "should_trigger": [
+        "comment-discipline"
+      ],
+      "should_not_trigger": [],
+      "notes": "Asking what belongs in a comment vs. a commit message is a comment/commit-message content decision, in Japanese."
+    },
+    {
+      "id": "comment-discipline-negative-cpp-doxygen-header",
+      "prompt": "Add Doxygen documentation comments to every declaration in sensor_driver.hpp, including the private members, with units and ranges.",
+      "should_trigger": [
+        "code-readability"
+      ],
+      "should_not_trigger": [
+        "comment-discipline"
+      ],
+      "notes": "Public-API/Doxygen documentation is a carved-out genre owned by code-readability, not comment-discipline."
+    },
+    {
+      "id": "comment-discipline-negative-pure-bug-fix",
+      "prompt": "Fix the off-by-one error causing the retry loop to run one extra time under high latency.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "comment-discipline"
+      ],
+      "notes": "A pure runtime bug fix with no comment, commit-message, or test-naming decision in scope does not trigger comment-discipline."
+    }
+  ]
+}
