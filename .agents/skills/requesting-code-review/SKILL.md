@@ -49,6 +49,8 @@ The skill packages review context. It does not decide submit readiness, replace
    - Deferred or intentionally excluded work.
    - Instruction for where review comments should be left when the user or
      workflow requires a specific channel.
+   - When the PR body or review request itself is written in Japanese, apply
+     `$japanese-tech-writing`.
 
 ## Request Package
 
