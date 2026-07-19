@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "unit-test-design-discount-boundary-cases",
+      "prompt": "Add unit tests for the new discount calculation — how many boundary cases do I need?",
+      "should_trigger": [
+        "unit-test-design"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "notes": "Deciding boundary-case count for a calculation change is the core unit-test-design trigger."
+    },
+    {
+      "id": "unit-test-design-payment-module-ja",
+      "prompt": "この決済モジュールの変更にどこまでテストを書くべき?境界値は何件必要?",
+      "should_trigger": [
+        "unit-test-design"
+      ],
+      "notes": "Japanese-language request to size test coverage and boundary values for a payment-module change."
+    },
+    {
+      "id": "unit-test-design-negative-e2e-checkout",
+      "prompt": "Write an E2E browser test for the checkout flow",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "unit-test-design"
+      ],
+      "notes": "E2E browser test strategy is outside unit-test-design's boundary; it only owns the delegation decision itself."
+    },
+    {
+      "id": "unit-test-design-negative-embedded-battery-harness",
+      "prompt": "Set up the embedded battery-drain measurement harness",
+      "should_trigger": [
+        "embedded-nfr-harness-design"
+      ],
+      "should_not_trigger": [
+        "unit-test-design"
+      ],
+      "notes": "Embedded NFR measurement harnesses route to embedded-nfr-harness-design, not unit-test-design."
+    }
+  ]
+}

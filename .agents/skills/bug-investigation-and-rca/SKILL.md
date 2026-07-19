@@ -26,7 +26,7 @@ Use this skill when any of these apply:
 1) Reproduce (or explain why reproduction is currently impossible).
 2) Capture evidence (logs/metrics/traces, stack traces, minimal repro, or failing test output).
 3) Form hypotheses (max 2) and pick the leading one.
-4) Validate the hypothesis (add/adjust logging, add a minimal test, or use debugger/tooling).
+4) Validate the hypothesis (add/adjust logging, add a minimal test, or use debugger/tooling). The regression test follows the `$unit-test-design` fix criteria (fails before, passes after, minimal repro, lowest appropriate level, sibling boundaries reviewed).
 5) Apply the smallest safe fix.
 6) Verify with tests/repro/tooling output.
 7) Add prevention actions (at least 1) with a verifiable end state.
