@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "intent-workflows-ja-throwaway-poc-demo",
+      "prompt": "新機能の実現方式を確かめる使い捨てPoCを作りたい。まず動くデモが欲しい",
+      "should_trigger": [
+        "poc-workflow"
+      ],
+      "should_not_trigger": [
+        "unit-test-design"
+      ],
+      "notes": "A throwaway PoC to confirm a feasibility approach is the core poc-workflow trigger, in Japanese; the rigor floor is a smoke check, not unit-test-design case-depth tiers."
+    },
+    {
+      "id": "intent-workflows-feasibility-prototype-thrown-away",
+      "prompt": "Build a quick feasibility prototype for the new ranking idea; it will be thrown away",
+      "should_trigger": [
+        "poc-workflow"
+      ],
+      "should_not_trigger": [
+        "test-driven-development"
+      ],
+      "notes": "An explicitly disposable feasibility prototype routes to poc-workflow on the research-mode substrate; TDD's test-first cycle does not apply to code declared disposable up front."
+    },
+    {
+      "id": "intent-workflows-restructure-preserve-behavior",
+      "prompt": "This module works but is a mess — restructure it without changing behavior",
+      "should_trigger": [
+        "refactor-workflow",
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "poc-workflow"
+      ],
+      "notes": "Structural change with behavior explicitly preserved as the task's purpose is the refactor intent; dev-workflow still routes and closes the task via refactor-workflow's lane, and there is no research-mode PoC construction here."
+    },
+    {
+      "id": "intent-workflows-ja-harden-legacy-high-risk-first",
+      "prompt": "レガシーコードの品質を上げたい。まずテストが薄い高リスク箇所から固めたい",
+      "should_trigger": [
+        "hardening-workflow",
+        "unit-test-design"
+      ],
+      "should_not_trigger": [
+        "poc-workflow"
+      ],
+      "notes": "Quality improvement on existing legacy code, explicitly working highest-risk-coverage-gap first, is the hardening intent; unit-test-design supplies the E/S/H tiering hardening-workflow's stage 2 cites. No PoC construction is involved."
+    },
+    {
+      "id": "intent-workflows-add-discount-feature",
+      "prompt": "Add the new discount feature to checkout",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "refactor-workflow",
+        "hardening-workflow",
+        "poc-workflow"
+      ],
+      "notes": "Plain new-capability feature work is the default feature intent; none of the dedicated intent lanes apply because the deliverable is new behavior, not a structural change, a quality delta, or a disposable PoC."
+    },
+    {
+      "id": "intent-workflows-register-experiment-disconfirm-predicate",
+      "prompt": "Register an experiment with a disconfirm predicate for the cache hypothesis",
+      "should_trigger": [
+        "experiment-loop"
+      ],
+      "should_not_trigger": [
+        "poc-workflow"
+      ],
+      "notes": "A registered evidence-bearing probe with a hypothesis and disconfirm predicate belongs to experiment-loop; poc-workflow owns construction of a demo/prototype artifact, not registered probes."
+    }
+  ]
+}

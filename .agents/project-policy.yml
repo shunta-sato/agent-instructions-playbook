@@ -4,10 +4,12 @@
   "default_mode": "delivery",
   "path_modes": {
     "experiments/": "research",
+    "poc/": "research",
     "research/": "research"
   },
   "structure_waivers": [
     { "path": "experiments/", "reason": "disposable research probe code" },
+    { "path": "poc/", "reason": "disposable PoC construction code (poc-workflow rigor floor)" },
     { "path": "research/runs/", "reason": "runner-generated experiment artifacts" }
   ],
   "safety_paths": []
