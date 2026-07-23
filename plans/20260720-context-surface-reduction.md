@@ -101,6 +101,18 @@ faithful; index/visibility regression clean.
   narrower pre-existing phrasing ("explicitly waived") — immaterial because §0b
   independently forces compat-mode recording for all API-touching work.
 
+## WS-B v1 result (2026-07-23)
+
+`scripts/run_routing_eval.py` (build/grade/report; runner-agnostic packs; the
+no-expectation-leak property is test-enforced) executed over the full 212-case
+corpus on both sides of WS-A with 24 isolated Sonnet subjects. Result: surface
+77.5k → 65.7k chars (−15%); should-trigger recall 86.0% → 82.9%; should-not-trigger
+compliance 98.9% → 98.3%; mean co-fire 3.29 → 3.14. The recall cost concentrates
+in embedded-NFR chain skills. Full data + supervisor reading:
+`evals/routing-runs/20260723-*`. WS-C is now measurement-gated as intended:
+embedded-chain discoverability first; no trigger narrowing in that family until
+repaired; single-run caveat recorded honestly.
+
 ## Handoff
 
 - 2026-07-20: WS-A started on branch `context-surface-a` (based on
