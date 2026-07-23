@@ -98,6 +98,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - runtime behavior change (new/changed async or background work, external call, periodic job, user-visible operation, or retry/timeout/fallback path) → `$observability`
 - embedded/edge/target-local work where target behavior, hardware capability, workload envelope, bottlenecks, margins, or NFR provenance are not understood → `$embedded-system-familiarization`
 - embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → route by the Embedded NFR routing table (§2a)
+- auth/session, DB migration/schema-change, or public-API/generated-client work, or an unfamiliar/cross-service/high-risk task needing context preparation → the matching `$preflight-*` skill (`$preflight-engineering` as the generic entry)
 - ambiguous requirements or explicit quality/NFR target → `$requirements-engineering`
 - strict-constraint/low-level synthesis OR repeated compile/test loops → `$staged-lowering`
 - weak tests / nondeterminism / legacy refactor → `$working-with-legacy-code`
@@ -122,6 +123,13 @@ Use this table to avoid opening all embedded NFR skills by default.
 | `$embedded-nfr-harness-design` | Embedded physical budgets require measurement or a target smoke command. |
 | `$embedded-nfr-gate` | Feature-level embedded NFR design, harness, hot-path, or observer-effect branch was triggered; route before `$quality-gate`. |
 | `$embedded-project-constitution` | Project bootstrap or a new embedded runtime class, without feature implementation. |
+
+**Chain composition** (router rule — route together, not one at a time):
+
+- Broad target-learning/optimization work → `$embedded-system-familiarization` as orchestrator, riding together with whichever stages still lack context: `$embedded-target-characterization` (target/workload/baseline unknown), `$embedded-operating-envelope-discovery` (normal/boundary/degraded/blackout behavior unknown), `$embedded-nfr-calibration` (budgets set or revised from that evidence).
+- Any measurement/benchmark/budget-proof need also adds `$embedded-nfr-harness-design`; any measurement that can perturb the target also adds `$embedded-observer-effect-review`.
+- An unsupported embedded performance/battery/reliability claim routes to the learning chain that would produce the evidence, not only to the gates that reject the claim.
+- An embedded malfunction symptom (blackout/dropout/missed deadline) with an uncharacterized operating envelope routes to the learning chain in addition to `$bug-investigation-and-rca`.
 
 Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
 

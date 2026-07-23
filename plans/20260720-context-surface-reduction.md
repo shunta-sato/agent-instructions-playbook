@@ -113,6 +113,16 @@ in embedded-NFR chain skills. Full data + supervisor reading:
 embedded-chain discoverability first; no trigger narrowing in that family until
 repaired; single-run caveat recorded honestly.
 
+## WS-C1 result (2026-07-23)
+
+Chain-composition cues + preflight reachability row (worker run a7eca010, surfacing
+only what the embedded skills' own text states; no eval expectation touched).
+Full-corpus re-measurement: recall 82.9% → 87.0% (above the 86.0% pre-WS-A
+baseline), compliance unchanged 98.3%, surface +1.2k chars (net −14% vs pre-WS-A),
+embedded misses 24 → 17. The measure→repair→re-measure loop closed in one day.
+Next repair candidate from the data: destructive-refactor misses (6, stable across
+variants). Remaining WS-C items unchanged and still measurement-gated.
+
 ## Handoff
 
 - 2026-07-20: WS-A started on branch `context-surface-a` (based on

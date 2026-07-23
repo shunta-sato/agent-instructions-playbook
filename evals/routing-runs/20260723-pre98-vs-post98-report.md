@@ -62,3 +62,27 @@ is open (see README).
 - fixed-frequency-benchmark-needed: missed=['embedded-system-familiarization', 'embedded-operating-envelope-discovery']
 - android-background-work: missed=['concurrency-core']
 - architecture-negative-observability-detail: violated=['quality-gate']
+
+## WS-C1 repair result (same day)
+
+The chain-composition cues (6 lines in dev-workflow reference §2a: familiarization
+rides with its missing-context stages; measurement adds harness-design;
+perturbing measurement adds observer-effect-review; unsupported claims and
+uncharacterized malfunctions route to the learning chain) plus the preflight
+reachability row were applied and the FULL corpus re-measured with 12 fresh
+isolated Sonnet subjects (`20260723-chainfix-sonnet-5.json`):
+
+| Metric | post98 | chainfix |
+| --- | --- | --- |
+| Should-trigger recall | 82.9% | 87.0% |
+| Should-not-trigger compliance | 98.3% | 98.3% |
+| Mean co-fire | 3.142 | 3.212 |
+| Surface chars | 65,656 | 66,899 |
+
+Recall recovered past the pre-WS-A baseline (86.0%) at a surface cost of +1.2k
+chars (net vs pre-WS-A: still −14%). Embedded skill-misses dropped 24 → 17.
+Compliance unchanged — the cues did not cause over-selection; the small co-fire
+rise is completed chains, which is the intended behavior. No eval expectation was
+modified. Largest remaining miss cluster: `destructive-refactor` (6 cases, present
+at the same level in every variant) — next repair candidate, same protocol.
+Single-run caveat applies to all three variants equally.
