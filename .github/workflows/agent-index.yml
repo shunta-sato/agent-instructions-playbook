@@ -56,6 +56,9 @@ jobs:
       - name: Check AGENTS.md index is up to date
         run: python scripts/generate_agent_index.py --check
 
+      - name: Check context budget
+        run: python scripts/check_context_budget.py
+
       # G4: the 197-test suite must actually run in CI (not just locally),
       # and it must run BEFORE the boundary gate below judges the same
       # changed-path set the tests could still fail on.

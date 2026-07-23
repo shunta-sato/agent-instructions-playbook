@@ -3,7 +3,7 @@ name: preflight-db-migration
 description: "Preflight DB migration, schema change, rollback, backfill, data compatibility, transaction boundary. Use before database or persistence-layer changes."
 metadata:
   short-description: DB migration preflight
-  requires:
+  resources:
     - references/db-migration-reference.md
 ---
 

@@ -3,7 +3,7 @@ name: bug-investigation-and-rca
 description: "Use when fixing or investigating crashes, regressions, flakes, hangs, incorrect outputs, or incidents."
 metadata:
   short-description: Bug investigation & RCA
-  requires:
+  resources:
     - references/bug-investigation-and-rca.md
     - references/bug-report-template.md
 ---
@@ -39,6 +39,8 @@ If the root cause is a missed workflow/product contract, prevention must include
 - a replay fixture or generated artifact snapshot when applicable
 
 For details and guidance, open `references/bug-investigation-and-rca.md`.
+
+Open `references/bug-report-template.md` when filling in the Bug Report (RCA) output below.
 
 Helper for deterministic artifact bootstrap:
 - `python scripts/init_artifact.py --kind bug-report --slug <ticket-or-topic>` (default output: `reports/bug-reports/<slug>.md`)

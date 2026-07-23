@@ -3,7 +3,7 @@ name: agent-workflow-contract-review
 description: "Use when adding or changing Agent-facing workflows, generated prompts, collect plans, executable handoff artifacts, CLI workflows, controller/target-local workflow chains, or validation artifacts consumed by downstream reports. Do not use for ordinary code changes without an Agent-facing workflow or generated instruction surface."
 metadata:
   short-description: Agent workflow contract review
-  requires:
+  templates:
     - templates/workflow-contract-review.md
 ---
 

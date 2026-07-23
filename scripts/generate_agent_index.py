@@ -31,11 +31,16 @@ README_SKILLS_END_MARKER = "<!-- END README SKILL CATALOG (generated) -->"
 DEFAULT_MAX_BYTES = 8192
 
 
+DEFAULT_VISIBILITY = "default"
+INDEX_VISIBILITY_GROUPS = {"explicit-only": "skills-explicit", "template": "skills-template"}
+
+
 @dataclass(frozen=True)
 class SkillMeta:
     name: str
     short: str
     skill_path: str
+    visibility: str = DEFAULT_VISIBILITY
 
 
 def _read_text(path: Path) -> str:
@@ -60,10 +65,11 @@ def _truncate(s: str, max_len: int) -> str:
     return s[: max_len - 1] + "…"
 
 
-def _parse_skill_frontmatter(skill_md: Path) -> Tuple[str, str]:
+def _parse_skill_frontmatter(skill_md: Path) -> Tuple[str, str, str]:
     """
-    Returns (name, short_description). Uses metadata.short-description when available,
-    else falls back to description.
+    Returns (name, short_description, visibility). Uses metadata.short-description
+    when available, else falls back to description. visibility defaults to
+    "default" when metadata.visibility is absent.
     We intentionally implement a minimal parser to avoid external dependencies.
     """
     txt = _read_text(skill_md)
@@ -77,6 +83,7 @@ def _parse_skill_frontmatter(skill_md: Path) -> Tuple[str, str]:
     name_m = re.search(r"^\s*name:\s*(.+)\s*$", fm, re.M)
     desc_m = re.search(r"^\s*description:\s*(.+)\s*$", fm, re.M)
     short_m = re.search(r"^\s*short-description:\s*(.+)\s*$", fm, re.M)
+    visibility_m = re.search(r"^\s*visibility:\s*(.+)\s*$", fm, re.M)
 
     if not name_m:
         raise ValueError(f"Missing 'name' in frontmatter: {skill_md}")
@@ -88,7 +95,9 @@ def _parse_skill_frontmatter(skill_md: Path) -> Tuple[str, str]:
     elif desc_m:
         short = _strip_quotes(desc_m.group(1))
 
-    return name, short
+    visibility = _strip_quotes(visibility_m.group(1)) if visibility_m else DEFAULT_VISIBILITY
+
+    return name, short, visibility
 
 
 def _collect_skills(repo_root: Path) -> List[SkillMeta]:
@@ -96,8 +105,8 @@ def _collect_skills(repo_root: Path) -> List[SkillMeta]:
 
     for p in glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md")):
         md = Path(p)
-        name, short = _parse_skill_frontmatter(md)
-        codex[name] = (short, str(md.relative_to(repo_root).as_posix()))
+        name, short, visibility = _parse_skill_frontmatter(md)
+        codex[name] = (short, str(md.relative_to(repo_root).as_posix()), visibility)
 
     names = sorted(set(codex.keys()))
     out: List[SkillMeta] = []
@@ -107,12 +116,14 @@ def _collect_skills(repo_root: Path) -> List[SkillMeta]:
         short = _truncate(short, 72)
 
         skill_path = codex[name][1]
+        visibility = codex[name][2]
 
         out.append(
             SkillMeta(
                 name=name,
                 short=short,
                 skill_path=skill_path,
+                visibility=visibility,
             )
         )
 
@@ -120,16 +131,21 @@ def _collect_skills(repo_root: Path) -> List[SkillMeta]:
 
 
 def _collect_source_skills(repo_root: Path) -> List[SkillMeta]:
-    """Collect skill catalog from .agents/skills only (source of truth)."""
+    """Collect skill catalog from .agents/skills only (source of truth).
+
+    Used for the human-facing README catalog, which lists every skill —
+    including explicit-only/template ones — unlike the AGENTS.md index.
+    """
     out: List[SkillMeta] = []
     for p in sorted(glob.glob(str(repo_root / ".agents" / "skills" / "*" / "SKILL.md"))):
         md = Path(p)
-        name, short = _parse_skill_frontmatter(md)
+        name, short, visibility = _parse_skill_frontmatter(md)
         out.append(
             SkillMeta(
                 name=name,
                 short=_truncate(short, 72),
                 skill_path=str(md.relative_to(repo_root).as_posix()),
+                visibility=visibility,
             )
         )
     return sorted(out, key=lambda s: (s.name, s.skill_path))
@@ -155,7 +171,16 @@ def _build_index_text(
 
     lines.append("skills|name|short|skill_path")
     for s in skills:
+        if s.visibility != DEFAULT_VISIBILITY:
+            continue
         lines.append(f"skill|{s.name}|{s.short}|{s.skill_path}")
+
+    # explicit-only/template skills are dropped from the full rows above and
+    # collapsed into one name-only line per group instead (A3, WS-A).
+    for visibility, group_token in INDEX_VISIBILITY_GROUPS.items():
+        names = [s.name for s in skills if s.visibility == visibility]
+        if names:
+            lines.append("|".join([group_token, *names]))
 
     lines.append("end|AGENT_INDEX_V1")
 

@@ -4,8 +4,9 @@ description: "Thread-safety verification toolkit. Use when C/C++ code introduces
 metadata:
   short-description: Thread-safety verification
   requires:
-    - references/concurrency-verification-matrix-template.md
     - references/thread-safety-tooling.md
+  resources:
+    - references/concurrency-verification-matrix-template.md
 ---
 
 ## Purpose
@@ -22,6 +23,7 @@ Use this skill when touching:
 ## How to use
 
 0) Open `references/thread-safety-tooling.md`.
+Open `references/concurrency-verification-matrix-template.md` when producing the Concurrency Verification Matrix output below.
 1) Choose verification stack (TSan / static thread-safety analysis / stress tests).
    - Quick start helper: `python scripts/init_artifact.py --kind concurrency-matrix --slug <ticket-or-topic>`
 2) Provide reproducible commands or CI steps (placeholders if repo differs).

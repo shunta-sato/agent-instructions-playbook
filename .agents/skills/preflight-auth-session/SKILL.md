@@ -3,7 +3,7 @@ name: preflight-auth-session
 description: "Preflight auth, OAuth, refresh token, session, JWT, cookie, CSRF, login redirect, token logging. Use before auth/session/security-sensitive implementation or multi-agent investigation."
 metadata:
   short-description: Auth/session preflight
-  requires:
+  resources:
     - references/auth-session-reference.md
 ---
 

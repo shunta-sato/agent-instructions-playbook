@@ -3,7 +3,7 @@ name: embedded-nfr-gate
 description: "Use before final submit readiness when embedded NFR design or harness work was triggered, to decide submit/no-submit from physical budgets, measurements, unknowns, and claims. Do not use as a generic quality gate."
 metadata:
   short-description: Embedded NFR submit gate
-  requires:
+  templates:
     - templates/nfr-gate-report.md
 ---
 

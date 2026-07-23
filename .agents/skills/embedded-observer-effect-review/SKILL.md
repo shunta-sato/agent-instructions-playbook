@@ -3,7 +3,7 @@ name: embedded-observer-effect-review
 description: "Use when target-local logging, recording, collection, tracing, profiling, or measurement could change scheduler, power, thermal, I/O, memory, wakeup, or workload behavior. Do not use for ordinary server observability with no embedded physical-footprint risk."
 metadata:
   short-description: Embedded observer-effect review
-  requires:
+  templates:
     - templates/observer-effect-review.md
 ---
 

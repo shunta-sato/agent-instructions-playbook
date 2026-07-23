@@ -363,6 +363,32 @@ class WiringTests(unittest.TestCase):
         lint_block = text.split("\nlint:", 1)[1].split("\nanalysis:", 1)[0]
         self.assertIn("check_research_evidence.py --check-ledger", lint_block)
 
+    def test_makefile_lint_target_invokes_context_budget_check(self) -> None:
+        # WS-A wave 3: the context-budget gate must sit in the same
+        # verify/analysis chain as the other mechanical checks.
+        makefile = Path(__file__).resolve().parent.parent / "Makefile"
+        text = makefile.read_text(encoding="utf-8")
+        lint_block = text.split("\nlint:", 1)[1].split("\nanalysis:", 1)[0]
+        self.assertIn("check_context_budget.py", lint_block)
+
+    def test_workflow_runs_context_budget_check_before_unit_tests(self) -> None:
+        # WS-A wave 3: the budget gate must run in CI, before the unit-test
+        # step (it is a cheap static check; no reason to wait on the suite).
+        workflow = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "agent-index.yml"
+        text = workflow.read_text(encoding="utf-8")
+        self.assertIn("check_context_budget.py", text)
+
+        steps = _workflow_step_order(text)
+        budget_indices = [i for i, (_, run) in enumerate(steps) if run and "check_context_budget.py" in run]
+        self.assertEqual(len(budget_indices), 1, steps)
+        budget_index = budget_indices[0]
+
+        test_indices = [i for i, (_, run) in enumerate(steps) if run and ("unittest" in run or "test-unit" in run)]
+        self.assertTrue(test_indices, steps)
+        self.assertTrue(all(budget_index < i for i in test_indices),
+                         f"context-budget step {budget_index} must run before unit-test step(s) {test_indices} "
+                         f"in {steps}")
+
     def test_workflow_runs_diff_range_boundary_gate(self) -> None:
         # S1/B3: the gate must be wired into CI and run AFTER every other
         # validator step (it judges the whole PR's changed-path set, so a

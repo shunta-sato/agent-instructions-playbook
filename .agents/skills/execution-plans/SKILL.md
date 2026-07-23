@@ -5,8 +5,10 @@ metadata:
   short-description: "ExecPlan: plan/WBS/progress + handoff"
   requires:
     - references/execution-plans.md
+  resources:
     - references/model-routing.md
     - references/subagent-execution.md
+  templates:
     - templates/subagent-report.md
     - templates/subagent-task-brief.md
     - templates/supervisor-review-request.md

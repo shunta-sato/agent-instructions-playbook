@@ -5,6 +5,7 @@ metadata:
   short-description: Embedded physical NFR design
   requires:
     - references/embedded-nfr-taxonomy.md
+  templates:
     - templates/nfr-matrix.md
     - templates/physical-budgets.yaml
 ---

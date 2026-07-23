@@ -3,7 +3,7 @@ name: project-structure
 description: "Use when creating a new source file, module, crate, or package, when deciding where code or tests should live, or when a touched file exceeds the structure budget (scripts/check_structure.py). Gives forward-looking physical layout rules: entrypoint vs library split, module boundaries, and test placement. Use design-balance for responsibility layout across modules."
 metadata:
   short-description: Physical code layout and structure budget
-  requires:
+  resources:
     - references/project-structure-rust.md
 ---
 

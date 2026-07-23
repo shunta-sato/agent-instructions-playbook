@@ -3,7 +3,7 @@ name: refactor-workflow
 description: "Use for delivery-mode tasks whose purpose is structural change with no intended behavior change: extracting, moving, or renaming code, replacing a flawed abstraction, or consolidating duplication. Sequences a behavior lock, the owning structural-change skill, and equivalence evidence. Do not use for behavior-changing feature work, or the in-feature preparatory-refactor step, which stays in dev-workflow step 2b."
 metadata:
   short-description: Behavior-preserving refactor lane
-  requires:
+  resources:
     - references/refactor-workflow.md
 ---
 
@@ -20,6 +20,8 @@ Do not use for:
 - the in-feature preparatory-refactor step done to make a feature change easy first — that stays in `dev-workflow` step 2b.
 
 ## How to use
+
+Open `references/refactor-workflow.md` when following the stage table for this lane.
 
 0) Record `intent: refactor` and the compat-mode. Compat-mode semantics (`preserve` / `staged` / `break-allowed`) are owned by `dev-workflow` step 1b — cite the recorded value here, do not restate its definitions.
 

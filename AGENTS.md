@@ -15,7 +15,11 @@ Explicit invocation differs by client:
 Before acting on software-development work, inspect the Agent Index and decide whether any skill applies.
 If the user explicitly names a skill, load it before acting.
 Determine the epistemic mode first: explicit declaration > `.agents/project-policy.yml` path_modes > the policy's default_mode (this repository defaults to `delivery`). If the task changes code or tests in `delivery` mode, use `dev-workflow` before editing and `quality-gate` before reporting completion. In `research` mode, use `research-workflow` instead; evidence discipline (`scripts/check_research_evidence.py`) replaces the code-quality gates for probe code, and touching a delivery-mode path requires promotion through the delivery gates. Physical-safety, secrets, and destructive-operation rules apply in every mode.
-When loading a skill, also load every file listed in its frontmatter `metadata.requires` before executing it; a listed file that cannot be read is an error, not a skippable extra.
+When loading a skill, apply its four-tier load contract:
+- `metadata.requires`: load before executing; a listed file that cannot be read is an error, not a skippable extra.
+- `metadata.resources`: load ONLY when the condition its SKILL.md states matches — the SKILL.md condition is the sole authority.
+- `metadata.commands`: execute or cite by path; never inline into context.
+- `metadata.templates`: open only when producing that output artifact.
 For multi-step or delegatable work, create a task brief before invoking a subagent; the brief must name the task, allowed files, allowed commands, expected artifacts, and escalation conditions.
 
 ## Agent Index (generated)
@@ -67,7 +71,6 @@ skill|poc-workflow|PoC construction on the research substrate|.agents/skills/poc
 skill|preflight-api-compat|Public API compatibility preflight|.agents/skills/preflight-api-compat/SKILL.md
 skill|preflight-auth-session|Auth/session preflight|.agents/skills/preflight-auth-session/SKILL.md
 skill|preflight-db-migration|DB migration preflight|.agents/skills/preflight-db-migration/SKILL.md
-skill|preflight-domain-template|Domain preflight skill template|.agents/skills/preflight-domain-template/SKILL.md
 skill|preflight-engineering|Preflight agent context and handoff|.agents/skills/preflight-engineering/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
 skill|project-structure|Physical code layout and structure budget|.agents/skills/project-structure/SKILL.md
@@ -84,12 +87,13 @@ skill|thread-safety-tooling|Thread-safety verification|.agents/skills/thread-saf
 skill|tonemana-apply|Apply tone/manner choice to UIUX Pack|.agents/skills/tonemana-apply/SKILL.md
 skill|tonemana-catalog|Tone & Manner catalog + previews|.agents/skills/tonemana-catalog/SKILL.md
 skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/skills/uidesign-flow/SKILL.md
-skill|uidesign-orchestrator|Explicit UI evidence orchestration|.agents/skills/uidesign-orchestrator/SKILL.md
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md
 skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.agents/skills/uiux-flow-preview/SKILL.md
 skill|unit-test-design|Risk-tiered unit test design|.agents/skills/unit-test-design/SKILL.md
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md
 skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md
+skills-explicit|uidesign-orchestrator
+skills-template|preflight-domain-template
 end|AGENT_INDEX_V1
 ```
 <!-- END AGENT INDEX (generated) -->

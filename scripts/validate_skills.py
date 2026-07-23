@@ -25,6 +25,18 @@ ALLOWED_TOP_LEVEL_FIELDS = {
     "metadata",
     "allowed-tools",
 }
+# Must stay in sync by hand with TIER_FIELDS in update_skill_requires.py and
+# the visibility handling in generate_agent_index.py — no shared constant
+# exists across these three scripts.
+ALLOWED_METADATA_FIELDS = {
+    "short-description",
+    "requires",
+    "resources",
+    "commands",
+    "templates",
+    "visibility",
+}
+ALLOWED_VISIBILITY_VALUES = {"default", "explicit-only", "template"}
 
 
 @dataclass(frozen=True)
@@ -32,6 +44,7 @@ class SkillDoc:
     path: Path
     body: str
     fields: dict[str, str]
+    metadata_fields: dict[str, str]
 
 
 def parse_args() -> argparse.Namespace:
@@ -64,6 +77,29 @@ def strip_quotes(value: str) -> str:
     return value
 
 
+def parse_metadata_fields(frontmatter: str) -> dict[str, str]:
+    """Return keys nested directly under `metadata:`, mapped to their inline
+    scalar value (empty string for keys that introduce a nested list block,
+    e.g. `requires:`)."""
+    fields: dict[str, str] = {}
+    in_metadata = False
+    for raw_line in frontmatter.splitlines():
+        if raw_line.rstrip() == "metadata:":
+            in_metadata = True
+            continue
+        if not in_metadata:
+            continue
+        if raw_line.startswith("  ") and not raw_line.startswith("    "):
+            stripped = raw_line.strip()
+            key, _, value = stripped.partition(":")
+            fields[key.strip()] = strip_quotes(value)
+        elif raw_line.strip() == "" or raw_line.startswith("    "):
+            continue
+        else:
+            in_metadata = False
+    return fields
+
+
 def parse_skill_doc(path: Path) -> SkillDoc:
     text = path.read_text(encoding="utf-8")
     if not text.startswith("---\n"):
@@ -93,7 +129,8 @@ def parse_skill_doc(path: Path) -> SkillDoc:
             raise ValueError(f"duplicate frontmatter field: {key}")
         fields[key] = value
 
-    return SkillDoc(path=path, body=body, fields=fields)
+    metadata_fields = parse_metadata_fields(frontmatter) if "metadata" in fields else {}
+    return SkillDoc(path=path, body=body, fields=fields, metadata_fields=metadata_fields)
 
 
 def validate_skill(doc: SkillDoc, repo_root: Path) -> list[str]:
@@ -104,6 +141,19 @@ def validate_skill(doc: SkillDoc, repo_root: Path) -> list[str]:
     unknown_fields = sorted(set(doc.fields) - ALLOWED_TOP_LEVEL_FIELDS)
     if unknown_fields:
         errors.append(f"{relpath}: unknown frontmatter fields: {', '.join(unknown_fields)}")
+
+    unknown_metadata_fields = sorted(set(doc.metadata_fields) - ALLOWED_METADATA_FIELDS)
+    if unknown_metadata_fields:
+        errors.append(
+            f"{relpath}: unknown metadata fields: {', '.join(unknown_metadata_fields)}"
+        )
+
+    visibility = doc.metadata_fields.get("visibility")
+    if visibility is not None and visibility not in ALLOWED_VISIBILITY_VALUES:
+        errors.append(
+            f"{relpath}: invalid metadata.visibility '{visibility}' "
+            f"(must be one of {', '.join(sorted(ALLOWED_VISIBILITY_VALUES))})"
+        )
 
     name = doc.fields.get("name", "")
     if not name:

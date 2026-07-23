@@ -3,8 +3,9 @@ name: uidesign-flow
 description: "Use when an approved tone-and-manner decision must become concrete UI styling tokens and visual previews."
 metadata:
   short-description: tonemana → tokens → component+screen previews
-  requires:
+  resources:
     - references/uidesign-flow.md
+  templates:
     - templates/auto_review.json
     - templates/diff_summary.md
     - templates/previews/components.html
@@ -43,6 +44,8 @@ This skill does **not** change IA (screens, navigation, decision points). That b
 - You want consistent review outputs across Android/iOS/Web projects
 
 ## Workflow
+
+Open `references/uidesign-flow.md` when running the workflow steps below.
 
 1) Locate the target UIUX Pack folder (uiux/YYYYMMDD-<slug>/).
 2) Verify `ui_spec.json` includes `meta.tone_and_manner` with:

@@ -4,9 +4,10 @@ description: "Use when UI changes require repo-defined snapshot or visual-diff v
 metadata:
   short-description: Tool-agnostic UI visual verification contract
   requires:
+    - references/visual-regression-testing.md
+  resources:
     - references/visual-regression-android.md
     - references/visual-regression-ios.md
-    - references/visual-regression-testing.md
     - references/visual-regression-web.md
 ---
 
@@ -22,7 +23,7 @@ Use this skill to enforce a consistent UI visual verification contract without h
 ## How to use
 
 1) Open `references/visual-regression-testing.md`.
-2) For Android, iOS, or web targets, also open the matching platform reference in `references/`.
+2) Also open the matching platform reference: `references/visual-regression-android.md` for Android targets, `references/visual-regression-ios.md` for iOS targets, `references/visual-regression-web.md` for web targets.
 3) Discover the live UI verify/record interface from repo commands, CI config, tool help, and snapshot config before trusting examples.
 4) Review produced artifacts and compare against baselines/design mocks.
 5) Update baselines only for intentional UI changes.

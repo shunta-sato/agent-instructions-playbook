@@ -3,7 +3,7 @@ name: hardening-workflow
 description: "Use for delivery-mode tasks whose purpose is quality improvement on shipped code: closing high-risk coverage gaps, structure-budget findings, flaky tests, missing observability, or smell density on a named path. Sequences a measured baseline, risk-tiered targets, and a stop at the policy ceiling. Do not use for tests written alongside new feature behavior, or embedded NFR budget work (embedded-nfr-design)."
 metadata:
   short-description: Measure-tier-stop hardening lane
-  requires:
+  resources:
     - references/hardening-workflow.md
 ---
 
@@ -30,6 +30,8 @@ Do not use for:
   and the embedded NFR skill family.
 
 ## How to use
+
+Open `references/hardening-workflow.md` when following the stage table for this lane.
 
 0) Record `intent: hardening`, the target quality dimension, and its metric (for
    example: changed-code branch coverage, `check_structure.py` finding count, flaky

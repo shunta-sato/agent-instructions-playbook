@@ -3,7 +3,7 @@ name: destructive-refactor
 description: "AI-led replacement protocol for flawed abstractions, allowing temporary red state while migrating call sites and converging back to green or rollback."
 metadata:
   short-description: Replace flawed abstraction safely
-  requires:
+  resources:
     - references/destructive-refactor.md
 ---
 
@@ -22,6 +22,8 @@ Use when:
 - old name no longer matches responsibility
 
 ## Protocol
+
+Open `references/destructive-refactor.md` when running this protocol.
 
 1) Baseline
 - identify target abstraction and call sites
