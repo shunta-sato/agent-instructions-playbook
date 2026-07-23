@@ -1,0 +1,3110 @@
+{
+  "cases": [
+    {
+      "co_fire_count": 4,
+      "id": "workflow-contract-collect-plan-validate-to-operating-contract",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "agent-workflow-contract-review",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "workflow-contract-generated-codex-prompt-target-local-sweep",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "agent-workflow-contract-review",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "workflow-contract-installer-path-ssh-runner",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "agent-workflow-contract-review",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "workflow-contract-include-run-downstream-consumption",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "agent-workflow-contract-review",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "workflow-contract-negative-internal-json-parser",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "workflow-contract-negative-readme-typo-no-command-example",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "workflow-contract-negative-cpu-load-iteration",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "workflow-contract-negative-unit-test-margin",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "architecture-db-option-comparison",
+      "misses": [],
+      "not_trigger_total": 4,
+      "selected": [
+        "architecture-decision-analysis"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "architecture-queue-vs-sync",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "architecture-decision-analysis"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "architecture-negative-ambiguous-search-requirements",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "requirements-engineering"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "architecture-negative-diff-boundary-leak",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "code-smells-and-antipatterns"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "architecture-negative-observability-detail",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": [
+        "quality-gate"
+      ]
+    },
+    {
+      "co_fire_count": 1,
+      "id": "architecture-negative-final-gate",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "dev-workflow-routes-architecture-decision",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "architecture-decision-analysis",
+        "dev-workflow",
+        "observability",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": [
+        "quality-gate"
+      ]
+    },
+    {
+      "co_fire_count": 3,
+      "id": "comment-discipline-cleanup-ai-comments-diff",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "comment-discipline",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "comment-discipline-ja-comment-vs-commit-message",
+      "misses": [],
+      "not_trigger_total": 0,
+      "selected": [
+        "comment-discipline"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "comment-discipline-negative-cpp-doxygen-header",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "code-readability",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "comment-discipline-negative-pure-bug-fix",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "bug-investigation-and-rca",
+        "observability"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "dev-workflow-code-change",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "unit-test-design"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "quality-gate-before-submit",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "execplan-long-running",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "execution-plans",
+        "agent-workflow-contract-review"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "project-init-fill",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "project-initialization"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "bug-rca-regression",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "bug-investigation-and-rca",
+        "observability"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "legacy-no-tests-time",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "working-with-legacy-code"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "staged-lowering-simd",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "staged-lowering"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "tdd-explicit",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "test-driven-development"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "concurrency-core-queue",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "concurrency-core",
+        "thread-safety-tooling",
+        "observability"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "thread-safety-cpp",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "concurrency-core",
+        "thread-safety-tooling"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "android-background-work",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "concurrency-core",
+        "concurrency-android",
+        "observability"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 7,
+      "id": "ros2-callback-deadlock",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "concurrency-core",
+        "concurrency-ros2",
+        "thread-safety-tooling",
+        "bug-investigation-and-rca",
+        "observability"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "requirements-ambiguous-feature",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "requirements-engineering"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "template-authoring-deploy",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "playbook-template-authoring"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "maintainability-boundary-diff",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "code-smells-and-antipatterns"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "readability-cpp-header",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "code-readability"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "error-boundary",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "error-handling",
+        "observability"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "observability-runtime-change",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "uiux-core-new-flow",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "uiux-core"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "uiux-flow-preview",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "uiux-flow-preview"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "tonemana-catalog",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "tonemana-catalog"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "tonemana-apply",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "tonemana-apply"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "uidesign-flow",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "uidesign-flow"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "uidesign-orchestrator",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "uidesign-orchestrator",
+        "uiux-core",
+        "tonemana-catalog",
+        "tonemana-apply",
+        "uidesign-flow"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "uidesign-single-step-not-orchestrator",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "uidesign-flow"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "tonemana-only-not-orchestrator",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "tonemana-catalog"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "uiux-single-step-not-orchestrator",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "uiux-core"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "observability-docs-only-negative",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "observability-background-job-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "error-handling-copy-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "error-handling-retry-fallback-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "error-handling",
+        "observability",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "readability-ordinary-code-change-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "readability-test-intent-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "code-readability",
+        "comment-discipline",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "requirements-small-clear-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "template-execution-negative",
+      "misses": [
+        "dev-workflow"
+      ],
+      "not_trigger_total": 1,
+      "selected": [],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 6,
+      "id": "library-implementation-not-template-authoring",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "unit-test-design",
+        "implementation-economy",
+        "observability",
+        "preflight-api-compat"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "visual-regression-ui-change",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "visual-regression-testing"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-helper-similar",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "implementation-economy"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "destructive-refactor-wrong-side-effects",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "destructive-refactor",
+        "implementation-economy"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-boolean-flag",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "implementation-economy"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-intentional-parallel",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-readability-only",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "comment-discipline"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-sibling-helpers-accumulated",
+      "misses": [
+        "destructive-refactor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "implementation-economy"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-move-side-effects",
+      "misses": [
+        "destructive-refactor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "implementation-economy"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "function-boundary-staged-public-adapter",
+      "misses": [
+        "destructive-refactor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "preflight-api-compat",
+        "implementation-economy"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-generated-code",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "preflight-api-compat"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-fixture-duplication",
+      "misses": [
+        "function-boundary-governor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "unit-test-design"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "function-boundary-formatting-only",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "default-lane-feature-layout-budget",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "design-balance",
+        "implementation-economy"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "implementation-economy-wrapper-pressure",
+      "misses": [
+        "test-driven-development"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "implementation-economy"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "design-balance-large-class-pressure",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "design-balance",
+        "implementation-economy"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "low-risk-typo-no-default-lane",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-only-boundary-not-design-balance",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "quality-gate",
+        "function-boundary-governor",
+        "implementation-economy"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": [
+        "implementation-economy"
+      ]
+    },
+    {
+      "co_fire_count": 4,
+      "id": "architecture-options-not-design-balance",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "requirements-engineering",
+        "architecture-decision-analysis",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 8,
+      "id": "embedded-recorder-10ms",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 7,
+      "id": "embedded-daemon-proc-watcher",
+      "misses": [
+        "embedded-hot-path-review"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 6,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "embedded-project-start",
+      "misses": [
+        "project-initialization",
+        "embedded-nfr-design"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-project-constitution",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "embedded-nfr-final-gate-missing-report",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "battery-safe-claim-without-measurement",
+      "misses": [
+        "embedded-nfr-design"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "constitution-only-no-feature-submit",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "embedded-project-constitution",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "generic-backend-api-near-miss",
+      "misses": [],
+      "not_trigger_total": 6,
+      "selected": [
+        "dev-workflow",
+        "preflight-api-compat",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "pure-parser-near-miss",
+      "misses": [],
+      "not_trigger_total": 4,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "server-observability-near-miss",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 10,
+      "id": "embedded-system-new-target-optimization",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 7,
+      "id": "embedded-system-hardware-capability-unknown",
+      "misses": [
+        "architecture-decision-analysis"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 9,
+      "id": "embedded-system-boundary-optimization",
+      "misses": [
+        "embedded-observer-effect-review",
+        "embedded-nfr-calibration"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-design",
+        "embedded-hot-path-review",
+        "embedded-nfr-harness-design",
+        "bug-investigation-and-rca",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 10,
+      "id": "embedded-system-performance-extraction",
+      "misses": [
+        "architecture-decision-analysis"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-hot-path-review",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "observed-cpufreq-not-controlled-sweep",
+      "misses": [
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "embedded-nfr-calibration",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 9,
+      "id": "gpu-capability-without-cost-model",
+      "misses": [
+        "architecture-decision-analysis"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": [
+        "embedded-nfr-harness-design"
+      ]
+    },
+    {
+      "co_fire_count": 7,
+      "id": "fixed-frequency-benchmark-needed",
+      "misses": [
+        "embedded-system-familiarization",
+        "embedded-operating-envelope-discovery"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-calibration",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "embedded-system-known-target-small-change",
+      "misses": [],
+      "not_trigger_total": 4,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "embedded-system-simple-runtime-no-architecture-claim",
+      "misses": [],
+      "not_trigger_total": 4,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "embedded-system-narrow-calibration-only",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "embedded-system-current-familiarization-harness-threshold",
+      "misses": [],
+      "not_trigger_total": 4,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "embedded-system-generic-backend-performance",
+      "misses": [
+        "requirements-engineering"
+      ],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "performance-review",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 8,
+      "id": "embedded-target-missing-profile",
+      "misses": [
+        "embedded-project-constitution"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 6,
+      "id": "embedded-envelope-unknown",
+      "misses": [
+        "embedded-nfr-calibration"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "embedded-budget-calibration",
+      "misses": [
+        "embedded-nfr-harness-design"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "existing-logger-blackout-boundary",
+      "misses": [
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-observer-effect-review",
+        "embedded-nfr-calibration"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "observability",
+        "requirements-engineering",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 10,
+      "id": "embedded-template-budget-production-claim",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-system-familiarization",
+        "embedded-target-characterization",
+        "embedded-operating-envelope-discovery",
+        "embedded-nfr-calibration",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-observer-effect-review",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 4,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "embedded-target-characterization-negative-schema-only",
+      "misses": [],
+      "not_trigger_total": 4,
+      "selected": [
+        "dev-workflow",
+        "preflight-api-compat",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "embedded-target-characterization-negative-doc-only",
+      "misses": [
+        "dev-workflow"
+      ],
+      "not_trigger_total": 3,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "embedded-target-characterization-negative-backend-performance",
+      "misses": [
+        "requirements-engineering"
+      ],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "performance-review",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-similar-helper-positive",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "destructive-refactor-wrong-side-effect-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-agentic-sibling-accumulation-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "destructive-refactor-replace-old-abstraction-positive",
+      "misses": [
+        "function-boundary-governor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "destructive-refactor",
+        "design-balance",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "destructive-refactor-move-side-effects-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "destructive-refactor",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "function-boundary-boolean-flag-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "destructive-refactor-delete-obsolete-positive",
+      "misses": [
+        "destructive-refactor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "destructive-refactor-public-api-staged-adapter-positive",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "function-boundary-local-variable-rename-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "function-boundary-generated-code-negative",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-test-fixture-duplication-negative",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-intentional-parallel-negative",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-boundary-small-diverging-duplication-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "function-boundary-docs-only-negative",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "function-boundary-formatting-only-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "destructive-refactor-readability-only-negative",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "code-readability",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "function-design-generic-maintainability-routing",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "code-smells-and-antipatterns",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "function-design-legacy-no-tests-routing",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "working-with-legacy-code",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "quality-gate-function-design-evidence",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "intent-workflows-ja-throwaway-poc-demo",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "research-workflow",
+        "poc-workflow"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "intent-workflows-feasibility-prototype-thrown-away",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "research-workflow",
+        "poc-workflow"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "intent-workflows-restructure-preserve-behavior",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "intent-workflows-ja-harden-legacy-high-risk-first",
+      "misses": [
+        "unit-test-design"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "hardening-workflow",
+        "working-with-legacy-code",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "intent-workflows-add-discount-feature",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "implementation-economy",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "intent-workflows-register-experiment-disconfirm-predicate",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "research-workflow",
+        "experiment-loop"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "japanese-tech-writing-pr-body-japanese",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "japanese-tech-writing"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "japanese-tech-writing-plans-doc-revision",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "japanese-tech-writing"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "japanese-tech-writing-negative-english-pr-body",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "japanese-tech-writing-negative-commit-message-convention",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "nfr-target-declared-server",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "requirements-engineering",
+        "performance-review",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "nfr-vague-quality-word",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "requirements-engineering",
+        "performance-review",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "nfr-not-for-embedded",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-nfr-harness-design",
+        "embedded-nfr-gate",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "request-path-n-plus-one",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "performance-review",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "render-path-repeated-serialization",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "performance-review",
+        "visual-regression-testing",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "serial-await-request-path",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "performance-review",
+        "concurrency-core"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": [
+        "concurrency-core"
+      ]
+    },
+    {
+      "co_fire_count": 2,
+      "id": "embedded-sampler-not-generic-performance",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "embedded-hot-path-review",
+        "embedded-observer-effect-review"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "bounded-one-shot-script-no-performance-review",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "project-structure",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "cross-boundary-cache-options-architecture-first",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "requirements-engineering",
+        "architecture-decision-analysis"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "implementation-economy-wrapper-vs-reuse",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "implementation-economy-review-fewer-layers",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "receiving-code-review",
+        "implementation-economy",
+        "design-balance"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "implementation-economy-normal-risk-two-helpers",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "implementation-economy-premature-generic-abstraction",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "implementation-economy",
+        "design-balance",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "execution-plans-multi-pr-migration",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "execution-plans",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "execution-plans-long-running-refactor-handoff",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "execution-plans",
+        "preflight-engineering",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": [
+        "quality-gate"
+      ]
+    },
+    {
+      "co_fire_count": 6,
+      "id": "execution-plans-quantitative-targets-wbs",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "requirements-engineering",
+        "architecture-decision-analysis",
+        "performance-review",
+        "execution-plans",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "tdd-new-behavior-test-list",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "test-driven-development",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "tdd-refactor-needs-protection-first",
+      "misses": [
+        "test-driven-development"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "working-with-legacy-code",
+        "refactor-workflow",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "tdd-explicit-red-green-refactor-request",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "test-driven-development",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "bug-rca-flaky-test",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "working-with-legacy-code",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "bug-rca-production-crash-with-logs",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "error-handling",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "bug-rca-regression-after-dependency-bump",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "observability-embedded-daemon-runtime-behavior-change",
+      "misses": [
+        "embedded-observer-effect-review"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-design",
+        "embedded-nfr-gate",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "observability-background-job-external-api",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "performance-review",
+        "error-handling",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "embedded-vocab-host-rotating-file-logger",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "embedded-vocab-host-cli-log-collector",
+      "misses": [
+        "performance-review"
+      ],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "preflight-api-compat-positive-openapi-error-shape",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "preflight-api-compat",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "preflight-api-compat-positive-generated-client-update",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "preflight-api-compat",
+        "preflight-engineering",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "preflight-api-compat-negative-current-context",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "preflight-api-compat-negative-internal-helper",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "preflight-auth-session-positive-refresh-token-prep",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "preflight-auth-session",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "preflight-auth-session-positive-multi-agent-auth-investigation",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "preflight-auth-session"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "preflight-auth-session-negative-current-context",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "preflight-auth-session-negative-unrelated-doc",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "preflight-db-migration-positive-schema-change",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "preflight-db-migration"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "preflight-db-migration-positive-backfill-investigation",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "preflight-db-migration"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "preflight-db-migration-negative-current-context",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "preflight-db-migration-negative-read-only-query",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "preflight-full-multi-service-auth",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "preflight-engineering",
+        "preflight-auth-session",
+        "preflight-api-compat"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "preflight-cache-stable-prefix",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "preflight-engineering"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "preflight-repo-inspection-helpers-unfamiliar",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "preflight-engineering"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "preflight-negative-small-typo",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "preflight-negative-already-routed-multifile",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "preflight-negative-review-feedback-only",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "receiving-code-review",
+        "unit-test-design",
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "preflight-negative-helper-not-needed-current-context",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "project-structure-new-rust-cli",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "project-structure",
+        "implementation-economy",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "project-structure-monolithic-main",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "project-structure",
+        "design-balance",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "project-structure-test-placement-question",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "project-structure"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "project-structure-not-for-local-rename",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "project-structure-not-for-architecture-choice",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "requirements-engineering",
+        "architecture-decision-analysis"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "refactoring-rework-compat-waived",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "destructive-refactor",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "refactoring-delete-unused-api",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "refactoring-flatten-class-hierarchy",
+      "misses": [
+        "destructive-refactor"
+      ],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "design-balance",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "refactoring-consolidate-near-duplicates",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 6,
+      "id": "refactoring-prep-before-feature",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "project-structure",
+        "function-boundary-governor",
+        "implementation-economy",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "refactoring-not-a-rework-small-rename",
+      "misses": [],
+      "not_trigger_total": 3,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "refactoring-compat-preserved-staged",
+      "misses": [
+        "destructive-refactor"
+      ],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "refactor-workflow",
+        "function-boundary-governor",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "research-os-npu-op-degradation-probe",
+      "misses": [
+        "experiment-loop"
+      ],
+      "not_trigger_total": 3,
+      "selected": [
+        "research-workflow"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "research-os-quantization-collapse-prefix16",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "research-workflow",
+        "experiment-loop"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "research-os-synthesize-accumulated-results",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "research-workflow",
+        "research-synthesis"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "research-os-promote-winning-kernel",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "research-synthesis",
+        "dev-workflow",
+        "staged-lowering",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "research-os-delivery-production-bugfix",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "bug-investigation-and-rca",
+        "observability",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 5,
+      "id": "research-os-delivery-latency-target",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "requirements-engineering",
+        "performance-review",
+        "implementation-economy",
+        "quality-gate"
+      ],
+      "trigger_total": 3,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "requesting-review-package-after-verification",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "requesting-code-review"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "requesting-review-negative-final-gate",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "quality-gate",
+        "agent-workflow-contract-review"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "receiving-review-requested-changes",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "receiving-code-review"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "receiving-review-approve-handoff",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "receiving-code-review",
+        "branch-completion"
+      ],
+      "trigger_total": 2,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "branch-completion-merge-sync",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "branch-completion"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "branch-completion-discard-protected",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "branch-completion"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "requirements-problem-frame-solution-first",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "requirements-engineering"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "requirements-negative-clear-small-task",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "smells-current-diff-design-pressure",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "code-smells-and-antipatterns"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 0,
+      "id": "smells-negative-full-codebase-audit",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "legacy-protect-edge-cases",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "working-with-legacy-code",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "observability-signal-purpose",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "dev-workflow",
+        "observability",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "quality-gate-missing-observability-plan",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 1,
+      "id": "quality-gate-missing-architecture-record",
+      "misses": [],
+      "not_trigger_total": 2,
+      "selected": [
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "unit-test-design-discount-boundary-cases",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 3,
+      "id": "unit-test-design-payment-module-ja",
+      "misses": [],
+      "not_trigger_total": 0,
+      "selected": [
+        "dev-workflow",
+        "unit-test-design",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 2,
+      "id": "unit-test-design-negative-e2e-checkout",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "quality-gate"
+      ],
+      "trigger_total": 0,
+      "unknown": [],
+      "violations": []
+    },
+    {
+      "co_fire_count": 4,
+      "id": "unit-test-design-negative-embedded-battery-harness",
+      "misses": [],
+      "not_trigger_total": 1,
+      "selected": [
+        "dev-workflow",
+        "embedded-nfr-harness-design",
+        "embedded-observer-effect-review",
+        "quality-gate"
+      ],
+      "trigger_total": 1,
+      "unknown": [],
+      "violations": []
+    }
+  ],
+  "cases_graded": 212,
+  "cases_total": 212,
+  "co_fire_mean": 3.212,
+  "co_fire_p90": 5.0,
+  "commit": "64212dee60b9bf5a05af850960490d1dfa447aa7",
+  "compliance": 0.9834,
+  "confusion": {
+    "concurrency-core": 1,
+    "embedded-nfr-harness-design": 1,
+    "implementation-economy": 1,
+    "quality-gate": 3
+  },
+  "recall": 0.8703,
+  "surface": {
+    "chars": 66899,
+    "lines": 655
+  },
+  "ungraded": [],
+  "unknown_skills": {},
+  "variant": "wt-wsb"
+}
