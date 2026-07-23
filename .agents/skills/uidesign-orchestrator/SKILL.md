@@ -3,7 +3,8 @@ name: uidesign-orchestrator
 description: "Use only for explicit end-to-end UI evidence orchestration across UIUX, Tone & Manner, and UIDesign packs. Do not trigger for ordinary single-step UIUX, Tone & Manner, or UIDesign work."
 metadata:
   short-description: Explicit UI evidence orchestration
-  requires:
+  visibility: explicit-only
+  resources:
     - references/uidesign-orchestrator.md
 ---
 
@@ -35,6 +36,8 @@ Use only when the request explicitly calls for end-to-end orchestration or all c
 - Do not infer this orchestrator just because more than one UI skill could be useful.
 
 ## Workflow (high-level)
+
+Open `references/uidesign-orchestrator.md` when running the workflow steps below.
 
 1) Preflight: locate or create a fill-free UIUX Pack.
 2) Ensure the Tone & Manner catalog exists (`tonemana-catalog`).

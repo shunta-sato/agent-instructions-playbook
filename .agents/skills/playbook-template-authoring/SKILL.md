@@ -3,11 +3,12 @@ name: playbook-template-authoring
 description: "Use only when explicitly authoring or revising reusable, repo-neutral playbook/template skills for deployment, infrastructure operations, data fetching/analysis, or library/API reference guidance. Do not use for normal E2E implementation, executing deployments, running infrastructure changes, one-off data analysis, or applying a library directly."
 metadata:
   short-description: Reusable playbook/template authoring
-  requires:
+  resources:
     - references/data-fetching-analysis-checklist.md
     - references/deployment-checklist.md
     - references/infrastructure-operations-checklist.md
     - references/library-api-cli-summary.md
+  templates:
     - templates/data-analysis-report-template.md
     - templates/deployment-report-template.md
     - templates/infrastructure-operations-report-template.md

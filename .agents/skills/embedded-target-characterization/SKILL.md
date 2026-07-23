@@ -3,7 +3,7 @@ name: embedded-target-characterization
 description: "Use before embedded NFR budgeting when the target system, workload, measurement surfaces, resource headroom, or normal operating baseline are not yet characterized. Do not use for generic implementation work with known target budgets."
 metadata:
   short-description: Embedded target characterization
-  requires:
+  templates:
     - templates/target-characterization-report.schema.json
     - templates/target-characterization.md
 ---

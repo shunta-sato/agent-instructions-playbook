@@ -4,10 +4,11 @@ description: "Use when touching code without reliable automated tests or with no
 metadata:
   short-description: Working with legacy code safely
   requires:
+    - references/working-with-legacy-code.md
+  resources:
     - references/working-with-legacy-code-cpp.md
     - references/working-with-legacy-code-py.md
     - references/working-with-legacy-code-ts.md
-    - references/working-with-legacy-code.md
 ---
 
 ## Purpose

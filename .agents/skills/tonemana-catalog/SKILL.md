@@ -3,8 +3,9 @@ name: tonemana-catalog
 description: "Create or update a comparable Tone & Manner catalog with 7 default patterns, tokens, and preview HTML. Use before choosing a visual/voice pattern for UIUX or UIDesign work."
 metadata:
   short-description: Tone & Manner catalog + previews
-  requires:
+  resources:
     - references/tonemana-catalog.md
+  templates:
     - templates/catalog_index.yaml
     - templates/patterns/bold-energetic.yaml
     - templates/patterns/modern-tech.yaml
@@ -49,6 +50,7 @@ Tone = atmosphere (visual impression). Manner = explicit rules. Keep terminology
 - `tonemana/catalog/previews/index.html`
 
 ## How to run
+- Open `references/tonemana-catalog.md` when generating or updating the catalog.
 - Generate `tonemana/catalog/` from templates.
 - Keep IDs stable. Do not delete user-added patterns.
 

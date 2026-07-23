@@ -3,7 +3,7 @@ name: embedded-nfr-harness-design
 description: "Use after embedded physical budgets exist, or when an embedded daemon/logger/recorder/sampler needs resource, battery, wakeup, flash, thermal, latency, or observer-overhead measurement. Do not use for performance advice without a target-local physical footprint."
 metadata:
   short-description: Embedded NFR harness design
-  requires:
+  templates:
     - templates/resource-harness-plan.md
     - templates/resource-report.schema.json
     - templates/target-profile.yaml

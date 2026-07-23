@@ -5,6 +5,7 @@ metadata:
   short-description: Transition map preview with pan/zoom + focus review
   requires:
     - references/uiux-flow-preview.md
+  templates:
     - templates/previews/flow-map.css
     - templates/previews/flow-map.html
     - templates/previews/flow-map.js

@@ -5,6 +5,7 @@ metadata:
   short-description: Autonomous function-boundary design
   requires:
     - references/function-boundary-governor.md
+  templates:
     - templates/function-design-ledger-entry.md
 ---
 

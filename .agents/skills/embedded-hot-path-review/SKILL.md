@@ -3,7 +3,7 @@ name: embedded-hot-path-review
 description: "Use when reviewing embedded or target-local loops, polling, sampling, collectors, recorders, sub-100ms work, per-iteration I/O, repeated serialization, or hot-path allocation. Do not use for non-embedded application request/render/job paths; use performance-review there."
 metadata:
   short-description: Embedded hot-path review
-  requires:
+  templates:
     - templates/hot-path-review.md
 ---
 

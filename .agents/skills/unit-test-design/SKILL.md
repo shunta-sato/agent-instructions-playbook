@@ -5,6 +5,7 @@ metadata:
   short-description: Risk-tiered unit test design
   requires:
     - references/unit-test-case-design.md
+  resources:
     - references/unit-test-operations.md
 ---
 
@@ -47,8 +48,10 @@ Do not use this skill for:
 
 ## How to use
 
-0) Open `references/unit-test-case-design.md` and
-   `references/unit-test-operations.md`.
+0) Open `references/unit-test-case-design.md`. Open
+   `references/unit-test-operations.md` only when the decision involves coverage
+   targets, test doubles (mock vs fake), isolation/speed/flakiness,
+   regression-on-fix criteria, or property-based/mutation/fuzzing selection.
 1) Classify the target E / S / H using the §2 risk formula (impact x
    likelihood, ≥6 is high-risk; some categories are high-risk regardless of
    score).

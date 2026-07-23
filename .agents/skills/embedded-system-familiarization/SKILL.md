@@ -3,7 +3,7 @@ name: embedded-system-familiarization
 description: "Use when embedded, edge, target-local, robot, Android, ROS 2, kernel/driver-adjacent, sensor, logger, recorder, or daemon work requires understanding target behavior, hardware capability, operating envelope, bottlenecks, or NFR provenance before design or optimization. Do not use for small changes with current characterization and no runtime/architecture impact."
 metadata:
   short-description: Principal embedded system familiarization
-  requires:
+  templates:
     - templates/architecture-constraints.md
     - templates/bottleneck-margin-map.md
     - templates/capability-cost-model.md

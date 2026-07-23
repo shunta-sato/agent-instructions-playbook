@@ -5,7 +5,9 @@ metadata:
   short-description: UI/UX core contract + deterministic review bundle
   requires:
     - references/uiux-core.md
+  resources:
     - references/uiux-platform-adapters.md
+  templates:
     - templates/auto_review.json
     - templates/diff_summary.md
     - templates/ui_contract.yaml

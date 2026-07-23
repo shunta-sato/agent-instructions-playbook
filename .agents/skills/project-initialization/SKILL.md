@@ -3,7 +3,7 @@ name: project-initialization
 description: "Use when COMMANDS.md is uninitialized, contains <fill>, or the repository lacks verified canonical build, lint, test, and verify commands."
 metadata:
   short-description: Initialize canonical verify commands
-  requires:
+  resources:
     - references/project-initialization.md
 ---
 
@@ -23,6 +23,8 @@ Use this skill when:
 If project evidence points to embedded, edge, target-local, daemon, logger, recorder, collector, sampler, sensor, robot, battery, flash, wakeup, or thermal constraints, recommend `embedded-project-constitution` after the command system is initialized. Do not block command initialization on that constitution work.
 
 ## Workflow
+
+Open `references/project-initialization.md` when updating `COMMANDS.md` and the `Makefile` wrapper targets.
 
 1. Check `COMMANDS.md` for `<fill>`.
    - If `<fill>` exists, initialization is required.

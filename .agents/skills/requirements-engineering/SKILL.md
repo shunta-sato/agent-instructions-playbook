@@ -3,7 +3,7 @@ name: requirements-engineering
 description: "Use for ambiguous or non-trivial feature planning and requirements documentation: problem framing, spec-before-build checks, requirements briefs/specs, EARS-style requirements, acceptance criteria, traceability, and ISO/IEC 25010 quality scenarios. Do not use for tiny unambiguous implementation tasks, architecture option comparison, or diff-focused design review unless requirements output is requested."
 metadata:
   short-description: Requirements engineering
-  requires:
+  resources:
     - references/ears-requirements-to-design.md
     - references/iso25010-quality-scenarios.md
     - references/requirements-briefs-and-specs.md

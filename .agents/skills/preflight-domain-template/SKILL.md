@@ -3,7 +3,8 @@ name: preflight-domain-template
 description: "Template for authoring domain preflight skills that extract invariants, first docs/files, AGENTS.md proposals, .agent/ctx maps, test routing, approvals, reviewers, and handoff fragments. Use when creating or reviewing a new preflight-* domain skill, not during product implementation."
 metadata:
   short-description: Domain preflight skill template
-  requires:
+  visibility: template
+  resources:
     - references/domain-agents-template.md
     - references/domain-ctx-template.md
     - references/domain-handoff-fragment-template.md

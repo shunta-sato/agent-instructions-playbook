@@ -3,7 +3,7 @@ name: embedded-nfr-calibration
 description: "Use after target characterization or operating-envelope discovery to derive embedded NFR budgets with provenance, confidence, and revisit conditions. Do not use to invent budgets without target evidence unless explicitly marking them provisional."
 metadata:
   short-description: Embedded NFR calibration
-  requires:
+  templates:
     - templates/calibrated-nfr.yaml
     - templates/nfr-calibration.md
 ---

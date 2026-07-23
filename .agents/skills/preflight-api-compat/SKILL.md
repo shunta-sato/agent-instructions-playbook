@@ -3,7 +3,7 @@ name: preflight-api-compat
 description: "Preflight public API compatibility, OpenAPI, GraphQL, generated clients, public error shapes, versioning. Use before API-facing changes or generated client updates."
 metadata:
   short-description: Public API compatibility preflight
-  requires:
+  resources:
     - references/api-compat-reference.md
 ---
 
