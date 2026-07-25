@@ -32,7 +32,9 @@
       "default_effort": "high",
       "selected": true,
       "selected_model": "claude-opus-4-8",
-      "fallback_reasons": [],
+      "fallback_reasons": [
+        "candidate_smoke_eval_not_passed:claude-opus-5"
+      ],
       "success_criteria": {
         "required": [
           "failing_command_recorded",

@@ -4,6 +4,22 @@
   "notes": "Generated model catalog for the resolver (resolver-policy.yml: catalog_format=external-json). Concrete model IDs live only here and in the derived route lockfile, never in skill bodies. smoke_eval is evidence-backed: flip pending->passed only with a recorded supervised run (see evidence fields).",
   "models": [
     {
+      "id": "claude-opus-5",
+      "aliases": [
+        "opus-5"
+      ],
+      "profiles": [
+        "coding_supervisor",
+        "terminal_debug_supervisor"
+      ],
+      "status": "available",
+      "smoke_eval": "pending",
+      "evidence": [
+        "User direction 2026-07-25: use Opus 5 for supervision/review roles.",
+        "Model ID pending /v1/models verification (ant models list); alias 'opus' stays on claude-opus-4-8 until a recorded supervised run passes on this model per the catalog's smoke-eval discipline (PR #88 precedent)."
+      ]
+    },
+    {
       "id": "claude-sonnet-5",
       "aliases": [
         "sonnet"
@@ -34,7 +50,7 @@
       "status": "available",
       "smoke_eval": "passed",
       "evidence": [
-        "run 20260705T112230Z-opus-smoke-reviewer-11f5d90d in .agents/runs/agent-runs.jsonl: playbook-reviewer supervision of a delegated break-allowed refactor \u2014 independent re-verification (5 validation commands, all pass), correct fail-closed no-submit on missing worker run evidence, honest run recording, write-scope respected"
+        "run 20260705T112230Z-opus-smoke-reviewer-11f5d90d in .agents/runs/agent-runs.jsonl: playbook-reviewer supervision of a delegated break-allowed refactor — independent re-verification (5 validation commands, all pass), correct fail-closed no-submit on missing worker run evidence, honest run recording, write-scope respected"
       ]
     },
     {

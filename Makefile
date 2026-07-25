@@ -1,4 +1,4 @@
-.PHONY: help build-debug build-release format lint analysis test-unit test-integration verify
+.PHONY: help build-debug build-release format lint lint-static lint-diff analysis test-unit test-integration verify
 
 .DEFAULT_GOAL := help
 
@@ -29,7 +29,9 @@ format:
 git-diff-check:
 	git diff --check
 
-lint:
+lint: lint-static lint-diff
+
+lint-static:
 	$(PYTHON) scripts/validate_skills.py
 	$(PYTHON) scripts/update_skill_requires.py --check
 	$(PYTHON) scripts/sync_claude_skills.py --check
@@ -41,6 +43,11 @@ lint:
 	$(PYTHON) scripts/validate_model_routing_evals.py
 	$(PYTHON) scripts/check_research_evidence.py --check-ledger
 	$(PYTHON) scripts/check_context_budget.py
+	$(PYTHON) scripts/lint_instruction_graph.py
+	$(PYTHON) scripts/lint_command_docs.py
+
+lint-diff:
+	$(PYTHON) scripts/check_structure.py --working-tree
 
 analysis:
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
@@ -60,6 +67,8 @@ test-integration:
 	$(PYTHON) scripts/validate_model_routing_evals.py
 	$(PYTHON) scripts/check_research_evidence.py --check-ledger
 	$(PYTHON) scripts/check_context_budget.py
+	$(PYTHON) scripts/lint_instruction_graph.py
+	$(PYTHON) scripts/lint_command_docs.py
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 	$(PYTHON) scripts/generate_agent_index.py --check
 	git diff --check

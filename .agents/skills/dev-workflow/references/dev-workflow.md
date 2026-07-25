@@ -155,7 +155,7 @@ Add `$code-smells-and-antipatterns` on top of any row only when module-layer dep
 
 ## 2c) Structure watch
 
-Run the structure watch (all risks, including low): `python scripts/check_structure.py <touched source files>`.
+Run the structure watch (all risks, including low): run `python scripts/check_structure.py --working-tree`; resolve findings or record a bounded waiver.
 
 - Any finding makes `$project-structure` required in this change: apply the split (layout), routing naming/ownership to `$design-balance` and function moves to `$function-boundary-governor`.
 - This step is state-based on purpose: it fires on accumulated size even when this change added only a few lines.

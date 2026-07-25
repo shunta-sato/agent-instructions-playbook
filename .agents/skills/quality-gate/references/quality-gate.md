@@ -16,7 +16,7 @@ Sweep rule: evaluate every item in every applicable section in one complete pass
 
 ## 1b) Structural exit check (required, all risks)
 
-- `python scripts/check_structure.py <touched source files>` was run and the result is recorded.
+- run `python scripts/check_structure.py --working-tree`; resolve findings or record a bounded waiver.
 - Every finding (`source-file-lines`, `entrypoint-logic-lines`, `inline-test-lines`) is resolved by an applied split in this submission, or carries an explicit bounded waiver in the change brief (for example generated code).
 - Entrypoint files (`main.rs`, `src/bin/*.rs`, `main.py`, `__main__.py`, `main.go`, `main.c/cc/cpp`) contain wiring only; behavior tests are not accumulated in entrypoints.
 - This check does not depend on triggered branches. An unresolved finding without a waiver is `no-submit`.

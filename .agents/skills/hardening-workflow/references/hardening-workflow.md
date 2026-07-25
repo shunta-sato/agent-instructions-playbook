@@ -81,8 +81,9 @@ not be listed as done.
 ## Stage 5 — stop at the policy ceiling
 
 Apply `$unit-test-design`'s stop criteria as this lane's ceiling. The numbers are
-owned by that skill's `references/unit-test-operations.md` §Coverage — read the
-current values there rather than from any copy. The ceiling covers:
+owned by that skill's
+`.agents/skills/unit-test-design/references/unit-test-operations.md` §Coverage
+— read the current values there rather than from any copy. The ceiling covers:
 - the changed-code line/branch targets (standard and high-risk)
 - the overall guide value and healthy range
 - the prohibition on pushing normal-tier areas toward full coverage

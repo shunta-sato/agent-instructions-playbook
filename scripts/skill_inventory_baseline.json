@@ -1,0 +1,99 @@
+{
+  "branch-completion": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "bug-investigation-and-rca": [
+    "broad-trigger:any-change",
+    "broad-trigger:task-mentions"
+  ],
+  "concurrency-android": [
+    "quality-bar:positive-shortfall@1"
+  ],
+  "concurrency-core": [
+    "quality-bar:negative-shortfall@1"
+  ],
+  "concurrency-ros2": [
+    "quality-bar:negative-shortfall@2",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "dev-workflow": [
+    "broad-trigger:whenever"
+  ],
+  "error-handling": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "execution-plans": [
+    "broad-trigger:whenever"
+  ],
+  "experiment-loop": [
+    "quality-bar:negative-shortfall@1"
+  ],
+  "hardening-workflow": [
+    "broad-trigger:any-change",
+    "quality-bar:negative-shortfall@1",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "japanese-tech-writing": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "playbook-template-authoring": [
+    "quality-bar:positive-shortfall@1"
+  ],
+  "preflight-api-compat": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "preflight-auth-session": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "preflight-db-migration": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "preflight-domain-template": [
+    "no-trigger-eval-coverage"
+  ],
+  "project-structure": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "receiving-code-review": [
+    "quality-bar:negative-shortfall@2"
+  ],
+  "refactor-workflow": [
+    "quality-bar:negative-shortfall@1",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "requesting-code-review": [
+    "quality-bar:positive-shortfall@1"
+  ],
+  "requirements-engineering": [
+    "broad-trigger:all-work"
+  ],
+  "research-synthesis": [
+    "quality-bar:negative-shortfall@0"
+  ],
+  "research-workflow": [
+    "broad-trigger:whenever",
+    "quality-bar:negative-shortfall@2"
+  ],
+  "staged-lowering": [
+    "quality-bar:negative-shortfall@2",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "thread-safety-tooling": [
+    "quality-bar:negative-shortfall@0",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "tonemana-apply": [
+    "quality-bar:negative-shortfall@2",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "uiux-flow-preview": [
+    "quality-bar:negative-shortfall@1",
+    "quality-bar:positive-shortfall@1"
+  ],
+  "visual-regression-testing": [
+    "quality-bar:positive-shortfall@1"
+  ],
+  "working-with-legacy-code": [
+    "quality-bar:negative-shortfall@1"
+  ]
+}

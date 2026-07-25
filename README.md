@@ -206,10 +206,23 @@ If any criterion fails, do not add the skill.
 
 ## Validation
 
-Run these after changing skills or the agent index:
+Run these after changing skills or the agent index (this list is kept in
+sync with `make lint`'s validator chain by `scripts/lint_command_docs.py`):
 
 - `python scripts/validate_skills.py`
+- `python scripts/update_skill_requires.py --check`
+- `python scripts/sync_claude_skills.py --check`
+- `python scripts/generate_route_lockfile.py --check`
 - `python scripts/validate_skill_trigger_evals.py`
+- `python scripts/validate_skill_behavior_evals.py`
+- `python scripts/validate_function_design_protocol.py`
+- `python scripts/validate_model_routing.py`
+- `python scripts/validate_model_routing_evals.py`
+- `python scripts/check_research_evidence.py --check-ledger`
+- `python scripts/check_context_budget.py`
+- `python scripts/check_structure.py --working-tree`
+- `python scripts/lint_instruction_graph.py`
+- `python scripts/lint_command_docs.py`
 - `python scripts/report_skill_inventory.py --check --format text`
 - `python scripts/generate_agent_index.py --check`
 

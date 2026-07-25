@@ -1,0 +1,17 @@
+{
+  "_comment": "Ratchet baseline for scripts/lint_instruction_graph.py (see plans/20260725-lint-migration.md, L2). Baselined findings pass; anything not listed here fails on discovery. Shrinking this list is the goal — remove an entry once its underlying reference is fixed or the finding is no longer produced.",
+  "baseline": [
+    {
+      "rule": "dangling-path",
+      "location": ".agents/skills/embedded-nfr-harness-design/SKILL.md:65",
+      "detail": "scripts/resource/run-resource-smoke.sh",
+      "reason": "Illustrative example of a target embedded project's own resource-harness script ('or a project-equivalent command' follows it in the same bullet); this repo has no scripts/resource/ directory and none is expected. Not a citation of a file that should exist here."
+    },
+    {
+      "rule": "dangling-path",
+      "location": ".agents/skills/embedded-project-constitution/SKILL.md:64",
+      "detail": "scripts/resource/run-resource-smoke.sh",
+      "reason": "Same illustrative target-project script name as embedded-nfr-harness-design ('or documented equivalent' follows it); embedded-project-constitution/templates/target-profile.yaml:17 wraps the same string in <...>, confirming it is a placeholder example, not a real path."
+    }
+  ]
+}
