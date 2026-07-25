@@ -134,6 +134,18 @@ residual embedded misses (15, mostly calibration co-fire depth), lane folding
 (dropped unless future data shows harm — the measured co-fire does not justify the
 churn), unit-test-operations trim (fidelity-bound), GPT-runner slot.
 
+## MT2 result (2026-07-25)
+
+Residual adjudication: 2 expectation recalibrations (narrow-task rule vs the
+broad orchestrator — rules-alignment, converts 2 misses to passes by definition,
+stated plainly), 1 constitution-row cue, 5 cases kept as known-hard. GPT-runner
+RUNBOOK.md published (canonical subject instruction verbatim; cross-model slot
+open). WS-B2 behavior harness landed (run_behavior_eval.py, 247 tests) and the
+first 9-case behavior measurement ran: quality-gate decision accuracy 6/6,
+output-contains 30/30, findings-phrase matching weak (informational; calibration
+noted). Schema evolved: expected_decision optional for skills without decision
+markers — a case-design error found and fixed by the first real run.
+
 ## Handoff
 
 - 2026-07-20: WS-A started on branch `context-surface-a` (based on

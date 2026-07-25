@@ -1,0 +1,138 @@
+{
+  "cases": [
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "delegated-run-missing-ledger-no-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "delegated-run-validation-missing-no-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 0
+      },
+      "id": "delegated-run-token-not-collected-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "delegated-run-scope-violation-no-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "nfr-claim-without-measurement-no-submit",
+      "output_contains": {
+        "matched": 1,
+        "missing": [],
+        "total": 1
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 0
+      },
+      "id": "nfr-target-measured-submit",
+      "output_contains": {
+        "matched": 1,
+        "missing": [],
+        "total": 1
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": null,
+      "findings": {
+        "matched": 1,
+        "total": 2
+      },
+      "id": "discount-rate-tier-and-boundary-design",
+      "output_contains": {
+        "matched": 10,
+        "missing": [],
+        "total": 10
+      },
+      "skill": "unit-test-design"
+    },
+    {
+      "decision_match": null,
+      "findings": {
+        "matched": 2,
+        "total": 2
+      },
+      "id": "refund-transfer-money-moving-design",
+      "output_contains": {
+        "matched": 7,
+        "missing": [],
+        "total": 7
+      },
+      "skill": "unit-test-design"
+    },
+    {
+      "decision_match": null,
+      "findings": {
+        "matched": 2,
+        "total": 2
+      },
+      "id": "over-testing-review-near-identical-values",
+      "output_contains": {
+        "matched": 3,
+        "missing": [],
+        "total": 3
+      },
+      "skill": "unit-test-design"
+    }
+  ],
+  "cases_graded": 9,
+  "cases_total": 9,
+  "commit": "a10a3abd7c3592341ae400a8f0463b330324d9a4",
+  "decision_accuracy": 1.0,
+  "findings_ratio_mean": 0.3571,
+  "output_contains_rate": 1.0,
+  "ungraded": [],
+  "variant": "wt-mt2"
+}

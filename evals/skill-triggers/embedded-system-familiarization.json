@@ -97,7 +97,6 @@
       "id": "observed-cpufreq-not-controlled-sweep",
       "prompt": "We observed scaling_cur_freq between 600MHz and 1800MHz under the ondemand governor during CPU stress. Use this to claim the recorder is low overhead at all CPU clocks.",
       "should_trigger": [
-        "embedded-system-familiarization",
         "embedded-operating-envelope-discovery",
         "embedded-nfr-calibration",
         "quality-gate"
@@ -113,7 +112,7 @@
         "Observed frequency variation under ondemand is not a controlled frequency sweep",
         "Claims across all CPU clocks are blocked until controlled operating point experiments exist"
       ],
-      "notes": "Target55-like case: natural cpufreq variation must not count as CPU clock sweep evidence."
+      "notes": "Target55-like case: natural cpufreq variation must not count as CPU clock sweep evidence. This is a narrow measurement task with known target context, so per dev-workflow.md §2a ('Use the specific embedded skills directly for narrow tasks with known target context'), the orchestrator embedded-system-familiarization is not required here."
     },
     {
       "id": "gpu-capability-without-cost-model",
@@ -140,7 +139,6 @@
       "id": "fixed-frequency-benchmark-needed",
       "prompt": "Benchmark adc-targetd overhead at fixed 600MHz, 900MHz, 1200MHz, 1500MHz, and 1800MHz on Raspberry Pi 4.",
       "should_trigger": [
-        "embedded-system-familiarization",
         "embedded-operating-envelope-discovery",
         "embedded-nfr-harness-design"
       ],
@@ -155,7 +153,7 @@
       "expected_decisions": [
         "Create controlled operating point matrix with governor/frequency control, safety limits, and reversible setup"
       ],
-      "notes": "A fixed-frequency benchmark request should plan controlled operating points before measurement."
+      "notes": "A fixed-frequency benchmark request should plan controlled operating points before measurement. This is a narrow measurement task with known target context, so per dev-workflow.md §2a ('Use the specific embedded skills directly for narrow tasks with known target context'), the orchestrator embedded-system-familiarization is not required here."
     },
     {
       "id": "embedded-system-known-target-small-change",
