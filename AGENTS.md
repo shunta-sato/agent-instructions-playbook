@@ -40,7 +40,6 @@ skill|branch-completion|Finish branch and PR lifecycle|.agents/skills/branch-com
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
 skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
 skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/skills/code-smells-and-antipatterns/SKILL.md
-skill|comment-discipline|Comment channel discipline|.agents/skills/comment-discipline/SKILL.md
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
 skill|concurrency-ros2|ROS 2 concurrency patterns|.agents/skills/concurrency-ros2/SKILL.md
@@ -92,7 +91,7 @@ skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.age
 skill|unit-test-design|Risk-tiered unit test design|.agents/skills/unit-test-design/SKILL.md
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md
 skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md
-skills-explicit|uidesign-orchestrator
+skills-explicit|comment-discipline|uidesign-orchestrator
 skills-template|preflight-domain-template
 end|AGENT_INDEX_V1
 ```
@@ -104,6 +103,7 @@ end|AGENT_INDEX_V1
 - No broad cleanups **unrelated to the task**. Leave touched code slightly easier to read than before. Triggered refactor work — structure-budget splits, function/API consolidation or deletion, class/module reorganization, and preparatory refactors in the feature's landing area — is required work, not a broad cleanup.
 - Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol. Compatibility handling follows the recorded compat-mode: under `preserve`, callers keep working; under `staged`, temporary adapters require a ledger entry with a removal condition; under `break-allowed` (requester explicitly waived compatibility), delete — keeping old APIs, deprecated markers, aliases, or parallel old/new versions is a defect, not caution.
 - In delivery mode, if runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable; research probes are exempt (measurement instrumentation is part of the experiment itself).
+- Comment channel (always-on): code carries How; tests carry What; the commit log carries Why; implementation comments carry ONLY Why-not (constraints, rejected alternatives, hazards, external requirements) — comments restating How/What are removed before submit; API-doc comments required by documentation gates are a different genre and exempt.
 
 ## Mandatory workflow for code/test changes (delivery mode)
 1) Apply the `dev-workflow` playbook end-to-end before editing (start with risk routing: low / normal / high, then execute trigger-based required branches only when applicable).

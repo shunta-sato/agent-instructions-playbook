@@ -82,7 +82,7 @@ Default lane output:
 Mark each line as `triggered` or `not triggered` with one-line evidence.
 
 - new source file/module/crate/package created, test placement decision, or structure budget finding on a touched file → `$project-structure`
-- explicit rework/rewrite/consolidation/simplification request, API deletion, or backward compatibility explicitly waived → record compat-mode (§0b), then `$function-boundary-governor` (function/API level) or `$design-balance` (module/class level); temporary red state needed → `$destructive-refactor`
+- explicit rework/rewrite/consolidation/simplification request, API deletion, or backward compatibility explicitly waived → record compat-mode (§0b), then `$function-boundary-governor` (function/API level) or `$design-balance` (module/class level); if the change replaces, consolidates, or removes code across multiple call sites → also `$destructive-refactor` (its protocol permits temporary red state and enforces convergence or rollback)
 - code or API with zero remaining callers → `$function-boundary-governor` (`delete` action)
 - bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
 - cross-boundary architecture/technology option comparison with measurable quality drivers (metric + target + measurement method all present) → `$architecture-decision-analysis`
@@ -91,7 +91,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - normal/high-risk implementation or new abstraction/helper/wrapper/adapter/indirection → `$implementation-economy`
 - non-embedded request/render/job path, input-proportional collection processing, loop I/O, N+1 query risk, repeated serialization/allocation, serial awaits, or cache/batching/pagination decisions → `$performance-review`
 - function/helper/API/call-site design change → `$function-boundary-governor`
-- replace flawed abstraction requiring temporary red-state migration → `$destructive-refactor`
+- replacing a flawed abstraction across multiple call sites → `$destructive-refactor` (its protocol permits temporary red state and enforces convergence or rollback)
 - concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
 - ROS2 concurrency context → `$concurrency-ros2`
 - Android concurrency context → `$concurrency-android`
@@ -105,7 +105,7 @@ Mark each line as `triggered` or `not triggered` with one-line evidence.
 - unit tests being added, changed, or reviewed; deciding test cases, boundaries, coverage, or mock use → `$unit-test-design`
 - C++ headers touched (`.h/.hpp/...`) → `$code-readability` (Doxygen)
 - UI changes → `$visual-regression-testing` + matching platform reference
-- adding or editing implementation comments, commit-message content decisions, or test names/descriptions → `$comment-discipline`
+- cleaning up redundant/AI-narration comments, or an explicit comment-policy decision → `$comment-discipline` (the channel rule itself is always-on in AGENTS.md)
 
 ## 2a) Embedded NFR routing table
 

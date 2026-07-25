@@ -86,3 +86,32 @@ rise is completed chains, which is the intended behavior. No eval expectation wa
 modified. Largest remaining miss cluster: `destructive-refactor` (6 cases, present
 at the same level in every variant) — next repair candidate, same protocol.
 Single-run caveat applies to all three variants equally.
+
+## WS-C2 result (2026-07-25)
+
+Two measurement-driven changes, re-measured on the full corpus with 12 fresh
+isolated Sonnet subjects (`20260725-c2-sonnet-5.json`):
+
+1. The destructive-refactor router rows framed temporary red state as a
+   PRECONDITION ("if execution needs temporary red state"); subjects therefore
+   never selected the protocol from one-line tasks. Reworded as a permission tied
+   to the structural fact (replacement/consolidation/removal across multiple call
+   sites), matching PR #86's intent. Misses: 6 → 1.
+2. comment-discipline compressed per the adopted external-review adjudication:
+   the channel rule (code=How, tests=What, commit log=Why, comments=Why-not) is
+   now an always-on AGENTS.md line; the skill is explicit-only and triggers only
+   on cleanup/policy work; the quality-gate sweep is unchanged. Eval expectations
+   updated to the new design (2 case changes, listed in the worker report);
+   result: 0 misses, 1 residual violation (one subject selected the skill for the
+   now-negative policy-question case).
+
+| Metric | chainfix | c2 |
+| --- | --- | --- |
+| Should-trigger recall | 87.0% | 88.4% |
+| Should-not-trigger compliance | 98.3% | 98.6% |
+| Mean co-fire | 3.212 | 3.278 |
+| Surface chars | 66,899 | 67,006 |
+
+Embedded misses 17 → 15 (stable). The tier/visibility vocabulary was also
+single-sourced across the three contract scripts (refactor intent, behavior-locked,
+no routing impact expected or observed). Single-run caveat applies as always.
