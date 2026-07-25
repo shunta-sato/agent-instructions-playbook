@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "skill": "unit-test-design",
+  "cases": [
+    {
+      "id": "discount-rate-tier-and-boundary-design",
+      "prompt": "Design the unit tests for `volume_discount_rate(quantity: int) -> int`, which returns the discount rate in percent for an order line. Classify its risk tier and state the boundary value set you would test.",
+      "given": [
+        "Valid domain: 1 <= quantity <= 100; outside it, raise ValueError.",
+        "1..10 maps to 0, 11..50 maps to 5, 51..100 maps to 10 (three distinct valid partitions, not one).",
+        "The returned rate directly determines what the customer is charged for the order line.",
+        "The function receives int only; None/float inputs are not part of the contract."
+      ],
+      "expected_findings": [
+        "money/billing",
+        "internal boundar"
+      ],
+      "expected_output_contains": [
+        "S",
+        "H",
+        "0",
+        "1",
+        "10",
+        "11",
+        "50",
+        "51",
+        "100",
+        "101"
+      ]
+    },
+    {
+      "id": "refund-transfer-money-moving-design",
+      "prompt": "Design the unit tests for `apply_refund(balance_cents: int, refund_cents: int, gateway) -> int`, which refunds money through a payment gateway. Classify its risk tier and state the required boundary values and the interaction contract with the gateway.",
+      "given": [
+        "Valid domain: 1 <= refund_cents <= balance_cents; outside it, raise ValueError without contacting the gateway.",
+        "On a valid refund, call gateway.transfer(refund_cents) exactly once, then return balance_cents - refund_cents.",
+        "A duplicate transfer call would double-refund real money.",
+        "If gateway.transfer raises GatewayError, let it propagate; balance must remain unchanged because nothing was committed before the transfer.",
+        "gateway also exposes log(message); logging content or order is not part of the contract.",
+        "Example balance for boundary values: balance_cents = 100."
+      ],
+      "expected_findings": [
+        "exactly once",
+        "ValueError"
+      ],
+      "expected_output_contains": [
+        "0",
+        "1",
+        "2",
+        "99",
+        "100",
+        "101",
+        "exactly once"
+      ]
+    },
+    {
+      "id": "over-testing-review-near-identical-values",
+      "prompt": "Review this existing test suite for `volume_discount_rate`. It has 10 separate test methods for interior values 12, 15, 18, 20, 25, 30, 35, 40, 45, and 48 - all inside the same 11..50 partition, each just asserting rate == 5 - plus 2 tests that call the module's private `_round_to_bracket` helper directly instead of going through the public function. There is no test yet for the 0/1/10/11/50/51/100/101 boundary set. Does this suite need changes?",
+      "given": [
+        "10 near-identical test methods target interior values of the same 11..50 partition, each asserting only rate == 5.",
+        "2 tests call the private helper _round_to_bracket directly.",
+        "None of the 12 existing tests covers a boundary value or a different partition.",
+        "The suite has no test yet for the 0/1/10/11/50/51/100/101 boundary set."
+      ],
+      "expected_findings": [
+        "partition",
+        "private"
+      ],
+      "expected_output_contains": [
+        "stop criter",
+        "private method",
+        "same equivalence partition"
+      ]
+    }
+  ]
+}

@@ -110,7 +110,12 @@ def validate_case(
     case_id = require_str(case, "id", context, errors)
     require_str(case, "prompt", context, errors)
     require_str_list(case, "given", context, errors)
-    decision = require_str(case, "expected_decision", context, errors)
+    # Optional: a skill without a decision-marker output (e.g. unit-test-design)
+    # omits it; the grader then skips the decision dimension for that case.
+    decision = case.get("expected_decision", "")
+    if "expected_decision" in case and (not isinstance(decision, str) or not decision.strip()):
+        errors.append(f"{context}: expected_decision must be a non-empty string when present")
+        decision = ""
     require_str_list(case, "expected_findings", context, errors, allow_empty=True)
     require_str_list(case, "expected_output_contains", context, errors)
     validate_quality_gate_decision(skill_name, decision, context, errors)

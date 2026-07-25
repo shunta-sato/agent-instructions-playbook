@@ -122,7 +122,7 @@ Use this table to avoid opening all embedded NFR skills by default.
 | `$embedded-observer-effect-review` | Target-local logging/recording/collection/tracing/profiling/measurement that can perturb scheduler, power, thermal, I/O, memory, wakeups, or workload. |
 | `$embedded-nfr-harness-design` | Embedded physical budgets require measurement or a target smoke command. |
 | `$embedded-nfr-gate` | Feature-level embedded NFR design, harness, hot-path, or observer-effect branch was triggered; route before `$quality-gate`. |
-| `$embedded-project-constitution` | Project bootstrap or a new embedded runtime class, without feature implementation. |
+| `$embedded-project-constitution` | Only for project bootstrap, a new embedded runtime class, or a new physical target with no recorded project profile. |
 
 **Chain composition** (router rule — route together, not one at a time):
 
