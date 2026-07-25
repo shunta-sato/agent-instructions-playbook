@@ -1,8 +1,9 @@
 ---
 name: comment-discipline
-description: "Use when writing or reviewing implementation comments, deciding comment vs commit-message vs test-name content, or cleaning up AI-generated comments that restate code (How) or purpose (What). Comments carry only Why-not: constraints, rejected alternatives, hazards, external requirements. Do not use for C++ Doxygen/public-API docs (`code-readability`), or work with no comment/commit/test-name decision."
+description: "Use only when explicitly asked to clean up AI-narration/redundant comments in a diff, or to adjudicate comment vs. commit-message vs. test-name content for a specific change. The always-on Why-not comment rule lives in AGENTS.md; this skill is the explicit cleanup/adjudication protocol only. Do not use for C++ Doxygen/public-API docs (`code-readability`), or when no explicit comment decision is in scope."
 metadata:
   short-description: Comment channel discipline
+  visibility: explicit-only
   requires:
     - references/comment-discipline.md
 ---

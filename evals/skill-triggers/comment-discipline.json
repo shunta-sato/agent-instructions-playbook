@@ -15,11 +15,11 @@
     {
       "id": "comment-discipline-ja-comment-vs-commit-message",
       "prompt": "この変更について、コードコメントに書くべき内容とコミットメッセージに書くべき内容の違いを教えてください。",
-      "should_trigger": [
+      "should_trigger": [],
+      "should_not_trigger": [
         "comment-discipline"
       ],
-      "should_not_trigger": [],
-      "notes": "Asking what belongs in a comment vs. a commit message is a comment/commit-message content decision, in Japanese."
+      "notes": "The always-on Why-not comment channel rule now lives in AGENTS.md prose, so this Japanese comment-vs-commit-message question is answered directly without loading the explicit-only comment-discipline skill."
     },
     {
       "id": "comment-discipline-negative-cpp-doxygen-header",

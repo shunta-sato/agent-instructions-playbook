@@ -123,6 +123,17 @@ embedded misses 24 → 17. The measure→repair→re-measure loop closed in one 
 Next repair candidate from the data: destructive-refactor misses (6, stable across
 variants). Remaining WS-C items unchanged and still measurement-gated.
 
+## WS-C2 result (2026-07-25)
+
+destructive-refactor trigger reframed permission-not-precondition (misses 6 → 1);
+comment-discipline compressed to an always-on channel rule + explicit-only skill
+(0 misses on the updated expectations; quality-gate sweep intact); vocabulary
+single-sourced (refactor intent with behavior lock). Full-corpus re-measurement:
+recall 87.0% → 88.4%, compliance 98.3% → 98.6%, surface flat. Remaining watchlist:
+residual embedded misses (15, mostly calibration co-fire depth), lane folding
+(dropped unless future data shows harm — the measured co-fire does not justify the
+churn), unit-test-operations trim (fidelity-bound), GPT-runner slot.
+
 ## Handoff
 
 - 2026-07-20: WS-A started on branch `context-surface-a` (based on

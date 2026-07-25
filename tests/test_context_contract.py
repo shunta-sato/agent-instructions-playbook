@@ -193,5 +193,24 @@ class VisibilityIndexTests(unittest.TestCase):
             self.assertIn("skills-template|tpl-skill", index)
 
 
+class SharedVocabularyTests(unittest.TestCase):
+    def test_tier_and_visibility_vocabulary_is_single_sourced(self) -> None:
+        """update_skill_requires.py owns TIER_FIELDS/visibility; the other two
+        scripts must import (not hand-copy) it — assert identical objects."""
+        import scripts.generate_agent_index as generate_agent_index
+        import scripts.update_skill_requires as update_skill_requires
+        import scripts.validate_skills as validate_skills
+
+        self.assertIs(validate_skills.TIER_FIELDS, update_skill_requires.TIER_FIELDS)
+        self.assertIs(
+            validate_skills.ALLOWED_VISIBILITY_VALUES,
+            update_skill_requires.ALLOWED_VISIBILITY_VALUES,
+        )
+        self.assertIs(
+            generate_agent_index.DEFAULT_VISIBILITY,
+            update_skill_requires.DEFAULT_VISIBILITY,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

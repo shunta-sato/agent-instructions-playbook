@@ -23,6 +23,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+try:
+    from scripts.update_skill_requires import DEFAULT_VISIBILITY
+except ImportError:  # pragma: no cover - direct execution puts scripts/ on sys.path
+    from update_skill_requires import DEFAULT_VISIBILITY
+
 
 BEGIN_MARKER = "<!-- BEGIN AGENT INDEX (generated) -->"
 END_MARKER = "<!-- END AGENT INDEX (generated) -->"
@@ -31,7 +36,6 @@ README_SKILLS_END_MARKER = "<!-- END README SKILL CATALOG (generated) -->"
 DEFAULT_MAX_BYTES = 8192
 
 
-DEFAULT_VISIBILITY = "default"
 INDEX_VISIBILITY_GROUPS = {"explicit-only": "skills-explicit", "template": "skills-template"}
 
 

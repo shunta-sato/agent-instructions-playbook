@@ -8,10 +8,18 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from skill_description_style import (
-    DESCRIPTION_RECOMMENDED_MAX_CHARS,
-    description_trigger_only_flags,
-)
+try:
+    from scripts.skill_description_style import (
+        DESCRIPTION_RECOMMENDED_MAX_CHARS,
+        description_trigger_only_flags,
+    )
+    from scripts.update_skill_requires import ALLOWED_VISIBILITY_VALUES, TIER_FIELDS
+except ImportError:  # pragma: no cover - direct execution puts scripts/ on sys.path
+    from skill_description_style import (
+        DESCRIPTION_RECOMMENDED_MAX_CHARS,
+        description_trigger_only_flags,
+    )
+    from update_skill_requires import ALLOWED_VISIBILITY_VALUES, TIER_FIELDS
 
 
 NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
@@ -25,18 +33,7 @@ ALLOWED_TOP_LEVEL_FIELDS = {
     "metadata",
     "allowed-tools",
 }
-# Must stay in sync by hand with TIER_FIELDS in update_skill_requires.py and
-# the visibility handling in generate_agent_index.py — no shared constant
-# exists across these three scripts.
-ALLOWED_METADATA_FIELDS = {
-    "short-description",
-    "requires",
-    "resources",
-    "commands",
-    "templates",
-    "visibility",
-}
-ALLOWED_VISIBILITY_VALUES = {"default", "explicit-only", "template"}
+ALLOWED_METADATA_FIELDS = {"short-description", "visibility", *TIER_FIELDS}
 
 
 @dataclass(frozen=True)

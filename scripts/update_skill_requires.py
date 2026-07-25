@@ -61,6 +61,13 @@ SUBDIR_FIELD = {"references": "resources", "scripts": "commands", "templates": "
 REQUIRES_WARN_MAX = 2
 UNSORTED_MARKER = "# UNSORTED"
 
+# Visibility vocabulary for skill frontmatter (`metadata.visibility`). Owned here
+# alongside TIER_FIELDS: validate_skills.py and generate_agent_index.py used to
+# hand-copy these strings independently, so a value added or renamed in one copy
+# but not the others would silently drift out of sync with no error to catch it.
+DEFAULT_VISIBILITY = "default"
+ALLOWED_VISIBILITY_VALUES = {DEFAULT_VISIBILITY, "explicit-only", "template"}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
