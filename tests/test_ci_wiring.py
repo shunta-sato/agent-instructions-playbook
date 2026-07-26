@@ -139,6 +139,34 @@ class WiringTests(unittest.TestCase):
                          f"structure-diff step {structure_index} must run before unit-test step(s) {test_indices} "
                          f"in {steps}")
 
+    def test_workflow_runs_submission_lint_check_after_structure_diff_before_unit_tests(self) -> None:
+        # W2-B (plans/20260726-submission-evidence.md): validate-if-present
+        # submission_evidence check, guarded like the structure-diff step
+        # (PR-only) and positioned just after it, before the unit-test step.
+        workflow = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "agent-index.yml"
+        text = workflow.read_text(encoding="utf-8")
+        self.assertIn("lint_submission.py --diff-range", text)
+
+        steps = _workflow_step_order(text)
+        submission_indices = [i for i, (_, run) in enumerate(steps)
+                               if run and "lint_submission.py" in run and "--diff-range" in run]
+        self.assertEqual(len(submission_indices), 1, steps)
+        submission_index = submission_indices[0]
+
+        structure_indices = [i for i, (_, run) in enumerate(steps)
+                              if run and "check_structure.py" in run and "--diff-range" in run]
+        self.assertEqual(len(structure_indices), 1, steps)
+        structure_index = structure_indices[0]
+        self.assertEqual(submission_index, structure_index + 1,
+                          f"submission-lint step {submission_index} must sit immediately after "
+                          f"structure-diff step {structure_index} in {steps}")
+
+        test_indices = [i for i, (_, run) in enumerate(steps) if run and ("unittest" in run or "test-unit" in run)]
+        self.assertTrue(test_indices, steps)
+        self.assertTrue(all(submission_index < i for i in test_indices),
+                         f"submission-lint step {submission_index} must run before unit-test step(s) "
+                         f"{test_indices} in {steps}")
+
 
 if __name__ == "__main__":
     unittest.main()

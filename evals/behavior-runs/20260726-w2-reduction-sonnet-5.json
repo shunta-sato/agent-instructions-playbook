@@ -1,0 +1,111 @@
+{
+  "cases": [
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "delegated-run-missing-ledger-no-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "delegated-run-validation-missing-no-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 0
+      },
+      "id": "delegated-run-token-not-collected-submit",
+      "output_contains": {
+        "matched": 2,
+        "missing": [],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "delegated-run-scope-violation-no-submit",
+      "output_contains": {
+        "matched": 1,
+        "missing": [
+          "scope"
+        ],
+        "total": 2
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "nfr-claim-without-measurement-no-submit",
+      "output_contains": {
+        "matched": 1,
+        "missing": [],
+        "total": 1
+      },
+      "skill": "quality-gate"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 0
+      },
+      "id": "nfr-target-measured-submit",
+      "output_contains": {
+        "matched": 1,
+        "missing": [],
+        "total": 1
+      },
+      "skill": "quality-gate"
+    }
+  ],
+  "cases_graded": 6,
+  "cases_total": 9,
+  "commit": "b5ffbd95ea69db96daac1265a4909ffd31df1d60",
+  "decision_accuracy": 1.0,
+  "findings_ratio_mean": 0.0,
+  "output_contains_rate": 0.9,
+  "ungraded": [
+    {
+      "id": "discount-rate-tier-and-boundary-design",
+      "reason": "response_missing"
+    },
+    {
+      "id": "refund-transfer-money-moving-design",
+      "reason": "response_missing"
+    },
+    {
+      "id": "over-testing-review-near-identical-values",
+      "reason": "response_missing"
+    }
+  ],
+  "variant": "wt-lint2"
+}

@@ -19,3 +19,17 @@ cases set `expected_decision` on a skill that has no decision-marker output,
 mis-scoring 3 correct responses; the schema now makes `expected_decision`
 optional and the accuracy denominator counts only cases that declare it. The
 responses were never regenerated — only the bookkeeping was fixed.
+
+## Wave-2 reduction re-measurement (2026-07-26, branch lint-migration-w2, 6 isolated Sonnet subjects)
+
+Gate for the quality-gate reference reduction (`plans/20260726-submission-evidence.md`
+adjudication 4). Decision accuracy 6/6 — identical to the baseline; the reduction
+did not move any gate call. Output-contains 9/10: the one missing fragment is
+`"scope"` on the scope-violation case. Single-sample variance (n=1 per case):
+the diff gives no mechanism — the reference's `scope` occurrences went UP
+(2→3) and the §3 line the subject echoed ("changed files exceed allowed
+files") is unchanged by this change set and was equally available in the
+baseline run that scored 10/10. Recorded as-is — the expectation was not
+edited; the fragment sits on the existing findings-phrase calibration
+watchlist. Only the six quality-gate cases were re-run (the reduction touched no
+other skill's behavior surface).

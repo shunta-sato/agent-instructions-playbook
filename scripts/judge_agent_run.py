@@ -17,10 +17,10 @@ from agent_run import (
 
 
 def select_record(records: list[dict[str, Any]], run_id: str) -> dict[str, Any]:
+    """``run_id`` is required by the CLI (adjudication 5, quality-gate's
+    explicit-identity rule): no latest/newest fallback is ever offered here."""
     if not records:
         raise ValueError("ledger has no agent_run records")
-    if not run_id:
-        return records[-1]
 
     for record in reversed(records):
         if record.get("run_id") == run_id:
@@ -48,7 +48,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Judge one agent run ledger record.")
     parser.add_argument("--repo-root", default="", help="Repository root.")
     parser.add_argument("--ledger", default="", help="Ledger path; defaults to .agents/runs/agent-runs.jsonl.")
-    parser.add_argument("--run-id", default="", help="Run ID to judge; defaults to latest agent_run record.")
+    parser.add_argument("--run-id", required=True, help="Run ID to judge (required: no latest/newest fallback).")
     parser.add_argument(
         "--format",
         choices=("json", "text"),

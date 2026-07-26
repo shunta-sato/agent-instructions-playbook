@@ -7,7 +7,7 @@ Sweep rule: evaluate every item in every applicable section in one complete pass
 
 ## 1) Command status (required)
 
-- Canonical commands are recorded with exact commands + key results.
+- Canonical commands are recorded with exact commands + key results; when a `submission_evidence` record is present (`python scripts/submission_run.py record ...`), `python scripts/lint_submission.py` re-derives the recorded chain's declared exit codes (adoption phase: the record is not yet required, and the lint verifies declarations, not omissions).
 - If external systems/tools were involved, live-discovery evidence is recorded before static examples were trusted: command/interface source, version or status output, schema/config path, connection state, and artifact/log path.
 - Required depth matches routed risk:
   - low risk: canonical minimum for changed surface
@@ -18,14 +18,14 @@ Sweep rule: evaluate every item in every applicable section in one complete pass
 
 - run `python scripts/check_structure.py --working-tree`; resolve findings or record a bounded waiver.
 - Every finding (`source-file-lines`, `entrypoint-logic-lines`, `inline-test-lines`) is resolved by an applied split in this submission, or carries an explicit bounded waiver in the change brief (for example generated code).
-- Entrypoint files (`main.rs`, `src/bin/*.rs`, `main.py`, `__main__.py`, `main.go`, `main.c/cc/cpp`) contain wiring only; behavior tests are not accumulated in entrypoints.
+- Entrypoints (`main.rs`, `src/bin/*.rs`, `main.py`, `__main__.py`, `main.go`, `main.c/cc/cpp`) are wiring only; the tool's line budget is a floor, not the rule.
 - This check does not depend on triggered branches. An unresolved finding without a waiver is `no-submit`.
 
 ## 2) Triggered-branch evidence (required when triggered)
 
 Confirm required evidence exists for each triggered branch:
 
-- bugfix branch → Bug Report (repro/evidence/Five Whys/verification/prevention)
+- bugfix branch → Bug Report exists; heading structure enforced by `python scripts/lint_artifacts.py` (bug-report kind).
 - UI branch → UI Visual Verification Report + artifact paths
 - concurrency branch → concurrency verification evidence (plan/shutdown-verification/logging)
 - architecture-decision-analysis branch → Architecture Decision Analysis Record with decision/no-decision, quality drivers, option tradeoffs, verification tasks, and handoffs
@@ -37,9 +37,9 @@ Confirm required evidence exists for each triggered branch:
 - comment-discipline branch → new or edited implementation comments that restate How (narrate adjacent code / the diff) or What (restate the unit's purpose) are findings, fixed via `$comment-discipline` before submit; API-doc comments required by the `code-readability` documentation gate are exempt
 - refactor intent (`$refactor-workflow`) → behavior-lock baseline and equivalence evidence: pre-existing tests unchanged and green, or characterization-first records; listed test edits limited to renames/moves; under compat-mode `break-allowed`, the removed-symbol sweep (`check_api_removal.py`) returns zero hits. A behavior change under refactor intent is `no-submit`
 - hardening intent (`$hardening-workflow`) → baseline and after metrics are recorded with a delta, targets were tiered (E/S/H) with high-risk first, and the stop ceiling was respected (no normal-tier pushes toward 95/100%, no E-tier hardening). A missing baseline is `no-submit`
-- Agent-facing workflow contract branch → `reports/workflow-contract-review/<slug>.md` with decision `submit`, scope, source-of-truth chain, generated argv replay, producer/consumer consistency, run-set/target/workflow identity consistency, controller/target-local execution locations, deployment/runtime discovery, forbidden fallback checks, claim boundaries, and resolved or explicitly accepted findings
-- delegated/subagent/worker execution changed files → `.agents/runs/agent-runs.jsonl` contains an explicitly cited `agent_run` record for this delegated run; `python3 scripts/judge_agent_run.py --run-id <run_id> --require-accepted` passes or the same fields are manually verified from the cited record
-- feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` with decision, runtime mode classification, artifact check, budget results, claims review, and unknowns/limits; accept `submit` only when the NFR gate decision is `submit`, or the feature is explicitly experimental with production claims removed
+- Agent-facing workflow contract branch → `reports/workflow-contract-review/<slug>.md` exists with findings resolved or explicitly accepted; required-section structure (scope, source-of-truth chain, argv replay, producer/consumer consistency, identity consistency, execution locations, deployment/runtime discovery, forbidden fallback checks, claim boundaries) enforced by `python scripts/lint_artifacts.py` (workflow-contract-review kind)
+- delegated/subagent/worker execution changed files (also: delegated run evidence case) → an explicitly cited `agent_run` record exists in `.agents/runs/agent-runs.jsonl` for this delegated run; verified via `python3 scripts/judge_agent_run.py --run-id <run_id> --require-accepted` (explicit run ID, matching changed files, validation results, accepted judgment), or the same fields manually verified from the cited record
+- feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` exists; heading structure (findings, runtime mode classification, artifact check, budget results, claims review, unknowns/limits, handoff to quality gate) enforced by `python scripts/lint_artifacts.py` (nfr-gate-report kind); accept `submit` only when the NFR gate decision is `submit`, or the feature is explicitly experimental with production claims removed
 - embedded system familiarization branch → `docs/targets/<target>/system-familiarization.md` with required/created/missing/provisional/deferred artifacts, artifact freshness/revisit conditions, controlled conditions, uncontrolled confounders, operating point coverage, claim-to-evidence traces with allowed wording, claims blocked by missing evidence, and handoff statuses (`not_needed|required_pending|completed|deferred_with_reason|blocked`)
 - hardware operating point claim → `docs/targets/<target>/controlled-operating-points.md` with controlled factors, observed covariates, uncontrolled confounders, coverage status, confidence, safety preconditions, control/verification/abort/restore methods, and allowed wording
 - hardware capability architecture claim → `docs/targets/<target>/hardware-control-surface-map.md`, `docs/targets/<target>/hardware-capability-map.md`, or `docs/targets/<target>/capability-cost-model.md` showing control surface status and cost model status
@@ -53,20 +53,19 @@ Confirm required evidence exists for each triggered branch:
 - structural scan branch → smells/anti-patterns result (new/worsened handled)
 - function-boundary-governor branch → function-boundary decision record (`keep|rename|split|merge|replace|inline|delete|no-op`) + rationale; when `no-op` is chosen → explicit reasoning
 - destructive-refactor branch → convergence record (`replaced|no-op|rollback`), migrated call-sites evidence, red-state usage record; when `no-op` or `rollback` is chosen → explicit reasoning
-- refactor branch under compat-mode `break-allowed` → removed-symbol sweep output: `python scripts/check_api_removal.py --symbol <old-name> ...` with zero hits (tool output, not a claim); surviving old symbols/shims/aliases are `no-submit`. The staged-migration ledger escape applies only under compat-mode `staged`, never under `break-allowed`.
+- refactor branch under compat-mode `break-allowed` → no surviving old symbols/shims/aliases (`no-submit` otherwise); verified via `python scripts/check_api_removal.py --symbol <old-name> ...` (zero hits, tool output not a claim). The staged-migration ledger escape applies only under compat-mode `staged`, never under `break-allowed`.
 - API-touching or rework/consolidation/deletion task → recorded compat-mode (`preserve|staged|break-allowed`; `break-allowed` quotes the requester's waiver)
 - function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
 - C++ header branch → Doxygen completeness evidence
-- ExecPlan required case → `plans/<slug>.md` is current (WBS/decisions/surprises/handoff); if the ExecPlan declares quantitative targets, the Outcomes section records measured value vs. each target, and every unmet target has a Decision log entry that re-baselines it or explicitly accepts the miss with rationale — a fully-checked WBS with silently unmet declared targets is `no-submit`
-- delegated run evidence case → explicit run ID, matching changed files, validation command results, and accepted judgment
+- ExecPlan required case → `plans/<slug>.md` exists and is current; required-section structure (purpose, scope, constraints, context, design, validation, WBS/progress, surprises, decisions, handoff, outcomes) enforced by `python scripts/lint_artifacts.py` (execplan kind). If the ExecPlan declares quantitative targets, the Outcomes section records measured value vs. each target, and every unmet target has a Decision log entry that re-baselines it or explicitly accepts the miss with rationale — a fully-checked WBS with silently unmet declared targets is `no-submit`
 
 ## 3) Minimum exit criteria review (always)
 
 - Path-specific instructions were identified and followed.
 - Requirements/acceptance changes (if any) are reflected in docs/tests.
 - Default-lane evidence is present for normal/high-risk work, or the low-risk skip reason is explicit.
-- Agent-facing workflow, generated instruction, collect plan, executable handoff, multi-step CLI workflow, or cross-host workflow changes are blocked unless the Workflow Contract Review Report decision is `submit`.
-- Delegated/subagent/worker changes are blocked unless the submission cites fresh run evidence by explicit run identity. Do not accept `latest`, newest file, mtime, raw co-presence, or agent self-assessment as evidence.
+- Agent-facing workflow, generated instruction, collect plan, executable handoff, multi-step CLI workflow, or cross-host workflow changes are blocked unless the Workflow Contract Review Report decision is `submit`; `python scripts/lint_submission.py` re-derives this (`contract-not-submit` finding) when a submission record cites the report.
+- Delegated/subagent/worker changes are blocked unless the submission cites fresh run evidence by explicit run identity. Do not accept `latest`, newest file, mtime, raw co-presence, or agent self-assessment as evidence; `python scripts/lint_submission.py` re-derives citation acceptance and gate status (`cited-run:*` findings) when a submission record cites the run.
 - Delegated run evidence is `no-submit` when the ledger record is missing, the run ID is not explicit, required validation did not run, validation failed, validation output is missing, changed files exceed allowed files, or `judge_agent_run.py --require-accepted` fails.
 - Missing token telemetry alone never blocks: treat absent telemetry or `telemetry.status: not_collected` as acceptable when every other run-evidence criterion passes.
 - Completion claims require verification evidence. A worker report that says the task is done without validation command results remains `no-submit`.
@@ -132,7 +131,7 @@ Rule: `submit` only when all required criteria are satisfied and findings are 0.
 
 - Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.
 - Verify delegated run evidence by checking `.agents/runs/agent-runs.jsonl` with an explicit run ID, not by latest/newest record selection.
-- Verify embedded NFR evidence by checking `reports/resource/nfr-gate-report.md`, not only final-response text.
+- Verify embedded NFR evidence by checking `reports/resource/nfr-gate-report.md`, not only final-response text; `reports/resource/nfr-gate-report.md` is now covered by `python scripts/lint_artifacts.py`.
 - Verify constitution-only evidence by checking the generated project artifacts, not only final-response text.
 - Verify controlled operating point claims by checking the target pack artifact paths, not only final-response text.
 - Verify artifact structure by running `python scripts/lint_artifacts.py` (resolve findings or record them in the baseline with an adjudication).

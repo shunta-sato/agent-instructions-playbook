@@ -35,7 +35,7 @@ Record:
 | Default implementation lane | skip if one file, no new abstraction, public API unchanged, no behavior expansion | required | required |
 | Complexity budget | optional only when new abstraction appears | `implementation-economy` budget + audit | `implementation-economy` budget + audit |
 | Responsibility layout | optional only when module/class layout changes | `design-balance` map when layout changes | `design-balance` map when layout changes |
-| Structure watch (`scripts/check_structure.py` on touched files) | required | required | required |
+| Structure watch (`scripts/check_structure.py --working-tree`) | required | required | required |
 | Verification depth before gate | canonical minimum for changed surface | full canonical chain | full canonical chain |
 | Final gate | `$quality-gate` required | `$quality-gate` required | `$quality-gate` required |
 | ExecPlan | optional | required if complex | required if complex/long-running |
@@ -184,7 +184,7 @@ Record:
 
 - Default lane outputs:
 - Branches executed:
-- Structure watch result (`scripts/check_structure.py` on touched files; findings + applied splits, or pass):
+- Structure watch result (`scripts/check_structure.py --working-tree`; findings + applied splits, or pass):
 - Verification commands executed:
 - Live discovery evidence captured (or `not applicable`):
 - Remaining known gaps before gate (if any):

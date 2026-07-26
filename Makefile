@@ -46,6 +46,7 @@ lint-static:
 	$(PYTHON) scripts/lint_instruction_graph.py
 	$(PYTHON) scripts/lint_command_docs.py
 	$(PYTHON) scripts/lint_artifacts.py
+	$(PYTHON) scripts/lint_submission.py --working-tree
 
 lint-diff:
 	$(PYTHON) scripts/check_structure.py --working-tree

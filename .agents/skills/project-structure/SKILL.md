@@ -26,7 +26,7 @@ Use this skill when:
 
 ## Structure budget (canonical)
 
-Checked mechanically with `python scripts/check_structure.py <touched files>`:
+Checked mechanically with `python scripts/check_structure.py --working-tree`:
 
 | Rule | Limit | Required action on breach |
 |---|---|---|
