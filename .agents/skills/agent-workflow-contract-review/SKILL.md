@@ -127,17 +127,17 @@ Produce a Workflow Contract Review Report:
 
 It must include:
 
-- workflow surfaces reviewed
-- source-of-truth chain
-- generated argv replay table
-- artifact producer/consumer table
-- run-set / target / workflow identity consistency
-- controller / target-local execution-location table
-- deployment/runtime discovery assumptions
-- forbidden fallback checks
-- claim boundary checks
-- findings
-- `submit` or `no-submit` recommendation
+- Scope (PR/branch, workflow surfaces, generated artifacts)
+- Source-of-truth chain
+- Generated argv replay
+- Producer/consumer consistency
+- Run-set / target / workflow identity consistency
+- Controller / target-local execution locations
+- Deployment/runtime discovery
+- Forbidden fallback checks
+- Claim boundaries
+- Findings
+- Decision (`submit` or `no-submit`)
 
 ## Gotchas
 

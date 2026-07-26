@@ -65,6 +65,9 @@ jobs:
       - name: Check command docs drift
         run: python scripts/lint_command_docs.py
 
+      - name: Check artifact structure
+        run: python scripts/lint_artifacts.py
+
       # Cheap static check on the PR's changed file set; guarded the same
       # way as the boundary-gate step below (needs the base ref fetched by
       # the full-history checkout above). Runs before the test/boundary

@@ -1,0 +1,74 @@
+{
+  "plans/20260424-skill-quality-hardening.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design",
+    "missing-section:outcome",
+    "missing-section:surprise"
+  ],
+  "plans/20260424-skillset-review.md": [
+    "missing-section:design"
+  ],
+  "plans/20260705-claude-code-wiring.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260705-generic-nfr-gate.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260705-portfolio-calibration.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260705-refactoring-overhaul.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260705-skill-contract-infra.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260705-sonnet5-executable.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260705-structure-gates.md": [
+    "missing-section:context"
+  ],
+  "plans/20260710-research-os-v0.md": [
+    "missing-section:constraint",
+    "missing-section:context",
+    "missing-section:design"
+  ],
+  "plans/20260725-lint-migration.md": [
+    "missing-section:decision"
+  ],
+  "reports/workflow-contract-review/20260627-preflight-critical-domain-skills.md": [
+    "missing-heading:Claim boundaries",
+    "missing-heading:Controller / target-local execution locations",
+    "missing-heading:Deployment/runtime discovery",
+    "missing-heading:Producer/consumer consistency",
+    "missing-heading:Scope"
+  ],
+  "reports/workflow-contract-review/20260627-preflight-domain-scaffold.md": [
+    "missing-heading:Claim boundaries",
+    "missing-heading:Controller / target-local execution locations",
+    "missing-heading:Deployment/runtime discovery",
+    "missing-heading:Producer/consumer consistency",
+    "missing-heading:Scope"
+  ],
+  "reports/workflow-contract-review/20260627-preflight-inspection-helpers.md": [
+    "missing-heading:Claim boundaries",
+    "missing-heading:Controller / target-local execution locations",
+    "missing-heading:Deployment/runtime discovery",
+    "missing-heading:Producer/consumer consistency",
+    "missing-heading:Scope"
+  ]
+}

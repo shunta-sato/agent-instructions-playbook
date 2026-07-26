@@ -94,6 +94,17 @@ An ExecPlan must contain these sections (exact headings can differ, but content 
 - Handoff
 - Outcomes & retrospective
 
+## Design-record variant
+
+A plan whose H1 title contains "design record" is a supervisor
+adjudication/design log, not a full ExecPlan: it records decisions already
+made rather than tracking upcoming work. It is exempt from the 11-section
+contract above and instead MUST contain a **Handoff** section (what's done,
+what's next, where to pick up). The full 11-section contract above stays
+the default for execution plans; the artifact lint
+(`scripts/lint_artifacts.py`) enforces exactly this split by the title
+marker.
+
 ## Workflow
 
 Use the **Explore → Plan → Code → Commit** loop:
