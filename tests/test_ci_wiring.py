@@ -112,7 +112,7 @@ class WiringTests(unittest.TestCase):
 
         test_indices = [i for i, (_, run) in enumerate(steps) if run and ("unittest" in run or "test-unit" in run)]
         self.assertTrue(test_indices, steps)
-        for script in ("lint_instruction_graph.py", "lint_command_docs.py"):
+        for script in ("lint_instruction_graph.py", "lint_command_docs.py", "lint_artifacts.py"):
             lint_indices = [i for i, (_, run) in enumerate(steps) if run and script in run]
             self.assertEqual(len(lint_indices), 1, f"{script} must appear exactly once in {steps}")
             self.assertTrue(all(lint_indices[0] < i for i in test_indices),

@@ -45,6 +45,7 @@ lint-static:
 	$(PYTHON) scripts/check_context_budget.py
 	$(PYTHON) scripts/lint_instruction_graph.py
 	$(PYTHON) scripts/lint_command_docs.py
+	$(PYTHON) scripts/lint_artifacts.py
 
 lint-diff:
 	$(PYTHON) scripts/check_structure.py --working-tree
@@ -69,6 +70,7 @@ test-integration:
 	$(PYTHON) scripts/check_context_budget.py
 	$(PYTHON) scripts/lint_instruction_graph.py
 	$(PYTHON) scripts/lint_command_docs.py
+	$(PYTHON) scripts/lint_artifacts.py
 	$(PYTHON) scripts/report_skill_inventory.py --check --format text
 	$(PYTHON) scripts/generate_agent_index.py --check
 	git diff --check

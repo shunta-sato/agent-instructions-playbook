@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "notes": "Hand-authored artifact registry: each artifact kind the playbook promises, with its detection rule and machine-checkable structure. Consumed by scripts/lint_artifacts.py. Skills own the judgment of when/why to produce an artifact; this file owns only acceptability. Edit by hand together with a design-record adjudication in plans/.",
+  "artifacts": {
+    "bug-report": {
+      "checker": "docs",
+      "detect_glob": "reports/bug-reports/*.md",
+      "heading_mode": "exact",
+      "required_headings": [
+        "Reproduction",
+        "Evidence",
+        "Root Cause Analysis (Five Whys)",
+        "Fix",
+        "Verification",
+        "Prevention (must include at least one, measurable)"
+      ],
+      "source": ".agents/skills/bug-investigation-and-rca/references/bug-report-template.md"
+    },
+    "workflow-contract-review": {
+      "checker": "docs",
+      "detect_glob": "reports/workflow-contract-review/*.md",
+      "heading_mode": "exact",
+      "required_headings": [
+        "Scope",
+        "Source-of-truth chain",
+        "Generated argv replay",
+        "Producer/consumer consistency",
+        "Run-set / target / workflow identity consistency",
+        "Controller / target-local execution locations",
+        "Deployment/runtime discovery",
+        "Forbidden fallback checks",
+        "Claim boundaries",
+        "Findings",
+        "Decision"
+      ],
+      "source": ".agents/skills/agent-workflow-contract-review/templates/workflow-contract-review.md"
+    },
+    "execplan": {
+      "checker": "docs",
+      "detect_glob": "plans/*.md",
+      "heading_mode": "keyword-sections",
+      "design_record_title_marker": "design record",
+      "required_section_keywords": [
+        [
+          "purpose",
+          "big picture"
+        ],
+        [
+          "scope"
+        ],
+        [
+          "constraint",
+          "quality target"
+        ],
+        [
+          "context",
+          "orientation"
+        ],
+        [
+          "design"
+        ],
+        [
+          "validation",
+          "acceptance"
+        ],
+        [
+          "progress",
+          "wbs"
+        ],
+        [
+          "surprise",
+          "discover"
+        ],
+        [
+          "decision"
+        ],
+        [
+          "handoff"
+        ],
+        [
+          "outcome",
+          "retrospective"
+        ]
+      ],
+      "design_record_required_section_keywords": [
+        [
+          "decision",
+          "adjudication"
+        ],
+        [
+          "handoff"
+        ]
+      ],
+      "source": "PLANS.md"
+    },
+    "uiux-pack": {
+      "checker": "packs",
+      "detect_dir_glob": "uiux/*",
+      "required_files": [
+        "ui_contract.yaml",
+        "ui_spec.json",
+        "auto_review.json",
+        "diff_summary.md"
+      ],
+      "json_parse": [
+        "ui_spec.json",
+        "auto_review.json"
+      ],
+      "forbid_fill_sentinel": true,
+      "forbid_symlinks": true,
+      "token_refs_in": "ui_spec.json",
+      "preview_addon": {
+        "trigger_file": "previews/flow-map.html",
+        "required_files": [
+          "previews/flow-map.css",
+          "previews/flow-map.js",
+          "previews/flow-map_panzoom.js",
+          "previews/flow-map_focus.js",
+          "previews/flow-map_minimap.js",
+          "previews/review/review.css",
+          "previews/review/review_store.js",
+          "previews/review/review_export.js",
+          "previews/review/review_ui.js"
+        ],
+        "trigger_file_must_contain": "window.UIUX_SPEC",
+        "forbid_remote_script_src": true
+      },
+      "source": ".agents/skills/uiux-core/references/uiux-core.md"
+    },
+    "uidesign-pack": {
+      "checker": "packs",
+      "detect_dir_glob": "uidesign/*",
+      "required_files": [
+        "uidesign_contract.yaml",
+        "uidesign_spec.json",
+        "auto_review.json",
+        "diff_summary.md",
+        "review_notes.md",
+        "previews/review/review.css",
+        "previews/review/review_store.js",
+        "previews/review/review_export.js",
+        "previews/review/review_ui.js",
+        "tokens/resolved.tokens.json",
+        "tokens/resolved.tokens.css",
+        "previews/index.html",
+        "previews/components.html",
+        "previews/screens/entry.html",
+        "previews/screens/form.html",
+        "previews/screens/status.html",
+        "previews/preview.css",
+        "previews/preview.js"
+      ],
+      "json_parse": [
+        "uidesign_spec.json",
+        "auto_review.json",
+        "tokens/resolved.tokens.json"
+      ],
+      "forbid_fill_sentinel": true,
+      "forbid_symlinks": true,
+      "token_refs_in": "uidesign_spec.json",
+      "source": ".agents/skills/uidesign-flow/references/uidesign-flow.md"
+    },
+    "tonemana-pack": {
+      "checker": "packs",
+      "detect_dir_glob": "tonemana/*",
+      "exclude": [
+        "tonemana/catalog"
+      ],
+      "required_files": [
+        "tonemana_contract.yaml",
+        "tonemana_spec.json",
+        "auto_review.json",
+        "diff_summary.md"
+      ],
+      "json_parse": [
+        "tonemana_spec.json",
+        "auto_review.json"
+      ],
+      "forbid_fill_sentinel": true,
+      "forbid_symlinks": true,
+      "source": ".agents/skills/tonemana-apply/SKILL.md"
+    },
+    "tonemana-catalog": {
+      "checker": "packs",
+      "detect_dir": "tonemana/catalog",
+      "required_files": [
+        "catalog_index.yaml",
+        "previews/index.html",
+        "previews/style-tile.css"
+      ],
+      "forbid_fill_sentinel": true,
+      "forbid_symlinks": true,
+      "catalog_cross_check": {
+        "id_pattern": "^\\s*-\\s+id:\\s*[\"']?([A-Za-z0-9._-]+)[\"']?\\s*$",
+        "per_id_files": [
+          "patterns/{id}.yaml",
+          "tokens/{id}.tokens.json",
+          "tokens/{id}.tokens.css"
+        ]
+      },
+      "source": ".agents/skills/tonemana-catalog/SKILL.md"
+    },
+    "resource-report": {
+      "checker": "packs",
+      "detect_glob": "reports/resource/*.json",
+      "subset_schema": ".agents/skills/embedded-nfr-harness-design/templates/resource-report.schema.json",
+      "source": ".agents/skills/embedded-nfr-harness-design/SKILL.md"
+    }
+  },
+  "token_refs_rule": {
+    "notes": "meta.tone_and_manner.token_refs in a spec JSON is optional (the block appears only after tonemana-apply); when present, each ref must be a relative path, contain no '..' segment, start with 'tonemana/catalog/tokens/', use the matching suffix (.tokens.json / .tokens.css), and resolve to an existing file from the repo root.",
+    "required_prefix": "tonemana/catalog/tokens/",
+    "suffixes": {
+      "json": ".tokens.json",
+      "css": ".tokens.css"
+    },
+    "source": ".agents/skills/uidesign-flow/SKILL.md"
+  }
+}
