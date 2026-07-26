@@ -38,7 +38,7 @@ def _capture(argv: list[str]) -> tuple[int, str]:
 
 
 def _git_init(root: Path) -> None:
-    for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
+    for args in (["init", "-q", "-b", "main"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
         subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
 
 

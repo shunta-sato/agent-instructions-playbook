@@ -21,7 +21,7 @@ from scripts.submission_run import add_record_parser, build_record, main
 
 
 def _git_init(root: Path) -> None:
-    for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
+    for args in (["init", "-q", "-b", "main"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
         subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
 
 
