@@ -1,13 +1,13 @@
 """Boundary-gate tests for the Research OS diff-range and working-tree modes.
 Covers ``evaluate_diff``/``run_diff_mode``/``run_working_tree_mode``:
 promotion, safety, symlink-boundary, declared-mode binding, the
-promotion-acknowledgment downgrade (F7), rename-origin evaluation (G2),
-working-tree mode (F1), and CI wiring (including G4's unit-test-before-
-boundary-gate ordering). Base-policy binding (F6) and a real-git deletion
+promotion-acknowledgment downgrade (F7), rename-origin evaluation (G2), and
+working-tree mode (F1). Base-policy binding (F6) and a real-git deletion
 tombstone (c) live in the sibling ``test_research_os_round8`` (400-line
 overflow); G1 (range-bound declared-mode selector) tests live in
 ``test_research_os_mode``; ledger/runner/claim tests live in
-``test_research_os.py``."""
+``test_research_os.py``; CI/Makefile wiring tests (including G4's
+unit-test-before-boundary-gate ordering) live in ``test_ci_wiring``."""
 
 from __future__ import annotations
 
@@ -15,7 +15,6 @@ import contextlib
 import hashlib
 import io
 import json
-import re
 import subprocess
 import tempfile
 import unittest
@@ -23,31 +22,6 @@ from pathlib import Path
 
 from scripts import check_research_evidence as cre
 from tests.test_research_os_ack import ACK, POLICY as ACK_POLICY, _run, _sha256, _write_ack, _write_canonical_ledger
-
-_STEP_NAME_RE = re.compile(r"^ {6}- name: (.+)$")
-_STEP_RUN_RE = re.compile(r"^ {8}run: (.+)$")
-_VALIDATOR_WORDS = ("validate", "check", "report", "generate")
-
-
-def _workflow_step_order(text: str) -> list[tuple[str, str | None]]:
-    """``[(step name, run command or None)]`` in file order (line scan over
-    this workflow's regular ``- name: ...`` / ``run: ...`` shape)."""
-    steps: list[tuple[str, str | None]] = []
-    pending_name: str | None = None
-    for line in text.splitlines():
-        name_match = _STEP_NAME_RE.match(line)
-        if name_match:
-            if pending_name is not None:
-                steps.append((pending_name, None))
-            pending_name = name_match.group(1).strip()
-            continue
-        run_match = _STEP_RUN_RE.match(line)
-        if run_match and pending_name is not None:
-            steps.append((pending_name, run_match.group(1).strip()))
-            pending_name = None
-    if pending_name is not None:
-        steps.append((pending_name, None))
-    return steps
 
 
 def _capture(fn, *args) -> tuple[int, str]:
@@ -351,69 +325,6 @@ class RenameOriginTests(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertIn("FINDING safety-review-required: SECURITY/a", output)
         self.assertIn("FINDING promotion-required: runtime/probe.py", output)
-
-
-# --- wiring: the chain, not just the script ----------------------------------
-
-
-class WiringTests(unittest.TestCase):
-    def test_makefile_lint_target_invokes_check(self) -> None:
-        makefile = Path(__file__).resolve().parent.parent / "Makefile"
-        text = makefile.read_text(encoding="utf-8")
-        lint_block = text.split("\nlint:", 1)[1].split("\nanalysis:", 1)[0]
-        self.assertIn("check_research_evidence.py --check-ledger", lint_block)
-
-    def test_makefile_lint_target_invokes_context_budget_check(self) -> None:
-        # WS-A wave 3: the context-budget gate must sit in the same
-        # verify/analysis chain as the other mechanical checks.
-        makefile = Path(__file__).resolve().parent.parent / "Makefile"
-        text = makefile.read_text(encoding="utf-8")
-        lint_block = text.split("\nlint:", 1)[1].split("\nanalysis:", 1)[0]
-        self.assertIn("check_context_budget.py", lint_block)
-
-    def test_workflow_runs_context_budget_check_before_unit_tests(self) -> None:
-        # WS-A wave 3: the budget gate must run in CI, before the unit-test
-        # step (it is a cheap static check; no reason to wait on the suite).
-        workflow = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "agent-index.yml"
-        text = workflow.read_text(encoding="utf-8")
-        self.assertIn("check_context_budget.py", text)
-
-        steps = _workflow_step_order(text)
-        budget_indices = [i for i, (_, run) in enumerate(steps) if run and "check_context_budget.py" in run]
-        self.assertEqual(len(budget_indices), 1, steps)
-        budget_index = budget_indices[0]
-
-        test_indices = [i for i, (_, run) in enumerate(steps) if run and ("unittest" in run or "test-unit" in run)]
-        self.assertTrue(test_indices, steps)
-        self.assertTrue(all(budget_index < i for i in test_indices),
-                         f"context-budget step {budget_index} must run before unit-test step(s) {test_indices} "
-                         f"in {steps}")
-
-    def test_workflow_runs_diff_range_boundary_gate(self) -> None:
-        # S1/B3: the gate must be wired into CI and run AFTER every other
-        # validator step (it judges the whole PR's changed-path set, so a
-        # later step could otherwise still fail on files it already blessed).
-        workflow = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "agent-index.yml"
-        text = workflow.read_text(encoding="utf-8")
-        self.assertIn("check_research_evidence.py --diff-range", text)
-        self.assertIn("github.event_name == 'pull_request'", text)
-
-        steps = _workflow_step_order(text)
-        boundary_indices = [i for i, (_, run) in enumerate(steps) if run and "--diff-range" in run]
-        self.assertEqual(len(boundary_indices), 1, steps)
-        boundary_index = boundary_indices[0]
-        other_validator_indices = [i for i, (name, _) in enumerate(steps)
-                                    if i != boundary_index and any(w in name.lower() for w in _VALIDATOR_WORDS)]
-        self.assertTrue(other_validator_indices, steps)
-        self.assertTrue(all(i < boundary_index for i in other_validator_indices),
-                         f"boundary-gate step (index {boundary_index}) must run after every other validator step: "
-                         f"{[i for i in other_validator_indices if i > boundary_index]} in {steps}")
-
-        # G4: the 197-test suite must actually run in CI, and before the boundary gate.
-        test_indices = [i for i, (_, run) in enumerate(steps) if run and ("unittest" in run or "test-unit" in run)]
-        self.assertTrue(test_indices, steps)
-        self.assertTrue(all(i < boundary_index for i in test_indices),
-                         f"unit-test step(s) {test_indices} must run before boundary gate {boundary_index} in {steps}")
 
 
 if __name__ == "__main__":

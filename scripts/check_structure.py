@@ -108,7 +108,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--max-inline-test-lines", type=int, default=DEFAULT_MAX_INLINE_TEST_LINES
     )
     parser.add_argument("--json", action="store_true", help="Emit findings as JSON.")
-    return parser.parse_args(argv)
+    parser.add_argument("--repo-root", default="", help="Repository root override.")
+    parser.add_argument("--working-tree", action="store_true", help="Check changed/added source files from `git status --porcelain`.")
+    parser.add_argument("--diff-range", metavar="A..B", default="", help="Check source files from `git diff --name-only A..B` that still exist in the working tree.")
+    args = parser.parse_args(argv)
+    if sum([bool(args.paths), args.working_tree, bool(args.diff_range)]) > 1:
+        parser.error("paths, --working-tree, and --diff-range are mutually exclusive")
+    return args
+
+
+def repo_root_from_args(explicit_root: str) -> Path:
+    return Path(explicit_root).resolve() if explicit_root else Path.cwd()
 
 
 def git_tracked_source_files(root: Path) -> list[Path]:
@@ -142,6 +152,40 @@ def collect_files(paths: list[str]) -> list[Path]:
         elif path.is_file() and path.suffix in SOURCE_EXTENSIONS:
             files.append(path)
     return files
+
+
+def _git_output_z(root: Path, *args: str) -> list[str]:
+    """NUL-delimited git output, decoded raw (mirrors scripts/research_gate.py)."""
+    out = subprocess.run(["git", "-C", str(root), "-c", "core.quotepath=false", *args], capture_output=True, check=True).stdout
+    return [p.decode("utf-8", "surrogateescape") for p in out.split(b"\0") if p]
+
+
+def changed_paths_from_working_tree(root: Path) -> list[str]:
+    """Porcelain -z paths; a rename/copy's second bare token is the ORIG_PATH (kept, mirroring
+    scripts/research_gate.py) and dropped later by existence filtering, same as any deletion."""
+    paths: list[str] = []
+    skip_next = False
+    for token in _git_output_z(root, "status", "--porcelain", "-z", "--untracked-files=all"):
+        if skip_next:
+            paths.append(token)
+            skip_next = False
+            continue
+        status, path = token[:2], token[3:]
+        paths.append(path)
+        skip_next = "R" in status or "C" in status
+    return paths
+
+
+def changed_paths_from_range(root: Path, diff_range: str) -> list[str]:
+    """Paths from ``git diff --no-renames --name-only -z A..B``."""
+    return _git_output_z(root, "diff", "--no-renames", "--name-only", "-z", diff_range)
+
+
+def existing_source_files(root: Path, rel_paths: list[str]) -> list[Path]:
+    """Resolve repo-relative paths under root; keep source files that currently exist
+    on disk (drops deletions and rename ORIG_PATHs)."""
+    candidates = {root / p for p in rel_paths}
+    return sorted((p for p in candidates if p.suffix in SOURCE_EXTENSIONS and p.is_file()), key=lambda p: p.as_posix())
 
 
 def is_entrypoint(path: Path) -> bool:
@@ -307,7 +351,13 @@ def partition_waived_findings(
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    files = collect_files(args.paths)
+    root = repo_root_from_args(args.repo_root)
+    if args.working_tree:
+        files = existing_source_files(root, changed_paths_from_working_tree(root))
+    elif args.diff_range:
+        files = existing_source_files(root, changed_paths_from_range(root, args.diff_range))
+    else:
+        files = collect_files(args.paths)
     if not files:
         print("structure-budget: pass (0 source files checked)")
         return 0
@@ -316,7 +366,6 @@ def main(argv: list[str] | None = None) -> int:
     for path in files:
         findings.extend(check_file(path, args))
 
-    root = Path.cwd()
     waivers = load_structure_waivers(root)
     findings, waived = partition_waived_findings(findings, root, waivers)
 

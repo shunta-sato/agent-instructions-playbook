@@ -62,8 +62,9 @@ Open `references/hardening-workflow.md` when following the stage table for this 
    hardening adds verification/diagnosability, it does not change contracts).
 
 5) Stop at the policy ceiling owned by `$unit-test-design`
-   (`references/unit-test-operations.md` §Coverage — cite it, do not restate the
-   numbers): changed-code targets, the overall guide and healthy range, no
+   (`.agents/skills/unit-test-design/references/unit-test-operations.md`
+   §Coverage — cite it, do not restate the numbers): changed-code targets,
+   the overall guide and healthy range, no
    normal-tier pushes toward full coverage, no blanket-hardening of E-tier
    targets. Flaky fixes follow that reference's same-day-or-quarantine rule.
    Hardening work that produced no measured delta is gold-plating — the stop
