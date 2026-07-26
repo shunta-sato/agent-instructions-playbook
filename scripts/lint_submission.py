@@ -217,7 +217,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f"lint-submission: error: submission_evidence record not found: {args.record}", file=sys.stderr)
             return 2
         head_commit = record.get("head_commit")
-        state_ref = head_commit if isinstance(head_commit, str) and head_commit and _rev_parse(repo_root, head_commit) else None
+        if isinstance(head_commit, str) and head_commit and _rev_parse(repo_root, head_commit) is None:
+            # A claimed-but-unresolvable identity must not fall back to the
+            # working tree: that would validate against unrelated state.
+            return _emit([f"unknown-head-commit:{head_commit}"], "")
+        state_ref = head_commit if isinstance(head_commit, str) and head_commit else None
         findings = evaluate_submission_record(
             record, repo_root, agent_runs_by_id, state_ref, duplicate_ids
         )

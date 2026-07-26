@@ -33,12 +33,16 @@ class HappyPathTests(unittest.TestCase):
             _git_init(root)
             _write(root, "src/app.py", "x = 1\n")
             _commit_all(root, "base")
+            head = subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                check=True, capture_output=True, text=True).stdout.strip()
             ledger = _write_ledger(
                 root,
                 [
                     _agent_run("W1"),
                     _submission_record(
                         "SUB-1",
+                        head_commit=head,
                         changed_files=[{"path": "src/app.py", "sha256": _sha("x = 1\n")}],
                         cited_runs=["W1"],
                     ),
@@ -152,6 +156,23 @@ class JudgeAgentRunRequiresRunIdTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("--run-id", result.stderr)
 
+
+
+class UnresolvableHeadCommitTests(unittest.TestCase):
+    def test_record_mode_fails_closed_on_unknown_head_commit(self) -> None:
+        # A claimed commit identity that does not resolve must be a finding,
+        # never a silent fallback to working-tree state (Codex P1).
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "a.md", "x\n")
+            _commit_all(root, "base")
+            record = _submission_record("SUB-X", head_commit="f" * 40)
+            ledger = _write_ledger(root, [record])
+            rc, output = _capture([
+                "--record", "SUB-X", "--repo-root", str(root), "--ledger", str(ledger)])
+        self.assertEqual(rc, 1, output)
+        self.assertIn("unknown-head-commit:" + "f" * 40, output)
 
 
 if __name__ == "__main__":
