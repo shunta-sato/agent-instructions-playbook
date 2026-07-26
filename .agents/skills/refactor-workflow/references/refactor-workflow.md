@@ -78,6 +78,6 @@ Record all of:
 ## Handback
 
 After stage 4, continue in `dev-workflow`: the structure watch
-(`python scripts/check_structure.py <touched files>`), canonical verification at the
+(`python scripts/check_structure.py --working-tree`), canonical verification at the
 routed risk depth, and `$quality-gate`. This checklist's stage-3/4 output feeds the
 gate's refactor-branch evidence bullet; it does not replace the gate's own decision.

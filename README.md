@@ -224,6 +224,7 @@ sync with `make lint`'s validator chain by `scripts/lint_command_docs.py`):
 - `python scripts/lint_instruction_graph.py`
 - `python scripts/lint_command_docs.py`
 - `python scripts/lint_artifacts.py`
+- `python scripts/lint_submission.py --working-tree`
 - `python scripts/report_skill_inventory.py --check --format text`
 - `python scripts/generate_agent_index.py --check`
 

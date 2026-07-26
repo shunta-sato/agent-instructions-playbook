@@ -37,7 +37,7 @@ Use this skill **for any delivery-mode task that changes code and/or tests**. It
 
 5) Execute implementation with the selected route + required branches.
 
-6) Run the structure watch (all risks, including low): `python scripts/check_structure.py <touched source files>` — consequences of a finding: `references/dev-workflow.md` §2c.
+6) Run the structure watch (all risks, including low): `python scripts/check_structure.py --working-tree` — consequences of a finding: `references/dev-workflow.md` §2c.
 
 7) Run canonical verification at the depth required by the selected risk route (`references/dev-workflow.md` §0 table).
 

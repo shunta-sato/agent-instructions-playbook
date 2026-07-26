@@ -35,7 +35,7 @@ Run the repo's own measurement tool for the declared dimension and record the ex
 command and result:
 
 - coverage report for the touched area
-- `python scripts/check_structure.py <candidate files>`
+- `python scripts/check_structure.py --working-tree`
 - the current flaky-test list
 - a smell sweep via `$code-smells-and-antipatterns`
 
@@ -97,6 +97,6 @@ to the whole hardening pass. Record which specific criterion ended the work.
 ## Handback
 
 After stage 5, continue in `dev-workflow`: the structure watch
-(`python scripts/check_structure.py <touched files>`), canonical verification at the
+(`python scripts/check_structure.py --working-tree`), canonical verification at the
 routed risk depth, and `$quality-gate`. This checklist's stage-4/5 output feeds the
 gate's hardening-branch evidence bullet; it does not replace the gate's own decision.

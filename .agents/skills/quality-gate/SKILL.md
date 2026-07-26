@@ -23,7 +23,7 @@ Invoke this skill **before every delivery-mode submission**. It is mandatory in 
 
 1) Verify canonical commands are green at the required depth — full command-status checklist: `references/quality-gate.md` §1.
 
-1b) Run the structural exit check: `python scripts/check_structure.py <touched source files>` — full rule (finding types, entrypoint scope, no-waiver-no-submit): `references/quality-gate.md` §1b.
+1b) Run the structural exit check: `python scripts/check_structure.py --working-tree` — full rule (finding types, entrypoint scope, no-waiver-no-submit): `references/quality-gate.md` §1b.
 
 1c) Run the boundary gate with the declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery` — `safety-review-required` findings are `no-submit` in every mode: `references/quality-gate.md` §3.
 
