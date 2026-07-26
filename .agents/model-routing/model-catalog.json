@@ -6,17 +6,21 @@
     {
       "id": "claude-opus-5",
       "aliases": [
+        "opus",
         "opus-5"
       ],
       "profiles": [
         "coding_supervisor",
-        "terminal_debug_supervisor"
+        "terminal_debug_supervisor",
+        "high_reasoning_review",
+        "frontier_execution_supervisor"
       ],
       "status": "available",
-      "smoke_eval": "pending",
+      "smoke_eval": "passed",
       "evidence": [
         "User direction 2026-07-25: use Opus 5 for supervision/review roles.",
-        "Model ID pending /v1/models verification (ant models list); alias 'opus' stays on claude-opus-4-8 until a recorded supervised run passes on this model per the catalog's smoke-eval discipline (PR #88 precedent)."
+        "run 20260726T020003Z-artifact_registry_adversarial_review_corrected-bf0cc57f in .agents/runs/agent-runs.jsonl: playbook-reviewer adversarial review of the Wave-1 artifact-registry change set on claude-opus-5 (harness 'opus' resolution) — independent re-verification (9 validation commands, all pass), run-evidence verification by explicit run IDs with digest checks, 16 findings incl. 7 confirmed-by-reproduction should-fixes, correct integrate-after-fixes verdict with matching quality-gate fail, honest supersede-and-append correction of its own first mis-recorded run.",
+        "Model ID confirmed by harness resolution during that run (alias 'opus' resolved to claude-opus-5); profile set follows the PR #88 precedent (single supervised smoke run qualified the supervisor/review profile family)."
       ]
     },
     {
@@ -39,7 +43,7 @@
     {
       "id": "claude-opus-4-8",
       "aliases": [
-        "opus"
+        "opus-4-8"
       ],
       "profiles": [
         "coding_supervisor",
