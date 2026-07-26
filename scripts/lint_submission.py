@@ -239,7 +239,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"lint-submission: error: cannot resolve range {args.diff_range}", file=sys.stderr)
             return 2
         candidates = candidate_records_for_range(repo_root, records, base_sha, head_sha)
-        state_ref = head_sha  # digests describe committed state => check blobs
+        state_ref = "own"  # each record describes its OWN commit, also in-range:
+        # a later commit editing an earlier record's files must not stale it.
 
     if not candidates:
         print("lint-submission: pass (no submission record; adoption phase)")
@@ -247,8 +248,9 @@ def main(argv: list[str] | None = None) -> int:
 
     findings: list[str] = []
     for record in candidates:
+        record_ref = record.get("head_commit") if state_ref == "own" else state_ref
         findings += evaluate_submission_record(
-            record, repo_root, agent_runs_by_id, state_ref, duplicate_ids
+            record, repo_root, agent_runs_by_id, record_ref, duplicate_ids
         )
     ids = ", ".join(str(r.get("run_id")) for r in candidates)
     return _emit(findings, f"{ids} validated ({len(candidates)} candidate(s))")

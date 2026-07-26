@@ -156,3 +156,40 @@ class JudgeAgentRunRequiresRunIdTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PerRecordStateTests(unittest.TestCase):
+    def test_earlier_record_not_staled_by_later_commit_in_same_range(self) -> None:
+        # Range-mode candidates each validate against their OWN head_commit:
+        # the dogfood sequence record->fix-commit->record must stay green.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "src/app.py", "x = 1\n")
+            _commit_all(root, "base")
+            base = subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                check=True, capture_output=True, text=True).stdout.strip()
+            _write(root, "src/app.py", "x = 2\n")
+            _commit_all(root, "first")
+            first = subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                check=True, capture_output=True, text=True).stdout.strip()
+            early = _submission_record(
+                "SUB-EARLY", head_commit=first,
+                changed_files=[{"path": "src/app.py", "sha256": _sha("x = 2\n")}])
+            _write(root, "src/app.py", "x = 3\n")
+            _commit_all(root, "second")
+            head = subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                check=True, capture_output=True, text=True).stdout.strip()
+            late = _submission_record(
+                "SUB-LATE", head_commit=head,
+                changed_files=[{"path": "src/app.py", "sha256": _sha("x = 3\n")}])
+            ledger = _write_ledger(root, [early, late])
+            rc, output = _capture([
+                "--diff-range", f"{base}..{head}",
+                "--repo-root", str(root), "--ledger", str(ledger)])
+        self.assertEqual(rc, 0, output)
+        self.assertIn("SUB-EARLY", output)
+        self.assertIn("SUB-LATE", output)

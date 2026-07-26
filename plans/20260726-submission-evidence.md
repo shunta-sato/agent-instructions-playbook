@@ -181,3 +181,12 @@ Opus adversarial review.
     selection tests) out of the check-unit tests.
   After fixes: 376 tests OK; all lints, artifact lint, context budget,
   and `make verify` green; adoption-phase pass on this tree.
+- 2026-07-26 (dogfood caught the last hole): CI failed on a fixture
+  branch-name assumption (runners default to master; pinned `-b main`),
+  and recording a second submission for that fix made the lint stale the
+  FIRST record — range mode was validating every candidate against the
+  range head instead of its own commit, reproducing F1's landmine inside
+  one branch. Fixed: range-mode candidates each validate against their
+  OWN head_commit (regression test: record → fix-commit → record stays
+  green). Both dogfood records (33a7b30c, 434ffe5f) now validate as the
+  range's two candidates. 377 tests OK.
