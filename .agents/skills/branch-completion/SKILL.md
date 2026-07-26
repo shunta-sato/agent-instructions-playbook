@@ -69,6 +69,14 @@ Use after merge or abandonment when cleanup is allowed.
 - Remove only branches known to be completed and safe to delete.
 - Leave unknown, dirty, or unrelated branches untouched.
 
+## Learning capture
+
+Before discarding or cleaning up a branch with rollback, abandoned-approach,
+or repeated-failed-attempt evidence, evaluate the `$failure-retrospective`
+trigger first. This is not enforced on every merge or publish, and an unrun
+retrospective is never an ordinary merge blocker — but cleanup must never
+discard evidence from an already-triggered retrospective.
+
 ## Completion Record
 
 ```markdown
@@ -92,6 +100,11 @@ Result:
 - merge SHA:
 - local sync state:
 - cleanup deferred:
+
+Learning capture:
+- failure-retrospective: not-triggered | completed | tracked-follow-up
+- report:
+- reason:
 ```
 
 ## Output expectation

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "retrospective_id": "R-20260727-retrospective-v1-shipping",
+  "title": "Shipping failure-retrospective v1: fixes reopened the hole they closed",
+  "outcome": "recovered",
+  "current_work_disposition": "amend-current-work",
+  "trigger": {
+    "kind": "rejected-completion-claim",
+    "evidence_refs": [
+      "reports/workflow-contract-review/20260727-failure-retrospective-v1.md",
+      ".agents/runs/agent-runs.jsonl"
+    ]
+  },
+  "attempts": [
+    {
+      "id": "A1",
+      "hypothesis_or_approach": "Close review finding F7 (attempt-to-learning closure correlation) by scoping closure rules 5.1/5.2 to a learning's optional attempt_refs list",
+      "evidence_sought": ["unit suite green", "reviewer round-2 re-verification"],
+      "evidence_refs": ["reports/workflow-contract-review/20260727-failure-retrospective-v1.md"],
+      "result": "rejected",
+      "failure_class": "verification",
+      "preventability": "preventable",
+      "changed_next": "The round-2 review re-ran its original adversarial probes instead of re-reading the diff and found F16: an unresolvable attempt_refs entry silently disabled rules 5.1/5.2 (fail-open). The fix was amended to emit unknown-attempt-ref findings and fall back to the record-level correlation, with a regression test asserting both halves."
+    },
+    {
+      "id": "A2",
+      "hypothesis_or_approach": "Amend the F7 fix to fail closed: unresolvable refs become findings and the record-level correlation re-engages",
+      "evidence_sought": ["reviewer round-3 probe re-runs", "full verify chain"],
+      "evidence_refs": ["reports/workflow-contract-review/20260727-failure-retrospective-v1.md"],
+      "result": "succeeded",
+      "failure_class": "verification",
+      "preventability": "preventable",
+      "changed_next": "n/a - accepted (integrate-as-is, Decision submit)"
+    }
+  ],
+  "learnings": [
+    {
+      "id": "L1",
+      "claim": "A review fix can reopen the exact hole it closes in a more deniable form; re-verification after fixes must RE-RUN the original adversarial probes, not re-read the diff - two of this change's three blocking findings were introduced or left by fixes, and only probe re-runs caught them.",
+      "evidence_refs": [
+        "reports/workflow-contract-review/20260727-failure-retrospective-v1.md",
+        "tests/test_artifact_checks_learning_fixes.py"
+      ],
+      "causal_confidence": "confirmed",
+      "scope": "cross-project-reusable",
+      "enforceability": "model-evaluable",
+      "criticality": "advisory",
+      "applies_when": [
+        "re-verifying a change after review fixes were applied",
+        "a fix touches the same code path a blocking finding exercised"
+      ],
+      "does_not_apply_when": [
+        "the fix is a pure text/wording change with no executable surface",
+        "the original review carried no executable probes to re-run"
+      ],
+      "attempt_refs": ["A1", "A2"],
+      "existing_skill_absorption": {
+        "skills_considered": ["receiving-code-review", "failure-retrospective", "quality-gate"],
+        "decision": "absorbed",
+        "rationale": "The playbook's review contract (directive section 16: re-verify after fixes) already owns this; the delta is the re-probe-not-re-read wording, absorbed into this pack and the ExecPlan's decision log rather than a new skill. The reviewer's round-2/round-3 practice is the positive worked example."
+      },
+      "retention_actions": [
+        {
+          "kind": "existing-skill",
+          "status": "implemented",
+          "target": "reports/workflow-contract-review/20260727-failure-retrospective-v1.md",
+          "verification_commands": [],
+          "tracking_ref": "",
+          "closure_condition": "The review report's round-2/3 probe tables stand as the worked example cited by this learning."
+        },
+        {
+          "kind": "retrospective-only",
+          "status": "implemented",
+          "target": "reports/retrospectives/20260727-retrospective-v1-shipping/report.md",
+          "verification_commands": [],
+          "tracking_ref": "",
+          "closure_condition": "This pack passes the learning artifact lint in CI."
+        }
+      ]
+    }
+  ],
+  "recurrence": {
+    "status": "first-seen",
+    "prior_records": []
+  }
+}

@@ -74,6 +74,28 @@
       ],
       "source": "PLANS.md"
     },
+    "failure-retrospective": {
+      "checker": "learning",
+      "detect_dir_glob": "reports/retrospectives/*",
+      "required_files": [
+        "record.json",
+        "report.md"
+      ],
+      "forbid_fill_sentinel": true,
+      "forbid_symlinks": true,
+      "source": ".agents/skills/failure-retrospective/SKILL.md"
+    },
+    "llm-wiki": {
+      "checker": "learning",
+      "detect_dir": ".agent/wiki",
+      "required_files": [
+        "README.md",
+        "index.md"
+      ],
+      "forbid_fill_sentinel": true,
+      "forbid_symlinks": true,
+      "source": ".agents/skills/failure-retrospective/references/failure-retrospective.md"
+    },
     "nfr-gate-report": {
       "checker": "docs",
       "detect_glob": "reports/resource/*.md",

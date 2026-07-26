@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "skill": "failure-retrospective",
+  "cases": [
+    {
+      "id": "project-specific-deterministic-requires-lint-not-wiki-only",
+      "prompt": "This project's deploy script silently defaults to the staging config directory when an env var is unset -- that caused a bad rollout last week. The failure is entirely deterministic (a specific unset-env-var branch) and specific to this repo's deploy tooling, not something other projects would hit. Run the failure retrospective and decide where the learning goes.",
+      "given": [
+        "learning scope: project-specific",
+        "machine-checkability: deterministic",
+        "preventability: preventable",
+        "the deploy script's config-path fallback is unique to this repository"
+      ],
+      "expected_findings": [
+        "Wiki-only retention is insufficient for a preventable, deterministic failure",
+        "a local lint or local harness must accompany the Wiki entry"
+      ],
+      "expected_output_contains": [
+        "scope",
+        "enforceability",
+        "deterministic",
+        "llm-wiki",
+        "local-lint",
+        "retention action"
+      ],
+      "expected_decision": "harden-repository"
+    },
+    {
+      "id": "cross-project-derived-summary-evidence-confusion-existing-skill",
+      "prompt": "Across two different repos now, a delegated worker treated its own derived summary of test output as if it were the actual evidence, and quality-gate almost accepted it both times before a human caught it. This pattern is not specific to one project. Run the failure retrospective.",
+      "given": [
+        "learning scope: cross-project-reusable",
+        "machine-checkability: deterministic (derived-summary vs raw-evidence is detectable)",
+        "the pattern recurred across two repositories, not one",
+        "an evidence-confusion class of failure, not a one-off mistake"
+      ],
+      "expected_findings": [
+        "existing-skill absorption is judged before proposing a new skill",
+        "no new-skill-candidate proliferation for a pattern an existing skill's output contract can cover",
+        "a reusable lint/harness accompanies the existing-skill change"
+      ],
+      "expected_output_contains": [
+        "scope",
+        "cross-project-reusable",
+        "existing-skill",
+        "absorption",
+        "reusable-harness",
+        "new-skill-candidate"
+      ],
+      "expected_decision": "harden-repository"
+    },
+    {
+      "id": "productive-exploration-no-durable-change-accepted",
+      "prompt": "We tried three different caching strategies as a deliberate exploration to learn which one was fastest; two were discarded because they were slower, not because anything was broken, and the fastest one shipped. Run the failure retrospective for closeout.",
+      "given": [
+        "preventability: productive-exploration for the two discarded strategies",
+        "no invariant was violated -- the discarded strategies worked correctly, just slower",
+        "the exploration was deliberate and expected to discard some options"
+      ],
+      "expected_findings": [
+        "no-durable-change is an acceptable disposition here",
+        "productive-exploration is not treated as preventable",
+        "no lint/harness/new-skill overhead is imposed on a working, deliberate exploration"
+      ],
+      "expected_output_contains": [
+        "no-durable-change",
+        "productive-exploration",
+        "disposition"
+      ],
+      "expected_decision": "no-durable-change"
+    },
+    {
+      "id": "unclear-causality-insufficient-evidence-observe-first",
+      "prompt": "The flaky integration test started passing again after we changed three things at once (bumped a dependency, adjusted a timeout, and reordered two test setup steps) and we do not know which one actually fixed it. Run the failure retrospective.",
+      "given": [
+        "three simultaneous changes precede the fix",
+        "no isolated verification of which change mattered",
+        "causal confidence cannot honestly be called confirmed or even plausible for any single change"
+      ],
+      "expected_findings": [
+        "disposition is insufficient-evidence, not amend-current-work or harden-repository",
+        "an observe-first plan records the missing evidence, next signal, artifact path, and re-evaluation condition"
+      ],
+      "expected_output_contains": [
+        "insufficient-evidence",
+        "observe-first",
+        "causal confidence",
+        "unknown"
+      ],
+      "expected_decision": "insufficient-evidence"
+    },
+    {
+      "id": "repeated-preventable-deterministic-docs-only-refused",
+      "prompt": "The same missing-null-check failure class has now shown up in three retrospectives in a row, always the same failure class, invariant, and earliest signal, and it is a fully deterministic, preventable pattern. Someone wants to close this one with just a paragraph in the report. Run the failure retrospective.",
+      "given": [
+        "recurrence: repeated (third occurrence)",
+        "preventability: preventable",
+        "machine-checkability: deterministic",
+        "a proposal exists to close with prose only"
+      ],
+      "expected_findings": [
+        "a docs-only close is refused for repeated plus preventable",
+        "at minimum a lint/harness change or a new observe-first mechanism is required"
+      ],
+      "expected_output_contains": [
+        "repeated",
+        "docs-only",
+        "local-lint",
+        "reusable-lint",
+        "closure condition"
+      ],
+      "expected_decision": "harden-repository"
+    },
+    {
+      "id": "existing-skill-absorption-possible-no-new-skill",
+      "prompt": "A delegated worker keeps citing success claims without a run_id, and this has now happened on two different repos. Someone suggested writing a brand-new 'evidence-verification' skill for it. Run the failure retrospective and decide.",
+      "given": [
+        "quality-gate already owns delegated-run evidence verification and has a trigger/anti-trigger and output contract",
+        "the gap is that its rule or reference does not yet cover this specific evidence-omission pattern",
+        "a new skill has been proposed as the fix"
+      ],
+      "expected_findings": [
+        "existing-skill absorption is judged as absorbed before any new-skill-candidate is considered",
+        "new-skill-candidate is not chosen because quality-gate's trigger/anti-trigger/output-contract can absorb the fix"
+      ],
+      "expected_output_contains": [
+        "existing-skill",
+        "absorbed",
+        "output contract",
+        "new-skill-candidate"
+      ],
+      "expected_decision": "harden-repository"
+    },
+    {
+      "id": "final-attempt-success-only-causal-confidence-not-confirmed",
+      "prompt": "We tried four different fixes for the intermittent deploy failure; the first three did not help and the fourth one was applied right before it started working, but we never isolated whether the fourth fix was actually what fixed it versus the infrastructure recovering on its own. Run the failure retrospective.",
+      "given": [
+        "four attempts total, three failed or inconclusive, the fourth precedes success",
+        "no isolated test confirms the fourth fix caused the recovery",
+        "an infrastructure-recovery alternative explanation was never ruled out"
+      ],
+      "expected_findings": [
+        "causal confidence for the fourth attempt is not asserted as confirmed from success alone",
+        "confidence is recorded as plausible or unknown pending further isolation"
+      ],
+      "expected_output_contains": [
+        "Attempt sequence",
+        "earliest signal",
+        "causal confidence",
+        "plausible",
+        "unknown"
+      ],
+      "expected_decision": "insufficient-evidence"
+    }
+  ]
+}

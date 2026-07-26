@@ -33,7 +33,7 @@ This skill prepares the work environment; it does not implement product fixes, r
    - For obvious one-file fixes, typo fixes, formatter-only changes, or already-routed small work, state why preflight is unnecessary and stop.
 
 1. Inventory stable repository surfaces.
-   - Inspect instruction files, README/CONTRIBUTING, package and lock files, CI/test config, docs, `.agent/`, `.agents/skills/`, schema files, generated-code directories, migrations, deploy config, and secret-like filename patterns.
+   - Inspect instruction files, README/CONTRIBUTING, package and lock files, CI/test config, docs, `.agent/` (if `.agent/wiki/index.md` exists, read only entries matching the task's paths/components), `.agents/skills/`, schema files, generated-code directories, migrations, deploy config, and secret-like filename patterns.
    - Do not read secret, credential, token, cookie, or key values. Record paths and patterns only.
    - Mark facts as `confirmed`, `inferred`, or `unknown`.
    - When the repository is unfamiliar, `AGENTS.md` is missing, or docs/test routing are unknown, run the read-only helper collectors:

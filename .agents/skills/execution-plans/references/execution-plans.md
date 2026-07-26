@@ -77,3 +77,4 @@ Use this format (keep bullets ≤ 3 each):
 - If runtime behavior changes, invoke `$observability` and record the plan’s signals in the ExecPlan.
 - If concurrency is introduced/changed, invoke `$concurrency-core` (+ platform skill) and record the plan in the ExecPlan.
 - Before finishing, run `$quality-gate` and ensure the ExecPlan is updated with final outcomes.
+- At closeout, evaluate the `$failure-retrospective` trigger; when it fires, write the details to the retrospective pack and keep only the link in the ExecPlan's "Outcomes & Retrospective" section.

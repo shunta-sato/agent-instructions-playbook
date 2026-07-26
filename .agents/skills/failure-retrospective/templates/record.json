@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "retrospective_id": "R-YYYYMMDD-<slug>",
+  "title": "",
+  "outcome": "unresolved",
+  "current_work_disposition": "insufficient-evidence",
+  "trigger": {
+    "kind": "",
+    "evidence_refs": []
+  },
+  "attempts": [],
+  "learnings": [],
+  "recurrence": {
+    "status": "first-seen",
+    "prior_records": []
+  },
+  "_enums": {
+    "outcome": [
+      "recovered",
+      "rolled-back",
+      "abandoned",
+      "unresolved"
+    ],
+    "current_work_disposition": [
+      "amend-current-work",
+      "harden-repository",
+      "no-durable-change",
+      "insufficient-evidence"
+    ],
+    "attempts[].result": [
+      "failed",
+      "rejected",
+      "abandoned",
+      "succeeded",
+      "inconclusive"
+    ],
+    "attempts[].failure_class": [
+      "assumption",
+      "approach",
+      "routing",
+      "verification",
+      "coordination",
+      "environment"
+    ],
+    "attempts[].preventability": [
+      "preventable",
+      "productive-exploration",
+      "unknown"
+    ],
+    "learnings[].causal_confidence": [
+      "confirmed",
+      "plausible",
+      "unknown"
+    ],
+    "learnings[].scope": [
+      "task-only",
+      "project-specific",
+      "cross-project-reusable"
+    ],
+    "learnings[].enforceability": [
+      "explanatory",
+      "model-evaluable",
+      "deterministic"
+    ],
+    "learnings[].criticality": [
+      "advisory",
+      "required-before-action",
+      "submit-blocking"
+    ],
+    "learnings[].existing_skill_absorption.decision": [
+      "absorbed",
+      "not-absorbed",
+      "not-applicable"
+    ],
+    "learnings[].retention_actions[].kind": [
+      "retrospective-only",
+      "llm-wiki",
+      "project-instruction",
+      "existing-skill",
+      "new-skill-candidate",
+      "local-lint",
+      "local-harness",
+      "reusable-lint",
+      "reusable-harness",
+      "observe-first",
+      "tracked-follow-up"
+    ],
+    "learnings[].retention_actions[].status": [
+      "implemented",
+      "planned",
+      "not-applicable"
+    ],
+    "recurrence.status": [
+      "first-seen",
+      "repeated"
+    ],
+    "learnings[].retention_actions[] observe-first extra required fields": [
+      "missing_evidence",
+      "signal",
+      "artifact_path",
+      "revisit_condition",
+      "tracking_ref"
+    ],
+    "learnings[].attempt_refs (optional)": [
+      "list of Attempt ids; when present, closure rules 5.1/5.2 use only these attempts' preventability instead of the record-level any-preventable fallback"
+    ]
+  }
+}

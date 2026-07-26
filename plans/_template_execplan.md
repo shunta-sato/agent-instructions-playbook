@@ -102,9 +102,14 @@ List the measurable acceptance criteria and how they are verified.
   - Verification:
 - AC2: ...
 
-## Outcomes & Retrospective (fill when done)
+## Outcomes & Retrospective
+
+When the `$failure-retrospective` trigger fires, write the details to the
+retrospective pack and keep only the link here.
 
 - What shipped / merged:
-- What went well:
-- What went wrong:
-- Follow-ups / tech debt tickets:
+- Failed, rejected, or abandoned attempts:
+- Failure retrospective:
+  - not-triggered: <reason>
+  - report: reports/retrospectives/<id>/
+- Remaining follow-ups / debt:

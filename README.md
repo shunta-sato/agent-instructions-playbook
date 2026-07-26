@@ -86,6 +86,10 @@ The goal is a small, curated software-development operating system: clear entry 
 
 - `playbook-template-authoring` — explicit reusable deployment, infra, data-analysis, and API-reference template authoring
 
+### Learning and closeout
+
+- `failure-retrospective` — turn rollbacks, abandoned attempts, misrouted work, and rejected completions into task, project, or cross-project learning
+
 The generated full index in `AGENTS.md` is the authoritative machine-readable list.
 
 ## Generated Skill Catalog
@@ -121,6 +125,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `error-handling` | Boundary error handling | `.agents/skills/error-handling/SKILL.md` |
 | `execution-plans` | ExecPlan: plan/WBS/progress + handoff | `.agents/skills/execution-plans/SKILL.md` |
 | `experiment-loop` | Registered experiment evidence contract | `.agents/skills/experiment-loop/SKILL.md` |
+| `failure-retrospective` | Failure learning and promotion routing | `.agents/skills/failure-retrospective/SKILL.md` |
 | `function-boundary-governor` | Autonomous function-boundary design | `.agents/skills/function-boundary-governor/SKILL.md` |
 | `hardening-workflow` | Measure-tier-stop hardening lane | `.agents/skills/hardening-workflow/SKILL.md` |
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |

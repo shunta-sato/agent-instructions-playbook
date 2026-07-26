@@ -63,3 +63,4 @@ artifact snapshot when applicable.
 - Error translation/retries/fallbacks hide cause: invoke `$error-handling`.
 - Legacy area lacks safe tests: invoke `$working-with-legacy-code`.
 - Missed Agent-facing workflow/product contract: invoke `$agent-workflow-contract-review`.
+- Multiple failed fixes, a process/workflow failure RCA alone will not close, a reusable verification-contract defect, or the same failure signature recurring from a prior retrospective: hand off to `$failure-retrospective` (an ordinary single-bug RCA does not).

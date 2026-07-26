@@ -59,6 +59,7 @@ skill|embedded-target-characterization|Embedded target characterization|.agents/
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
 skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
 skill|experiment-loop|Registered experiment evidence contract|.agents/skills/experiment-loop/SKILL.md
+skill|failure-retrospective|Failure learning and promotion routing|.agents/skills/failure-retrospective/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
 skill|hardening-workflow|Measure-tier-stop hardening lane|.agents/skills/hardening-workflow/SKILL.md
 skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md

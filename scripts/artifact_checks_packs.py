@@ -86,7 +86,7 @@ def _check_forbid_fill_sentinel(artifact_path: Path, spec: dict) -> list[str]:
             if path.is_symlink():
                 continue  # reported by forbid_symlinks; do not read through it
             text = _read_text(path)
-            if text is not None and "<fill>" in text:
+            if text is not None and "<fill" in text:
                 rel = path.relative_to(artifact_path).as_posix()
                 findings.append(f"fill-sentinel:{rel}")
     return findings
