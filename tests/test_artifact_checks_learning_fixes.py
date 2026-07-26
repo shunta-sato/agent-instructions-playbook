@@ -21,11 +21,11 @@ except ModuleNotFoundError:  # direct execution
     from artifact_checks_learning import run_checks
 
 
-def _run_pack(record, extra_report_text: str = ""):
+def _run_pack(record, extra_report_text: str = "", replace_report: str | None = None):
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
-        report = _good_report() + extra_report_text
+        report = (replace_report if replace_report is not None else _good_report()) + extra_report_text
         pack = _write_pack(root, record, report)
         return run_checks(root, pack, RETRO_SPEC, {})
 
@@ -116,6 +116,42 @@ class UnresolvableAttemptRefsTests(unittest.TestCase):
         findings = _run_pack(record)
         self.assertIn("retro:unknown-attempt-ref:L1:A9", findings)
         self.assertTrue(any(f.startswith("retro:closure:5.1:L1") for f in findings), findings)
+
+
+class CodexReviewRegressionTests(unittest.TestCase):
+    """PR-review P2 fixes: non-string refs (C1), token-delimited report ID
+    citation (C2), non-list container shapes (C3), absorption decision
+    required (C4)."""
+
+    def test_non_string_attempt_ref_is_a_finding_not_a_crash(self) -> None:
+        record = _good_record()
+        record["learnings"][0]["attempt_refs"] = [{"id": "A1"}]
+        findings = _run_pack(record)
+        self.assertIn("retro:unknown-attempt-ref:L1:<non-string>", findings)
+
+    def test_attempt_id_prefix_does_not_satisfy_citation(self) -> None:
+        record = _good_record()
+        record["attempts"][0]["id"] = "A1"
+        report = _good_report().replace("A1", "A10")
+        findings = _run_pack(record, replace_report=report)
+        self.assertIn("retro:report-missing-id:attempt:A1", findings)
+
+    def test_non_list_attempts_is_a_finding(self) -> None:
+        record = _good_record()
+        record["attempts"] = {"A1": record["attempts"][0]}
+        findings = _run_pack(record)
+        self.assertIn("retro:bad-shape:attempts", findings)
+
+    def test_absorption_without_decision_fails_5_4(self) -> None:
+        record = _good_record()
+        learning = record["learnings"][0]
+        learning["retention_actions"].append({
+            "kind": "new-skill-candidate", "status": "planned", "target": "",
+            "verification_commands": [], "tracking_ref": "T-2", "closure_condition": "gate",
+        })
+        del learning["existing_skill_absorption"]["decision"]
+        findings = _run_pack(record)
+        self.assertIn("retro:closure:5.4:L1", findings)
 
 
 if __name__ == "__main__":

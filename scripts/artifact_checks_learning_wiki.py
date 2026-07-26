@@ -79,6 +79,7 @@ STATUS_ENUM = {"active", "superseded", "expired"}
 CONFIDENCE_ENUM = {"confirmed", "plausible", "unknown"}
 LAST_VERIFIED_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
+LEVEL_HEADING_RE = re.compile(r"^(#{1,6})[ \t]+(.*?)[ \t]*$", re.M)
 HEADING_LINE_RE = re.compile(r"^#{1,6}[ \t]+(.*?)[ \t]*$", re.MULTILINE)
 STATUS_LINE_RE = re.compile(r"(?m)^Status:[ \t]*(.*?)[ \t]*$")
 CONFIDENCE_LINE_RE = re.compile(r"(?m)^Confidence:[ \t]*(.*?)[ \t]*$")
@@ -99,12 +100,22 @@ def _check_entry(entry: Path, wiki_root: Path) -> list[str]:
     text = _read_text(entry) or ""
     name = entry.relative_to(wiki_root).as_posix()
 
-    present_headings = {m.strip() for m in HEADING_LINE_RE.findall(text)}
-    findings += [
-        f"wiki:heading:{name}:{heading}"
-        for heading in WIKI_REQUIRED_HEADINGS
-        if heading not in present_headings
+    # Ordered, level-aware: one leading `#` title, then the required `##`
+    # sections in template order (Codex C5 — a reversed or mis-levelled
+    # entry must not pass on set membership).
+    heading_seq = [
+        (len(m.group(1)), m.group(2).strip())
+        for m in LEVEL_HEADING_RE.finditer(text)
     ]
+    if not heading_seq or heading_seq[0][0] != 1:
+        findings.append(f"wiki:heading:{name}:<title>")
+    h2_seq = [h for lvl, h in heading_seq if lvl == 2]
+    cursor = 0
+    for heading in WIKI_REQUIRED_HEADINGS:
+        try:
+            cursor = h2_seq.index(heading, cursor) + 1
+        except ValueError:
+            findings.append(f"wiki:heading:{name}:{heading}")
 
     status_match = STATUS_LINE_RE.search(text)
     if not status_match or not status_match.group(1):

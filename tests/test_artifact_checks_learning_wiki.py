@@ -165,5 +165,27 @@ class RecursiveEntryTests(unittest.TestCase):
         self.assertTrue(any("sub/page.md" in f for f in findings), findings)
 
 
+class OrderedHeadingTests(unittest.TestCase):
+    def test_reversed_section_order_is_a_finding(self) -> None:
+        # Codex C5: set membership must not accept a reversed entry.
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            wiki = root / ".agent" / "wiki"
+            wiki.mkdir(parents=True)
+            (wiki / "README.md").write_text("# Wiki\n")
+            (wiki / "index.md").write_text("# Index\n\n- [e](entry.md)\n")
+            body = (
+                "# T\n\n## Promoted learning\nx\n\n## Freshness\n"
+                "Status: active\nConfidence: confirmed\nLast verified: 2026-07-27\nRevisit when: x\n\n"
+                "## Confidence\nx\n\n## Evidence\nx\n\n## Operational consequence\nx\n\n"
+                "## Does not apply when\nx\n\n## Applies when\nx\n\n"
+                "## Project knowledge\nx\n\n## Scope\nx\n"
+            )
+            (wiki / "entry.md").write_text(body)
+            findings = run_checks(root, wiki, WIKI_SPEC, {})
+        self.assertTrue(any(f.startswith("wiki:heading:entry.md:") for f in findings), findings)
+
+
 if __name__ == "__main__":
     unittest.main()

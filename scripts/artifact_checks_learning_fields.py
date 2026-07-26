@@ -7,6 +7,8 @@ main module."""
 
 from __future__ import annotations
 
+import re
+
 ATTEMPT_REQUIRED_FIELDS = (
     "id", "hypothesis_or_approach", "evidence_sought", "evidence_refs",
     "result", "failure_class", "preventability", "changed_next",
@@ -88,8 +90,35 @@ def resolve_attempt_scope(
         return [], any_preventable
     by_id = {a.get("id"): a for a in attempts if isinstance(a, dict)}
     lid = learning.get("id") or "<unnamed>"
-    findings = [f"retro:unknown-attempt-ref:{lid}:{r}" for r in refs if r not in by_id]
-    scoped = [by_id[r] for r in refs if r in by_id]
+    valid = [r for r in refs if isinstance(r, str) and r]
+    findings = [
+        f"retro:unknown-attempt-ref:{lid}:{r if isinstance(r, str) and r else '<non-string>'}"
+        for r in refs
+        if not (isinstance(r, str) and r) or r not in by_id
+    ]
+    scoped = [by_id[r] for r in valid if r in by_id]
     if scoped:
         return findings, any(a.get("preventability") == "preventable" for a in scoped)
     return findings, any_preventable
+
+
+def _check_id_cross_checks(record: dict, report_text: str) -> list[str]:
+    def cited(token: str) -> bool:
+        # Token-delimited: "A1" is not satisfied by "A10" (Codex C2).
+        return re.search(
+            rf"(?<![A-Za-z0-9_-]){re.escape(token)}(?![A-Za-z0-9_-])", report_text
+        ) is not None
+
+    findings = []
+    rid = record.get("retrospective_id")
+    if isinstance(rid, str) and rid and not cited(rid):
+        findings.append("retro:id-mismatch:retrospective_id")
+    for attempt in record.get("attempts") or []:
+        aid = attempt.get("id") if isinstance(attempt, dict) else None
+        if isinstance(aid, str) and aid and not cited(aid):
+            findings.append(f"retro:report-missing-id:attempt:{aid}")
+    for learning in record.get("learnings") or []:
+        lid = learning.get("id") if isinstance(learning, dict) else None
+        if isinstance(lid, str) and lid and not cited(lid):
+            findings.append(f"retro:report-missing-id:learning:{lid}")
+    return findings

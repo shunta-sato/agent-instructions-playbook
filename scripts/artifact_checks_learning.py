@@ -141,18 +141,25 @@ def _has_absorption_rationale(learning: dict) -> bool:
         return False
     skills = absorption.get("skills_considered")
     rationale = absorption.get("rationale")
-    return bool(skills) and isinstance(rationale, str) and rationale.strip() != ""
+    decision = absorption.get("decision")
+    return (
+        bool(skills)
+        and isinstance(rationale, str) and rationale.strip() != ""
+        and decision in ABSORPTION_DECISION_ENUM
+    )
 
 try:
     from artifact_checks_learning_fields import (
         _check_object_required_fields,
         _check_ref_safety,
+        _check_id_cross_checks,
         resolve_attempt_scope,
     )
 except ModuleNotFoundError:  # imported as scripts.artifact_checks_learning
     from scripts.artifact_checks_learning_fields import (
         _check_object_required_fields,
         _check_ref_safety,
+        _check_id_cross_checks,
         resolve_attempt_scope,
     )
 
@@ -180,21 +187,6 @@ def _check_report_headings(report_text: str) -> list[str]:
         for heading in REPORT_REQUIRED_HEADINGS
         if heading not in present
     ]
-
-def _check_id_cross_checks(record: dict, report_text: str) -> list[str]:
-    findings = []
-    rid = record.get("retrospective_id")
-    if isinstance(rid, str) and rid and rid not in report_text:
-        findings.append("retro:id-mismatch:retrospective_id")
-    for attempt in record.get("attempts") or []:
-        aid = attempt.get("id") if isinstance(attempt, dict) else None
-        if isinstance(aid, str) and aid and aid not in report_text:
-            findings.append(f"retro:report-missing-id:attempt:{aid}")
-    for learning in record.get("learnings") or []:
-        lid = learning.get("id") if isinstance(learning, dict) else None
-        if isinstance(lid, str) and lid and lid not in report_text:
-            findings.append(f"retro:report-missing-id:learning:{lid}")
-    return findings
 
 def _check_trigger(record: dict) -> list[str]:
     trigger = record.get("trigger")
@@ -374,8 +366,12 @@ def _run_retrospective_checks(repo_root: Path, artifact_path: Path, spec: dict) 
     findings += _check_trigger(record)
 
     attempts = record.get("attempts")
+    if attempts is not None and not isinstance(attempts, list):
+        findings.append("retro:bad-shape:attempts")
     attempts = attempts if isinstance(attempts, list) else []
     learnings = record.get("learnings")
+    if learnings is not None and not isinstance(learnings, list):
+        findings.append("retro:bad-shape:learnings")
     learnings = learnings if isinstance(learnings, list) else []
 
     findings += _check_attempts(attempts)
