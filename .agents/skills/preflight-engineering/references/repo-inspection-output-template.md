@@ -25,6 +25,7 @@ python3 .agents/skills/preflight-engineering/scripts/check_agent_docs.py --root 
 
 - Instruction files:
 - Agent context:
+- LLM Wiki index (`.agent/wiki/index.md`, if present):
 - Skill files:
 - Docs:
 - Commands:
@@ -60,3 +61,10 @@ python3 .agents/skills/preflight-engineering/scripts/check_agent_docs.py --root 
 - Keep root `AGENTS.md` compact and stable.
 - Move area-specific rules into nested `AGENTS.md` files.
 - Keep `.agent/ctx/<domain>.md` maps short, readable, and auditable.
+
+## LLM Wiki Inventory
+
+- If `.agent/wiki/index.md` exists, inventory it as the project-knowledge entry point.
+- Read only the entries whose scope matches the task's paths or components — never load the whole wiki.
+- Reference relevant entries from `.agent/ctx` maps or the work-routing map; do not restate their content there.
+- Never copy Wiki entry bodies into `AGENTS.md`.

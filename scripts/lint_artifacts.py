@@ -48,6 +48,7 @@ DEFAULT_BASELINE_RELPATH = "scripts/artifact_lint_baseline.json"
 CHECKER_MODULES: dict[str, tuple[str, str]] = {
     "docs": ("scripts.artifact_checks_docs", "artifact_checks_docs"),
     "packs": ("scripts.artifact_checks_packs", "artifact_checks_packs"),
+    "learning": ("scripts.artifact_checks_learning", "artifact_checks_learning"),
 }
 
 Checker = Callable[[Path, Path, dict, dict], list]

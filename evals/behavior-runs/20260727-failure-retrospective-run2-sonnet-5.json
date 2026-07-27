@@ -1,0 +1,157 @@
+{
+  "cases": [
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "project-specific-deterministic-requires-lint-not-wiki-only",
+      "output_contains": {
+        "matched": 5,
+        "missing": [
+          "enforceability"
+        ],
+        "total": 6
+      },
+      "skill": "failure-retrospective"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 3
+      },
+      "id": "cross-project-derived-summary-evidence-confusion-existing-skill",
+      "output_contains": {
+        "matched": 6,
+        "missing": [],
+        "total": 6
+      },
+      "skill": "failure-retrospective"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 3
+      },
+      "id": "productive-exploration-no-durable-change-accepted",
+      "output_contains": {
+        "matched": 3,
+        "missing": [],
+        "total": 3
+      },
+      "skill": "failure-retrospective"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "unclear-causality-insufficient-evidence-observe-first",
+      "output_contains": {
+        "matched": 4,
+        "missing": [],
+        "total": 4
+      },
+      "skill": "failure-retrospective"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "repeated-preventable-deterministic-docs-only-refused",
+      "output_contains": {
+        "matched": 3,
+        "missing": [
+          "reusable-lint",
+          "closure condition"
+        ],
+        "total": 5
+      },
+      "skill": "failure-retrospective"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "existing-skill-absorption-possible-no-new-skill",
+      "output_contains": {
+        "matched": 2,
+        "missing": [
+          "existing-skill",
+          "absorbed"
+        ],
+        "total": 4
+      },
+      "skill": "failure-retrospective"
+    },
+    {
+      "decision_match": true,
+      "findings": {
+        "matched": 0,
+        "total": 2
+      },
+      "id": "final-attempt-success-only-causal-confidence-not-confirmed",
+      "output_contains": {
+        "matched": 4,
+        "missing": [
+          "earliest signal"
+        ],
+        "total": 5
+      },
+      "skill": "failure-retrospective"
+    }
+  ],
+  "cases_graded": 7,
+  "cases_total": 16,
+  "commit": "b66c9463f24cfe0c865c3cf59559b6131b4151f3",
+  "decision_accuracy": 1.0,
+  "findings_ratio_mean": 0.0,
+  "output_contains_rate": 0.8182,
+  "ungraded": [
+    {
+      "id": "delegated-run-missing-ledger-no-submit",
+      "reason": "response_missing"
+    },
+    {
+      "id": "delegated-run-validation-missing-no-submit",
+      "reason": "response_missing"
+    },
+    {
+      "id": "delegated-run-token-not-collected-submit",
+      "reason": "response_missing"
+    },
+    {
+      "id": "delegated-run-scope-violation-no-submit",
+      "reason": "response_missing"
+    },
+    {
+      "id": "nfr-claim-without-measurement-no-submit",
+      "reason": "response_missing"
+    },
+    {
+      "id": "nfr-target-measured-submit",
+      "reason": "response_missing"
+    },
+    {
+      "id": "discount-rate-tier-and-boundary-design",
+      "reason": "response_missing"
+    },
+    {
+      "id": "refund-transfer-money-moving-design",
+      "reason": "response_missing"
+    },
+    {
+      "id": "over-testing-review-near-identical-values",
+      "reason": "response_missing"
+    }
+  ],
+  "variant": "wt-retro"
+}

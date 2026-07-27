@@ -126,6 +126,7 @@ This playbook is inspired by, or aligned with, the following sources.
 - Atlassian 5 Whys analysis template: https://www.atlassian.com/software/confluence/templates/5-whys-analysis
 - Jira bug report template (steps/expected/actual/environment): https://www.atlassian.com/en/software/jira/templates/bug-report
 - Mozilla bug writing guidelines (steps/expected/actual; facts vs speculations): https://devdoc.net/web/developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines.html
+- Ward Cunningham, *WikiWikiWeb* (the original wiki pattern — one page per component/concept, incrementally edited, never one page per event; informs `failure-retrospective`'s LLM Wiki "not one page per task" rule): https://wiki.c2.com/
 
 ## Constrained code synthesis / staged lowering
 

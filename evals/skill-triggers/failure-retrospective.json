@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "failure-retro-two-rollbacks-third-succeeds",
+      "prompt": "We rolled back two different approaches to the payment retry queue design before a third approach finally worked and shipped. We're at a stable closeout point now -- extract the reusable learning from why the first two failed and decide where it should live.",
+      "should_trigger": [
+        "failure-retrospective"
+      ],
+      "should_not_trigger": [
+        "bug-investigation-and-rca",
+        "research-synthesis",
+        "quality-gate",
+        "branch-completion"
+      ],
+      "expected_decisions": [
+        "Attempt sequence reconstructed for materially different attempts only",
+        "Learning scope and machine-checkability classified",
+        "Exactly one disposition chosen"
+      ],
+      "expected_evidence": [
+        "Evidence of each rolled-back approach (diffs/commits/revert)",
+        "Contrast between the earlier attempts and the one that shipped"
+      ],
+      "expected_output_contains": [
+        "Attempt sequence",
+        "causal confidence",
+        "retention action"
+      ],
+      "notes": "Two rolled-back approaches plus a third that shipped is materially-different-attempts closeout learning capture, not just a normal merge."
+    },
+    {
+      "id": "failure-retro-delegated-scope-rejection-then-accepted",
+      "prompt": "A delegated worker's first attempt was rejected because it edited files outside its allowed scope; we rewrote the task brief with a tighter allowed-file list and a boundary note, and the second attempt was accepted. Now that the branch is stable, capture what should change so this scope miss doesn't happen again.",
+      "should_trigger": [
+        "failure-retrospective"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "bug-investigation-and-rca",
+        "research-synthesis"
+      ],
+      "expected_decisions": [
+        "Materially different attempt recognized (delegation boundary/allowed scope changed)",
+        "Learning scope classified project-specific or cross-project-reusable",
+        "Retention action chosen from the priority order, not a docs-only close if preventable and deterministic"
+      ],
+      "expected_evidence": [
+        "Rejected run record or judge result",
+        "Revised task brief",
+        "Accepted run record"
+      ],
+      "expected_output_contains": [
+        "materially different attempt",
+        "retention action",
+        "existing-skill"
+      ],
+      "notes": "A rejected-then-accepted delegated run with a changed delegation boundary is a materially different attempt, not routine review."
+    },
+    {
+      "id": "failure-retro-quality-gate-weak-oracle-rerouted",
+      "prompt": "Quality-gate rejected our completion claim because the only evidence was a manual eyeball check with no reproducible oracle; we changed the verification approach and re-routed the work through a different validation method before it passed. Now that it is closed out, capture the learning.",
+      "should_trigger": [
+        "failure-retrospective"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "bug-investigation-and-rca"
+      ],
+      "expected_decisions": [
+        "Verification-method change recognized as a materially different attempt",
+        "Project-specific vs cross-project-reusable scope decided for the weak-oracle pattern",
+        "Retention action prefers lint/harness over prose for a deterministic gap"
+      ],
+      "expected_evidence": [
+        "Quality-gate rejection finding",
+        "Evidence of the changed verification method/oracle"
+      ],
+      "expected_output_contains": [
+        "failure class",
+        "verification",
+        "closure"
+      ],
+      "notes": "A quality-gate rejection followed by a route/verification-method change is process learning this skill owns, not a second quality-gate run."
+    },
+    {
+      "id": "failure-retro-recurring-failure-signature",
+      "prompt": "This branch just hit the same failure signature we already wrote up in a retrospective a few weeks ago -- same failure class, same failed invariant, same earliest signal, same affected workflow boundary. Handle the retrospective side of closing this out.",
+      "should_trigger": [
+        "failure-retrospective"
+      ],
+      "should_not_trigger": [
+        "bug-investigation-and-rca",
+        "quality-gate"
+      ],
+      "expected_decisions": [
+        "Recurrence marked repeated, not treated as a one-off",
+        "Repeated plus preventable rules out a docs-only close"
+      ],
+      "expected_evidence": [
+        "Reference to the prior retrospective record",
+        "Matching failure class, invariant, signal, and boundary"
+      ],
+      "expected_output_contains": [
+        "repeated",
+        "recurrence",
+        "lint"
+      ],
+      "notes": "A recurring failure signature against a prior retrospective record is this skill's recurrence-search step and its repeated+preventable closure rule."
+    },
+    {
+      "id": "failure-retro-explicit-lessons-learned-request",
+      "prompt": "振り返りをして、Project固有と汎用の学びを分け、SKILL/Lint/Wikiへの反映先を決めて。",
+      "should_trigger": [
+        "failure-retrospective"
+      ],
+      "should_not_trigger": [
+        "quality-gate",
+        "branch-completion"
+      ],
+      "expected_decisions": [
+        "Learning scope split into task-only, project-specific, and cross-project-reusable",
+        "Retention action assigned per learning"
+      ],
+      "expected_output_contains": [
+        "scope",
+        "retention action"
+      ],
+      "notes": "Explicit request naming retrospective plus project-specific vs general-learning routing to Skill/Lint/Wiki; the one case allowed to name adjacent mechanisms explicitly."
+    },
+    {
+      "id": "failure-retro-negative-typo-one-line-fix",
+      "prompt": "Fix the typo in the log message on line 42 of parser.py from 'recieved' to 'received' and commit.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "failure-retrospective",
+        "bug-investigation-and-rca",
+        "quality-gate"
+      ],
+      "notes": "A one-line typo fix is clean first-pass work; no rollback, no attempts, no rejection."
+    },
+    {
+      "id": "failure-retro-negative-network-retry-same-command",
+      "prompt": "The deploy script failed with a connection timeout to the registry; I reran the exact same deploy command and it succeeded this time.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "failure-retrospective",
+        "bug-investigation-and-rca"
+      ],
+      "notes": "A transient network retry of the identical command is explicitly not a materially different attempt."
+    },
+    {
+      "id": "failure-retro-negative-single-bug-rca-only",
+      "prompt": "The login endpoint throws a 500 on empty passwords. Reproduce it, find the root cause, fix it, and verify.",
+      "should_trigger": [
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "failure-retrospective"
+      ],
+      "notes": "Single-incident RCA stays inside bug-investigation-and-rca; no rollback, no multiple attempts, no misrouting."
+    },
+    {
+      "id": "failure-retro-negative-single-disconfirmed-experiment",
+      "prompt": "The registered experiment testing whether caching the embeddings improves latency came back disconfirmed as expected -- no speedup. Log the result and move to the next probe.",
+      "should_trigger": [
+        "experiment-loop"
+      ],
+      "should_not_trigger": [
+        "failure-retrospective",
+        "research-synthesis"
+      ],
+      "notes": "One expected disconfirmed result is ordinary negative evidence handled per-experiment, not a retrospective trigger."
+    },
+    {
+      "id": "failure-retro-negative-merge-and-cleanup-only",
+      "prompt": "All checks pass and review is approved. Merge the PR and delete the local and remote feature branch.",
+      "should_trigger": [
+        "branch-completion"
+      ],
+      "should_not_trigger": [
+        "failure-retrospective",
+        "quality-gate"
+      ],
+      "notes": "A clean merge and cleanup with no rollback or repeated failed attempt is branch-completion's ordinary lifecycle, not a retrospective trigger."
+    },
+    {
+      "id": "failure-retro-negative-ordinary-review-feedback",
+      "prompt": "Address the reviewer's comments on this PR: rename the two variables they flagged and split the long function as requested, then reply to each thread.",
+      "should_trigger": [
+        "receiving-code-review"
+      ],
+      "should_not_trigger": [
+        "failure-retrospective"
+      ],
+      "notes": "Ordinary review-comment accept/refute processing is not a retrospective trigger even though it changes code after feedback."
+    }
+  ]
+}

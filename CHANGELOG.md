@@ -2,6 +2,11 @@
 
 All notable changes to this repository are documented in this file.
 
+## v4.19.0
+
+### Added
+- Added the **`failure-retrospective`** skill and its Learning Promotion routing: rollbacks, abandoned approaches, misrouted work, weak verification, delegation failures, and rejected completion claims are now routed to task-only (`reports/retrospectives/<id>/`, `record.json` + `report.md`, bootstrapped via `python scripts/init_artifact.py --kind failure-retrospective`), project-specific (`.agent/wiki/` — one page per component/constraint/failure pattern, never per task), or cross-project-reusable (existing-skill absorption before any new skill) scope, with a hard closure rule that a preventable, deterministically checkable failure can never close on prose alone. `scripts/lint_artifacts.py` gained a `learning` checker covering both the retrospective pack and the `.agent/wiki` shape (required files, headings, fixed fields, ID/enum integrity, index reachability, no dead links). `execution-plans`, `plans/_template_execplan.md`, `branch-completion`, `bug-investigation-and-rca`, `research-synthesis`, and `preflight-engineering` each gained an additive trigger/handoff line for the new skill; `quality-gate` and submission evidence stay uncoupled from it (no gate cycle).
+
 ## v4.18.0
 
 ### Added
