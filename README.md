@@ -15,6 +15,22 @@ The goal is a small, curated software-development operating system: clear entry 
 
 ## Quick Start
 
+To enable this playbook's skills in another Git worktree for Codex, GitHub
+Copilot, and Claude Code, run:
+
+```sh
+./setup.sh /path/to/worktree
+```
+
+The setup creates `.agents/skills` and `.claude/skills` symlinks to this
+repository's skill source. It records both paths in the target repository's
+Git-local exclude file, so the setup remains untracked without changing the
+project's shared `.gitignore`. Existing paths are never overwritten. Because
+the links point to this repository directly, pulling or editing the playbook
+automatically updates every configured worktree, including newly added skills.
+
+After setup:
+
 1. Open `AGENTS.md` first. It contains the always-on rules and generated skill index.
 2. If `COMMANDS.md` still contains `<fill>`, run `project-initialization` before trusting build/test commands.
 3. For code or test changes, follow `dev-workflow`, then finish with `quality-gate`.
