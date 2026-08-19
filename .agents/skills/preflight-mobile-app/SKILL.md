@@ -78,6 +78,7 @@ Do not use it for an already-routed, small, single-platform edit when the reposi
 ## Routing rules
 
 - Ambiguous functionality or NFR targets -> `requirements-engineering`.
+- One product capability required on both iOS and Android -> `mobile-feature-parity` for per-platform semantics, allowed deviations, and verification evidence.
 - Cross-boundary architecture/framework choice -> `architecture-decision-analysis` after measurable quality drivers exist.
 - Public API/schema/generated client -> `preflight-api-compat`.
 - OAuth/session/token/login -> `preflight-auth-session`.
