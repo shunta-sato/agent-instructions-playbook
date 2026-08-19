@@ -22,7 +22,6 @@ metadata:
 ## Purpose
 
 Prepare a repository for long-running agentic development before product implementation starts. Produce compact Agent-facing context, routing maps, safety invariants, test routing, subagent work plans, cache-readiness checks, and a development commander handoff prompt.
-
 This skill prepares the work environment; it does not implement product fixes, run migrations, deploy, reveal secrets, or broaden dependencies.
 
 ## How to use
