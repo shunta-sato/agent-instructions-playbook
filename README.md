@@ -147,6 +147,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `implementation-economy` | Implementation complexity budget | `.agents/skills/implementation-economy/SKILL.md` |
 | `japanese-tech-writing` | Japanese technical writing conventions | `.agents/skills/japanese-tech-writing/SKILL.md` |
 | `mobile-feature-parity` | Cross-platform mobile capability parity | `.agents/skills/mobile-feature-parity/SKILL.md` |
+| `mobile-release-coordination` | Coordinated iOS and Android release gate | `.agents/skills/mobile-release-coordination/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |
