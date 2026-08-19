@@ -44,7 +44,7 @@ This skill prepares the work environment; it does not implement product fixes, r
    - Use `references/repo-inspection-output-template.md` when summarizing helper output.
 
 2. Classify task risk.
-   - Check for auth/session/token, billing/payment, public API, DB migration, security-sensitive code, production config, generated clients, multi-service work, external side effects, and dependency changes.
+   - Check for auth/session/token, billing/payment, public API, DB migration, security-sensitive code, production config, generated clients, multi-service work, mobile platform/toolchain/signing/store surfaces, external side effects, and dependency changes.
    - Record risk level, sensitive areas, approval needs, required reviewers, and required tests.
    - After risk classification, select applicable domain preflight skills when a risk surface needs specialist invariants or first-file routing.
    - Domain preflight skills are helpers, not replacements for this orchestrator. Merge their outputs into `AGENTS.md` proposals, `.agent/ctx` maps, skill routing, test routing, approval/reviewer notes, and the final handoff prompt.
@@ -56,6 +56,7 @@ This skill prepares the work environment; it does not implement product fixes, r
 | auth/session/token | `preflight-auth-session` | OAuth, refresh token, JWT, cookie, CSRF, login redirect |
 | public API/generated client | `preflight-api-compat` | OpenAPI, GraphQL, public error shape, generated clients |
 | DB/migration/persistence | `preflight-db-migration` | schema change, migration, rollback, backfill |
+| mobile app/platform/toolchain | `preflight-mobile-app` | new or unfamiliar iOS/Android/Flutter/cross-platform app, cross-platform delivery, signing/device/store/cloud-mobile boundaries |
 | security-sensitive code | `preflight-security-sensitive` (candidate) | secrets, logging, injection, SSRF, dependency risk |
 | infra/deploy/runtime config | `preflight-infra-deploy` (candidate) | deploy config, IaC, env vars, production runtime |
 | billing/payment | `preflight-billing-payment` (candidate) | payment flow, invoice, subscription, external money movement |
