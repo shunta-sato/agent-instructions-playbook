@@ -4,11 +4,16 @@ set -eu
 
 usage() {
     cat <<'EOF'
-Usage: ./setup.sh [WORKDIR]
+Usage: ./setup.sh [--overlay] [WORKDIR]
 
 Expose this repository's skills to Codex, GitHub Copilot, and Claude Code in
 WORKDIR. WORKDIR defaults to the current directory and must be a Git worktree
 root.
+
+By default, setup links each client's entire skills directory to this playbook.
+Use --overlay when the target repository must keep its own or third-party skills
+alongside playbook skills. Overlay mode creates one symlink per playbook skill
+and leaves non-conflicting entries in the target skills directories untouched.
 EOF
 }
 
@@ -59,22 +64,77 @@ ensure_exclude_pattern() {
     fi
 }
 
-if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
-    usage
-    exit 0
-fi
-if [ "$#" -gt 1 ]; then
-    usage >&2
-    exit 2
-fi
+check_overlay_parent() {
+    parent=$1
+    if [ -L "$parent" ]; then
+        echo "error: overlay mode requires a real directory, not an existing directory symlink: $parent" >&2
+        echo "error: remove the legacy skills-directory symlink before switching this worktree to --overlay" >&2
+        exit 1
+    fi
+    if [ -e "$parent" ] && [ ! -d "$parent" ]; then
+        echo "error: overlay skills parent is not a directory: $parent" >&2
+        exit 1
+    fi
+}
+
+overlay_check_all() {
+    target_root=$1
+    for source_skill in "$source_skills"/*; do
+        [ -d "$source_skill" ] || continue
+        skill_name=$(basename "$source_skill")
+        check_link_destination "$target_root/$skill_name" "$source_skill"
+    done
+}
+
+overlay_install_all() {
+    target_root=$1
+    exclude_prefix=$2
+    exclude_file=$3
+
+    mkdir -p "$target_root"
+    for source_skill in "$source_skills"/*; do
+        [ -d "$source_skill" ] || continue
+        skill_name=$(basename "$source_skill")
+        ensure_link "$target_root/$skill_name" "$source_skill"
+        ensure_exclude_pattern "$exclude_file" "$exclude_prefix/$skill_name"
+    done
+}
+
+overlay=false
+workdir_arg=""
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --overlay)
+            overlay=true
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        --*)
+            echo "error: unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+        *)
+            if [ -n "$workdir_arg" ]; then
+                usage >&2
+                exit 2
+            fi
+            workdir_arg=$1
+            ;;
+    esac
+    shift
+done
 
 script_dir=$(canonical_dir "$(dirname "$0")")
 source_skills=$(canonical_dir "$script_dir/.agents/skills") || {
     echo "error: source skills not found under $script_dir/.agents/skills" >&2
     exit 1
 }
-workdir=$(canonical_dir "${1:-.}") || {
-    echo "error: workdir does not exist: ${1:-.}" >&2
+workdir=$(canonical_dir "${workdir_arg:-.}") || {
+    echo "error: workdir does not exist: ${workdir_arg:-.}" >&2
     exit 1
 }
 
@@ -93,23 +153,43 @@ if [ "$workdir" = "$script_dir" ]; then
     exit 0
 fi
 
-agents_link="$workdir/.agents/skills"
-claude_link="$workdir/.claude/skills"
-
-check_link_destination "$agents_link" "$source_skills"
-check_link_destination "$claude_link" "$source_skills"
-ensure_link "$agents_link" "$source_skills"
-ensure_link "$claude_link" "$source_skills"
+agents_path="$workdir/.agents/skills"
+claude_path="$workdir/.claude/skills"
 
 exclude_file=$(git -C "$workdir" rev-parse --git-path info/exclude)
 case "$exclude_file" in
     /*) ;;
     *) exclude_file="$workdir/$exclude_file" ;;
 esac
+
+if [ "$overlay" = true ]; then
+    check_overlay_parent "$agents_path"
+    check_overlay_parent "$claude_path"
+
+    # Check both clients completely before mutating either one so name
+    # collisions cannot leave a half-installed overlay.
+    overlay_check_all "$agents_path"
+    overlay_check_all "$claude_path"
+
+    overlay_install_all "$agents_path" "/.agents/skills" "$exclude_file"
+    overlay_install_all "$claude_path" "/.claude/skills" "$exclude_file"
+
+    echo "Enabled playbook skills in overlay mode in $workdir"
+    echo "  Codex / GitHub Copilot: $agents_path/<skill>"
+    echo "  Claude Code:            $claude_path/<skill>"
+    echo "  Git-local exclusions:   per playbook skill in $exclude_file"
+    exit 0
+fi
+
+check_link_destination "$agents_path" "$source_skills"
+check_link_destination "$claude_path" "$source_skills"
+ensure_link "$agents_path" "$source_skills"
+ensure_link "$claude_path" "$source_skills"
+
 ensure_exclude_pattern "$exclude_file" "/.agents/skills"
 ensure_exclude_pattern "$exclude_file" "/.claude/skills"
 
 echo "Enabled playbook skills in $workdir"
-echo "  Codex / GitHub Copilot: $agents_link"
-echo "  Claude Code:            $claude_link"
+echo "  Codex / GitHub Copilot: $agents_path"
+echo "  Claude Code:            $claude_path"
 echo "  Git-local exclusions:   $exclude_file"
