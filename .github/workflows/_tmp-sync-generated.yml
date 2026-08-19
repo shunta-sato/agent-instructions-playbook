@@ -1,0 +1,34 @@
+name: Temporary generated catalog sync
+
+on:
+  push:
+    branches:
+      - agent/mobile-preflight-foundation
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/mobile-preflight-foundation
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate catalog
+        run: python scripts/generate_agent_index.py --write
+      - name: Commit generated files
+        shell: bash
+        run: |
+          if git diff --quiet -- AGENTS.md README.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AGENTS.md README.md
+          git commit -m "Sync generated agent catalogs"
+          git push origin HEAD:agent/mobile-preflight-foundation
