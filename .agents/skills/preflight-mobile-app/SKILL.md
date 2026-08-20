@@ -79,6 +79,7 @@ Do not use it for an already-routed, small, single-platform edit when the reposi
 
 - Ambiguous functionality or NFR targets -> `requirements-engineering`.
 - One product capability required on both iOS and Android -> `mobile-feature-parity` for per-platform semantics, allowed deviations, and verification evidence.
+- Coordinated iOS/Android publication, store readiness, mixed-version backend compatibility, feature-flag rollout, or release rollback planning -> `mobile-release-coordination` at release-planning/readiness time.
 - Cross-boundary architecture/framework choice -> `architecture-decision-analysis` after measurable quality drivers exist.
 - Public API/schema/generated client -> `preflight-api-compat`.
 - OAuth/session/token/login -> `preflight-auth-session`.
