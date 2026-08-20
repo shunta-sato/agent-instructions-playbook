@@ -1,6 +1,6 @@
 ---
 name: mobile-runtime-verification
-description: "Operate a running mobile app to explore, reproduce, verify, or profile behavior and produce target-bound runtime evidence. Do not use when unit/component tests alone prove the change or when merely running an existing E2E suite."
+description: "Target-bound mobile runtime evidence for exploratory, reproduction, verification, or profiling work involving a running app. Excludes unit/component-only proof and simple execution of an existing E2E suite."
 metadata:
   short-description: Mobile runtime verification
   resources:
