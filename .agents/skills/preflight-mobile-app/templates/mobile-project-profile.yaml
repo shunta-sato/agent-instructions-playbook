@@ -1,7 +1,7 @@
-version: 1
+version: 2
 
 implementation:
-  model: unknown # dual-native | flutter | kmp-native-ui | compose-multiplatform | react-native | other | unknown
+  model: unknown # dual-native | flutter | kmp-native-ui | compose-multiplatform | react-native-expo | react-native-bare-or-brownfield | other | unknown
   evidence: []
 
 surfaces:
@@ -24,6 +24,32 @@ surfaces:
     emulator_or_device: unknown
   web:
     enabled: unknown
+
+javascript:
+  package_manager: unknown
+  node_version: unknown
+  lockfile: unknown
+  canonical_scripts: []
+
+react_native:
+  detected: unknown
+  version: unknown
+  native_project_model: unknown # expo-cng | committed-native-projects | bare-or-brownfield | unknown
+  new_architecture: unknown
+  hermes: unknown
+
+expo:
+  detected: unknown
+  sdk_version: unknown
+  app_config: unknown
+  router: unknown
+  development_build: unknown
+  expo_go_only: unknown
+  eas_project: unknown
+  eas_build_profiles: []
+  updates_enabled: unknown
+  runtime_version: unknown
+  channels: []
 
 flutter:
   detected: unknown
@@ -65,9 +91,25 @@ cloud:
 native_boundaries:
   android: []
   ios: []
-  ffi: []
+  ffi_or_jsi: []
   vendor_sdks: []
   performance_sensitive: []
+
+testing:
+  unit: unknown
+  component: unknown
+  mobile_e2e: unknown
+  web_e2e: unknown
+  maestro_paths: []
+  canonical_commands: []
+
+runtime_harness:
+  primary: unknown
+  agent_device_version: unknown
+  argent_version: unknown
+  device_hosts: []
+  artifact_policy: unknown
+  production_access: forbidden
 
 verification:
   canonical_commands: []
