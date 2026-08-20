@@ -6,6 +6,7 @@ metadata:
   resources:
     - references/ears-requirements-to-design.md
     - references/iso25010-quality-scenarios.md
+    - references/mobile-quality-scenarios.md
     - references/requirements-briefs-and-specs.md
 ---
 
@@ -35,6 +36,7 @@ Use this skill when:
 - a request is ambiguous, cross-component, user-facing, or risky enough to need requirements first
 - you are creating or updating a requirements brief/spec
 - vague qualities such as "fast", "reliable", "secure", or "usable" need measurable targets
+- mobile requirements must distinguish shared product capability, iOS/Android parity, platform constraints, and measurable mobile quality targets
 - non-embedded performance expectations need scale assumptions, latency/throughput acceptance criteria, or handoff to `performance-review`
 - embedded physical-footprint qualities such as CPU, RAM, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect need high-level requirement wording before NFR design
 - requirements must be traceable to design decisions, tests, or monitoring
@@ -49,11 +51,13 @@ Do not use it for small, already-clear implementation tasks unless the user asks
    - `references/requirements-briefs-and-specs.md` for briefs, specs, IDs, and trace tables
    - `references/ears-requirements-to-design.md` for EARS statements, boundaries, failure paths, and test seeds
    - `references/iso25010-quality-scenarios.md` for measurable quality attributes and NFRs
+   - `references/mobile-quality-scenarios.md` when iOS/Android/Flutter/mobile platform constraints or cross-platform parity materially affect requirement classification or verification
 4. Write 1-5 requirements first unless the task genuinely needs more.
 5. For each requirement, include acceptance criteria, a Definition of Done, and a verification method.
 6. If an embedded NFR requirement depends on target behavior, do not finalize numeric acceptance criteria until `embedded-target-characterization` exists or the requirement is explicitly unknown/provisional.
 7. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
 8. If the requirement involves non-embedded request latency, render cost, throughput, data-size scaling, or N+1 risk, hand off to `performance-review` with scale assumptions and acceptance criteria.
+8b. If one mobile capability must be implemented or verified across both iOS and Android, hand the stable requirement IDs and measurable quality targets to `mobile-feature-parity`; requirements define what must hold, parity owns per-platform evidence and allowed deviations.
 9. Trace acceptance criteria into the `test-driven-development` Test List and the `quality-gate` exit criteria when implementation will follow.
 9b. Record every measurable quality/NFR target in a gate-checkable Quality Targets list: `metric | target | measurement method | measured result (filled before gate, or not-measured with reason)`. The quality gate blocks submission when a declared target is silently unmeasured or unmet.
 10. Add assumptions, open questions, and traceability only where they reduce ambiguity.

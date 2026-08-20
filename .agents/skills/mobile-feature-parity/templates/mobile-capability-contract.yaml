@@ -1,0 +1,46 @@
+version: 1
+capability_id: unknown
+requirement_ids: []
+
+shared_behavior:
+  preconditions: []
+  inputs: []
+  success_result: unknown
+  state_transitions: []
+  user_visible_errors: []
+  recovery_behavior: unknown
+  cancellation_behavior: unknown
+  retry_behavior: unknown
+  offline_reconnect_behavior: unknown
+
+cloud_contract:
+  operation_or_schema: unknown
+  generated_client_owner: unknown
+  compatibility_window: unknown
+  idempotency_rule: unknown
+  auth_session_assumptions: []
+
+platforms:
+  ios:
+    entry_points: []
+    implementation_notes: []
+    verification: []
+    allowed_deviations: []
+    status: unknown
+  android:
+    entry_points: []
+    implementation_notes: []
+    verification: []
+    allowed_deviations: []
+    status: unknown
+
+observability:
+  correlation: unknown
+  success_signal: unknown
+  failure_signal: unknown
+  sensitive_data_redaction: unknown
+
+parity_matrix: []
+unknowns: []
+blockers: []
+decision: unknown # parity-pass | parity-blocked | not-applicable
