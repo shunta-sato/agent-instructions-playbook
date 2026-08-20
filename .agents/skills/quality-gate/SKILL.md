@@ -6,41 +6,47 @@ metadata:
   requires:
     - references/quality-gate.md
   resources:
+    - references/mobile-test-evidence-matrix.md
     - references/flutter-mobile-test-matrix.md
+    - references/react-native-expo-test-adapter.md
+    - references/maestro-agentic-verification-policy.md
 ---
 
 ## Purpose
 
-Use this skill as the final submit gate.
-
-It answers one question: **is this change ready to submit now?**
+Use this skill as the final submit gate. It answers one question: **is this change ready to submit now?**
 
 ## When to use
 
-Invoke this skill **before every delivery-mode submission**. It is mandatory in delivery mode. Research probes are gated by `scripts/check_research_evidence.py` instead; promotion into delivery paths re-enters this gate in full.
+Invoke this skill before every delivery-mode submission. Research probes use the research evidence gate; promotion into delivery paths re-enters this gate in full.
 
 ## How to use
 
-0) Open `references/quality-gate.md` and run the checklist as one complete sweep — never stop at the first failed item: `references/quality-gate.md` §sweep rule.
+0) Open `references/quality-gate.md` and run its checklist as one complete sweep; never stop at the first failed item.
 
-1) Verify canonical commands are green at the required depth — full command-status checklist: `references/quality-gate.md` §1.
+1) Verify canonical commands are green at the required depth.
 
-1b) Run the structural exit check: `python scripts/check_structure.py --working-tree` — full rule (finding types, entrypoint scope, no-waiver-no-submit): `references/quality-gate.md` §1b.
+1b) Run `python scripts/check_structure.py --working-tree` and apply the no-waiver/no-submit structure rule.
 
-1c) Run the boundary gate with the declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery` — `safety-review-required` findings are `no-submit` in every mode: `references/quality-gate.md` §3.
+1c) Run `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery`; `safety-review-required` is `no-submit` in every mode.
 
-2) Validate required artifacts/evidence from every triggered branch — full per-branch evidence list: `references/quality-gate.md` §2.
-   - If a Flutter/mobile change claims Android/iOS capability, parity, native/plugin behavior, or mobile quality targets, open `references/flutter-mobile-test-matrix.md` and require the target-specific evidence triggered there.
-   - A web/desktop pass cannot replace required Android/iOS evidence, and lack of a local macOS host does not make an iOS claim pass; use a macOS CI/worker path or leave the gate blocked.
-   - When `mobile-feature-parity` was triggered, `parity-blocked` or missing required platform evidence is `no-submit` for a change that claims both platforms complete.
+2) Validate required artifacts/evidence from every triggered branch.
+   - For any mobile claim, open `references/mobile-test-evidence-matrix.md` and select evidence from the changed boundary rather than framework preference.
+   - For Flutter, also open `references/flutter-mobile-test-matrix.md`.
+   - For React Native/Expo, also open `references/react-native-expo-test-adapter.md`.
+   - When Maestro, agent-device, Argent, `.ad`, or another device-driving harness contributed evidence, open `references/maestro-agentic-verification-policy.md`.
+   - Web/shared tests cannot replace Android/iOS native/runtime evidence. A missing macOS/iOS path remains blocked.
+   - `mobile-feature-parity` with missing required platform evidence or `parity-blocked` is `no-submit` for a both-platform completion claim.
+   - Runtime evidence marked `pass` without source/build/target/environment identity and an explicit oracle is `no-submit`; screenshot-only or exploratory no-finding evidence is `inconclusive`.
 
-3) Run concise exit-criteria review only; route anything needing deep analysis to its dedicated skill and return — full list: `references/quality-gate.md` §3.
+3) Run concise exit-criteria review only. Route deep analysis to its dedicated skill and return.
 
-4) Output `submit` or `no-submit` with findings — format and the zero-findings rule: `references/quality-gate.md` §4.
+4) Output `submit` or `no-submit` with all findings.
 
 ## Output expectation
 
-- Start with: `Gate decision: submit` or `Gate decision: no-submit`.
-- If `no-submit`, list each finding with: location, missing/failed criterion, required fix.
-- For Flutter/mobile platform claims, report required target evidence as pass/fail/unknown without overstating web/shared-test evidence.
-- Only output `0 findings` when all exit criteria are satisfied.
+- Start with `Gate decision: submit` or `Gate decision: no-submit`.
+- If `no-submit`, list each finding with location, missing/failed criterion, and required fix.
+- For mobile claims, report shared, Android, iOS, web, and runtime evidence separately as applicable.
+- Distinguish regression evidence, target-bound runtime verification, and observation; do not overstate screenshots or agent self-assessment.
+- Only output `0 findings` when every exit criterion is satisfied.
