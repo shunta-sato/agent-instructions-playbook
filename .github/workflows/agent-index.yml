@@ -3,6 +3,12 @@ name: Validate agent instructions
 on:
   pull_request:
   push:
+    branches:
+      - main
+
+concurrency:
+  group: validate-agent-instructions-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   agent-index:
