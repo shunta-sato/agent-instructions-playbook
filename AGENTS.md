@@ -66,6 +66,7 @@ skill|implementation-economy|Implementation complexity budget|.agents/skills/imp
 skill|japanese-tech-writing|Japanese technical writing conventions|.agents/skills/japanese-tech-writing/SKILL.md
 skill|mobile-feature-parity|Cross-platform mobile capability parity|.agents/skills/mobile-feature-parity/SKILL.md
 skill|mobile-release-coordination|Coordinated iOS and Android release gate|.agents/skills/mobile-release-coordination/SKILL.md
+skill|mobile-runtime-verification|Mobile runtime verification|.agents/skills/mobile-runtime-verification/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
