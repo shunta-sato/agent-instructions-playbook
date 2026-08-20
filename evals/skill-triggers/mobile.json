@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "mobile-preflight-new-flutter-cloud-app",
+      "prompt": "Start a new Flutter app for iOS and Android that signs users in and uploads media to our cloud API. Before implementation, inspect the repository and development environment and tell me what must be set up.",
+      "should_trigger": ["preflight-engineering", "preflight-mobile-app"],
+      "should_not_trigger": ["concurrency-android", "visual-regression-testing"],
+      "expected_decisions": [
+        "The implementation model and target platforms are confirmed from repository evidence or marked unknown",
+        "API/auth/toolchain/signing/device boundaries are routed before implementation starts"
+      ],
+      "expected_evidence": [
+        "Flutter/Dart, iOS, and Android project/toolchain signals are recorded",
+        "Secret and signing values are not read or copied"
+      ]
+    },
+    {
+      "id": "mobile-preflight-confidential-flutter-mcp",
+      "prompt": "This is a private Flutter repository. We want Codex to use Dart/Flutter MCP for analyzer, widget inspection, screenshots, and hot reload. Check the data paths and set safe preflight rules before we enable it.",
+      "should_trigger": ["preflight-engineering", "preflight-mobile-app"],
+      "should_not_trigger": ["preflight-db-migration"],
+      "expected_decisions": [
+        "Local MCP traffic is distinguished from cloud-model, package-network, application-network, and analytics traffic",
+        "MCP roots are not treated as a filesystem security boundary"
+      ],
+      "expected_evidence": [
+        "Analytics, package-network tools, filesystem isolation, accounts/endpoints, and protocol logging are reviewed",
+        "No private source or secret value is copied into the preflight artifact"
+      ]
+    },
+    {
+      "id": "mobile-preflight-negative-small-android-fix",
+      "prompt": "Fix this nullability bug in an existing Android ViewModel. The project commands, SDK, emulator, architecture, and tests are already documented and working.",
+      "should_trigger": [],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_decisions": [
+        "A small already-routed mobile edit does not reopen project preflight"
+      ]
+    },
+    {
+      "id": "mobile-preflight-negative-backend-only",
+      "prompt": "Refactor an internal backend cache implementation. No mobile client contract, auth flow, schema, or user-visible behavior changes.",
+      "should_trigger": [],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_decisions": [
+        "Backend-only internal work does not trigger mobile preflight"
+      ]
+    },
+    {
+      "id": "mobile-preflight-negative-ios-snapshot",
+      "prompt": "Update the expected iOS snapshot baseline for an intentional spacing change; the simulator and snapshot workflow are already configured.",
+      "should_trigger": ["visual-regression-testing"],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_decisions": [
+        "Existing visual verification handles the change without reopening mobile project setup"
+      ]
+    }
+  ]
+}

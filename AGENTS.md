@@ -72,6 +72,7 @@ skill|preflight-api-compat|Public API compatibility preflight|.agents/skills/pre
 skill|preflight-auth-session|Auth/session preflight|.agents/skills/preflight-auth-session/SKILL.md
 skill|preflight-db-migration|DB migration preflight|.agents/skills/preflight-db-migration/SKILL.md
 skill|preflight-engineering|Preflight agent context and handoff|.agents/skills/preflight-engineering/SKILL.md
+skill|preflight-mobile-app|Mobile app preflight|.agents/skills/preflight-mobile-app/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
 skill|project-structure|Physical code layout and structure budget|.agents/skills/project-structure/SKILL.md
 skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md

@@ -1,0 +1,80 @@
+version: 1
+
+implementation:
+  model: unknown # dual-native | flutter | kmp-native-ui | compose-multiplatform | react-native | other | unknown
+  evidence: []
+
+surfaces:
+  ios:
+    enabled: unknown
+    host_readiness: unknown # ready | blocked-by-host | delegated-to-ci | unknown
+    project_or_workspace: unknown
+    deployment_target: unknown
+    schemes: []
+    signing_reference: unknown
+    simulator_or_device: unknown
+  android:
+    enabled: unknown
+    host_readiness: unknown
+    modules: []
+    min_sdk: unknown
+    target_sdk: unknown
+    variants: []
+    signing_reference: unknown
+    emulator_or_device: unknown
+  web:
+    enabled: unknown
+
+flutter:
+  detected: unknown
+  flutter_version: unknown
+  dart_version: unknown
+  version_manager: unknown
+  analyzer_command: unknown
+  test_command: unknown
+  mcp:
+    enabled: unknown
+    version: unknown
+    analytics: unknown
+    package_network_tools: unknown
+    filesystem_isolation: unknown
+    cloud_model_data_path_reviewed: unknown
+
+project_policy:
+  state_management: unknown
+  dependency_injection: unknown
+  navigation: unknown
+  http_client: unknown
+  serialization: unknown
+  generated_code_policy: unknown
+  directory_model: unknown
+
+cloud:
+  api_contract: unknown
+  generated_clients: []
+  authentication: unknown
+  offline_or_cache_model: unknown
+  background_sync: unknown
+  push_notifications: unknown
+  upload_or_streaming: unknown
+  telemetry: unknown
+  feature_flags: unknown
+  compatibility_window: unknown
+  environments: []
+
+native_boundaries:
+  android: []
+  ios: []
+  ffi: []
+  vendor_sdks: []
+  performance_sensitive: []
+
+verification:
+  canonical_commands: []
+  ios_path: unknown
+  android_path: unknown
+  integration_test_path: unknown
+
+required_routes: []
+blockers: []
+unknowns: []

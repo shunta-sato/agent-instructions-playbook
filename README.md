@@ -155,6 +155,7 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `preflight-db-migration` | DB migration preflight | `.agents/skills/preflight-db-migration/SKILL.md` |
 | `preflight-domain-template` | Domain preflight skill template | `.agents/skills/preflight-domain-template/SKILL.md` |
 | `preflight-engineering` | Preflight agent context and handoff | `.agents/skills/preflight-engineering/SKILL.md` |
+| `preflight-mobile-app` | Mobile app preflight | `.agents/skills/preflight-mobile-app/SKILL.md` |
 | `project-initialization` | Initialize canonical verify commands | `.agents/skills/project-initialization/SKILL.md` |
 | `project-structure` | Physical code layout and structure budget | `.agents/skills/project-structure/SKILL.md` |
 | `quality-gate` | Final quality gate | `.agents/skills/quality-gate/SKILL.md` |
