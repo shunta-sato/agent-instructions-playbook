@@ -5,6 +5,8 @@ metadata:
   short-description: Architecture decision analysis
   requires:
     - references/architecture-decision-analysis.md
+  resources:
+    - references/mobile-native-boundary.md
 ---
 
 ## Purpose
@@ -66,7 +68,7 @@ Do not use this skill for:
    - If it is only diff review, route to `code-smells-and-antipatterns`.
    - If it is only observability detail, route to `observability`.
 
-3. Open `references/architecture-decision-analysis.md`.
+3. Open `references/architecture-decision-analysis.md`; for a Flutter/mobile shared-vs-native/plugin/FFI boundary, also open `references/mobile-native-boundary.md`.
 
 4. Identify up to 5 quality drivers.
    - Each driver must have a scenario, metric or threshold, and verification method.
@@ -140,9 +142,7 @@ Return an Architecture Decision Analysis Record:
 - code-smells-and-antipatterns:
 - quality-gate:
 ```
-
 ## Caps
-
 - Candidate options: maximum 3.
 - Quality drivers: maximum 5.
 - Verification tasks: maximum 7.

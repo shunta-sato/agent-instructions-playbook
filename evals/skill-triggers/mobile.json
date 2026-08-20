@@ -106,6 +106,57 @@
       "expected_decisions": [
         "Pixel baseline maintenance does not trigger product-capability parity"
       ]
+    },
+    {
+      "id": "flutter-native-boundary-camera-60fps",
+      "prompt": "Our configured Flutter app must process 1080p camera frames at 60fps on iOS and Android. Compare pure Dart/isolate, an existing plugin with native processing, and a custom FFI/native boundary. We have measurable frame-time and memory targets and need to decide before implementation.",
+      "should_trigger": ["architecture-decision-analysis", "performance-review"],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_decisions": [
+        "The native/shared boundary is chosen from measured quality drivers rather than framework preference",
+        "Data size, crossing frequency, copies/serialization, threading, lifecycle, and both platform verification paths are compared"
+      ],
+      "expected_evidence": [
+        "Candidate boundaries include only viable Dart/plugin/native/FFI options",
+        "Performance evidence is scoped to representative Android and iOS targets"
+      ]
+    },
+    {
+      "id": "flutter-performance-jank-review",
+      "prompt": "This Flutter scrolling screen misses frames when rendering 2,000 items. Review the render hot path, allocations, rebuild/copy costs, and measure it on our representative Android and iOS devices before claiming the optimization is complete.",
+      "should_trigger": ["performance-review"],
+      "should_not_trigger": ["architecture-decision-analysis"],
+      "expected_decisions": [
+        "The current render path is reviewed before escalating to an architecture decision",
+        "A shared mobile performance claim requires platform-scoped measurement evidence"
+      ],
+      "expected_evidence": [
+        "Build mode, device/OS, workload, and frame-oriented measurement are recorded",
+        "Debug or web-only timing is not used as mobile release-performance evidence"
+      ]
+    },
+    {
+      "id": "flutter-performance-negative-simple-form",
+      "prompt": "Add one validated text field to an existing Flutter settings form. No performance target, large data path, native boundary, background work, or measurable latency change is involved.",
+      "should_trigger": [],
+      "should_not_trigger": ["performance-review", "architecture-decision-analysis"],
+      "expected_decisions": [
+        "Ordinary Flutter UI work does not trigger performance or architecture analysis without a matching risk"
+      ]
+    },
+    {
+      "id": "flutter-mobile-quality-gate-platform-evidence",
+      "prompt": "Before submitting this Flutter feature as complete on iOS and Android, verify the required shared tests plus the Android emulator/device and iOS simulator/device evidence for the changed permission and native-plugin behavior.",
+      "should_trigger": ["quality-gate"],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_decisions": [
+        "Missing required target-specific evidence blocks a cross-platform completion claim",
+        "Web or shared widget-test passes do not substitute for platform-boundary evidence"
+      ],
+      "expected_evidence": [
+        "The gate matrix records shared, Android, and iOS evidence separately",
+        "Unavailable local iOS tooling routes to macOS validation or remains blocked"
+      ]
     }
   ]
 }

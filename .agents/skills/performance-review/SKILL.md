@@ -3,6 +3,8 @@ name: performance-review
 description: "Use when non-embedded application code changes request paths, render paths, input-proportional collection processing, loop I/O, N+1 queries, repeated serialization/allocation, serial awaits, or cache/memoization decisions. Declare hot paths, complexity, I/O counts, scale assumptions, and improve-or-accept decisions. For target-local embedded hot paths, use embedded-hot-path-review instead."
 metadata:
   short-description: Generic performance review
+  resources:
+    - references/flutter-performance.md
 ---
 
 ## Purpose
@@ -24,6 +26,7 @@ Use this skill for non-embedded code when a change includes:
 - repeated JSON parsing/serialization, regex, sorting, copying, allocation, or formatting
 - serial `await` chains that could be batched, parallelized, cached, or moved off the path
 - cache, memoization, batching, pagination, or streaming decisions
+- Flutter startup/render/frame, memory/image/media, sustained foreground/background, or Dart/native bridge paths with explicit performance risk or quality targets
 
 Do not use it for:
 
@@ -39,6 +42,7 @@ Do not use it for:
    - request/render/job/background path
    - expected data size and growth axis
    - latency or throughput sensitivity
+   - if Flutter/mobile rendering, startup, media, memory, or native-boundary behavior is involved, open `references/flutter-performance.md` and record platform/build/device scope
 
 2. Declare cost:
 
@@ -53,6 +57,7 @@ Do not use it for:
    - repeated parse/serialize/regex/sort/copy per item
    - serial external calls on a latency-sensitive path
    - cache/memoization without invalidation or size bounds
+   - for Flutter/mobile, platform-boundary copies/calls, UI-isolate work, repeated decode/allocation, or platform-specific lifecycle/background assumptions
 
 4. Decide one:
    - `improve-now`: change the implementation before submit
@@ -61,8 +66,10 @@ Do not use it for:
    - `needs-measurement`: no performance claim is allowed until evidence exists
 
 5. If measurement is feasible, run the smallest relevant benchmark, profiler, trace, query log, or test. If measurement is not feasible, state the scale assumption and avoid performance claims beyond that assumption.
+   - For Flutter/mobile claims, debug-mode timing and web/desktop-only measurements do not substitute for required Android/iOS evidence when the measured property is platform-dependent.
 
 6. Hand off to `observability` when runtime latency/error signals are needed after shipping, and to `architecture-decision-analysis` when the fix requires choosing among cross-boundary options.
+   - For Flutter/mobile shared-vs-native/plugin/FFI choices, use `.agents/skills/architecture-decision-analysis/references/mobile-native-boundary.md` rather than turning the performance review into an architecture decision.
 
 ## Output expectation
 
@@ -72,4 +79,5 @@ Return a concise Performance Review:
 - Cost declaration table.
 - Decision: `improve-now | accept | accept-with-limit | needs-measurement`.
 - Evidence: measurement, test, code inspection, query plan/log, or explicit no-measurement limit.
+- For Flutter/mobile platform-dependent claims: build mode, device/OS scope, and Android/iOS evidence status.
 - Follow-up only when a limit or measurement gap remains.
