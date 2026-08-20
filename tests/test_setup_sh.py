@@ -86,6 +86,68 @@ class SetupScriptTests(unittest.TestCase):
         self.assertTrue(marker.is_file())
         self.assertFalse((self.workdir / ".agents" / "skills").exists())
 
+    def test_overlay_keeps_external_skills_and_links_playbook_skills(self) -> None:
+        external_agents = self.workdir / ".agents" / "skills" / "external-flutter-skill"
+        external_agents.mkdir(parents=True)
+        (external_agents / "SKILL.md").write_text("external", encoding="utf-8")
+        external_claude = self.workdir / ".claude" / "skills" / "external-flutter-skill"
+        external_claude.mkdir(parents=True)
+        (external_claude / "SKILL.md").write_text("external", encoding="utf-8")
+
+        self.run_setup("--overlay", str(self.workdir))
+
+        expected = (REPO_ROOT / ".agents" / "skills" / "dev-workflow").resolve()
+        self.assertEqual((self.workdir / ".agents" / "skills" / "dev-workflow").resolve(), expected)
+        self.assertEqual((self.workdir / ".claude" / "skills" / "dev-workflow").resolve(), expected)
+        self.assertEqual((external_agents / "SKILL.md").read_text(encoding="utf-8"), "external")
+        self.assertEqual((external_claude / "SKILL.md").read_text(encoding="utf-8"), "external")
+
+        status = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.workdir),
+                "status",
+                "--short",
+                "--untracked-files=all",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertIn(".agents/skills/external-flutter-skill/SKILL.md", status.stdout)
+        self.assertIn(".claude/skills/external-flutter-skill/SKILL.md", status.stdout)
+        self.assertNotIn("dev-workflow", status.stdout)
+
+    def test_overlay_is_idempotent(self) -> None:
+        self.run_setup("--overlay", str(self.workdir))
+        self.run_setup("--overlay", str(self.workdir))
+
+        patterns = self.git_exclude_file().read_text(encoding="utf-8").splitlines()
+        self.assertEqual(patterns.count("/.agents/skills/dev-workflow"), 1)
+        self.assertEqual(patterns.count("/.claude/skills/dev-workflow"), 1)
+
+    def test_overlay_rejects_name_collision_before_partial_install(self) -> None:
+        collision = self.workdir / ".agents" / "skills" / "dev-workflow"
+        collision.mkdir(parents=True)
+        marker = collision / "SKILL.md"
+        marker.write_text("external", encoding="utf-8")
+
+        result = self.run_setup("--overlay", str(self.workdir), check=False)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("refusing to replace existing path", result.stderr)
+        self.assertEqual(marker.read_text(encoding="utf-8"), "external")
+        self.assertFalse((self.workdir / ".claude" / "skills" / "dev-workflow").exists())
+
+    def test_overlay_rejects_legacy_directory_symlink(self) -> None:
+        self.run_setup(str(self.workdir))
+
+        result = self.run_setup("--overlay", str(self.workdir), check=False)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("overlay mode requires a real directory", result.stderr)
+
     def test_rejects_a_subdirectory_instead_of_installing_outside_repo_root(self) -> None:
         nested = self.workdir / "nested"
         nested.mkdir()

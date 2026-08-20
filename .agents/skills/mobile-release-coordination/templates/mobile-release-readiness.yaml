@@ -1,0 +1,64 @@
+version: 1
+release_id: unknown
+source_revision: unknown
+capability_ids: []
+
+release_scope:
+  coordinated_platforms: [ios, android]
+  publication_action_window: unknown
+  exact_store_visibility_guaranteed: false
+  release_owner: unknown
+
+quality:
+  quality_gate: unknown
+  parity_decision: unknown
+  quality_targets: []
+
+ios:
+  version: unknown
+  build: unknown
+  artifact_reference: unknown
+  source_provenance: unknown
+  verification_state: unknown
+  signing_reference: unknown
+  store_submission_state: unknown
+  store_release_readiness: unknown
+
+android:
+  version: unknown
+  build: unknown
+  artifact_reference: unknown
+  source_provenance: unknown
+  verification_state: unknown
+  signing_reference: unknown
+  store_submission_state: unknown
+  store_release_readiness: unknown
+
+backend:
+  revision_or_release: unknown
+  api_schema_or_client_revision: unknown
+  current_client_compatibility: unknown
+  new_client_compatibility: unknown
+  mixed_version_window: unknown
+  idempotency_retry_state: unknown
+
+rollout_controls:
+  feature_flag: unknown
+  kill_switch: unknown
+  minimum_client_policy: unknown
+  backend_rollback_or_fallback: unknown
+  already_published_client_recovery: unknown
+
+publication_actions: []
+approvals: []
+
+observation:
+  store_availability: []
+  health_signals: []
+  backend_signals: []
+  parity_critical_signals: []
+  owner: unknown
+
+blockers: []
+unknowns: []
+decision: unknown # ready | no-go | not-applicable

@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "mobile-release-coordinated-both-stores",
+      "prompt": "Both iOS and Android builds passed their quality gates and implement the same capability. Coordinate a same-day release: confirm store readiness, backend compatibility with old and new clients, feature flag state, rollback, and the publication action window before we publish anything.",
+      "should_trigger": ["mobile-release-coordination"],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_artifacts": [
+        "Mobile Release Readiness Record"
+      ],
+      "expected_decisions": [
+        "Release readiness is decided separately from executing publication actions",
+        "The plan distinguishes a controlled publication action window from exact store visibility timing"
+      ],
+      "expected_evidence": [
+        "Both platform artifact and store-readiness states are recorded",
+        "Backend mixed-version compatibility, rollout controls, and recovery paths are explicit"
+      ]
+    },
+    {
+      "id": "mobile-release-backend-first-mixed-clients",
+      "prompt": "We need to deploy a backend change before the new iOS and Android versions are released. Check whether the backend can safely serve old and new app versions during the rollout, then decide whether the coordinated mobile release is ready.",
+      "should_trigger": ["mobile-release-coordination"],
+      "should_not_trigger": ["preflight-db-migration"],
+      "expected_decisions": [
+        "The release is no-go unless the declared old/new client compatibility window is supported",
+        "New store submissions are not treated as proof that old clients have disappeared"
+      ],
+      "expected_evidence": [
+        "Backend/API compatibility state covers currently deployed and new clients",
+        "Retry/idempotency behavior is checked when mutating operations are involved"
+      ]
+    },
+    {
+      "id": "mobile-release-negative-feature-implementation",
+      "prompt": "Implement a new Flutter profile screen for iOS and Android. We are not preparing a release, store submission, signing workflow, or rollout yet.",
+      "should_trigger": [],
+      "should_not_trigger": ["mobile-release-coordination"],
+      "expected_decisions": [
+        "Ordinary cross-platform feature implementation does not trigger the release gate"
+      ]
+    },
+    {
+      "id": "mobile-release-negative-single-platform-build-fix",
+      "prompt": "Fix a local Android debug build failure caused by a Gradle configuration typo. No store artifact, coordinated release, backend rollout, or publication decision is involved.",
+      "should_trigger": [],
+      "should_not_trigger": ["mobile-release-coordination"],
+      "expected_decisions": [
+        "A single-platform local build fix is not a coordinated mobile release decision"
+      ]
+    },
+    {
+      "id": "mobile-release-negative-framework-selection",
+      "prompt": "Compare Flutter, Kotlin Multiplatform, and dual native for a new product before implementation. Use measurable performance, native SDK, staffing, and maintenance drivers.",
+      "should_trigger": ["architecture-decision-analysis"],
+      "should_not_trigger": ["mobile-release-coordination"],
+      "expected_decisions": [
+        "Framework selection remains an architecture decision rather than a release-readiness decision"
+      ]
+    }
+  ]
+}
