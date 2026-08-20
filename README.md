@@ -1,116 +1,420 @@
 # AI Agent Instructions Playbook
 
-This repository is a template that provides software-development agents with thin always-on rules plus detailed playbooks read only when needed.
+A reusable, validated operating layer for software-development agents.
 
-The goal is a small, curated software-development operating system: clear entry points, precise triggers, reusable artifacts, and validation that keeps the trigger surface from growing accidentally.
+[English](#english) · [日本語](#japanese) · [Skill catalog](#skill-catalog) · [Validation](#validation)
 
-## Core files
+<a id="english"></a>
+## English
 
-- `AGENTS.md` — always-loaded core rules and the skill index
-- `.agents/skills/*/SKILL.md` — single source of repo-local Agent Skills for Codex, GitHub Copilot, and Claude Code (`.claude/skills` symlinks)
-- `COMMANDS.md` — canonical build / lint / test commands
-- `PLANS.md` — guide for ExecPlan operations
-- `README.md` — repository overview and minimum onboarding
-- `REFERENCES.md` — entry point for reference documents
+### What this is
 
-## Quick Start
+This repository is a versioned collection of **instructions, workflows, Agent Skills, templates, and validators** for software-development agents.
 
-To enable this playbook's skills in another Git worktree for Codex, GitHub
-Copilot, and Claude Code, run:
+It is intended to sit between a project request and the coding agent:
 
-```sh
-./setup.sh /path/to/worktree
+```text
+project request
+    ↓
+project-local AGENTS.md / policy / canonical commands
+    ↓
+preflight or workflow router
+    ↓
+only the specialist skills needed for this task
+    ↓
+implementation, tests, evidence, and final gate
 ```
 
-The setup creates `.agents/skills` and `.claude/skills` symlinks to this
-repository's skill source. It records both paths in the target repository's
-Git-local exclude file, so the setup remains untracked without changing the
-project's shared `.gitignore`. Existing paths are never overwritten. Because
-the links point to this repository directly, pulling or editing the playbook
-automatically updates every configured worktree, including newly added skills.
+The playbook helps an agent answer five practical questions before it edits code:
 
-After setup:
+1. What should I read first?
+2. Which workflow and specialist skills apply?
+3. Which constraints and approval boundaries must not be crossed?
+4. What tests or measurements are required?
+5. What evidence is needed before claiming completion?
 
-1. Open `AGENTS.md` first. It contains the always-on rules and generated skill index.
-2. If `COMMANDS.md` still contains `<fill>`, run `project-initialization` before trusting build/test commands.
-3. For code or test changes, follow `dev-workflow`, then finish with `quality-gate`.
-4. For explicit skill use, invoke `$skill-name` in Codex or `/skill-name` in GitHub Copilot CLI / agent mode.
-5. After changing skills or the generated index, run the validation commands below.
+The design deliberately separates:
 
-## Skill Map
+- **thin, stable instructions** that are safe to keep in context
+- **on-demand skills** loaded only when their trigger matches
+- **project-local facts** such as architecture choices, commands, credentials, and environments
+- **mechanical validation** that checks routing, structure, context budgets, and generated files
 
-### Core workflow
+### What this is not
 
-- `dev-workflow` — route change risk and execute only required branches
-- `quality-gate` — final decision before submission
-- `execution-plans` — execution planning for complex/long-running tasks
-- `requirements-engineering` — convert ambiguous requirements into verifiable design input
-- `project-initialization` — initialize the command system
+This repository is not:
 
-### Investigation and safety nets
+- an application framework or runtime dependency
+- an autonomous agent orchestrator or security sandbox
+- a replacement for project requirements, code review, CI, tests, or human approvals
+- a generic prompt dump that should be loaded in full for every task
+- a source of project secrets, signing credentials, production tokens, or environment-specific decisions
 
-- `bug-investigation-and-rca` — evidence-first bug reports and prevention actions
-- `working-with-legacy-code` — characterization tests and deterministic seams for risky legacy edits
-- `test-driven-development` — Red/Green/Refactor loop when TDD is requested or routed
-- `staged-lowering` — staged implementation for low-level, constrained, or repeatedly failing code
+### Supported clients
 
-### Design, quality, and reliability
+| Client | Skill location | Explicit invocation |
+| --- | --- | --- |
+| Codex | `.agents/skills` | `$skill-name` |
+| GitHub Copilot CLI / agent mode | `.agents/skills` | `/skill-name` |
+| Claude Code | `.claude/skills` symlinks | `/skill-name` |
 
-- `implementation-economy` — budget new implementation complexity and audit new abstractions
-- `design-balance` — map module/class responsibilities, names, reasons to change, and dependency direction
-- `performance-review` — review non-embedded request/render/job path cost, scaling, I/O, and N+1 risk
-- `function-boundary-governor` — autonomous function-boundary decisions for functions/helpers/APIs/call sites
-- `destructive-refactor` — replace flawed abstractions with temporary red-state migration and convergence
-- `architecture-decision-analysis` — compare architecture options against quality drivers, risks, tradeoffs, and verification tasks
-- `agent-workflow-contract-review` — review Agent-facing generated workflows, collect plans, handoffs, and downstream artifact contracts
-- `code-smells-and-antipatterns` — diff-focused maintainability and boundary review
-- `code-readability` — requested readability cleanup and C++ documentation gates
-- `error-handling` — failure contracts at boundaries, retries, fallbacks, and user-visible errors
-- `observability` — logs, metrics, and traces for behavior changes
+Agents can normally select skills from their descriptions. Explicit invocation is useful when you want to force a particular workflow or make routing unambiguous.
 
-### Embedded / target-local systems
+### How to use it
 
-- `embedded-system-familiarization` — principal-level orchestration for target learning, operating envelope, hardware capability, bottleneck/margin mapping, NFR calibration, and architecture constraints
-- `embedded-project-constitution` — bootstrap project-level physical budgets, target profiles, harness skeletons, and PR checks
-- `embedded-target-characterization` — learn target facts, measurement surfaces, baselines, and constraints before budgeting
-- `embedded-operating-envelope-discovery` — discover normal, degraded, boundary, recovery, and telemetry blackout behavior
-- `embedded-nfr-calibration` — derive embedded NFR budgets from target evidence with provenance and revisit conditions
-- `embedded-nfr-design` — define physical-footprint budgets and no-claim rules before embedded implementation
-- `embedded-nfr-harness-design` — turn embedded budgets into target profiles, scenarios, reports, and smoke commands
-- `embedded-hot-path-review` — review target-local polling, sampling, recorder, collector, and loop hot paths
-- `embedded-observer-effect-review` — check whether target-local instrumentation perturbs scheduler, power, I/O, memory, thermal, or workload behavior
-- `embedded-nfr-gate` — decide submit/no-submit from embedded budgets, measurements, unknowns, and claims
+1. Clone this playbook once in a stable local location.
+2. Run `setup.sh` against each target Git worktree that should see the shared skills.
+3. Keep project-specific facts and commands in the target repository.
+4. Give the agent the task normally; let skill descriptions route it, or invoke a skill explicitly when needed.
+5. Require the project's canonical verification and the appropriate final gate before accepting completion.
 
-### Concurrency
+> `setup.sh` exposes skills. It does not install an agent, copy project instructions, grant credentials, or change production systems.
 
-- `concurrency-core` — concurrency plan, lifecycle, cancellation, and safety strategy
-- `concurrency-android` — Android background work and coroutine guidance
-- `concurrency-ros2` — ROS 2 executor, callback group, and service/action patterns
-- `thread-safety-tooling` — TSan and compile-time thread-safety verification
+### Quick start
 
-### UI and visual evidence
+Requirements:
 
-- `uiux-core` — deterministic UI/UX review bundle
-- `visual-regression-testing` — snapshot verification and visual diff review
-- `uiux-flow-preview` — flow-map preview for transition review
-- `tonemana-catalog` — comparable tone and manner catalog with previews
-- `tonemana-apply` — apply a selected tone/manner pattern to UIUX artifacts
-- `uidesign-flow` — convert tone decisions into tokens and previews
-- `uidesign-orchestrator` — explicit-only end-to-end UI evidence pipeline wrapper
+- a Git worktree root
+- a POSIX shell environment with symlink support, such as Linux, macOS, or WSL
+- a local clone of this playbook
 
-### Authoring support
+Clone the playbook once:
 
-- `playbook-template-authoring` — explicit reusable deployment, infra, data-analysis, and API-reference template authoring
+```sh
+git clone https://github.com/shunta-sato/agent-instructions-playbook.git \
+  ~/tools/agent-instructions-playbook
+```
 
-### Learning and closeout
+Expose the shared skills in an existing project:
 
-- `failure-retrospective` — turn rollbacks, abandoned attempts, misrouted work, and rejected completions into task, project, or cross-project learning
+```sh
+~/tools/agent-instructions-playbook/setup.sh /path/to/your-project
+```
 
-The generated full index in `AGENTS.md` is the authoritative machine-readable list.
+The default setup:
 
-## Generated Skill Catalog
+- links the complete playbook skill directory into `.agents/skills`
+- links the same source into `.claude/skills`
+- records the links in the target worktree's Git-local exclude file
+- does not overwrite an existing path
+- does not copy project-specific root files such as `AGENTS.md` or `COMMANDS.md`
 
-This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based Skill Map above hand-authored for humans.
+When the target repository already has local or third-party skills, use overlay mode:
+
+```sh
+~/tools/agent-instructions-playbook/setup.sh --overlay /path/to/your-project
+```
+
+Overlay mode links each playbook skill separately and preserves non-conflicting project or external skills. See [`EXTERNAL_SKILLS.md`](EXTERNAL_SKILLS.md) for pinning and review rules, including Flutter and Dart upstream skills.
+
+Because the setup uses symlinks, updating the central clone updates every linked worktree:
+
+```sh
+git -C ~/tools/agent-instructions-playbook pull --ff-only
+```
+
+Pin or vendor a known revision instead when reproducibility is more important than receiving updates immediately.
+
+### What the target project still owns
+
+`setup.sh` shares reusable skills only. The target repository remains responsible for:
+
+- its own `AGENTS.md` and nested instruction files
+- product requirements and acceptance criteria
+- architecture and dependency choices
+- canonical build, lint, test, benchmark, and deployment commands
+- credentials, signing material, environments, and approval policy
+- platform- and organization-specific exceptions
+
+For a new or unfamiliar repository, start with `preflight-engineering`. If canonical commands are missing or still contain placeholders, use `project-initialization`.
+
+### Day-to-day use
+
+A normal delivery task follows this shape:
+
+```text
+preflight when needed
+    ↓
+dev-workflow
+    ↓
+triggered specialist skills only
+    ↓
+canonical build / lint / tests / measurements
+    ↓
+quality-gate
+```
+
+Recommended entry points:
+
+| Situation | Start with | Finish with |
+| --- | --- | --- |
+| Routine code or test change | `dev-workflow` | `quality-gate` |
+| New, unfamiliar, high-risk, multi-service, or long-running work | `preflight-engineering` | `quality-gate` |
+| Requirements are ambiguous or NFRs are vague | `requirements-engineering` | the routed implementation workflow |
+| Research, probes, or exploratory experiments | `research-workflow` | `research-synthesis` |
+| Mobile / Flutter / iOS / Android project setup | `preflight-mobile-app` through `preflight-engineering` | `quality-gate` |
+| Coordinated iOS and Android release | `mobile-release-coordination` | its `ready | no-go | not-applicable` record |
+| Embedded or target-local system discovery | `embedded-system-familiarization` | the routed embedded NFR gate |
+
+Example for an unfamiliar Flutter application connected to a cloud API:
+
+```text
+preflight-engineering
+    └─ preflight-mobile-app
+         ├─ requirements-engineering
+         ├─ preflight-api-compat
+         ├─ preflight-auth-session
+         └─ architecture-decision-analysis, when a measurable boundary decision exists
+    ↓
+dev-workflow
+    ├─ mobile-feature-parity, when both mobile platforms share a capability
+    ├─ performance-review, when there is a real performance risk or target
+    └─ other triggered implementation skills
+    ↓
+quality-gate
+    ↓
+mobile-release-coordination, when a coordinated store/backend release is required
+```
+
+### Repository map
+
+| Path | Purpose |
+| --- | --- |
+| `AGENTS.md` | Thin always-on contract and generated skill index for this repository |
+| `.agents/skills/*/SKILL.md` | Source of truth for reusable first-party Agent Skills |
+| `.claude/skills` | Claude Code links to the same skill source |
+| `.agents/project-policy.yml` | Delivery/research mode policy and path classification |
+| `COMMANDS.md` | Canonical command contract |
+| `PLANS.md`, `plans/` | ExecPlan guidance and durable plans |
+| `EXTERNAL_SKILLS.md` | External skill overlay, pinning, trust, and precedence rules |
+| `scripts/` | Validators, generators, routing helpers, and inspection tools |
+| `evals/` | Trigger, behavior, and model-routing evaluation seeds |
+| `reports/` | Review and measurement outputs retained by the playbook project |
+
+---
+
+<a id="japanese"></a>
+## 日本語
+
+### これは何か
+
+このリポジトリは、ソフトウェア開発エージェント向けの**指示、ワークフロー、Agent Skill、テンプレート、検証ツール**をバージョン管理するPlaybookです。
+
+プロジェクトへの依頼とコーディングエージェントの間に、次の運用層を置くことを目的としています。
+
+```text
+プロジェクトへの依頼
+    ↓
+プロジェクト固有のAGENTS.md・ポリシー・標準コマンド
+    ↓
+PreflightまたはWorkflow Router
+    ↓
+そのタスクに必要な専門Skillだけを選択
+    ↓
+実装・Test・Evidence・最終Gate
+```
+
+エージェントがコードを変更する前に、次の五点を判断できるようにします。
+
+1. 最初に何を読むべきか
+2. どのWorkflowと専門Skillを使うべきか
+3. 越えてはいけない制約・権限・承認境界は何か
+4. 必要なTestや計測は何か
+5. 完了を主張するために、どのEvidenceが必要か
+
+設計上、次を明確に分離しています。
+
+- Contextへ常時入れてよい、薄く安定した指示
+- Triggerが一致した場合だけ読むOn-demand Skill
+- Architecture、Command、Credential、Environmentなどのプロジェクト固有情報
+- Routing、構造、Context量、自動生成物を確認する機械的Validation
+
+### これは何ではないか
+
+このリポジトリは、次のものではありません。
+
+- Application FrameworkやRuntime依存Library
+- 自律Agent OrchestratorやSecurity Sandbox
+- 要件定義、Code Review、CI、Test、人間の承認の代替
+- 毎回すべてをContextへ投入するPrompt集
+- Secret、Signing Credential、Production Token、環境固有判断の保管場所
+
+### 対応クライアント
+
+| Client | Skill配置先 | 明示的な呼び出し |
+| --- | --- | --- |
+| Codex | `.agents/skills` | `$skill-name` |
+| GitHub Copilot CLI / agent mode | `.agents/skills` | `/skill-name` |
+| Claude Code | `.claude/skills`のSymlink | `/skill-name` |
+
+通常はSkillの`description`からエージェントが自動選択できます。特定のWorkflowを確実に使わせたい場合や、Routingを明示したい場合は明示呼び出しを使います。
+
+### 使い方の全体像
+
+1. このPlaybookを、安定した場所へ一度だけCloneします。
+2. 共有Skillを利用する各Git worktreeに対して`setup.sh`を実行します。
+3. プロジェクト固有の情報と標準コマンドは、対象リポジトリ側で管理します。
+4. 通常どおりタスクを依頼し、Skillの`description`による自動Routingに任せます。必要な場合だけSkillを明示呼び出しします。
+5. 完了を受け入れる前に、対象プロジェクトの標準検証と適切な最終Gateを要求します。
+
+> `setup.sh`が行うのはSkillの公開です。エージェントのInstall、プロジェクト指示のCopy、Credentialの付与、Production Systemの変更は行いません。
+
+### 導入方法
+
+前提条件は次のとおりです。
+
+- Git worktreeのRoot
+- Symlinkを利用できるPOSIX Shell環境。Linux、macOS、WSLなど
+- このPlaybookのLocal clone
+
+最初にPlaybookを一度だけCloneします。
+
+```sh
+git clone https://github.com/shunta-sato/agent-instructions-playbook.git \
+  ~/tools/agent-instructions-playbook
+```
+
+既存プロジェクトへ共有Skillを公開します。
+
+```sh
+~/tools/agent-instructions-playbook/setup.sh /path/to/your-project
+```
+
+Default setupは次を行います。
+
+- Playbook全体のSkill Directoryを`.agents/skills`へLink
+- 同じSourceを`.claude/skills`へLink
+- 対象worktreeのGit-local excludeへLinkを登録
+- 既存Pathを上書きしない
+- `AGENTS.md`や`COMMANDS.md`など、プロジェクト固有のRoot fileはCopyしない
+
+対象リポジトリにLocal SkillやThird-party Skillが既にある場合は、Overlay modeを使います。
+
+```sh
+~/tools/agent-instructions-playbook/setup.sh --overlay /path/to/your-project
+```
+
+Overlay modeはPlaybook Skillを一件ずつLinkし、名前が衝突しないProject Skill・External Skillを保持します。Flutter/Dart公式Skillを含むPinning・Review規則は[`EXTERNAL_SKILLS.md`](EXTERNAL_SKILLS.md)を参照してください。
+
+SetupはSymlinkを使うため、中央のCloneを更新すると、Link済みworktreeにも反映されます。
+
+```sh
+git -C ~/tools/agent-instructions-playbook pull --ff-only
+```
+
+更新を即時反映するより再現性を優先する場合は、既知のRevisionへ固定するか、管理下へVendorしてください。
+
+### 対象プロジェクト側で管理するもの
+
+`setup.sh`が共有するのは再利用可能なSkillだけです。次の項目は対象リポジトリが管理します。
+
+- プロジェクト固有の`AGENTS.md`とNested instruction
+- Product要件とAcceptance Criteria
+- ArchitectureとDependencyの選択
+- 標準のBuild、Lint、Test、Benchmark、Deploy Command
+- Credential、Signing material、Environment、Approval policy
+- Platform・組織固有の例外
+
+新規または不慣れなリポジトリでは、`preflight-engineering`から始めます。標準Commandが未定義、またはPlaceholderが残っている場合は`project-initialization`を使います。
+
+### 日常的な使い方
+
+通常のDelivery Taskは次の流れです。
+
+```text
+必要な場合だけPreflight
+    ↓
+dev-workflow
+    ↓
+Triggerした専門Skillだけを利用
+    ↓
+標準Build・Lint・Test・計測
+    ↓
+quality-gate
+```
+
+推奨Entry pointは次のとおりです。
+
+| 状況 | 最初に使うSkill | 完了時 |
+| --- | --- | --- |
+| 通常のCode・Test変更 | `dev-workflow` | `quality-gate` |
+| 新規、不慣れ、高Risk、複数Service、長期作業 | `preflight-engineering` | `quality-gate` |
+| 要件が曖昧、NFRが定量化されていない | `requirements-engineering` | Routingされた実装Workflow |
+| Research、Probe、探索的Experiment | `research-workflow` | `research-synthesis` |
+| Mobile / Flutter / iOS / Androidの初期化 | `preflight-engineering`経由の`preflight-mobile-app` | `quality-gate` |
+| iOS・Androidの協調Release | `mobile-release-coordination` | `ready | no-go | not-applicable` Record |
+| Embedded・Target-local Systemの把握 | `embedded-system-familiarization` | RoutingされたEmbedded NFR Gate |
+
+Cloud APIと連携する不慣れなFlutter Applicationでは、例えば次のようにRoutingします。
+
+```text
+preflight-engineering
+    └─ preflight-mobile-app
+         ├─ requirements-engineering
+         ├─ preflight-api-compat
+         ├─ preflight-auth-session
+         └─ 定量的な境界判断がある場合はarchitecture-decision-analysis
+    ↓
+dev-workflow
+    ├─ 両Mobile Platformで同じCapabilityを提供する場合はmobile-feature-parity
+    ├─ 実際のPerformance RiskまたはTargetがある場合はperformance-review
+    └─ その他、Triggerした実装Skill
+    ↓
+quality-gate
+    ↓
+Store・Backendを協調Releaseする場合はmobile-release-coordination
+```
+
+### リポジトリ構成
+
+| Path | 役割 |
+| --- | --- |
+| `AGENTS.md` | このリポジトリの薄い常時指示と、自動生成Skill Index |
+| `.agents/skills/*/SKILL.md` | 再利用可能なFirst-party Agent SkillのSource of truth |
+| `.claude/skills` | 同じSkill SourceをClaude Codeへ公開するLink |
+| `.agents/project-policy.yml` | Delivery/Research modeとPath分類 |
+| `COMMANDS.md` | 標準Command Contract |
+| `PLANS.md`, `plans/` | ExecPlanの指針と永続Plan |
+| `EXTERNAL_SKILLS.md` | External SkillのOverlay、Pinning、Trust、優先順位 |
+| `scripts/` | Validator、Generator、Routing helper、Inspection tool |
+| `evals/` | Trigger、Behavior、Model routingのEval seed |
+| `reports/` | Playbook Projectで保持するReview・Measurement output |
+
+---
+
+## Maintainer reference / メンテナ向けリファレンス
+
+### Skill authoring policy / Skill作成方針
+
+Keep `AGENTS.md` thin and stable. Put reusable, triggerable workflows in `.agents/skills/<name>/SKILL.md`; move heavier conditional material into `references/`, executable helpers into `scripts/`, and output skeletons into `templates/`.
+
+`AGENTS.md`は薄く安定させます。再利用可能でTrigger可能なWorkflowは`.agents/skills/<name>/SKILL.md`へ置き、条件付きの詳細は`references/`、実行Helperは`scripts/`、成果物の雛形は`templates/`へ分離します。
+
+Prefer fewer active skills with clear trigger boundaries. A broad or core skill should have positive cases and near-miss negative cases, a concrete output contract, and explicit handoffs to neighboring skills.
+
+Active Skillは数を増やすより、Trigger境界を明確にします。広範またはCoreなSkillには、Positive case、Near-miss negative case、具体的なOutput contract、隣接Skillへの明示的Handoffを用意します。
+
+### Skill Delta Gate
+
+Before adding a skill or broadening an existing one, all criteria must pass:
+
+1. **Runtime decision delta** — the change alters proceed/no-proceed, routing, submit/no-submit, or another observable Agent decision.
+2. **Existing-skill absorption** — a reference, trigger, anti-trigger, output-contract, or eval update is insufficient.
+3. **Trigger boundary** — broad/core skills have at least two positive and three near-miss negative cases.
+4. **Output contract** — the skill produces a decision, artifact, verification record, or explicit no-op/no-decision.
+5. **Complexity cap** — keep `SKILL.md` workflow-focused and move heavy taxonomy or detail behind conditional resources.
+
+新しいSkillの追加や既存Skillの拡張では、実行時判断が変わること、既存Skillへ吸収できないこと、Trigger境界をEvalできること、具体的Outputがあること、`SKILL.md`を過度に肥大化させないことを確認します。
+
+<a id="skill-catalog"></a>
+## Generated Skill Catalog / 自動生成スキルカタログ
+
+The full catalog below is generated from `.agents/skills/*/SKILL.md`. Do not edit the table by hand.
+
+以下の一覧は`.agents/skills/*/SKILL.md`から自動生成されます。Tableを手作業で編集しないでください。
+
+<details>
+<summary>Show the complete catalog / 全Skill一覧を表示</summary>
 
 <!-- BEGIN README SKILL CATALOG (generated) -->
 | Skill | Description | Source |
@@ -181,57 +485,13 @@ This block is regenerated from `.agents/skills/*/SKILL.md`. Keep the role-based 
 | `working-with-legacy-code` | Working with legacy code safely | `.agents/skills/working-with-legacy-code/SKILL.md` |
 <!-- END README SKILL CATALOG (generated) -->
 
-## Skill layout
-
-Project skills live only under `.agents/skills`. Do not mirror them into `.github/skills`; current Codex and GitHub Copilot both support `.agents/skills` as a project-skill location.
-
-Use `$skill-name` in Codex and `/skill-name` in GitHub Copilot CLI / agent mode when explicit invocation is needed. Keep short, always-on rules in `AGENTS.md`; move detailed procedures, examples, and templates into skills, `references/`, or `templates/`.
-
-## Skill Quality Bar
-
-Add or revise a skill only when it has a coherent job that should be discoverable by an agent. Prefer fewer active skills with clearer triggers over a long catalog of overlapping guidance.
-
-Each retained skill should have:
-
-- a narrow `description` that says when to use it and, for broad topics, when not to use it
-- a concise `SKILL.md` body with the core workflow only
-- conditional `references/`, `templates/`, `assets/`, or scripts for heavier material
-- a concrete output artifact, decision, or verification record
-- clear relationships to neighboring skills so trigger overlap stays intentional
-- trigger eval seeds for both positive prompts and near-miss negative prompts when the skill is core or broad
-
-## Skill Delta Gate
-
-Before adding a new skill or broadening an existing one, the change must pass all criteria:
-
-1. Runtime decision delta:
-
-   - The change alters agent behavior such as proceed/no-proceed, no-decision, route-to-skill, submit/no-submit, or rewrite/no-rewrite.
-
-2. Existing-skill absorption test:
-
-   - If description, trigger, anti-trigger, output contract, reference, or trigger eval updates are enough, do not add a new skill.
-
-3. Trigger boundary test:
-
-   - At least two positive cases and three near-miss negative cases exist for broad or core skills.
-
-4. Output contract test:
-
-   - The skill produces a concrete artifact, decision, verification record, or explicit no-op/no-decision.
-
-5. Complexity cap:
-
-   - Keep `SKILL.md` workflow-focused.
-   - Move heavy material to `references/`.
-   - Do not put deep taxonomy into `quality-gate`.
-
-If any criterion fails, do not add the skill.
+</details>
 
 ## Validation
 
-Run these after changing skills or the agent index (this list is kept in
-sync with `make lint`'s validator chain by `scripts/lint_command_docs.py`):
+For a normal change, use the repository's `make` targets. The list below is intentionally explicit because `scripts/lint_command_docs.py` checks that the README remains synchronized with the validator chain.
+
+通常の変更ではRepositoryの`make` targetを使用します。以下の一覧は、`scripts/lint_command_docs.py`がValidator chainとの同期を確認するため、明示的に保持しています。
 
 - `python scripts/validate_skills.py`
 - `python scripts/update_skill_requires.py --check`
@@ -251,9 +511,3 @@ sync with `make lint`'s validator chain by `scripts/lint_command_docs.py`):
 - `python scripts/lint_submission.py --working-tree`
 - `python scripts/report_skill_inventory.py --check --format text`
 - `python scripts/generate_agent_index.py --check`
-
-## Minimal bootstrap
-
-1. Open `AGENTS.md` and review the `dev-workflow` and `quality-gate` flow.
-2. If `COMMANDS.md` is uninitialized (`<fill>`), run `project-initialization`.
-3. Before and after changes, verify with canonical commands defined in `COMMANDS.md`.
