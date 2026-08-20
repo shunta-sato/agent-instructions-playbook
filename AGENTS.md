@@ -64,6 +64,7 @@ skill|function-boundary-governor|Autonomous function-boundary design|.agents/ski
 skill|hardening-workflow|Measure-tier-stop hardening lane|.agents/skills/hardening-workflow/SKILL.md
 skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
 skill|japanese-tech-writing|Japanese technical writing conventions|.agents/skills/japanese-tech-writing/SKILL.md
+skill|mobile-feature-parity|Cross-platform mobile capability parity|.agents/skills/mobile-feature-parity/SKILL.md
 skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md

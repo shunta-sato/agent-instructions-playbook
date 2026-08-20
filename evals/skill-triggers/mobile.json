@@ -55,6 +55,57 @@
       "expected_decisions": [
         "Existing visual verification handles the change without reopening mobile project setup"
       ]
+    },
+    {
+      "id": "mobile-parity-shared-upload-feature",
+      "prompt": "Add the same media upload capability to our already-configured Flutter iOS and Android apps. The shared requirements are upload, cancel, retry after reconnect, and the same backend error meaning on both platforms. Track any platform-specific differences explicitly.",
+      "should_trigger": ["mobile-feature-parity"],
+      "should_not_trigger": ["preflight-mobile-app"],
+      "expected_decisions": [
+        "Capability parity is defined by shared semantics rather than identical source or pixels",
+        "iOS and Android each receive explicit verification evidence and allowed deviations"
+      ],
+      "expected_evidence": [
+        "Shared requirement IDs cover upload, cancel, retry/reconnect, and backend error behavior",
+        "The parity matrix contains evidence for both target platforms"
+      ]
+    },
+    {
+      "id": "mobile-parity-port-existing-capability",
+      "prompt": "Android already supports account deletion. Implement the equivalent capability on iOS and prove both clients have the same server-side result, confirmation semantics, failure handling, and observability without forcing identical UI controls.",
+      "should_trigger": ["mobile-feature-parity"],
+      "should_not_trigger": ["architecture-decision-analysis"],
+      "expected_decisions": [
+        "The existing Android behavior becomes product-semantics evidence rather than a UI template",
+        "iOS deviations are accepted only when shared account-deletion semantics remain preserved"
+      ]
+    },
+    {
+      "id": "mobile-parity-negative-single-platform",
+      "prompt": "Add an Android-only Bluetooth diagnostic screen for a hardware accessory that is not supported on iOS.",
+      "should_trigger": [],
+      "should_not_trigger": ["mobile-feature-parity"],
+      "expected_decisions": [
+        "A deliberately single-platform capability does not create a false parity obligation"
+      ]
+    },
+    {
+      "id": "mobile-parity-negative-framework-choice",
+      "prompt": "Before coding, compare dual native, Flutter, and Kotlin Multiplatform for a new iOS/Android product using measurable staffing, performance, native-SDK, and delivery constraints.",
+      "should_trigger": ["architecture-decision-analysis"],
+      "should_not_trigger": ["mobile-feature-parity"],
+      "expected_decisions": [
+        "Framework selection is an architecture decision, not a capability parity record"
+      ]
+    },
+    {
+      "id": "mobile-parity-negative-pixel-baseline",
+      "prompt": "The feature semantics are unchanged. Regenerate the Android screenshot baseline for a deliberate padding adjustment.",
+      "should_trigger": ["visual-regression-testing"],
+      "should_not_trigger": ["mobile-feature-parity"],
+      "expected_decisions": [
+        "Pixel baseline maintenance does not trigger product-capability parity"
+      ]
     }
   ]
 }
