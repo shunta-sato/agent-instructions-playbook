@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "expo-preflight-new-cloud-app",
+      "prompt": "Start an Expo React Native app for iOS and Android, using our cloud API and Maestro. Before implementation, inspect package manager, Expo/CNG model, development-build needs, device hosts, tests, and runtime-tool security.",
+      "should_trigger": [
+        "preflight-engineering",
+        "preflight-mobile-app"
+      ],
+      "should_not_trigger": [
+        "mobile-runtime-verification",
+        "mobile-release-coordination"
+      ],
+      "expected_decisions": [
+        "React Native/Expo and the native-project ownership model are confirmed from repository evidence or marked unknown",
+        "Expo Go versus development-build, Maestro, runtime harness, cloud, device, and approval boundaries are recorded before implementation"
+      ],
+      "expected_evidence": [
+        "package/lockfile, Expo config, EAS, test, Android, and iOS signals are recorded without executing dynamic app config",
+        "secret, signing, account, and production values are not copied"
+      ]
+    },
+    {
+      "id": "expo-preflight-agent-device-security",
+      "prompt": "Enable agent-device and possibly Expo MCP for a confidential Expo repository. First map local device control, screenshots/logs/network artifacts, filesystem and network access, Expo account permissions, remote data paths, staging accounts, and forbidden production side effects.",
+      "should_trigger": [
+        "preflight-engineering",
+        "preflight-mobile-app"
+      ],
+      "should_not_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "expected_decisions": [
+        "Framework skills, local runtime tools, and remote account-backed MCP capabilities are treated as separate trust boundaries",
+        "One primary device driver and explicit artifact/side-effect policies are selected before runtime use"
+      ]
+    },
+    {
+      "id": "runtime-verify-permission-change",
+      "prompt": "The Expo feature changes camera permission behavior. Operate the Android emulator and iOS simulator, record build and device identity, verify explicit allow/deny/retry oracles, capture focused evidence, and decide which Maestro flow should be added.",
+      "should_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "should_not_trigger": [
+        "preflight-mobile-app",
+        "mobile-release-coordination"
+      ],
+      "expected_artifacts": [
+        "Mobile Runtime Verification Record"
+      ],
+      "expected_decisions": [
+        "The run uses verify mode with explicit platform-specific oracles",
+        "Durable coverage is promoted to Maestro without treating screenshots as sufficient proof"
+      ],
+      "expected_evidence": [
+        "source/build/target/environment identity and Android/iOS results are recorded separately"
+      ]
+    },
+    {
+      "id": "runtime-reproduce-device-only-bug",
+      "prompt": "Reproduce a React Native deep-link bug that only appears after app process termination. Use a running target, record initial state and operations, collect logs and screenshots, return fail/blocked/inconclusive precisely, then propose the smallest durable regression layer.",
+      "should_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "should_not_trigger": [
+        "performance-review"
+      ],
+      "expected_artifacts": [
+        "Mobile Runtime Verification Record"
+      ],
+      "expected_decisions": [
+        "The run uses reproduce mode and does not convert observation into an unsupported pass",
+        "Regression promotion selects a canonical layer rather than duplicate .ad and Maestro ownership"
+      ]
+    },
+    {
+      "id": "runtime-negative-pure-unit",
+      "prompt": "Add and verify a pure TypeScript email-normalization function with focused Jest cases. No component, native API, device, navigation, lifecycle, or runtime target is involved.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "expected_decisions": [
+        "Focused unit tests are sufficient; a device run is not opened"
+      ]
+    },
+    {
+      "id": "runtime-negative-rntl-only",
+      "prompt": "Verify a presentational React Native component renders its validation message and accessibility role using React Native Testing Library. It has no native/runtime boundary.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "expected_decisions": [
+        "Component evidence remains at the RNTL layer"
+      ]
+    },
+    {
+      "id": "runtime-negative-run-existing-maestro",
+      "prompt": "Run the repository's already-defined Maestro smoke suite with its documented command and report the existing assertions. Do not explore, debug, profile, or create a runtime record.",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "expected_decisions": [
+        "Executing an existing E2E suite alone does not trigger exploratory runtime verification"
+      ]
+    },
+    {
+      "id": "runtime-negative-store-release",
+      "prompt": "Both mobile builds are approved. Coordinate App Store and Play publication, backend compatibility, feature flags, and rollback without operating the app UI.",
+      "should_trigger": [
+        "mobile-release-coordination"
+      ],
+      "should_not_trigger": [
+        "mobile-runtime-verification"
+      ],
+      "expected_decisions": [
+        "Store/release coordination stays in the release gate"
+      ]
+    },
+    {
+      "id": "rn-expo-quality-gate-runtime-evidence",
+      "prompt": "Before claiming this Expo camera feature complete on Android and iOS, gate Jest/RNTL, Maestro, and agent-device evidence. The agent only attached screenshots for iOS and did not record an oracle or build identity.",
+      "should_trigger": [
+        "quality-gate"
+      ],
+      "should_not_trigger": [
+        "preflight-mobile-app"
+      ],
+      "expected_decisions": [
+        "Screenshot-only iOS evidence is inconclusive and blocks a both-platform completion claim",
+        "Regression, runtime-verification, and observation evidence are classified separately"
+      ]
+    }
+  ]
+}

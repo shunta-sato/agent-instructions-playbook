@@ -1,0 +1,53 @@
+schema_version: 1
+run_id: unknown
+mode: unknown # explore | reproduce | verify | profile
+
+source:
+  revision: unknown
+  dirty_state: unknown
+
+build:
+  identity: unknown
+  mode: unknown
+  application_id: unknown
+
+target:
+  platform: unknown # android | ios
+  device: unknown
+  os_version: unknown
+  physical_or_virtual: unknown
+
+environment:
+  backend: unknown
+  account_class: unknown
+  initial_state: unknown
+
+tool:
+  name: unknown
+  version: unknown
+  primary_driver: unknown
+
+requirements: []
+operations: []
+oracles: []
+
+artifacts:
+  screenshots: []
+  logs: []
+  network: []
+  traces: []
+  profiles: []
+  video: []
+
+sensitive_data_review:
+  production_data_used: false
+  redaction_checked: unknown
+  retained_artifacts_approved: unknown
+
+result: unknown # pass | fail | blocked | inconclusive
+limitations: []
+
+regression_promotion:
+  decision: unknown # none | unit | component | maestro | web-e2e | diagnostic-script | manual
+  paths: []
+  rationale: unknown

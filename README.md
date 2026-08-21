@@ -452,6 +452,7 @@ The full catalog below is generated from `.agents/skills/*/SKILL.md`. Do not edi
 | `japanese-tech-writing` | Japanese technical writing conventions | `.agents/skills/japanese-tech-writing/SKILL.md` |
 | `mobile-feature-parity` | Cross-platform mobile capability parity | `.agents/skills/mobile-feature-parity/SKILL.md` |
 | `mobile-release-coordination` | Coordinated iOS and Android release gate | `.agents/skills/mobile-release-coordination/SKILL.md` |
+| `mobile-runtime-verification` | Mobile runtime verification | `.agents/skills/mobile-runtime-verification/SKILL.md` |
 | `observability` | Observability plan and checklist | `.agents/skills/observability/SKILL.md` |
 | `performance-review` | Generic performance review | `.agents/skills/performance-review/SKILL.md` |
 | `playbook-template-authoring` | Reusable playbook/template authoring | `.agents/skills/playbook-template-authoring/SKILL.md` |

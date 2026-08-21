@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "skill": "mobile-runtime-verification",
+  "cases": [
+    {
+      "id": "screenshot-only-is-inconclusive",
+      "prompt": "The agent tapped through the profile editor and captured one screenshot. It wants to mark the mobile runtime verification as pass.",
+      "given": [
+        "source revision and build identity are unknown",
+        "no explicit oracle was recorded",
+        "one screenshot exists",
+        "the agent reports that the screen looked correct"
+      ],
+      "expected_decision": "inconclusive",
+      "expected_findings": [
+        "screenshot and agent self-assessment are observation rather than a pass oracle",
+        "source/build/target identity is incomplete"
+      ],
+      "expected_output_contains": [
+        "result: inconclusive",
+        "oracle"
+      ]
+    },
+    {
+      "id": "explicit-oracle-target-bound-pass",
+      "prompt": "Verify camera permission denial and recovery on a recorded Android emulator build, using explicit visible-state and log oracles, with artifacts retained and no production data.",
+      "given": [
+        "source revision, build identity, emulator, OS, backend, and initial state are recorded",
+        "permission denial and retry oracles are explicit",
+        "all required oracles passed",
+        "artifact paths and sensitive-data review are recorded"
+      ],
+      "expected_decision": "pass",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "result: pass",
+        "regression_promotion"
+      ]
+    },
+    {
+      "id": "exploration-no-finding-not-pass",
+      "prompt": "Explore the settings screens with agent-device and report no issue found. No acceptance oracle or required path list was supplied.",
+      "given": [
+        "mode is explore",
+        "several screens were visited",
+        "no failure was observed",
+        "no explicit oracle exists"
+      ],
+      "expected_decision": "inconclusive",
+      "expected_findings": [
+        "an exploratory no-finding run cannot prove required behavior"
+      ],
+      "expected_output_contains": [
+        "result: inconclusive"
+      ]
+    },
+    {
+      "id": "duplicate-ad-and-maestro-rejected",
+      "prompt": "Keep a permanent login.ad and an equivalent login.yaml Maestro flow and update both for every UI change.",
+      "given": [
+        "both files encode the same product journey",
+        "no diagnostic-only distinction exists"
+      ],
+      "expected_decision": "fail",
+      "expected_findings": [
+        "equivalent .ad and Maestro flows create duplicate sources of truth"
+      ],
+      "expected_output_contains": [
+        "Maestro",
+        "source of truth"
+      ]
+    },
+    {
+      "id": "production-side-effect-blocked",
+      "prompt": "Use the production account on a physical iPhone to test account deletion with agent-device; no approval or recovery path is recorded.",
+      "given": [
+        "production account is selected",
+        "the operation is destructive",
+        "explicit approval is absent"
+      ],
+      "expected_decision": "blocked",
+      "expected_findings": [
+        "unapproved destructive production side effect"
+      ],
+      "expected_output_contains": [
+        "result: blocked"
+      ]
+    }
+  ]
+}
