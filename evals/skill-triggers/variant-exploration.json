@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "variant-exploration-ja-mobile-three-runnable-options",
+      "prompt": "チャット画面についてBottom sheet、Inline、Gestureの3案をReact Nativeで実装し、AndroidとiPhoneで同じシナリオを触って比較したい。探索コードは捨てる前提。",
+      "should_trigger": [
+        "variant-exploration"
+      ],
+      "should_not_trigger": [
+        "poc-workflow",
+        "dev-workflow"
+      ],
+      "expected_output_contains": [
+        "controlled substrate",
+        "blocker-only review",
+        "Productization Brief"
+      ],
+      "notes": "Two or more disposable executable alternatives under one shared evaluation protocol are the core trigger."
+    },
+    {
+      "id": "variant-exploration-quality-attribute-tradeoff",
+      "prompt": "起動速度、メモリ、offline cacheのトレードオフについて実装A/B/Cを作り、同一端末・同一データで測って製品方針を選びたい。",
+      "should_trigger": [
+        "variant-exploration",
+        "experiment-loop"
+      ],
+      "should_not_trigger": [
+        "hardening-workflow"
+      ],
+      "expected_output_contains": [
+        "variation axes",
+        "registered evidence"
+      ],
+      "notes": "Executable alternatives route to variant-exploration; citable measurements also route to experiment-loop."
+    },
+    {
+      "id": "variant-exploration-convergence-from-variants",
+      "prompt": "既に作ったVariant BとCの良い挙動を評価し、何をFeature Contractとしてproductionで作り直すか決めたい。",
+      "should_trigger": [
+        "variant-exploration",
+        "research-synthesis"
+      ],
+      "should_not_trigger": [
+        "hardening-workflow"
+      ],
+      "expected_output_contains": [
+        "rebuild-from-contract",
+        "prototype_source_authority"
+      ],
+      "notes": "Variant convergence and the productization handoff belong to variant-exploration plus research-synthesis."
+    },
+    {
+      "id": "variant-exploration-blocker-only-review",
+      "prompt": "使い捨てのUI Variantをレビューして。ただし安全性、比較の妥当性、評価不能になる欠陥だけをblockし、DRYや命名やproduction向けtest不足は指摘しないで。",
+      "should_trigger": [
+        "variant-exploration"
+      ],
+      "should_not_trigger": [
+        "code-smells-and-antipatterns",
+        "quality-gate"
+      ],
+      "expected_decisions": [
+        "pass | block | escalate"
+      ],
+      "notes": "The explicit exploration blocker-only review contract is owned by variant-exploration."
+    },
+    {
+      "id": "variant-exploration-near-miss-single-poc",
+      "prompt": "この認証SDKをReact Nativeから一度呼べるか、最小の使い捨てデモを一つ作りたい。",
+      "should_trigger": [
+        "poc-workflow"
+      ],
+      "should_not_trigger": [
+        "variant-exploration"
+      ],
+      "notes": "One cheapest artifact answering one feasibility question remains poc-workflow."
+    },
+    {
+      "id": "variant-exploration-near-miss-one-experiment",
+      "prompt": "Cache有効化でp95 latencyが20%改善するという仮説を、反証条件とコマンドを登録して測りたい。",
+      "should_trigger": [
+        "experiment-loop"
+      ],
+      "should_not_trigger": [
+        "variant-exploration",
+        "poc-workflow"
+      ],
+      "notes": "One evidence-bearing hypothesis belongs to experiment-loop."
+    },
+    {
+      "id": "variant-exploration-near-miss-paper-architecture",
+      "prompt": "SQLiteとRealmを、実装せずに可用性・保守性・移行リスクの観点から比較してADRを書きたい。",
+      "should_trigger": [
+        "architecture-decision-analysis"
+      ],
+      "should_not_trigger": [
+        "variant-exploration"
+      ],
+      "notes": "Implementation-free architecture option analysis is not executable variant exploration."
+    },
+    {
+      "id": "variant-exploration-near-miss-production-feature",
+      "prompt": "確定済みのInline interaction仕様をproductionアプリへ実装し、unitとE2Eを通して出荷可能にして。",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "variant-exploration",
+        "poc-workflow"
+      ],
+      "notes": "Confirmed behavior being implemented for delivery uses dev-workflow."
+    },
+    {
+      "id": "variant-exploration-near-miss-hardening",
+      "prompt": "既存のproduction実装についてflaky testとobservability不足を計測して改善したい。",
+      "should_trigger": [
+        "hardening-workflow"
+      ],
+      "should_not_trigger": [
+        "variant-exploration"
+      ],
+      "notes": "Measured quality improvement on shipped behavior is hardening."
+    },
+    {
+      "id": "variant-exploration-near-miss-figma-only",
+      "prompt": "Figma上でチャット画面のレイアウト案を5つ発散して。まだ動くアプリは作らない。",
+      "should_trigger": [],
+      "should_not_trigger": [
+        "variant-exploration"
+      ],
+      "notes": "Paper-only ideation without executable alternatives is outside this skill."
+    }
+  ]
+}

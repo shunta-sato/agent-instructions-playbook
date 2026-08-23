@@ -1,6 +1,6 @@
 ---
 name: research-workflow
-description: "Use when the task's epistemic mode is research: exploratory optimization, feasibility probes, model/architecture exploration, benchmark investigation, or proof-of-concept work where learning per unit cost matters more than shipping. Routes probes to experiment-loop and synthesis to research-synthesis. Do not use in delivery mode, or once findings are being promoted into a delivery path (dev-workflow, quality-gate)."
+description: "Use when task mode is research: exploratory optimization, feasibility probes, executable variant comparison, model/architecture exploration, benchmarks, or PoC work where learning per cost matters more than shipping. Routes evidence experiments to experiment-loop, multi-variant construction to variant-exploration, and decisions to research-synthesis. Do not use in delivery mode or after promotion begins."
 metadata:
   short-description: Research-mode router
   resources:
@@ -15,7 +15,7 @@ Its goal is to maximize learning per unit cost. Unknowns are assets to reduce, n
 
 ## When to use
 
-Use this skill when the task's mode is `research`: exploratory optimization, feasibility probes, model/architecture exploration, benchmark investigation, or proof-of-concept work. Mode is resolved by explicit declaration > `.agents/project-policy.yml` `path_modes` > the policy's `default_mode`.
+Use this skill when the task's mode is `research`: exploratory optimization, feasibility probes, executable variant comparison, model/architecture exploration, benchmark investigation, or proof-of-concept work. Mode is resolved by explicit declaration > `.agents/project-policy.yml` `path_modes` > the policy's `default_mode`.
 
 Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-gate`. Do not use it once a research result is being promoted into a delivery path — promotion re-enters `dev-workflow` and `quality-gate` in full, even though the finding originated here.
 
@@ -41,18 +41,21 @@ Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-ga
 
 3) Any evidence-bearing experiment goes through `$experiment-loop`. Unregistered exploration is allowed for reconnaissance but is never citable as evidence until it is re-registered through `$experiment-loop` with a fresh confirmation.
 
-3b) PoC, demo, or feasibility CONSTRUCTION — building the demo/feasibility artifact itself, not a registered probe — routes to `$poc-workflow`, which owns construction on this mode's substrate.
+3b) PoC, demo, or feasibility CONSTRUCTION — building one cheapest demo/feasibility artifact, not a registered probe — routes to `$poc-workflow`, which owns single-artifact construction on this mode's substrate.
+
+3c) Comparative product/UX/quality-attribute construction — intentionally building two or more disposable executable alternatives under one shared evaluation protocol — routes to `$variant-exploration`. Do not simulate this by repeatedly invoking `$poc-workflow`; `$variant-exploration` owns controlled variables, variant budgets, blocker-only review, and the rebuild-from-contract convergence package.
 
 4) Before reporting completion of any research task that changed files, run the boundary gate with your declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode research`, and include its output in your report. `promotion-required` findings are not failures — they route the affected paths to `$research-synthesis` (promote) and the delivery gates.
 
-5) Periodically, or whenever more than 5 results remain unsynthesized, hand this cycle's results to `$research-synthesis`.
+5) Periodically, or whenever more than 5 results remain unsynthesized, hand this cycle's results to `$research-synthesis`. A completed `$variant-exploration` cycle reaches synthesis at its recorded decision point even when fewer than 5 registered experiments exist.
 
-6) Code-quality gates (`dev-workflow`, `quality-gate`) are waived for probe code under research-mode paths — disposable implementation is expected. Evidence discipline is **not** waived: every empirical claim still needs a registered experiment. Physical-safety, secrets, and destructive-operation rules never waive, in any mode.
+6) Code-quality gates (`dev-workflow`, `quality-gate`) are waived for probe and variant code under research-mode paths — disposable implementation is expected. Evidence discipline is **not** waived: every empirical claim still needs a registered experiment. Physical-safety, secrets, protected-boundary, and destructive-operation rules never waive, in any mode.
 
 ## Hard rules
 
 - No empirical claim without a registered experiment ID. This rule is mode-independent — it attaches to the claim, not to the mode the claim was made in — and is mechanically checked by `scripts/check_research_evidence.py`.
-- Disposable code is acceptable; disposable knowledge is not. A probe's script can be thrown away; what was learned or falsified must reach `$research-synthesis`.
+- Disposable code is acceptable; disposable knowledge is not. A probe or variant's code can be thrown away; what was learned or falsified must reach `$research-synthesis`.
+- Exploration review checks learning integrity and protected boundaries, not production maintainability. `$variant-exploration` owns that narrower review contract.
 - Touching a delivery-mode path from research work triggers promotion: `dev-workflow` and `quality-gate` apply to that path from that point on.
 
 ## Output expectation
@@ -60,5 +63,5 @@ Do not use it for delivery-mode work; that stays on `dev-workflow` + `quality-ga
 - The 4-line frame (`mode` / `question` / `decision` / `next_probe`).
 - Current live hypotheses, in plain language.
 - Probes executed this cycle, each with its experiment ID or exploration ID.
-- Handoffs made this cycle (to `$experiment-loop`, `$research-synthesis`, or a promotion into delivery gates), or `none`.
+- Handoffs made this cycle (to `$experiment-loop`, `$poc-workflow`, `$variant-exploration`, `$research-synthesis`, or a promotion into delivery gates), or `none`.
 - Boundary gate output (declared mode).

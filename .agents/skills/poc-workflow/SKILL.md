@@ -1,6 +1,6 @@
 ---
 name: poc-workflow
-description: "Use for PoC, prototype, demo, or feasibility-spike construction answering one question with the cheapest artifact, on the research-mode substrate (a poc/ path or explicitly declared research task). Frames the question, exit criteria, and rigor floor first; ends in discard, promotion, or a citable-evidence handoff. Do not use for delivery feature work (dev-workflow) or registered experiments (experiment-loop)."
+description: "Use in research mode to build one cheapest PoC, prototype, demo, or feasibility spike that answers one question. Establishes the question, exit criteria, and a minimal rigor floor before discard, promotion, or evidence handoff. Do not use for comparison of two or more executable alternatives (variant-exploration), delivery feature work, or registered experiments."
 metadata:
   short-description: PoC construction on the research substrate
   requires:
@@ -9,29 +9,30 @@ metadata:
 
 ## Purpose
 
-PoC construction is research-mode work, not a fourth mode and not a delivery shortcut. This skill makes that concrete: it owns the CONSTRUCTION activity of building a demo, prototype, or feasibility artifact, with a rigor floor low enough that disposable code stays disposable and high enough that nothing unsafe ships.
+PoC construction is research-mode work, not a fourth mode and not a delivery shortcut. This skill makes that concrete: it owns the CONSTRUCTION activity of building one demo, prototype, or feasibility artifact, with a rigor floor low enough that disposable code stays disposable and high enough that nothing unsafe ships.
 
 ## When to use
 
-Use this skill when the task is to build a demo, prototype, or feasibility spike to answer one question cheaply. It applies only inside the research-mode boundary:
+Use this skill when the task is to build one demo, prototype, or feasibility spike to answer one question cheaply. It applies only inside the research-mode boundary:
 
 - the target path resolves to `research` under `.agents/project-policy.yml` `path_modes` (this repo maps `poc/`), or
 - the task explicitly declares mode `research`.
 
-A PoC built on a delivery path in delivery mode gets **no** exemptions — `$dev-workflow` applies in full. Do not use this skill for delivery feature work or for a registered evidence-bearing probe (that is `$experiment-loop`).
+A PoC built on a delivery path in delivery mode gets **no** exemptions — `$dev-workflow` applies in full. Do not use this skill for delivery feature work, for a registered evidence-bearing probe (that is `$experiment-loop`), or when two or more executable alternatives are intentionally built for comparative product selection (that is `$variant-exploration`).
 
 ## Boundaries
 
 - `$research-workflow` owns mode routing and evidence-loop dispatch.
 - `$experiment-loop` owns registered probes (hypothesis + disconfirm predicate + command).
-- `poc-workflow` owns CONSTRUCTION only: building the demo/feasibility artifact itself.
+- `$variant-exploration` owns comparative construction of two or more alternatives under one evaluation protocol.
+- `poc-workflow` owns single-artifact CONSTRUCTION only: building the cheapest demo/feasibility artifact that answers one question.
 - Promotion re-enters `$dev-workflow` as intent `feature` on the promoted diff, in full.
 
 ## How to use
 
 0) Confirm the entry precondition above and record the RECEIPT before any exemption is claimed: the resolved mode for the target paths (from `.agents/project-policy.yml` or the explicit declaration) plus the output of `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode research`. No receipt, no rigor floor. If neither precondition holds, stop and route to `$dev-workflow` — do not proceed under a relaxed rigor floor.
 
-1) Open `references/poc-workflow.md` and record, before writing any code: the QUESTION the PoC answers, the cheapest artifact that answers it, and the exit criteria that ends the PoC.
+1) Open `references/poc-workflow.md` and record, before writing any code: the QUESTION the PoC answers, the cheapest artifact that answers it, and the exit criteria that ends the PoC. If the request intentionally needs two or more alternatives compared under shared scenarios, stop and route to `$variant-exploration`.
 
 2) Build to the rigor floor only (always on, never relaxed): it runs; one smoke-level check proves the demo path works; the safety overlay (secrets handling, destructive-operation rules, physical-safety rules) applies as in every mode; structure-budget violations are tolerated but noted, not fixed.
 
