@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate model-routing smoke eval seed files against the local resolver."""
+"""Validate harness-aware model-routing smoke eval seed files."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--eval-dir",
         default="evals/model-routing",
-        help="Eval directory relative to repo root.",
+        help="Model-routing eval directory relative to repo root.",
     )
     return parser.parse_args()
 
@@ -83,6 +83,7 @@ def validate_catalog(
 ) -> None:
     if catalog.get("schema_version") != 1:
         errors.append(f"{path}.schema_version: must be 1")
+    require_string(catalog.get("harness"), f"{path}.harness", errors)
 
     models = catalog.get("models")
     if not isinstance(models, list) or not models:
@@ -180,6 +181,7 @@ def validate_case(
     if task_class and task_class not in task_classes:
         errors.append(f"{path}.task_class: unknown task class {task_class}")
 
+    harness = require_string(case.get("harness"), f"{path}.harness", errors)
     expected_profile = require_string(
         case.get("expected_capability_profile"),
         f"{path}.expected_capability_profile",
@@ -205,12 +207,22 @@ def validate_case(
             errors,
         )
 
-    if task_class in task_classes and catalog and expected:
+    if task_class in task_classes and harness and catalog and expected:
         try:
-            result = resolve_route(task_class, routing, catalog)
+            result = resolve_route(
+                task_class,
+                routing,
+                catalog,
+                harness=harness,
+            )
         except ValueError as exc:
             errors.append(f"{path}: resolver failed: {exc}")
         else:
+            if result.get("harness") != harness:
+                errors.append(
+                    f"{path}: resolver harness expected {harness}, "
+                    f"got {result.get('harness')}"
+                )
             if result.get("capability_profile") != expected_profile:
                 errors.append(
                     f"{path}: resolver capability_profile expected {expected_profile}, "
@@ -283,7 +295,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print(f"Validated {case_count} model routing eval cases.")
+    print(f"Validated {case_count} harness-aware model routing eval cases.")
     return 0
 
 
