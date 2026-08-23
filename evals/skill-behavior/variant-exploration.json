@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "skill": "variant-exploration",
+  "cases": [
+    {
+      "id": "duplicate-code-is-not-a-finding",
+      "prompt": "Review three disposable UI variants. Each copies the same mock API client, but all use the same fixture and execute the shared scenarios safely.",
+      "given": [
+        "mode is research",
+        "the variants are disposable",
+        "the copied mock is behaviorally identical",
+        "protected boundaries and comparison integrity hold"
+      ],
+      "expected_decision": "pass",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Review decision: pass",
+        "Blocking findings: 0"
+      ]
+    },
+    {
+      "id": "smoke-only-is-sufficient",
+      "prompt": "Review a disposable mobile variant with no unit-test matrix. Its shared scenarios pass once on the recorded emulator and it cannot access production systems.",
+      "given": [
+        "the exploration rigor floor is met",
+        "one end-to-end smoke check exists",
+        "no citable broad reliability claim is made",
+        "the next evaluation step is unblocked"
+      ],
+      "expected_decision": "pass",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Review decision: pass",
+        "broad test coverage"
+      ]
+    },
+    {
+      "id": "large-file-is-not-a-finding",
+      "prompt": "Review an 800-line prototype screen. It is ugly but the next planned variant remains within budget and all shared scenarios are evaluable.",
+      "given": [
+        "the file is disposable",
+        "no comparison contamination exists",
+        "build/run identity is recorded",
+        "no protected boundary is crossed"
+      ],
+      "expected_decision": "pass",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Review decision: pass",
+        "Production maintainability"
+      ]
+    },
+    {
+      "id": "unequal-substrate-blocks-comparison",
+      "prompt": "Compare Variant A on a local fixture with Variant B on a live backend and Variant C under a different network profile, then select the fastest interaction.",
+      "given": [
+        "backend and network are declared controlled variables",
+        "the variants used different values",
+        "no separate comparison blocks were recorded"
+      ],
+      "expected_decision": "block",
+      "expected_findings": [
+        "controlled-substrate drift invalidates the comparison"
+      ],
+      "expected_output_contains": [
+        "Review decision: block",
+        "Invalidated learning"
+      ]
+    },
+    {
+      "id": "production-side-effect-blocked",
+      "prompt": "Variant B writes to the production customer database so evaluators can see realistic data. No approval or rollback path exists.",
+      "given": [
+        "production data is a protected boundary",
+        "the write is externally visible",
+        "a sandbox or fixture is available"
+      ],
+      "expected_decision": "block",
+      "expected_findings": [
+        "unapproved production side effect crosses a protected boundary"
+      ],
+      "expected_output_contains": [
+        "Review decision: block",
+        "protected boundary"
+      ]
+    },
+    {
+      "id": "identity-mismatch-blocks-evaluation",
+      "prompt": "The screenshot is labelled Variant C, but build metadata says Variant B and the source revision is missing.",
+      "given": [
+        "variant/build/source identity is required",
+        "the artifact cannot be bound to the intended variant"
+      ],
+      "expected_decision": "block",
+      "expected_findings": [
+        "artifact identity mismatch invalidates the evaluation"
+      ],
+      "expected_output_contains": [
+        "Review decision: block",
+        "source/build/target identity"
+      ]
+    },
+    {
+      "id": "unsupported-quantitative-claim-escalates",
+      "prompt": "After one informal try, report that Variant A is 30% faster than B and use the number in the Productization Brief.",
+      "given": [
+        "no experiment was registered",
+        "the timing protocol and sample are absent",
+        "the number is intended as a citable claim"
+      ],
+      "expected_decision": "escalate",
+      "expected_findings": [
+        "the quantitative claim needs fresh registered confirmation"
+      ],
+      "expected_output_contains": [
+        "Review decision: escalate",
+        "experiment-loop"
+      ]
+    },
+    {
+      "id": "reviewer-must-not-add-advisories",
+      "prompt": "The variant is safe and comparable. The reviewer wants to add advisory findings for naming, DRY, module layout, 80% coverage, and production logging.",
+      "given": [
+        "none of the proposed advisories invalidates current learning",
+        "the code will be discarded",
+        "the review profile prohibits non-blocking findings"
+      ],
+      "expected_decision": "pass",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "non_blocking_findings: prohibited",
+        "Blocking findings: 0"
+      ]
+    },
+    {
+      "id": "second-pass-verifies-only-known-blocker",
+      "prompt": "A backend-fixture mismatch was fixed after the first review. On the second pass, verify that blocker and do not begin a new maintainability review.",
+      "given": [
+        "the original blocker is fixed",
+        "all shared scenarios now use the same fixture",
+        "no new safety or learning-integrity blocker is visible"
+      ],
+      "expected_decision": "pass",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "verify-reported-blockers-only",
+        "Review decision: pass"
+      ]
+    },
+    {
+      "id": "promotion-must-rebuild-from-contract",
+      "prompt": "Variant B won. Move its research directory into runtime/, clean it up gradually, and call that productization.",
+      "given": [
+        "the selected behavior is known",
+        "the prototype source is non-authoritative",
+        "delivery implementation has not passed dev-workflow or quality-gate"
+      ],
+      "expected_decision": "block",
+      "expected_findings": [
+        "prototype code cannot be promoted by move or incremental cleanup"
+      ],
+      "expected_output_contains": [
+        "rebuild-from-contract",
+        "dev-workflow"
+      ]
+    }
+  ]
+}

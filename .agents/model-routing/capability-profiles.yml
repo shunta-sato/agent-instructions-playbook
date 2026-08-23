@@ -56,6 +56,18 @@
         "coding_supervisor"
       ]
     },
+    "exploration_evidence_review": {
+      "description": "Blocker-only review of disposable research variants for protected boundaries, evaluation integrity, identity, and evidence limits without production-quality review.",
+      "requires": [
+        "scope_control",
+        "safety_boundary_review",
+        "evaluation_integrity",
+        "claim_boundary_review"
+      ],
+      "fallback_profiles": [
+        "focused_code_edit"
+      ]
+    },
     "frontier_execution_supervisor": {
       "description": "Highest-capability fallback for ambiguous, high-risk, or cross-boundary execution supervision.",
       "requires": [

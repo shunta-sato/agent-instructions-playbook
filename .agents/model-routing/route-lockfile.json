@@ -154,6 +154,30 @@
           "exactly_one_focused_test_added"
         ]
       }
+    },
+    "variant_exploration_review": {
+      "schema_version": 1,
+      "task_class": "variant_exploration_review",
+      "capability_profile": "exploration_evidence_review",
+      "selection_profile": "focused_code_edit",
+      "prompt_detail": "strict",
+      "risk_gate": "low",
+      "default_effort": "low",
+      "selected": true,
+      "selected_model": "claude-sonnet-5",
+      "fallback_reasons": [
+        "no_candidate_for_profile:exploration_evidence_review",
+        "no_selectable_candidate:exploration_evidence_review",
+        "profile_fallback_used:focused_code_edit"
+      ],
+      "success_criteria": {
+        "required": [
+          "protected_boundaries_checked",
+          "evaluation_integrity_checked",
+          "only_blocking_findings_reported",
+          "production_quality_review_not_performed"
+        ]
+      }
     }
   }
 }
