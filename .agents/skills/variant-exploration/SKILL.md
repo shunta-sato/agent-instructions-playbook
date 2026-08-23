@@ -88,9 +88,10 @@ A finding is allowed only when it makes execution unsafe, blocks a declared scen
 invalidates comparison/evidence/identity, crosses a protected boundary, or blocks the
 next learning step. It must state the invalidated learning/boundary and minimum fix.
 Non-blocking production-quality findings are prohibited. A second pass verifies only
-reported blockers. Route routine review as `variant_exploration_review`; escalate only
-for protected-boundary decisions, contradictory evidence, controlled-substrate
-changes, or promotion.
+reported blockers. Use only a reviewer actually available in the active harness; do
+not infer a concrete model from a catalog or lockfile whose harness identity is absent
+or does not match. Model selection is outside this Skill, while this review output
+contract remains binding regardless of model.
 
 8) Evaluate each variant as `keep | mutate | drop`; retain selected and rejected
 knowledge, not a production-debt backlog for disposable code.
