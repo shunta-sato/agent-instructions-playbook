@@ -81,8 +81,7 @@ Requirements:
 Clone the playbook once:
 
 ```sh
-git clone https://github.com/shunta-sato/agent-instructions-playbook.git \
-  ~/tools/agent-instructions-playbook
+git clone https://github.com/shunta-sato/agent-instructions-playbook.git   ~/tools/agent-instructions-playbook
 ```
 
 Expose the shared skills in an existing project:
@@ -270,8 +269,7 @@ PreflightまたはWorkflow Router
 最初にPlaybookを一度だけCloneします。
 
 ```sh
-git clone https://github.com/shunta-sato/agent-instructions-playbook.git \
-  ~/tools/agent-instructions-playbook
+git clone https://github.com/shunta-sato/agent-instructions-playbook.git   ~/tools/agent-instructions-playbook
 ```
 
 既存プロジェクトへ共有Skillを公開します。
@@ -482,6 +480,7 @@ The full catalog below is generated from `.agents/skills/*/SKILL.md`. Do not edi
 | `uiux-core` | UI/UX core contract + deterministic review bundle | `.agents/skills/uiux-core/SKILL.md` |
 | `uiux-flow-preview` | Transition map preview with pan/zoom + focus review | `.agents/skills/uiux-flow-preview/SKILL.md` |
 | `unit-test-design` | Risk-tiered unit test design | `.agents/skills/unit-test-design/SKILL.md` |
+| `variant-exploration` | Executable variant exploration | `.agents/skills/variant-exploration/SKILL.md` |
 | `visual-regression-testing` | Tool-agnostic UI visual verification contract | `.agents/skills/visual-regression-testing/SKILL.md` |
 | `working-with-legacy-code` | Working with legacy code safely | `.agents/skills/working-with-legacy-code/SKILL.md` |
 <!-- END README SKILL CATALOG (generated) -->
