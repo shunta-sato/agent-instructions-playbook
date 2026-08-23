@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resolve model-routing task classes without storing concrete model IDs."""
+"""Resolve model-routing task classes without cross-harness model selection."""
 
 from __future__ import annotations
 
@@ -13,6 +13,9 @@ DEFAULT_MODEL_ROUTING_DIR = ".agents/model-routing"
 EXCLUDED_STATUS_REASON = "candidate_status_excluded"
 MISSING_FIELD_REASON = "candidate_missing_required_field"
 SMOKE_EVAL_REASON = "candidate_smoke_eval_not_passed"
+ACTIVE_HARNESS_MISSING_REASON = "active_harness_missing"
+CATALOG_HARNESS_MISSING_REASON = "catalog_harness_missing"
+CATALOG_HARNESS_MISMATCH_REASON = "catalog_harness_mismatch"
 
 
 def repo_root_from_args(explicit_root: str) -> Path:
@@ -57,6 +60,11 @@ def normalize_catalog(payload: dict[str, Any]) -> list[dict[str, Any]]:
             raise ValueError(f"catalog: models[{index}] must be an object")
         normalized.append(model)
     return normalized
+
+
+def catalog_harness(catalog: dict[str, Any]) -> str | None:
+    value = catalog.get("harness")
+    return value if isinstance(value, str) and value else None
 
 
 def candidate_profiles(candidate: dict[str, Any]) -> list[str]:
@@ -174,6 +182,7 @@ def resolve_route(
     task_class_name: str,
     routing: dict[str, dict[str, Any]],
     catalog: dict[str, Any] | None = None,
+    harness: str | None = None,
 ) -> dict[str, Any]:
     task_classes = routing["task_classes"]["task_classes"]
     profiles = routing["capability_profiles"]["capability_profiles"]
@@ -199,8 +208,18 @@ def resolve_route(
     fallback_reasons: list[str] = []
     selected_model = None
     selection_profile = profile_name
+    catalog_scope = catalog_harness(catalog) if catalog is not None else None
+
     if catalog is None:
         fallback_reasons.append("catalog_not_provided")
+    elif not harness:
+        fallback_reasons.append(ACTIVE_HARNESS_MISSING_REASON)
+    elif not catalog_scope:
+        fallback_reasons.append(CATALOG_HARNESS_MISSING_REASON)
+    elif catalog_scope != harness:
+        fallback_reasons.append(
+            f"{CATALOG_HARNESS_MISMATCH_REASON}:{catalog_scope}:{harness}"
+        )
     else:
         for candidate_profile in [profile_name, *profile_fallback_chain(profile_name, profiles)]:
             selected, attempt_reasons = select_candidate(candidate_profile, catalog, policy)
@@ -216,6 +235,8 @@ def resolve_route(
     return {
         "schema_version": 1,
         "task_class": task_class_name,
+        "harness": harness,
+        "catalog_harness": catalog_scope,
         "capability_profile": profile_name,
         "selection_profile": selection_profile,
         "prompt_detail": task_class["prompt_detail"],
@@ -230,7 +251,7 @@ def resolve_route(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Resolve a task class into a capability profile and optional model candidate."
+        description="Resolve a task class for an explicit active execution harness."
     )
     parser.add_argument("task_class", help="Task class name to resolve.")
     parser.add_argument(
@@ -241,7 +262,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--catalog",
         default="",
-        help="Optional external generated model catalog JSON file.",
+        help="Optional harness-scoped generated model catalog JSON file.",
+    )
+    parser.add_argument(
+        "--harness",
+        default="",
+        help=(
+            "Active execution harness, such as claude-code, codex, or copilot. "
+            "Catalog selection fails closed when omitted or mismatched."
+        ),
     )
     parser.add_argument(
         "--format",
@@ -255,6 +284,8 @@ def parse_args() -> argparse.Namespace:
 def render_text(result: dict[str, Any]) -> str:
     lines = [
         f"task_class: {result['task_class']}",
+        f"harness: {result['harness'] or '<unresolved>'}",
+        f"catalog_harness: {result['catalog_harness'] or '<none>'}",
         f"capability_profile: {result['capability_profile']}",
         f"selection_profile: {result['selection_profile']}",
         f"prompt_detail: {result['prompt_detail']}",
@@ -277,7 +308,12 @@ def main() -> int:
         catalog = None
         if args.catalog:
             catalog = load_json_compatible_yaml(Path(args.catalog).resolve())
-        result = resolve_route(args.task_class, routing, catalog)
+        result = resolve_route(
+            args.task_class,
+            routing,
+            catalog,
+            harness=args.harness or None,
+        )
     except ValueError as exc:
         print(f"Model route resolution failed: {exc}")
         return 1

@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
+  "harness": "claude-code",
   "generated": "2026-07-05",
-  "notes": "Generated model catalog for the resolver (resolver-policy.yml: catalog_format=external-json). Concrete model IDs live only here and in the derived route lockfile, never in skill bodies. smoke_eval is evidence-backed: flip pending->passed only with a recorded supervised run (see evidence fields).",
+  "notes": "Harness-scoped model catalog for Claude Code. Concrete model IDs live only here and in the derived route lockfile, never in skill bodies. This catalog is not authoritative for Codex, GitHub Copilot, or another harness. smoke_eval is evidence-backed: flip pending->passed only with a recorded supervised run (see evidence fields).",
   "models": [
     {
       "id": "claude-opus-5",

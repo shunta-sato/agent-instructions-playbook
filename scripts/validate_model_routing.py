@@ -7,7 +7,20 @@ import argparse
 from pathlib import Path
 from typing import Any
 
-from resolve_model_route import load_model_routing, resolve_route
+try:
+    from scripts.model_routing_harness_validation import (
+        validate_repository_catalog,
+        validate_resolver_policy,
+        validate_resolver_smoke,
+    )
+    from scripts.resolve_model_route import load_model_routing
+except ImportError:  # pragma: no cover - direct execution puts scripts/ on sys.path
+    from model_routing_harness_validation import (
+        validate_repository_catalog,
+        validate_resolver_policy,
+        validate_resolver_smoke,
+    )
+    from resolve_model_route import load_model_routing
 
 
 FORBIDDEN_MODEL_KEYS = {
@@ -184,127 +197,16 @@ def validate_task_classes(
         )
 
 
-def validate_resolver_policy(policy: dict[str, Any], errors: list[str]) -> None:
-    resolver = require_object(policy.get("resolver_policy"), "resolver_policy", errors)
-    selectable = set(
-        require_string_list(
-            resolver.get("selectable_statuses"),
-            "resolver_policy.selectable_statuses",
-            errors,
-        )
-    )
-    excluded = set(
-        require_string_list(
-            resolver.get("excluded_statuses"),
-            "resolver_policy.excluded_statuses",
-            errors,
-        )
-    )
-    if selectable & excluded:
-        errors.append("resolver_policy: selectable and excluded statuses overlap")
-    require_string_list(
-        resolver.get("candidate_required_fields"),
-        "resolver_policy.candidate_required_fields",
-        errors,
-    )
-    require_string_list(
-        resolver.get("fallback_reasons"),
-        "resolver_policy.fallback_reasons",
-        errors,
-    )
-
-
-def validate_resolver_smoke(routing: dict[str, dict[str, Any]], errors: list[str]) -> None:
-    catalog = {
-        "schema_version": 1,
-        "models": [
-            {
-                "id": "candidate-unavailable",
-                "profiles": ["focused_code_edit"],
-                "status": "unavailable",
-                "smoke_eval": "passed",
-                "priority": 100,
-            },
-            {
-                "id": "candidate-rumored",
-                "profiles": ["focused_code_edit"],
-                "status": "rumored",
-                "smoke_eval": "passed",
-                "priority": 90,
-            },
-            {
-                "id": "candidate-smoke-missing",
-                "profiles": ["focused_code_edit"],
-                "status": "available",
-                "smoke_eval": "not_run",
-                "priority": 80,
-            },
-            {
-                "id": "candidate-selectable",
-                "profiles": ["focused_code_edit"],
-                "status": "available",
-                "smoke_eval": "passed",
-                "priority": 1,
-            },
-        ],
-    }
-    result = resolve_route("unit_test_single_case", routing, catalog)
-    if result["selected_model"] != "candidate-selectable":
-        errors.append(
-            "resolver smoke: expected candidate-selectable after excluding "
-            f"unavailable candidates, got {result['selected_model']}"
-        )
-
-    reasons = "\n".join(result["fallback_reasons"])
-    for expected in (
-        "candidate_status_excluded:candidate-unavailable",
-        "candidate_status_excluded:candidate-rumored",
-        "candidate_smoke_eval_not_passed:candidate-smoke-missing",
-    ):
-        if expected not in reasons:
-            errors.append(f"resolver smoke: missing fallback reason {expected}")
-
-    no_catalog = resolve_route("unit_test_single_case", routing, None)
-    if no_catalog["selected"]:
-        errors.append("resolver smoke: route without catalog must not select a model")
-    if "catalog_not_provided" not in no_catalog["fallback_reasons"]:
-        errors.append("resolver smoke: missing catalog_not_provided fallback reason")
-
-    fallback_catalog = {
-        "schema_version": 1,
-        "models": [
-            {
-                "id": "candidate-supervisor",
-                "profiles": ["coding_supervisor"],
-                "status": "available",
-                "smoke_eval": "passed",
-                "priority": 1,
-            }
-        ],
-    }
-    fallback_result = resolve_route("unit_test_single_case", routing, fallback_catalog)
-    if fallback_result["selected_model"] != "candidate-supervisor":
-        errors.append(
-            "resolver smoke: expected fallback profile candidate-supervisor, got "
-            f"{fallback_result['selected_model']}"
-        )
-    if fallback_result["selection_profile"] != "coding_supervisor":
-        errors.append(
-            "resolver smoke: expected selection_profile coding_supervisor, got "
-            f"{fallback_result['selection_profile']}"
-        )
-    if "profile_fallback_used:coding_supervisor" not in fallback_result["fallback_reasons"]:
-        errors.append("resolver smoke: missing profile_fallback_used fallback reason")
-
-
 def validate_model_routing(repo_root: Path) -> list[str]:
     errors: list[str] = []
     try:
         routing = load_model_routing(repo_root)
     except ValueError as exc:
         return [str(exc)]
+
     detect_forbidden_model_keys(routing, "model-routing", errors)
     validate_prompt_detail_doc(repo_root, errors)
+    validate_repository_catalog(repo_root, errors)
 
     task_classes = require_object(
         routing["task_classes"].get("task_classes"),
@@ -344,7 +246,10 @@ def main() -> int:
     routing = load_model_routing(repo_root)
     task_count = len(routing["task_classes"]["task_classes"])
     profile_count = len(routing["capability_profiles"]["capability_profiles"])
-    print(f"Validated model routing: {task_count} task classes, {profile_count} profiles.")
+    print(
+        f"Validated harness-aware model routing: "
+        f"{task_count} task classes, {profile_count} profiles."
+    )
     return 0
 
 

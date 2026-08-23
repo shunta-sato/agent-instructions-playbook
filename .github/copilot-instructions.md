@@ -16,6 +16,7 @@ Produce changes that are easy to understand and safe to change.
    - If you cannot run them, say why and provide a reproducible procedure.
 6. If `COMMANDS.md` contains `<fill>`, do not guess project commands or proceed with normal implementation until initialization is completed via `/initialize` or `$project-initialization`.
 7. Consider initialization complete only after `make verify` succeeds; only then may `<fill>` be removed from `COMMANDS.md`.
+8. Treat concrete model routing as harness-scoped. The current `.agents/model-routing/model-catalog.json` and `.agents/model-routing/route-lockfile.json` identify `claude-code`; they are not execution authority for Copilot. If no catalog/lockfile explicitly matches the active Copilot harness, leave the concrete model unresolved and do not fall back through Claude or Codex candidates.
 
 ## Use the on-demand prompts
 
