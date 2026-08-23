@@ -1,6 +1,6 @@
 # PoC workflow reference
 
-Checklist form of the construction contract. Fill top-down before building.
+Checklist form of the single-artifact construction contract. Fill top-down before building.
 
 ## 1) Entry preconditions (boundary check)
 
@@ -9,8 +9,9 @@ Checklist form of the construction contract. Fill top-down before building.
 | Target path matches `path_modes` as `research` (e.g. `poc/`) | Boundary satisfied — proceed. |
 | Task explicitly declares mode `research` | Boundary satisfied — proceed. |
 | Neither holds, even for a "quick PoC" | STOP. No exemption. Route to `$dev-workflow` in full; this skill does not apply. |
+| Two or more executable alternatives are intentionally compared | STOP. Route to `$variant-exploration`; this skill owns only one cheapest artifact. |
 
-A PoC built on a delivery path in delivery mode gets **no** rigor discount. Do not relabel a delivery task as a PoC to skip gates.
+A PoC built on a delivery path in delivery mode gets **no** rigor discount. Do not relabel a delivery task as a PoC to skip gates. Do not loop multiple PoCs to bypass the shared controls and review discipline owned by `$variant-exploration`.
 
 ## 2) Record before building (all three, before writing code)
 
@@ -44,6 +45,8 @@ State each OFF item as acknowledged in the report; do not silently add any of th
 
 The moment the recorded QUESTION is answered (exit criteria met, or definitively falsified), **stop building**. Adding more scope after the answer is known is the over-quality failure in miniature — a PoC that keeps growing is laundering feature work through a research-mode exemption.
 
+If the new need is to compare alternatives rather than answer the original single question with one artifact, start a `$variant-exploration` cycle instead of growing the PoC.
+
 ## 6) Choose exactly one exit
 
 | Exit | What it requires |
@@ -56,4 +59,5 @@ The moment the recorded QUESTION is answered (exit criteria met, or definitively
 
 - `$research-workflow` owns mode routing and evidence-loop dispatch.
 - `$experiment-loop` owns registered probes.
-- `poc-workflow` owns CONSTRUCTION only: building the demo/feasibility artifact itself.
+- `$variant-exploration` owns comparative construction.
+- `poc-workflow` owns one cheapest construction artifact only.
