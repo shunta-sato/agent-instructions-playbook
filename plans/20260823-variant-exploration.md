@@ -10,7 +10,7 @@ cost into more executable product-learning cycles. Agents may build, compare,
 and discard multiple variants rapidly without applying production
 maintainability review to disposable code.
 
-The workflow must preserve protected boundaries, comparison integrity, evidence
+The workflow preserves protected boundaries, comparison integrity, evidence
 discipline, and a clean production boundary: selected behavior is rebuilt from
 confirmed contracts rather than grown from prototype source.
 
@@ -60,7 +60,7 @@ confirmed contracts rather than grown from prototype source.
   extensibility are not findings unless they invalidate current learning.
 - **Model neutrality:** the Skill binds review behavior, not a concrete model;
   only a reviewer actually invokable in the active harness may be used.
-- **Context budget:** active `SKILL.md` must remain at or below 150 lines and
+- **Context budget:** active `SKILL.md` remains at or below 150 lines and
   unconditional reach at or below 400 lines.
 - **Verification:** all repository validators, tests, generated-file checks, and
   the PR research-promotion/safety boundary must pass.
@@ -160,7 +160,7 @@ incremental cleanup.
 - New conditional reference: 1.
 - New output template: 1.
 - New runtime helper or service: 0.
-- Shared Model Routing changes: 0; harness-aware routing is a separate PR.
+- Shared Model Routing changes: 0; harness-aware routing is PR #117.
 
 ### Testing strategy
 
@@ -195,9 +195,10 @@ incremental cleanup.
   - Evidence: synthesis handoff, behavior eval, and workflow-contract review.
 - **AC6 — harness honesty:** the Skill does not claim or select a concrete model;
   a mismatched or unidentified model lockfile cannot justify delegation.
-  - Evidence: Skill text and absence of Model Routing changes in the PR diff.
+  - Evidence: Skill text and absence of Model Routing files from the PR diff.
 - **AC7 — repository verification:** canonical PR workflow is green.
-  - Evidence: final GitHub Actions run after the split commit.
+  - Evidence: GitHub Actions run `32619144407` for split head
+    `ab8b2dfca9bed35b4f20e159af39c0f9e536f257`, conclusion `success`.
 
 ## Progress (WBS)
 
@@ -207,10 +208,9 @@ incremental cleanup.
 - [x] (P3) Add trigger and behavior eval coverage.
 - [x] (P4) Update Agent Index, README catalog, and Claude Skill link.
 - [x] (P5) Complete Agent workflow-contract review.
-- [x] (P6) Remove concrete Model Routing changes and record them as a separate
-  follow-up PR.
-- [ ] (P7) Run full canonical PR verification after the split and record the
-  final result.
+- [x] (P6) Remove concrete Model Routing changes and move them to PR #117.
+- [x] (P7) Run full canonical PR verification after the split and record the
+  result.
 
 ## Surprises & Discoveries
 
@@ -222,14 +222,17 @@ incremental cleanup.
   and reducing `SKILL.md` resolved the finding without raising the budget.
 - 2026-08-23: The repository-global Model Catalog and Lockfile are materially
   Claude Code-specific. Treating their selected models as invokable from Codex
-  or another harness is unsafe, so Model Routing work was removed from this PR.
+  or another harness is unsafe, so Model Routing work was removed from this PR
+  and moved to PR #117.
+- 2026-08-23: Post-split CI run `32619144407` passed the complete repository
+  validation chain.
 
 ## Decision log
 
 - 2026-08-23: Add a dedicated `variant-exploration` Skill rather than broadening
   `poc-workflow` or invoking it repeatedly.
-  - Rationale: comparative construction changes runtime routing, controlled
-    variables, review policy, and output contracts.
+  - Rationale: comparative construction changes routing, controlled variables,
+    review policy, and output contracts.
 - 2026-08-23: Treat production maintainability as a temporary non-objective,
   while preserving enough local changeability for the next learning step.
   - Rationale: neither full neglect nor production polish serves rapid,
@@ -240,7 +243,7 @@ incremental cleanup.
     disposable code should not accumulate a production-debt backlog.
 - 2026-08-23: Use one general review pass and a known-blocker-only second pass.
   - Rationale: prevents review scope from reopening after every fix.
-- 2026-08-23: Split Model Routing into a separate PR.
+- 2026-08-23: Split Model Routing into PR #117.
   - Rationale: Task Class and Capability Profile can be shared, but concrete
     model selection is harness-dependent and must fail closed when the active
     harness cannot invoke the selected model.
@@ -253,17 +256,20 @@ incremental cleanup.
 
 - Branch: `feature/variant-exploration`
 - Pull request: `#116` (`Add rapid executable variant exploration workflow`)
+- Split validation: run `32619144407`, success.
 - What is complete: Skill, workflow wiring, trigger/behavior evals, generated
-  surfaces, ExecPlan, and workflow-contract review.
-- What remains: post-split CI and PR metadata update.
+  surfaces, ExecPlan, workflow-contract review, Model Routing split, and
+  canonical validation.
+- What remains: normal PR review and merge decision.
 - Canonical command: `make verify`.
 - Read first:
   - `.agents/skills/variant-exploration/SKILL.md`
   - `.agents/skills/variant-exploration/references/variant-exploration.md`
   - `evals/skill-behavior/variant-exploration.json`
   - `reports/workflow-contract-review/variant-exploration.md`
-- Separate follow-up: harness-aware Model Routing with explicit harness identity,
-  fail-closed mismatch behavior, and no cross-harness fallback.
+- Separate follow-up: PR #117 implements harness-aware Model Routing with
+  explicit harness identity, fail-closed mismatch behavior, and no
+  cross-harness fallback.
 
 ## Outcomes & Retrospective
 
@@ -276,12 +282,12 @@ incremental cleanup.
 - Failed/rejected attempts:
   - Initial unconditional context surface exceeded policy; corrected through
     Progressive Disclosure.
-  - Initial Model Routing addition assumed a repository-global concrete route;
+  - Initial Model Routing addition assumed repository-global concrete authority;
     removed after identifying the missing harness-invokability boundary.
 - Failure retrospective:
   - not triggered: both findings were detected before merge and corrected in the
     same workstream; no rollback or repeated unresolved failure remains.
 - Remaining follow-ups:
-  - harness-aware Model Routing PR;
+  - PR #117 for harness-aware Model Routing;
   - telemetry-gated artifact structure enforcement;
   - telemetry-gated prototype-source leakage lint.
