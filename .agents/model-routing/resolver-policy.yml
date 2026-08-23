@@ -1,9 +1,11 @@
 {
   "schema_version": 1,
   "resolver_policy": {
-    "catalog_format": "external-json",
+    "catalog_format": "harness-scoped-external-json",
     "route_lockfile_required_for_generated_agents": true,
     "concrete_model_ids_in_routing_files": false,
+    "active_harness_required_for_catalog_selection": true,
+    "cross_harness_fallback": false,
     "selectable_statuses": [
       "available"
     ],
@@ -31,6 +33,9 @@
     ],
     "fallback_reasons": [
       "catalog_not_provided",
+      "active_harness_missing",
+      "catalog_harness_missing",
+      "catalog_harness_mismatch",
       "no_candidate_for_profile",
       "candidate_missing_required_field",
       "candidate_status_excluded",
