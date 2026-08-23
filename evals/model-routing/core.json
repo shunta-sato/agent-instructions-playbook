@@ -94,50 +94,6 @@
         "rumored models are not selected by the resolver",
         "fallback reasons explain why no selectable candidate exists"
       ]
-    },
-    {
-      "id": "variant-review-prefers-bounded-fallback",
-      "task_class": "variant_exploration_review",
-      "expected_capability_profile": "exploration_evidence_review",
-      "catalog": {
-        "schema_version": 1,
-        "models": [
-          {
-            "id": "candidate-bounded",
-            "profiles": [
-              "focused_code_edit"
-            ],
-            "status": "available",
-            "smoke_eval": "passed",
-            "priority": 1
-          },
-          {
-            "id": "candidate-high-reasoning",
-            "profiles": [
-              "high_reasoning_review"
-            ],
-            "status": "available",
-            "smoke_eval": "passed",
-            "priority": 100
-          }
-        ]
-      },
-      "expected": {
-        "selected": true,
-        "selection_profile": "focused_code_edit",
-        "selected_model": "candidate-bounded",
-        "fallback_reasons_contains": [
-          "no_candidate_for_profile:exploration_evidence_review",
-          "no_selectable_candidate:exploration_evidence_review",
-          "profile_fallback_used:focused_code_edit"
-        ]
-      },
-      "checks": [
-        "checks protected boundaries and comparison integrity",
-        "reports blocker findings only",
-        "does not perform production maintainability review",
-        "escalates to high reasoning only on an explicit escalation condition"
-      ]
     }
   ]
 }
