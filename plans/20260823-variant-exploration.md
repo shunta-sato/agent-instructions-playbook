@@ -20,18 +20,18 @@ confirmed contracts rather than grown from prototype source.
 
 - Add `variant-exploration` with a compact `SKILL.md`, detailed conditional
   reference, and Exploration Cycle template.
-- Route two-or-more executable alternatives from `research-workflow` while
+- Route two-or-more executable alternatives from `research-workflow`, while
   preserving `poc-workflow` for one cheapest artifact and `experiment-loop` for
   citable evidence.
-- Define an exploration maintenance rule: refactor only when needed for the
+- Define an exploration maintenance rule: refactor only when required for the
   next learning step, isolation, comparison integrity, reproducibility, or
-  required instrumentation.
-- Define a blocker-only review profile with one general pass and a second pass
-  limited to previously reported blockers.
+  evaluation instrumentation.
+- Define blocker-only review with one general pass and a second pass limited to
+  previously reported blockers.
 - Require a Productization Brief with rebuild-from-contract semantics before
   promotion into delivery.
-- Add trigger, behavior, model-routing, workflow-contract, and generated-index
-  coverage.
+- Add trigger and behavior evals, generated indexes, and workflow-contract
+  evidence.
 
 ### Out of scope / non-goals
 
@@ -40,7 +40,7 @@ confirmed contracts rather than grown from prototype source.
   production-resource, migration, external-side-effect, or physical-safety
   boundaries.
 - Treating exploration observations as citable empirical claims.
-- Assigning a concrete model to a new capability without smoke evidence.
+- Selecting a concrete reviewer model or changing shared Model Routing.
 - Adding a prototype-source leakage lint or persistent artifact schema before
   operational evidence shows they are needed.
 - Changing production `dev-workflow`, `quality-gate`, or `hardening-workflow`
@@ -58,10 +58,10 @@ confirmed contracts rather than grown from prototype source.
 - **Review exclusions:** naming, DRY, abstraction shape, module layout, broad
   test coverage, production observability, documentation, and future
   extensibility are not findings unless they invalidate current learning.
+- **Model neutrality:** the Skill binds review behavior, not a concrete model;
+  only a reviewer actually invokable in the active harness may be used.
 - **Context budget:** active `SKILL.md` must remain at or below 150 lines and
   unconditional reach at or below 400 lines.
-- **Compatibility:** existing single-PoC, experiment, synthesis, promotion, and
-  delivery responsibilities remain explicit and non-overlapping.
 - **Verification:** all repository validators, tests, generated-file checks, and
   the PR research-promotion/safety boundary must pass.
 
@@ -74,14 +74,14 @@ Primary surfaces:
 - `.agents/skills/experiment-loop/SKILL.md` — registered evidence contract.
 - `.agents/skills/research-synthesis/SKILL.md` —
   `continue | pivot | kill | promote` decision.
-- `.agents/skills/variant-exploration/` — new comparative construction and
-  review contract.
-- `.agents/model-routing/` — task class, capability profile, catalog, and
-  generated route decision.
-- `evals/skill-triggers/`, `evals/skill-behavior/`, and
-  `evals/model-routing/` — executable contract seeds.
-- `reports/workflow-contract-review/variant-exploration.md` — source/consumer
-  and claim-boundary review.
+- `.agents/skills/variant-exploration/` — comparative construction and review
+  contract.
+- `evals/skill-triggers/variant-exploration.json` — trigger and near-miss
+  boundaries.
+- `evals/skill-behavior/variant-exploration.json` — blocker-only review and
+  production-boundary decisions.
+- `reports/workflow-contract-review/variant-exploration.md` — workflow and
+  claim-boundary review.
 
 The target project continues to own its devices, fixtures, data, accounts,
 commands, architecture, and production requirements.
@@ -131,15 +131,15 @@ The stopping criterion is “exploration can continue,” not “the code is cle
 
 ### Review rule
 
-The routine reviewer asks only:
+The reviewer asks only:
 
 > Is this disposable variant safe and valid enough to produce the intended
 > learning?
 
 Non-blocking production-quality findings are prohibited. The first pass reports
-blockers only; a second pass verifies those blockers only. Protected-boundary,
-contradictory-evidence, controlled-substrate, and promotion decisions escalate
-to high-reasoning review.
+blockers only; a second pass verifies those blockers only. The contract applies
+to whichever reviewer is actually available in the active harness. Concrete
+model selection is deliberately outside this PR.
 
 ### Evidence and promotion
 
@@ -157,12 +157,10 @@ incremental cleanup.
 ### Responsibility and complexity budget
 
 - New active Skill: 1.
-- New capability profile: 1.
-- New task class: 1.
+- New conditional reference: 1.
 - New output template: 1.
 - New runtime helper or service: 0.
-- Detailed operational policy resides in a conditional Resource rather than
-  unconditional Skill reach.
+- Shared Model Routing changes: 0; harness-aware routing is a separate PR.
 
 ### Testing strategy
 
@@ -175,8 +173,6 @@ incremental cleanup.
 - Behavior blockers for substrate drift, production side effects, identity
   mismatch, unsupported quantitative claims, advisory over-review, second-pass
   scope creep, and prototype-source promotion.
-- Model-routing case proving bounded review is selected before high-reasoning
-  review unless escalation is explicit.
 - Canonical repository CI for metadata, context, graph, artifacts, structure,
   submission evidence, unit tests, and promotion/safety boundaries.
 
@@ -184,56 +180,49 @@ incremental cleanup.
 
 - **AC1 — routing boundary:** two-or-more disposable executable alternatives
   trigger `variant-exploration`; adjacent near misses do not.
-  - Evidence: `evals/skill-triggers/variant-exploration.json` and trigger-eval
-    validator.
+  - Evidence: trigger eval seeds and validator.
 - **AC2 — rapid maintenance:** cosmetic or production-oriented cleanup does not
   block exploration; enabling repairs remain allowed.
   - Evidence: Skill/reference contract and behavior evals.
 - **AC3 — blocker-only review:** production maintainability advisories and new
   second-pass review findings are prohibited.
-  - Evidence: behavior evals and `variant_exploration_review` success criteria.
+  - Evidence: behavior evals and review output contract.
 - **AC4 — protected learning:** substrate drift, unsafe side effects, identity
   mismatch, and unsupported claims block or escalate.
   - Evidence: behavior evals.
 - **AC5 — production boundary:** promotion uses a Productization Brief and a new
   delivery implementation from contracts.
   - Evidence: synthesis handoff, behavior eval, and workflow-contract review.
-- **AC6 — model scope:** routine exploration review does not default to a
-  high-reasoning production reviewer merely because one is available.
-  - Evidence: model-routing eval and generated route lockfile.
+- **AC6 — harness honesty:** the Skill does not claim or select a concrete model;
+  a mismatched or unidentified model lockfile cannot justify delegation.
+  - Evidence: Skill text and absence of Model Routing changes in the PR diff.
 - **AC7 — repository verification:** canonical PR workflow is green.
-  - Evidence: GitHub Actions run `32617158045` for commit
-    `bd84762070e8b06686bcff09d0efeada3c83aef4`; all 23 substantive validation
-    steps succeeded.
+  - Evidence: final GitHub Actions run after the split commit.
 
 ## Progress (WBS)
 
 - [x] (P0) Confirm Skill Delta Gate and create this ExecPlan.
 - [x] (P1) Add Skill, conditional reference, and Exploration Cycle template.
 - [x] (P2) Wire research, PoC, evidence, synthesis, and delivery boundaries.
-- [x] (P3) Add bounded reviewer capability/task routing and generated lockfile.
-- [x] (P4) Add trigger, behavior, and model-routing eval coverage.
-- [x] (P5) Update Agent Index, README catalog, and Claude Skill link.
-- [x] (P6) Complete Agent workflow-contract review.
-- [x] (P7) Run full canonical PR verification and record the result.
+- [x] (P3) Add trigger and behavior eval coverage.
+- [x] (P4) Update Agent Index, README catalog, and Claude Skill link.
+- [x] (P5) Complete Agent workflow-contract review.
+- [x] (P6) Remove concrete Model Routing changes and record them as a separate
+  follow-up PR.
+- [ ] (P7) Run full canonical PR verification after the split and record the
+  final result.
 
 ## Surprises & Discoveries
 
 - 2026-08-23: `poc-workflow` already supplied a useful disposable-code rigor
   floor and reimplementation boundary, but its one-question/one-cheapest-artifact
   stop rule could not own controlled multi-variant comparison.
-- 2026-08-23: No model has evidence-backed membership in the new
-  `exploration_evidence_review` profile. The resolver therefore records a
-  transparent fallback to `focused_code_edit`; high-reasoning review remains an
-  escalation route rather than a false default capability claim.
-- 2026-08-23: The first CI run (`32617054909`) failed only the context-budget
-  gate: the initial Skill was 185 lines and unconditional reach was 489 lines.
-  Moving the 304-line operational reference from `requires` to a conditionally
-  loaded `resource` and reducing `SKILL.md` to 121 lines resolved both findings.
-- 2026-08-23: The second CI run (`32617158045`) passed every substantive step,
-  including context budget, instruction graph, command-doc drift, artifact and
-  structure checks, submission evidence, unit tests, and research
-  promotion/safety boundaries.
+- 2026-08-23: The first CI run failed only the context-budget gate. Moving the
+  detailed operational reference from `requires` to a conditional `resource`
+  and reducing `SKILL.md` resolved the finding without raising the budget.
+- 2026-08-23: The repository-global Model Catalog and Lockfile are materially
+  Claude Code-specific. Treating their selected models as invokable from Codex
+  or another harness is unsafe, so Model Routing work was removed from this PR.
 
 ## Decision log
 
@@ -251,34 +240,30 @@ incremental cleanup.
     disposable code should not accumulate a production-debt backlog.
 - 2026-08-23: Use one general review pass and a known-blocker-only second pass.
   - Rationale: prevents review scope from reopening after every fix.
-- 2026-08-23: Add a capability profile and task class without adding unsupported
-  concrete-model capability claims.
-  - Rationale: route evidence must precede catalog promotion.
+- 2026-08-23: Split Model Routing into a separate PR.
+  - Rationale: Task Class and Capability Profile can be shared, but concrete
+    model selection is harness-dependent and must fail closed when the active
+    harness cannot invoke the selected model.
 - 2026-08-23: Begin with semantic promotion rules and behavior evals rather than
   a mechanical prototype-copy detector.
   - Rationale: add deterministic enforcement only if observed misuse justifies
     the complexity.
-- 2026-08-23: Move detailed policy behind a conditional Resource after the
-  context-budget finding.
-  - Rationale: routing and hard rules stay visible; full operational detail is
-    loaded only when executing a cycle, review, or Productization Brief.
 
 ## Handoff
 
 - Branch: `feature/variant-exploration`
 - Pull request: `#116` (`Add rapid executable variant exploration workflow`)
-- Implementation validation: GitHub Actions run `32617158045`, success.
-- What is complete: Skill, workflow wiring, model routing, evals, generated
-  surfaces, ExecPlan, workflow-contract review, and canonical validation.
-- What remains: final documentation-only commit validation and normal PR review.
+- What is complete: Skill, workflow wiring, trigger/behavior evals, generated
+  surfaces, ExecPlan, and workflow-contract review.
+- What remains: post-split CI and PR metadata update.
 - Canonical command: `make verify`.
 - Read first:
   - `.agents/skills/variant-exploration/SKILL.md`
   - `.agents/skills/variant-exploration/references/variant-exploration.md`
   - `evals/skill-behavior/variant-exploration.json`
   - `reports/workflow-contract-review/variant-exploration.md`
-- Open follow-ups: add artifact-schema or prototype-leakage lint only after
-  operational evidence shows field drift or source laundering.
+- Separate follow-up: harness-aware Model Routing with explicit harness identity,
+  fail-closed mismatch behavior, and no cross-harness fallback.
 
 ## Outcomes & Retrospective
 
@@ -287,19 +272,16 @@ incremental cleanup.
   - enabling-only maintenance policy;
   - blocker-only review with bounded passes;
   - evidence/identity/controlled-substrate protection;
-  - Productization Brief and rebuild-from-contract boundary;
-  - bounded reviewer model routing and regression evals.
+  - Productization Brief and rebuild-from-contract boundary.
 - Failed/rejected attempts:
-  - Initial unconditional context surface exceeded policy; corrected by
-    Progressive Disclosure rather than raising the budget.
-  - Direct network clone was unavailable in this execution environment; GitHub
-    connector writes and canonical GitHub Actions supplied repository execution.
+  - Initial unconditional context surface exceeded policy; corrected through
+    Progressive Disclosure.
+  - Initial Model Routing addition assumed a repository-global concrete route;
+    removed after identifying the missing harness-invokability boundary.
 - Failure retrospective:
-  - not triggered: one mechanically detected integration finding was corrected
-    in the next attempt; no repeated materially different failures, rollback,
-    rejected completion claim, or reusable process failure occurred.
+  - not triggered: both findings were detected before merge and corrected in the
+    same workstream; no rollback or repeated unresolved failure remains.
 - Remaining follow-ups:
+  - harness-aware Model Routing PR;
   - telemetry-gated artifact structure enforcement;
-  - telemetry-gated prototype-source leakage lint;
-  - smoke evaluation before assigning a concrete model directly to
-    `exploration_evidence_review`.
+  - telemetry-gated prototype-source leakage lint.
