@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate model-routing artifacts and resolver invariants."""
+"""Validate model-routing artifacts, harness scope, and resolver invariants."""
 
 from __future__ import annotations
 
@@ -7,7 +7,13 @@ import argparse
 from pathlib import Path
 from typing import Any
 
-from resolve_model_route import load_model_routing, resolve_route
+from resolve_model_route import (
+    ACTIVE_HARNESS_MISSING_REASON,
+    CATALOG_HARNESS_MISMATCH_REASON,
+    load_json_compatible_yaml,
+    load_model_routing,
+    resolve_route,
+)
 
 
 FORBIDDEN_MODEL_KEYS = {
@@ -19,6 +25,11 @@ FORBIDDEN_MODEL_KEYS = {
     "concrete_model",
 }
 EXPECTED_PROMPT_DETAIL_LEVELS = {"compact", "normal", "strict"}
+REQUIRED_HARNESS_FALLBACKS = {
+    "active_harness_missing",
+    "catalog_harness_missing",
+    "catalog_harness_mismatch",
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -50,6 +61,13 @@ def require_string(value: Any, path: str, errors: list[str]) -> str:
     if not isinstance(value, str) or not value:
         errors.append(f"{path}: must be a non-empty string")
         return ""
+    return value
+
+
+def require_bool(value: Any, path: str, errors: list[str]) -> bool:
+    if not isinstance(value, bool):
+        errors.append(f"{path}: must be a boolean")
+        return False
     return value
 
 
@@ -186,6 +204,20 @@ def validate_task_classes(
 
 def validate_resolver_policy(policy: dict[str, Any], errors: list[str]) -> None:
     resolver = require_object(policy.get("resolver_policy"), "resolver_policy", errors)
+    require_string(resolver.get("catalog_format"), "resolver_policy.catalog_format", errors)
+    require_bool(
+        resolver.get("active_harness_required_for_catalog_selection"),
+        "resolver_policy.active_harness_required_for_catalog_selection",
+        errors,
+    )
+    cross_harness = require_bool(
+        resolver.get("cross_harness_fallback"),
+        "resolver_policy.cross_harness_fallback",
+        errors,
+    )
+    if cross_harness:
+        errors.append("resolver_policy.cross_harness_fallback: must be false")
+
     selectable = set(
         require_string_list(
             resolver.get("selectable_statuses"),
@@ -207,16 +239,36 @@ def validate_resolver_policy(policy: dict[str, Any], errors: list[str]) -> None:
         "resolver_policy.candidate_required_fields",
         errors,
     )
-    require_string_list(
-        resolver.get("fallback_reasons"),
-        "resolver_policy.fallback_reasons",
-        errors,
+    reasons = set(
+        require_string_list(
+            resolver.get("fallback_reasons"),
+            "resolver_policy.fallback_reasons",
+            errors,
+        )
     )
+    missing = sorted(REQUIRED_HARNESS_FALLBACKS - reasons)
+    if missing:
+        errors.append(
+            "resolver_policy.fallback_reasons: missing harness reasons: "
+            + ", ".join(missing)
+        )
+
+
+def validate_repository_catalog(repo_root: Path, errors: list[str]) -> None:
+    path = repo_root / ".agents/model-routing/model-catalog.json"
+    try:
+        catalog = load_json_compatible_yaml(path)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return
+    require_string(catalog.get("harness"), "model-catalog.harness", errors)
 
 
 def validate_resolver_smoke(routing: dict[str, dict[str, Any]], errors: list[str]) -> None:
+    harness = "test-harness"
     catalog = {
         "schema_version": 1,
+        "harness": harness,
         "models": [
             {
                 "id": "candidate-unavailable",
@@ -248,7 +300,9 @@ def validate_resolver_smoke(routing: dict[str, dict[str, Any]], errors: list[str
             },
         ],
     }
-    result = resolve_route("unit_test_single_case", routing, catalog)
+    result = resolve_route(
+        "unit_test_single_case", routing, catalog, harness=harness
+    )
     if result["selected_model"] != "candidate-selectable":
         errors.append(
             "resolver smoke: expected candidate-selectable after excluding "
@@ -264,14 +318,35 @@ def validate_resolver_smoke(routing: dict[str, dict[str, Any]], errors: list[str
         if expected not in reasons:
             errors.append(f"resolver smoke: missing fallback reason {expected}")
 
-    no_catalog = resolve_route("unit_test_single_case", routing, None)
+    no_catalog = resolve_route(
+        "unit_test_single_case", routing, None, harness=harness
+    )
     if no_catalog["selected"]:
         errors.append("resolver smoke: route without catalog must not select a model")
     if "catalog_not_provided" not in no_catalog["fallback_reasons"]:
         errors.append("resolver smoke: missing catalog_not_provided fallback reason")
 
+    no_harness = resolve_route("unit_test_single_case", routing, catalog)
+    if no_harness["selected"]:
+        errors.append("resolver smoke: route without active harness must not select")
+    if ACTIVE_HARNESS_MISSING_REASON not in no_harness["fallback_reasons"]:
+        errors.append("resolver smoke: missing active_harness_missing fallback reason")
+
+    mismatch_harness = "other-harness"
+    mismatch = resolve_route(
+        "unit_test_single_case", routing, catalog, harness=mismatch_harness
+    )
+    expected_mismatch = (
+        f"{CATALOG_HARNESS_MISMATCH_REASON}:{harness}:{mismatch_harness}"
+    )
+    if mismatch["selected"]:
+        errors.append("resolver smoke: cross-harness catalog must not select a model")
+    if expected_mismatch not in mismatch["fallback_reasons"]:
+        errors.append(f"resolver smoke: missing fallback reason {expected_mismatch}")
+
     fallback_catalog = {
         "schema_version": 1,
+        "harness": harness,
         "models": [
             {
                 "id": "candidate-supervisor",
@@ -282,7 +357,9 @@ def validate_resolver_smoke(routing: dict[str, dict[str, Any]], errors: list[str
             }
         ],
     }
-    fallback_result = resolve_route("unit_test_single_case", routing, fallback_catalog)
+    fallback_result = resolve_route(
+        "unit_test_single_case", routing, fallback_catalog, harness=harness
+    )
     if fallback_result["selected_model"] != "candidate-supervisor":
         errors.append(
             "resolver smoke: expected fallback profile candidate-supervisor, got "
@@ -305,6 +382,7 @@ def validate_model_routing(repo_root: Path) -> list[str]:
         return [str(exc)]
     detect_forbidden_model_keys(routing, "model-routing", errors)
     validate_prompt_detail_doc(repo_root, errors)
+    validate_repository_catalog(repo_root, errors)
 
     task_classes = require_object(
         routing["task_classes"].get("task_classes"),
@@ -344,7 +422,10 @@ def main() -> int:
     routing = load_model_routing(repo_root)
     task_count = len(routing["task_classes"]["task_classes"])
     profile_count = len(routing["capability_profiles"]["capability_profiles"])
-    print(f"Validated model routing: {task_count} task classes, {profile_count} profiles.")
+    print(
+        f"Validated harness-aware model routing: "
+        f"{task_count} task classes, {profile_count} profiles."
+    )
     return 0
 
 
