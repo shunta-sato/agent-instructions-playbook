@@ -6,11 +6,11 @@
 ## Purpose / Big Picture
 
 Prevent a concrete model selected for one execution harness from being treated
-as available in another. Task classes and capability profiles remain reusable,
-but concrete model selection must be bound to the active harness and fail closed
+as available in another. Task Classes and Capability Profiles remain reusable,
+but concrete model selection is bound to the active harness and fails closed
 when that identity is missing or mismatched.
 
-The motivating failure is a Codex/ChatGPT session reading a repository-global
+The motivating failure was a Codex/ChatGPT session reading a repository-global
 route that selected a Claude Sonnet model and discussing it as an available
 worker, even though the current harness could not invoke it.
 
@@ -47,11 +47,11 @@ worker, even though the current harness could not invoke it.
   equality is established.
 - **Compatibility:** route resolution without a catalog still returns
   model-independent metadata and `catalog_not_provided`.
-- **Evidence:** existing Claude model selections remain unchanged when
+- **Evidence:** existing Claude selections remain unchanged when
   `harness=claude-code` matches the catalog.
 - **No guessed availability:** no new Codex/Copilot model IDs are introduced.
-- **Structure:** touched Python files must stay within repository structure
-  budgets; split if a validator exceeds the limit.
+- **Structure:** every touched Python source remains within the repository's
+  400-line structure budget.
 - **Verification:** `make verify` and the PR workflow must pass.
 
 ## Context & Orientation
@@ -63,11 +63,12 @@ worker, even though the current harness could not invoke it.
   the resolver.
 - `scripts/resolve_model_route.py` owns candidate selection and profile fallback.
 - `scripts/generate_route_lockfile.py` materializes all Task Classes.
-- `scripts/validate_model_routing.py` checks configuration and resolver smoke
-  behavior.
+- `scripts/validate_model_routing.py` owns generic routing schema validation.
+- `scripts/model_routing_harness_validation.py` owns harness policy, catalog
+  identity, and fail-closed resolver smoke tests.
 - `scripts/validate_model_routing_evals.py` checks routing eval fixtures.
-- `.agents/skills/execution-plans/references/model-routing.md` is the shared
-  delegated-execution guidance used across clients.
+- `.agents/skills/execution-plans/references/model-routing.md` is shared
+  delegated-execution guidance.
 - `CLAUDE.md` and `.github/copilot-instructions.md` are client-specific entries.
 
 ## Design
@@ -105,10 +106,10 @@ Otherwise:
 ### Resolver sequence
 
 1. Resolve Task Class, Capability Profile, Risk Gate, and Prompt Detail.
-2. If no catalog exists, retain the existing `catalog_not_provided` result.
+2. If no catalog exists, return `catalog_not_provided`.
 3. If a catalog exists but active harness is absent, return
    `active_harness_missing`.
-4. If the catalog lacks its own identity, return `catalog_harness_missing`.
+4. If the catalog lacks its identity, return `catalog_harness_missing`.
 5. If identities differ, return `catalog_harness_mismatch:<catalog>:<active>`.
 6. Only after equality may candidate filtering and same-harness profile fallback
    run.
@@ -120,58 +121,51 @@ Otherwise:
 - Route Lockfile: top-level `harness` plus per-route `harness` and
   `catalog_harness` preserve the binding.
 - Current concrete artifacts declare `claude-code`.
-- A future Codex or Copilot catalog must be created separately with current
-  availability evidence; it cannot reuse the Claude catalog by renaming an
-  argument.
+- A future Codex or Copilot catalog requires separate availability evidence and
+  smoke evaluation; it cannot reuse the Claude catalog by changing an argument.
 
 ### Error handling
 
-Harness mismatch is an ordinary unresolved route, not a parser failure. This
-lets callers inspect model-independent route metadata while preventing an
-unavailable concrete delegation. Invalid files and unknown Task Classes remain
-hard errors.
+Harness mismatch is an ordinary unresolved route, not a parser failure. Callers
+can inspect model-independent metadata while concrete delegation remains
+blocked. Invalid files and unknown Task Classes remain hard errors.
 
 ### Observability
 
-Resolver JSON/text output reports:
-
-- active harness
-- catalog harness
-- selected flag/model
-- explicit fallback reasons
-
-No background service or external telemetry is added.
+Resolver JSON/text output reports active harness, catalog harness, selected
+flag/model, and explicit fallback reasons. No background service or external
+telemetry is added.
 
 ### Testing strategy
 
-- Existing status/smoke candidate filtering under a matching fixture harness.
+- Existing status/smoke filtering under a matching fixture harness.
 - Missing catalog remains unresolved.
 - Missing active harness remains unresolved.
 - Claude Code catalog with active `codex` remains unresolved before candidate
   selection.
 - Same-harness profile fallback continues to work.
-- Generated repository lockfile equals regeneration and records
-  `harness=claude-code` at every route.
+- Generated lockfile equals regeneration and records `harness=claude-code` at
+  every route.
 - Shared and client-specific docs state the same authority boundary.
 
 ## Validation & Acceptance
 
 - **AC1:** a matching harness preserves existing Claude selections.
-  - Verify: generated lockfile equality and unit tests.
+  - Evidence: generated lockfile equality and unit tests.
 - **AC2:** a Claude Code catalog cannot select a model for active Codex.
-  - Verify: model-routing eval and unit test.
+  - Evidence: model-routing eval and unit test.
 - **AC3:** missing active or catalog harness cannot select a model.
-  - Verify: resolver smoke validation.
+  - Evidence: resolver smoke validation.
 - **AC4:** mismatch stops before candidate/profile fallback.
-  - Verify: only the harness mismatch reason is required; no candidate is
-    described as selected or available.
+  - Evidence: `selected: false`, no selected model, explicit mismatch reason.
 - **AC5:** route artifacts expose their harness identity.
-  - Verify: lockfile generator and tests.
+  - Evidence: lockfile generator and tests.
 - **AC6:** shared instructions forbid cross-harness fallback; client entries
-  describe the current Claude artifacts accurately.
-  - Verify: instruction graph and workflow-contract review.
+  describe the Claude artifacts accurately.
+  - Evidence: instruction graph and Workflow Contract Review.
 - **AC7:** all canonical checks pass.
-  - Verify: `make verify` and GitHub Actions.
+  - Evidence: GitHub Actions run `32619716410` for head
+    `1539dba948a25572195ccb4ae0ea74841eb94f0f`, conclusion `success`.
 
 ## Progress (WBS)
 
@@ -182,66 +176,79 @@ No background service or external telemetry is added.
 - [x] (P4) Update shared, Claude Code, Copilot, and reviewer instructions.
 - [x] (P5) Regenerate the harness-bound Route Lockfile.
 - [x] (P6) Add this ExecPlan and Workflow Contract Review.
-- [ ] (P7) Run canonical PR validation and address findings.
-- [ ] (P8) Record final run identity and mark the PR ready.
+- [x] (P7) Run canonical PR validation and address findings.
+- [x] (P8) Record final run identity and prepare the PR for review.
 
 ## Surprises & Discoveries
 
-- 2026-08-23: The concrete catalog and lockfile originated in the Claude Code
-  wiring work, but their generic repository paths made them appear
-  harness-independent.
+- 2026-08-23: The concrete catalog and lockfile originated in Claude Code wiring,
+  but their generic repository paths made them appear harness-independent.
 - 2026-08-23: Static Claude custom agents already declare Claude aliases in
-  `.claude/agents/`; the defect is not their local invocation but the shared
-  authority implied by the catalog/lockfile and delegated-execution reference.
-- 2026-08-23: No evidence-backed Codex or Copilot catalog exists in the
-  repository. Leaving those concrete routes unresolved is the honest behavior.
+  `.claude/agents/`; the defect was the shared authority implied by the generic
+  Catalog/Lockfile and delegated-execution reference.
+- 2026-08-23: No evidence-backed Codex or Copilot catalog exists. Leaving those
+  concrete routes unresolved is the honest behavior.
+- 2026-08-23: Initial CI run `32619594154` passed every contract and routing check
+  but found `scripts/validate_model_routing.py` at 433 lines, above the 400-line
+  structure budget.
+- 2026-08-23: Harness-specific policy/catalog/smoke validation was extracted to
+  `scripts/model_routing_harness_validation.py`; run `32619716410` then passed
+  the complete validation chain.
 
 ## Decision log
 
 - 2026-08-23: Keep Task Classes and Capability Profiles shared.
-  - Rationale: their semantics describe work and required capability, not a
-    provider or client.
+  - Rationale: they describe work and required capability, not a provider.
 - 2026-08-23: Bind the concrete Catalog and Lockfile with a top-level harness.
-  - Alternatives: infer provider from model ID; maintain implicit client-local
-    convention; add explicit harness identity.
-  - Chosen: explicit identity because inference is ambiguous and not
-    mechanically enforceable.
-- 2026-08-23: Treat mismatch as unresolved rather than falling back to another
-  profile or model.
+  - Alternatives: infer provider from model ID; rely on client convention; add
+    explicit harness identity.
+  - Chosen: explicit identity because inference is ambiguous and unenforceable.
+- 2026-08-23: Treat mismatch as unresolved rather than falling back.
   - Rationale: a weaker profile in an unavailable harness remains unavailable.
 - 2026-08-23: Do not add speculative Codex/Copilot catalogs.
   - Rationale: availability and smoke evidence must precede selection.
-- 2026-08-23: Retain existing generic artifact paths in this PR, but make their
-  harness binding explicit in schema, output, validation, and instructions.
-  - Rationale: fixes authority without an unnecessary path migration; future
-    multi-harness catalogs may be split after concrete second-harness evidence
-    exists.
+- 2026-08-23: Retain existing artifact paths but make their harness binding
+  explicit in schema, output, validation, and instructions.
+  - Rationale: fixes authority without premature multi-catalog path migration.
+- 2026-08-23: Split generic and harness-specific validation modules.
+  - Rationale: preserve the source-file structure budget and align module
+    responsibility with the shared-versus-harness-specific authority boundary.
 
 ## Handoff
 
 - Branch: `fix/harness-aware-model-routing`
-- Base: `main` at `7c82a14add3534095f64f7ea03abd1015a27a2a1`.
-- What is complete: implementation, generated lockfile, docs, evals, tests, plan.
-- What remains: workflow-contract report, PR creation, CI, final plan update.
+- Pull request: `#117` (`Make concrete model routing harness-aware`).
+- Verified head: `1539dba948a25572195ccb4ae0ea74841eb94f0f`.
+- Validation: GitHub Actions run `32619716410`, success.
+- What is complete: implementation, generated lockfile, docs, evals, tests,
+  structure split, plan, Workflow Contract Review, and canonical validation.
+- What remains: normal PR review and merge decision.
 - Canonical command: `make verify`.
 - Read first:
   - `scripts/resolve_model_route.py`
+  - `scripts/model_routing_harness_validation.py`
   - `.agents/model-routing/model-catalog.json`
   - `.agents/model-routing/route-lockfile.json`
   - `.agents/skills/execution-plans/references/model-routing.md`
-  - `evals/model-routing/core.json`
-- Known risk: touched validators may cross the 400-line structure budget and
-  require a focused split after CI measurement.
 
 ## Outcomes & Retrospective
 
-- Shipped/merged: pending PR.
-- Failed/rejected attempts: none recorded yet.
+- Delivered in PR #117:
+  - explicit active/catalog harness identity;
+  - fail-closed mismatch and missing-identity behavior;
+  - same-harness-only profile fallback;
+  - harness-bound generated routes;
+  - client and shared instruction boundaries;
+  - eval and unit regression coverage.
+- Failed/rejected attempts:
+  - Initial validator composition exceeded the structure budget; responsibility
+    was split rather than waived.
 - Failure retrospective:
-  - not triggered at this checkpoint; no repeated implementation failure,
-    rollback, or rejected completion claim has occurred.
+  - not triggered: one deterministic integration finding was corrected directly;
+    there was no rollback, repeated materially different failed attempt, or
+    rejected completion claim.
 - Remaining follow-ups:
-  - create separate Codex/Copilot catalogs only after current harness capability
-    discovery and smoke evidence;
+  - create Codex/Copilot catalogs only after current capability discovery and
+    smoke evidence;
   - consider path-level catalog separation when a second concrete harness
     catalog exists.
