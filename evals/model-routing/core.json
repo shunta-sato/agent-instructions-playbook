@@ -4,9 +4,11 @@
     {
       "id": "unit-test-worker-scope-control",
       "task_class": "unit_test_single_case",
+      "harness": "test-harness",
       "expected_capability_profile": "focused_code_edit",
       "catalog": {
         "schema_version": 1,
+        "harness": "test-harness",
         "models": [
           {
             "id": "candidate-unavailable",
@@ -66,9 +68,11 @@
     {
       "id": "rumored-model-not-selectable",
       "task_class": "unit_test_single_case",
+      "harness": "test-harness",
       "expected_capability_profile": "focused_code_edit",
       "catalog": {
         "schema_version": 1,
+        "harness": "test-harness",
         "models": [
           {
             "id": "candidate-rumored",
@@ -93,6 +97,39 @@
         "rumored models stay evaluable as catalog fixtures",
         "rumored models are not selected by the resolver",
         "fallback reasons explain why no selectable candidate exists"
+      ]
+    },
+    {
+      "id": "cross-harness-catalog-not-selectable",
+      "task_class": "unit_test_single_case",
+      "harness": "codex",
+      "expected_capability_profile": "focused_code_edit",
+      "catalog": {
+        "schema_version": 1,
+        "harness": "claude-code",
+        "models": [
+          {
+            "id": "claude-worker-fixture",
+            "profiles": [
+              "focused_code_edit"
+            ],
+            "status": "available",
+            "smoke_eval": "passed",
+            "priority": 100
+          }
+        ]
+      },
+      "expected": {
+        "selected": false,
+        "selection_profile": "focused_code_edit",
+        "fallback_reasons_contains": [
+          "catalog_harness_mismatch:claude-code:codex"
+        ]
+      },
+      "checks": [
+        "a Claude Code catalog is not executable authority for Codex",
+        "the resolver does not evaluate or fall back through candidates after a harness mismatch",
+        "the concrete model remains unresolved rather than being mentioned as an available worker"
       ]
     }
   ]
