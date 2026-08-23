@@ -84,26 +84,6 @@
         ]
       }
     },
-    "variant_exploration_review": {
-      "description": "Review one disposable executable variant for only safety, evaluation integrity, identity, evidence boundaries, and blockers to the next learning step.",
-      "profile": "exploration_evidence_review",
-      "prompt_detail": "strict",
-      "risk_gate": "low",
-      "default_effort": "low",
-      "max_scope": {
-        "writable_files": 0,
-        "production_code": false
-      },
-      "escalation_profile": "high_reasoning_review",
-      "success_criteria": {
-        "required": [
-          "protected_boundaries_checked",
-          "evaluation_integrity_checked",
-          "only_blocking_findings_reported",
-          "production_quality_review_not_performed"
-        ]
-      }
-    },
     "research_probe": {
       "description": "Registered research experiment or exploration probe: small disposable implementation plus a runner-executed measurement.",
       "profile": "focused_code_edit",
