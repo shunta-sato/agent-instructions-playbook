@@ -30,9 +30,16 @@ do not block; hard-guardrail findings do.
 
 3) Validate only evidence required by acceptance, a real operating boundary, a
 machine-consumed contract, or a material claim. Skill invocation does not
-automatically require a standalone artifact. For mobile claims, load the mobile
-evidence matrix; load the Flutter, React Native, or device-driving reference only
-when that platform or harness applies.
+automatically require a standalone artifact.
+   - Open `references/mobile-test-evidence-matrix.md` for any mobile completion
+     claim.
+   - Open `references/flutter-mobile-test-matrix.md` when the changed mobile
+     surface is Flutter.
+   - Open `references/react-native-expo-test-adapter.md` when the changed mobile
+     surface is React Native or Expo.
+   - Open `references/maestro-agentic-verification-policy.md` when Maestro,
+     agent-device, Argent, `.ad`, or another device-driving harness contributed
+     evidence.
 
 4) Assign each finding `blocking` or `optional` using the concrete standard in
 the reference. Reviewer severity labels do not decide this classification.
