@@ -1,44 +1,51 @@
 # AGENTS.md — AI agent core instructions
 
-This repository is a reusable playbook for software-development agents.
-
-Keep this file short. Put detailed guidance in the on-demand playbooks under:
-- `.agents/skills/<name>/SKILL.md` (repo skills for Codex, GitHub Copilot, and Claude Code)
-
-Explicit invocation differs by client:
-- Codex: `$<skill>`
-- GitHub Copilot CLI / agent mode: `/<skill>`
-- Claude Code: `/<skill>` via the generated `.claude/skills` symlinks (client mapping in `CLAUDE.md`)
-
+This repository is a reusable playbook for software-development agents. Keep this
+file thin; detailed procedures live under `.agents/skills/<name>/SKILL.md`.
+Explicit invocation differs by client: Codex `$<skill>`, Copilot and Claude Code
+`/<skill>`.
 ## Playbook bootstrap
 
-Before acting on software-development work, inspect the Agent Index and decide whether any skill applies.
-If the user explicitly names a skill, load it before acting.
-Determine the epistemic mode first: explicit declaration > `.agents/project-policy.yml` path_modes > the policy's default_mode (this repository defaults to `delivery`). If the task changes code or tests in `delivery` mode, use `dev-workflow` before editing and `quality-gate` before reporting completion. In `research` mode, use `research-workflow` instead; evidence discipline (`scripts/check_research_evidence.py`) replaces the code-quality gates for probe code, and touching a delivery-mode path requires promotion through the delivery gates. Physical-safety, secrets, and destructive-operation rules apply in every mode.
-When loading a skill, apply its four-tier load contract:
-- `metadata.requires`: load before executing; a listed file that cannot be read is an error, not a skippable extra.
-- `metadata.resources`: load ONLY when the condition its SKILL.md states matches — the SKILL.md condition is the sole authority.
-- `metadata.commands`: execute or cite by path; never inline into context.
-- `metadata.templates`: open only when producing that output artifact.
-For multi-step or delegatable work, create a task brief before invoking a subagent; the brief must name the task, allowed files, allowed commands, expected artifacts, and escalation conditions.
+Inspect the Agent Index before software-development work and load only applicable
+skills. An explicitly named skill is loaded before acting.
+Determine epistemic mode first: explicit declaration, then
+`.agents/project-policy.yml` path modes, then its default. Research paths use
+`research-workflow`. Delivery-mode code/test changes use `dev-workflow` and finish
+with `quality-gate`.
+
+Issue-scoped feature delivery, backlog campaigns, and stalled feature PRs use
+`user-value-delivery` before `dev-workflow`. It governs scope, sequencing,
+review admission, delivery cost, and stop conditions. It never overrides explicit
+acceptance, safety, security, privacy, compliance, data integrity, compatibility,
+authorization, branch protection, or repository-required checks.
+Skill load contract:
+- `metadata.requires`: load before execution; unreadable is an error.
+- `metadata.resources`: load only when the SKILL-stated condition matches.
+- `metadata.commands`: execute or cite by path; do not inline them into context.
+- `metadata.templates`: open only when producing that artifact.
+
+The root/orchestrating agent owns Delivery Control, route lock, candidate identity,
+and final-gate assignment. Delegated workers receive a bounded task brief and use
+focused validation; they do not repeat the full workflow or final gate. Reviewers
+judge the requested candidate against blocking criteria and do not expand scope.
 
 ## Agent Index (generated)
 
-This block is machine-oriented and always present in context.
-Do not edit by hand. Update via: `python scripts/generate_agent_index.py --write`
+Do not edit this block by hand. Update it with
+`python scripts/generate_agent_index.py --write`.
 
 <!-- BEGIN AGENT INDEX (generated) -->
 ```text
 AGENT_INDEX_V1
 meta|format=v1|max_bytes=8192|invoke=codex:$<skill>,copilot:/<skill>
-defaults|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
+defaults|govern=user-value-delivery|workflow=dev-workflow|finish=quality-gate|verify=COMMANDS.md
 core|AGENTS.md|COMMANDS.md|PLANS.md|plans/README.md|README.md|REFERENCES.md
 skills|name|short|skill_path
 skill|agent-workflow-contract-review|Agent workflow contract review|.agents/skills/agent-workflow-contract-review/SKILL.md
 skill|architecture-decision-analysis|Architecture decision analysis|.agents/skills/architecture-decision-analysis/SKILL.md
 skill|branch-completion|Finish branch and PR lifecycle|.agents/skills/branch-completion/SKILL.md
 skill|bug-investigation-and-rca|Bug investigation & RCA|.agents/skills/bug-investigation-and-rca/SKILL.md
-skill|code-readability|Code readability|.agents/skills/code-readability/SKILL.md
+skill|code-readability|Proportional code readability|.agents/skills/code-readability/SKILL.md
 skill|code-smells-and-antipatterns|Diff-focused maintainability review|.agents/skills/code-smells-and-antipatterns/SKILL.md
 skill|concurrency-android|Android concurrency and background work|.agents/skills/concurrency-android/SKILL.md
 skill|concurrency-core|Concurrency design patterns and planning|.agents/skills/concurrency-core/SKILL.md
@@ -57,17 +64,17 @@ skill|embedded-project-constitution|Embedded project constitution|.agents/skills
 skill|embedded-system-familiarization|Principal embedded system familiarization|.agents/skills/embedded-system-familiarization/SKILL.md
 skill|embedded-target-characterization|Embedded target characterization|.agents/skills/embedded-target-characterization/SKILL.md
 skill|error-handling|Boundary error handling|.agents/skills/error-handling/SKILL.md
-skill|execution-plans|ExecPlan: plan/WBS/progress + handoff|.agents/skills/execution-plans/SKILL.md
+skill|execution-plans|Durable handoff ExecPlan|.agents/skills/execution-plans/SKILL.md
 skill|experiment-loop|Registered experiment evidence contract|.agents/skills/experiment-loop/SKILL.md
 skill|failure-retrospective|Failure learning and promotion routing|.agents/skills/failure-retrospective/SKILL.md
 skill|function-boundary-governor|Autonomous function-boundary design|.agents/skills/function-boundary-governor/SKILL.md
 skill|hardening-workflow|Measure-tier-stop hardening lane|.agents/skills/hardening-workflow/SKILL.md
-skill|implementation-economy|Implementation complexity budget|.agents/skills/implementation-economy/SKILL.md
+skill|implementation-economy|Scope-inversion and abstraction budget|.agents/skills/implementation-economy/SKILL.md
 skill|japanese-tech-writing|Japanese technical writing conventions|.agents/skills/japanese-tech-writing/SKILL.md
 skill|mobile-feature-parity|Cross-platform mobile capability parity|.agents/skills/mobile-feature-parity/SKILL.md
 skill|mobile-release-coordination|Coordinated iOS and Android release gate|.agents/skills/mobile-release-coordination/SKILL.md
 skill|mobile-runtime-verification|Mobile runtime verification|.agents/skills/mobile-runtime-verification/SKILL.md
-skill|observability|Observability plan and checklist|.agents/skills/observability/SKILL.md
+skill|observability|Boundary-focused observability|.agents/skills/observability/SKILL.md
 skill|performance-review|Generic performance review|.agents/skills/performance-review/SKILL.md
 skill|playbook-template-authoring|Reusable playbook/template authoring|.agents/skills/playbook-template-authoring/SKILL.md
 skill|poc-workflow|PoC construction on the research substrate|.agents/skills/poc-workflow/SKILL.md
@@ -77,8 +84,8 @@ skill|preflight-db-migration|DB migration preflight|.agents/skills/preflight-db-
 skill|preflight-engineering|Preflight agent context and handoff|.agents/skills/preflight-engineering/SKILL.md
 skill|preflight-mobile-app|Mobile app preflight|.agents/skills/preflight-mobile-app/SKILL.md
 skill|project-initialization|Initialize canonical verify commands|.agents/skills/project-initialization/SKILL.md
-skill|project-structure|Physical code layout and structure budget|.agents/skills/project-structure/SKILL.md
-skill|quality-gate|Final quality gate|.agents/skills/quality-gate/SKILL.md
+skill|project-structure|Two-tier structure guardrails|.agents/skills/project-structure/SKILL.md
+skill|quality-gate|Blocking-finding quality gate|.agents/skills/quality-gate/SKILL.md
 skill|receiving-code-review|Process review feedback safely|.agents/skills/receiving-code-review/SKILL.md
 skill|refactor-workflow|Behavior-preserving refactor lane|.agents/skills/refactor-workflow/SKILL.md
 skill|requesting-code-review|Prepare focused review requests|.agents/skills/requesting-code-review/SKILL.md
@@ -94,6 +101,7 @@ skill|uidesign-flow|tonemana → tokens → component+screen previews|.agents/sk
 skill|uiux-core|UI/UX core contract + deterministic review bundle|.agents/skills/uiux-core/SKILL.md
 skill|uiux-flow-preview|Transition map preview with pan/zoom + focus review|.agents/skills/uiux-flow-preview/SKILL.md
 skill|unit-test-design|Risk-tiered unit test design|.agents/skills/unit-test-design/SKILL.md
+skill|user-value-delivery|User-value delivery governor|.agents/skills/user-value-delivery/SKILL.md
 skill|variant-exploration|Executable variant exploration|.agents/skills/variant-exploration/SKILL.md
 skill|visual-regression-testing|Tool-agnostic UI visual verification contract|.agents/skills/visual-regression-testing/SKILL.md
 skill|working-with-legacy-code|Working with legacy code safely|.agents/skills/working-with-legacy-code/SKILL.md
@@ -104,34 +112,34 @@ end|AGENT_INDEX_V1
 <!-- END AGENT INDEX (generated) -->
 
 ## Always-on principles
-- Prefer the smallest safe change that satisfies the requirement, within the structure budget (`project-structure`, checked by `scripts/check_structure.py`). When a touched file breaches the budget, the split is part of the smallest correct change, not an optional cleanup.
-- Exception: when `function-boundary-governor`, `destructive-refactor`, or `design-balance` is triggered, prefer the smallest coherent final design, not the smallest edit.
-- No broad cleanups **unrelated to the task**. Leave touched code slightly easier to read than before. Triggered refactor work — structure-budget splits, function/API consolidation or deletion, class/module reorganization, and preparatory refactors in the feature's landing area — is required work, not a broad cleanup.
-- Destructive refactors may temporarily break compatibility only inside the skill-declared red-state protocol. Compatibility handling follows the recorded compat-mode: under `preserve`, callers keep working; under `staged`, temporary adapters require a ledger entry with a removal condition; under `break-allowed` (requester explicitly waived compatibility), delete — keeping old APIs, deprecated markers, aliases, or parallel old/new versions is a defect, not caution.
-- In delivery mode, if runtime behavior changes, add observability (logs/metrics/traces) so failures are diagnosable; research probes are exempt (measurement instrumentation is part of the experiment itself).
-- Comment channel (always-on): code carries How; tests carry What; the commit log carries Why; implementation comments carry ONLY Why-not (constraints, rejected alternatives, hazards, external requirements) — comments restating How/What are removed before submit; API-doc comments required by documentation gates are a different genre and exempt.
 
-## Mandatory workflow for code/test changes (delivery mode)
-1) Apply the `dev-workflow` playbook end-to-end before editing (start with risk routing: low / normal / high, then execute trigger-based required branches only when applicable).
-2) Before finishing, apply the `quality-gate` playbook and address findings.
+- Complete the issue, not the codebase. Meet the observable DoD; do not make
+  surrounding code ideal unless the DoD or real boundary requires it.
+- Prefer the smallest safe change that meets the DoD. When
+  `function-boundary-governor` or `destructive-refactor` is triggered, prefer
+  the smallest coherent final design within the current scope.
+- No broad cleanups unrelated to the task.
+- Separate failure criticality from maintenance horizon. The former sets
+  correctness/safety depth; the latter sets structure and generalization depth.
+- Fix blocking concrete defects and material regressions in the supported journey.
+  Record minor limitations without turning them into an unbounded polish loop.
+  Prevent material structural worsening; defer pre-existing debt and speculation.
+- Prefer one active feature PR and the shortest vertical production path.
+- Existing evidence is reused for the same candidate identity. Full HOST, CI,
+  release, target, and independent-review operations are delivery costs.
+- Runtime changes add observability only when a real failure path is otherwise
+  not diagnosable or an explicit operational claim needs measurement.
+- Compatibility follows the recorded mode: `preserve`, `staged`, or an explicit
+  `break-allowed` waiver.
+- Code carries How; tests carry What; history carries Why; implementation
+  comments carry only durable Why-not constraints, hazards, or requirements.
 
-Role split: `dev-workflow` decides required route/branches; `quality-gate` decides submit readiness via exit criteria.
+## Verification and completion
 
-In delivery mode, if work is complex/long-running, create and maintain an ExecPlan under `plans/` (see `PLANS.md`). Use `$execution-plans` or `/execution-plans`. In research mode the ledger plus `research-synthesis` IS the long-running record — an ExecPlan is required only at promotion.
+Use canonical commands in `COMMANDS.md`. If placeholders remain, use
+`project-initialization` rather than guessing. If a required command cannot run,
+state why and provide a reproducible procedure.
 
-In `research` mode this section is replaced by `research-workflow`; promotion back into delivery paths re-enters it in full.
-
-## Verification commands
-Use the canonical commands in `COMMANDS.md` (build, format/lint, tests).
-If `COMMANDS.md` still contains `<fill>`, treat the project as uninitialized: do not guess commands, run `$project-initialization` or `/initialize` first.
-Initialization completes only after `make verify` succeeds; remove `<fill>` only after that success.
-If you cannot run a command, state why and provide a reproducible procedure.
-
-## Required final response format (delivery mode)
-Return, in this order:
-1) Change Brief (what/why, scope, assumptions, risks)
-2) What changed (files + intent)
-3) Verification (commands + results; or what you could not run)
-4) Follow-ups (optional)
-
-Research-mode responses follow the `research-workflow` Output expectation (frame, experiment IDs with outcomes, interpretation) instead.
+Delivery reports lead with what the user can now do, followed by candidate/PR
+identity, verification, target evidence where required, and remaining limits.
+Research-mode reports follow `research-workflow`.

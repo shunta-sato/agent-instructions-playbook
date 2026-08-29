@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "skill": "quality-gate",
+  "cases": [
+    {
+      "id": "optional-findings-submit",
+      "prompt": "The identified candidate meets its DoD and required checks. Review has two optional readability notes with defer dispositions. Run the final gate.",
+      "given": [
+        "observable DoD passes",
+        "required checks pass",
+        "no regression or real boundary defect",
+        "optional findings have explicit dispositions"
+      ],
+      "expected_decision": "submit",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Gate decision: submit",
+        "0 blocking findings",
+        "Optional findings"
+      ]
+    },
+    {
+      "id": "structure-advisory-submit",
+      "prompt": "Feature-mode structure check reports one 720-line source-file advisory and zero hard findings. The change stays in the existing responsibility and all required checks pass. Run the final gate.",
+      "given": [
+        "structure checker exits zero",
+        "one advisory finding",
+        "zero hard findings",
+        "DoD and required checks pass"
+      ],
+      "expected_decision": "submit",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Gate decision: submit",
+        "advisory"
+      ]
+    },
+    {
+      "id": "preexisting-hard-debt-small-change-submit",
+      "prompt": "A 2,400-line legacy file was already above the hard guardrail. This feature changes two lines inside its existing responsibility, adds no new responsibility, and all required checks pass. Run the final gate.",
+      "given": [
+        "base revision already exceeded the hard guardrail",
+        "net metric growth is within the 50-line feature allowance",
+        "no distinct new responsibility was added",
+        "DoD and required checks pass"
+      ],
+      "expected_decision": "submit",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Gate decision: submit",
+        "pre-existing hard debt",
+        "advisory"
+      ]
+    },
+    {
+      "id": "hard-structure-finding-no-submit",
+      "prompt": "Feature-mode structure check reports a new 1700-line source file as a hard finding. No waiver exists. Run the final gate.",
+      "given": [
+        "structure checker exits non-zero",
+        "hard source-file guardrail exceeded",
+        "no bounded waiver"
+      ],
+      "expected_decision": "no-submit",
+      "expected_findings": [
+        "hard structure guardrail blocks"
+      ],
+      "expected_output_contains": [
+        "Gate decision: no-submit",
+        "hard"
+      ]
+    },
+    {
+      "id": "unused-template-section-not-blocking",
+      "prompt": "An observability skill was considered, but existing return values and logs already diagnose the only real failure path. No separate Observability Plan was created. The DoD and required checks pass. Run the final gate.",
+      "given": [
+        "existing signals are sufficient",
+        "no explicit operational claim",
+        "standalone observability artifact is not required by acceptance or a downstream tool"
+      ],
+      "expected_decision": "submit",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Gate decision: submit",
+        "standalone artifact"
+      ]
+    }
+  ]
+}

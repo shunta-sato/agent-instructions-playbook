@@ -1,46 +1,44 @@
 # GitHub Copilot Repository Instructions
 
-These instructions complement `AGENTS.md` and repo skills under `.agents/skills` (Copilot loads skills from there directly; the former `.github/prompts` mirror is retired).
+These instructions complement `AGENTS.md`; repository-wide delivery and quality
+policy remains single-sourced there.
 
 ## Primary goal
 
-Produce changes that are easy to understand and safe to change.
+Complete the requested observable user capability safely. A feature PR must meet
+its Definition of Done; it does not need to make the surrounding codebase ideal.
 
-## Always do this
+## Working rules
 
 1. Read the relevant code and tests before editing.
-2. Write a short *Change Brief* (intent, inputs/outputs, constraints, assumptions).
-3. Prefer minimal diffs that reduce reading time.
-4. If runtime behavior changes, add observability signals (logs/metrics/traces) so failures are diagnosable.
-5. Verify with the canonical commands in `COMMANDS.md` (build, format/lint, tests).
-   - If you cannot run them, say why and provide a reproducible procedure.
-6. If `COMMANDS.md` contains `<fill>`, do not guess project commands or proceed with normal implementation until initialization is completed via `/initialize` or `$project-initialization`.
-7. Consider initialization complete only after `make verify` succeeds; only then may `<fill>` be removed from `COMMANDS.md`.
-8. Treat concrete model routing as harness-scoped. The current `.agents/model-routing/model-catalog.json` and `.agents/model-routing/route-lockfile.json` identify `claude-code`; they are not execution authority for Copilot. If no catalog/lockfile explicitly matches the active Copilot harness, leave the concrete model unresolved and do not fall back through Claude or Codex candidates.
+2. For an issue-scoped feature, backlog campaign, or stalled feature PR, use
+   `/user-value-delivery` before `/dev-workflow`.
+3. Lock the user journey, DoD, non-goals, failure criticality, maintenance
+   horizon, and required route before implementation.
+4. Prefer the shortest vertical production path and focused tests while
+   iterating. Do not add generic infrastructure or unrelated refactors.
+5. Add observability only when a real operating failure path is not diagnosable
+   with existing signals or an explicit operational claim requires measurement.
+6. Treat structure-checker advisories as responsibility prompts, not merge
+   blockers. Hard findings still require a local fix or bounded waiver.
+7. Review against concrete blocking criteria. Readability, pre-existing debt,
+   future generalization, and speculative hardening are optional by default.
+8. Reuse evidence for an unchanged candidate. One assigned owner performs the
+   final `/quality-gate`.
+9. Use canonical commands from `COMMANDS.md`. If placeholders remain, use
+   `/initialize` before normal implementation rather than guessing commands.
+10. Treat concrete model routing as harness-scoped. Claude/Codex catalog IDs are
+    not Copilot execution authority.
 
-## Use the on-demand prompts
+## C++ highlights
 
-Use these prompt files to keep behavior consistent. Repo-local agent skills live in `.agents/skills`; do not look for a `.github/skills` mirror. When an explicit skill invocation is needed in Copilot CLI / agent mode, use `/skill-name`.
+- Document changed public/protected or otherwise stable header contracts with
+  Doxygen. Private members need documentation only for non-obvious invariants,
+  ownership, units, lifetime, or hazards.
+- Implementation comments explain constraints, rejected alternatives, or
+  hazards; they do not narrate code.
+- Name domain-specific literals whose meaning is not evident locally. Do not
+  require a literal audit for trivial values.
 
-- `/dev-workflow` — routing workflow (risk + required trigger branches)
-- `/quality-gate` — final exit-criteria gate (submit/no-submit)
-- `/review-readability` — readability review
-- `/review-modularity` — cohesion/coupling/boundaries review
-- `/review-antipatterns` — new/worsened smells & anti-patterns review
-- `/write-requirements` — requirement/spec writing workflow
-- `/bug-report` — evidence-based Bug Report (RCA) for bugfix/regression/flaky/incidents
-- `/uiux-core` — UI/UX design and review workflow with deterministic UIUX Pack outputs
-- `/uidesign-flow` — tone-and-manner → tokens → previews → deterministic UIDesign Pack
-- `/ui-verify` — snapshot/screenshot verification workflow for UI visual changes
-- `/tonemana-catalog` — Tone & Manner catalog generation workflow with seven default patterns
-- `/tonemana-apply` — Tone & Manner pack apply workflow for UIUX references
-- `/uidesign-orchestrator` — End-to-end orchestration (uiux → tonemana → uidesign previews)
-
-## Language-specific highlights
-
-- **C++ headers (`.hpp`)**: Doxygen comments are required for *all declarations*, including `private` members.
-- **C++ sources (`.cpp`)**: comments must explain intent / assumptions / pitfalls (not restate code), and replace “magic values” with named constants or enums.
-
-(See `.github/instructions/cpp.instructions.md` for the full rules.)
-
-When fixing bugs/regressions/flakes/incidents, run `/bug-report` and keep facts separate from assumptions.
+When review feedback arrives, use `/receiving-code-review`; publication and merge
+state belong to `/branch-completion`.

@@ -1,137 +1,81 @@
-# PLANS.md — Execution Plans (ExecPlans)
+# PLANS.md — Execution Plans
 
-This file defines what an **ExecPlan** is and how to use it.
-
-An ExecPlan is a **living, self-contained** design + execution document for work that is large enough to:
-- span multiple milestones or sessions, or
-- require handoff to another person/agent, or
-- benefit from explicit decision tracking (trade-offs, experiments, rollouts).
-
-For small, single-session changes, the normal workflow (`$dev-workflow`) is enough. Do not create a plan just to create a plan.
+An ExecPlan is a durable, self-contained continuation record. It is useful when
+work must survive a session or owner boundary; it is not a complexity tax for
+ordinary feature development.
 
 ## When an ExecPlan is required
 
-Create (or update) an ExecPlan when **any** of the following is true:
+Create or reuse one when at least one condition is true:
 
-- The change is expected to take more than ~2 hours of focused work, or it will likely span multiple commits/PRs.
-- The change crosses boundaries (layers/modules/services), introduces a new module, or changes data flow.
-- The request has non-trivial unknowns (API design, data model, concurrency, performance targets, rollout).
-- You expect to stop/resume later, or you want a handoff-ready state at any moment.
+- work will cross a session or owner boundary;
+- the deliverable has independently verifiable milestones that need durable
+  coordination;
+- a risky or irreversible decision needs an auditable record;
+- the requester explicitly asks for an ExecPlan;
+- a long-running monitor or qualification lane needs stable handoff state.
 
-If in doubt, create an ExecPlan. The time you spend writing it should be recovered by fewer wrong turns.
+Do not require an ExecPlan solely because work is cross-boundary, introduces a
+module, contains unknowns, or is estimated above two hours. Use the active
+`user-value-delivery` Delivery Control and PR description first. Promote to an
+ExecPlan only when a durable trigger appears.
 
 ## Where plans live
 
-Store each ExecPlan as a single Markdown file under:
+Use `plans/YYYYMMDD-<short-slug>.md`, starting from
+`plans/_template_execplan.md`. Reuse the active plan for the same capability.
 
-- `plans/<slug>.md`
+## Required qualities
 
-Recommended naming:
+A plan is:
 
-- `plans/YYYYMMDD-<short-slug>.md` (sorted by time, easy to scan)
+1. **Outcome-focused:** states the user journey and observable acceptance.
+2. **Scoped:** names non-goals and the smallest continuation boundary.
+3. **Evidence-based:** unknowns have a cheapest decisive proof.
+4. **Handoff-ready:** another owner can continue from the plan and worktree.
+5. **Living only when facts change:** update at milestones, ownership/session
+   transfer, material scope change, or blocker publication.
 
-Start from:
+Do not duplicate skill checklists, write an architecture paper, or update the
+plan for a short pause when no durable fact changed.
 
-- `plans/_template_execplan.md`
+## Quantitative targets
 
-## Non-negotiable requirements
+Record a target only when it is an acceptance or operating constraint. Include:
 
-An ExecPlan must be:
+- metric and denominator;
+- target;
+- measurement method;
+- measured result or explicit `not measured` limitation.
 
-1) **Self-contained**  
-A newcomer can continue the work from only: the ExecPlan + the current working tree.
-
-2) **Outcome-focused**  
-Define observable behavior, and how to verify it (commands + expected results).
-
-3) **A living document**  
-Update it as you learn. Do not treat it as a one-time artifact.
-
-4) **Evidence-based**  
-When something is uncertain, capture experiments, measurements, logs, or failing test output that justify decisions.
-
-5) **Handoff-ready**  
-Every stopping point must update the **Handoff** section (what’s done, what’s next, how to run, where you left off).
-
-## Quantitative targets (estimation rules)
-
-A quantitative target in "Constraints / quality targets" is valid only if the
-plan also records:
-
-1. **Metric definition**: the exact measurement command, and the denominator
-   (what is included/excluded — e.g., tests, generated code, vendored code).
-   A refactor that adds tests must not count test lines in a reduction target.
-2. **Contribution decomposition**: a table allocating the target across
-   in-scope work items: `target = sum(expected contribution per WBS item)`,
-   each row backed by a measured baseline (`wc -l`, file list, schema count).
-3. **Reachability check**: subtract all out-of-scope surfaces from the
-   denominator first. If the target is unreachable even with perfect execution
-   of every phase, shrink the target or expand the scope **before**
-   implementation starts, and record this in the Decision log.
-4. **Proxy declaration**: if the purpose is not the metric itself (e.g.,
-   purpose = constant extension cost, metric = LoC), mark the metric as a
-   secondary proxy and define a primary outcome metric that a test or
-   dry-run exercise can verify directly.
-
-At every phase or milestone boundary, re-forecast each quantitative target
-using current measurements. If the forecast no longer fits the target, record
-whether the plan re-scopes, re-baselines, or explicitly accepts the miss before
-continuing implementation.
+A secondary proxy such as line count does not replace the primary behavioral
+outcome. Do not invent targets merely to make the plan appear rigorous.
 
 ## Required sections
 
-An ExecPlan must contain these sections (exact headings can differ, but content must exist):
-
 - Purpose / Big Picture
 - Scope (in / out)
-- Constraints / quality targets
-- Context & orientation (paths, key concepts)
-- Design (interfaces, boundaries, error handling, observability, test strategy)
-- Validation & acceptance (how to prove success)
-- Progress (WBS) (checkbox list)
-- Surprises & discoveries
+- Constraints / Quality targets
+- Context & Orientation
+- Design
+- Milestones
+- Progress (WBS)
+- Surprises & Discoveries
 - Decision log
 - Handoff
-- Outcomes & retrospective
+- Validation & Acceptance
+- Outcomes & Retrospective
 
-## Design-record variant
-
-A plan whose H1 title contains "design record" is a supervisor
-adjudication/design log, not a full ExecPlan: it records decisions already
-made rather than tracking upcoming work. It is exempt from the 11-section
-contract above and instead MUST contain a **Handoff** section (what's done,
-what's next, where to pick up). The full 11-section contract above stays
-the default for execution plans; the artifact lint
-(`scripts/lint_artifacts.py`) enforces exactly this split by the title
-marker.
+Keep sections as short as the durable handoff permits. Empty boilerplate is not
+evidence.
 
 ## Workflow
 
-Use the **Explore → Plan → Code → Commit** loop:
+1. Frame the capability and decide whether a durable trigger exists.
+2. Create or reuse the plan only when required.
+3. Implement milestone-by-milestone with focused verification.
+4. Update durable state at milestone or transfer boundaries.
+5. Close with the candidate/PR identity, verification, limitations, and outcome.
 
-1) Explore  
-Read relevant files and tests. Capture facts (paths, conventions, constraints) in the plan.
-
-2) Plan  
-Fill the template. For risky/irreversible changes, ask a human for approval before implementing.
-
-3) Code  
-Implement milestone-by-milestone. Keep **Progress**, **Decision log**, **Surprises**, and **Handoff** up to date.
-
-4) Commit  
-Commit code + plan updates together so history tells a coherent story.
-
-## Status updates (human-facing)
-
-When reporting progress (PR description, issue comment, chat), use:
-
-- Summary (1–2 sentences)
-- Done (max 3 bullets)
-- Next (max 3 bullets)
-- Risks/Blocks (max 3 bullets)
-- Links (plan path + key commits/tests)
-
-## Notes
-
-- An ExecPlan is not a full architecture paper. It is an **executable specification**: it should tell you what to change and how to verify it.
-- If a plan grows too large, split into phases (Phase 1/2) as separate plan files. Keep each file self-contained.
+For small, single-owner work, use `dev-workflow` and the PR description without
+creating a plan.

@@ -1,11 +1,26 @@
 # CLAUDE.md — Claude Code entry point
 
-`AGENTS.md` is the canonical agent contract for this repository and is fully binding in Claude Code. Read it first and follow its Playbook bootstrap and mandatory workflow.
+`AGENTS.md` is the canonical repository contract. Read it first. This file maps
+that contract to Claude Code and does not redefine delivery or quality policy.
 
 ## Claude Code mapping
 
-- **Skills**: `.claude/skills/<name>` are symlinks to `.agents/skills/<name>` (single source of truth; regenerate with `python scripts/sync_claude_skills.py --write`). Wherever playbook prose writes `$<skill>` or `/<skill>`, load `.agents/skills/<name>/SKILL.md` and apply its four-tier load contract: load `metadata.requires` before executing (unreadable ⇒ error); load `metadata.resources` only when its SKILL.md-stated condition matches; execute or cite `metadata.commands` by path, never inline; open `metadata.templates` only when producing that output artifact.
-- **Delegation**: subagent task briefs (templates in `.agents/skills/execution-plans/templates/`) map to the Agent tool. Use the playbook-conformant custom agents in `.claude/agents/` (`playbook-worker`, `playbook-explorer`, `playbook-reviewer`) instead of ad-hoc prompts.
-- **Model routing**: classify the task with `.agents/model-routing/task-classes.yml`, then use `.agents/model-routing/model-catalog.json` and `.agents/model-routing/route-lockfile.json` only after verifying both carry `harness: claude-code`. Never use their concrete model IDs from Codex, Copilot, or another harness. A missing or mismatched harness leaves the concrete model unresolved and forbids cross-harness fallback. After editing the Claude Code catalog, regenerate with `python scripts/generate_route_lockfile.py --write`.
-- **Run evidence**: record every delegated run with `python3 scripts/agent_run.py record --harness claude-code ...`; `quality-gate` verifies delegated work by explicit run ID from `.agents/runs/agent-runs.jsonl`, never by success claims.
-- **Verification**: canonical commands are in `COMMANDS.md`; `make verify` is the full chain.
+- **Skills:** `.claude/skills/<name>` links to `.agents/skills/<name>`. Explicit
+  skill requests use `/<skill>`. Apply the four-tier load contract from
+  `AGENTS.md`.
+- **Feature delivery:** the root agent owns `user-value-delivery`, Delivery
+  Control, route lock, and candidate identity. Workers receive a read-only task
+  brief and focused validation. The assigned owner performs the final
+  `quality-gate` once per candidate.
+- **Delegation:** use `.claude/agents/playbook-worker.md`,
+  `playbook-explorer.md`, and `playbook-reviewer.md` rather than ad-hoc prompts.
+  Do not ask each role to repeat the full workflow.
+- **Model routing:** use `.agents/model-routing/task-classes.yml`, catalog, and
+  route lockfile only after confirming `harness: claude-code`. Do not export
+  concrete model IDs to another harness.
+- **Run evidence:** record delegated and supervision runs with
+  `python3 scripts/agent_run.py record --harness claude-code ...`; verify by
+  explicit run_id, never by newest-file inference.
+- **Verification:** canonical commands are in `COMMANDS.md`; `make verify` is the
+  full repository chain. Use focused checks during implementation and the full
+  chain on the identified final candidate.

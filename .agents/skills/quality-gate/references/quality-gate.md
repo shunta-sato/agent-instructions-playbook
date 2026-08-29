@@ -1,137 +1,166 @@
 # Quality-gate exit checklist
 
-This checklist is for `$quality-gate` only.
-Focus on final decision criteria, not broad re-review taxonomy.
+This checklist decides whether the identified candidate meets its locked
+Definition of Done and non-negotiable boundaries. It does not search for every
+possible improvement.
 
-Sweep rule: evaluate every item in every applicable section in one complete pass, collecting all failures. Never stop at the first failed item and never decide before the pass is finished.
+Sweep rule: inspect each applicable blocking criterion once, collect all blocking
+failures, and keep optional findings separate.
 
-## 1) Command status (required)
+## 1) Command status
+- Candidate identity is explicit: commit SHA or recorded working-tree snapshot.
+- Required commands match the route selected by `dev-workflow`.
+- Exact command and result are recorded; skipped required checks include a reason
+  and reproducible procedure.
+- Existing worker, CI, release, HOST, or target evidence is reused only when its
+  source/build/target/environment identity matches the candidate.
+- Focused iteration checks do not need to be repeated as full gates by each role.
+- External interface/version/status discovery is recorded only where the decision
+  depends on it.
 
-- Canonical commands are recorded with exact commands + key results; when a `submission_evidence` record is present (`python scripts/submission_run.py record ...`), `python scripts/lint_submission.py` re-derives the recorded chain's declared exit codes (adoption phase: the record is not yet required, and the lint verifies declarations, not omissions).
-- If external systems/tools were involved, live-discovery evidence is recorded before static examples were trusted: command/interface source, version or status output, schema/config path, connection state, and artifact/log path.
-- Required depth matches routed risk:
-  - low risk: canonical minimum for changed surface
-  - normal/high risk: full chain (build / format / static analysis / tests)
-- Any skipped command includes reason + reproducible procedure.
+A failing required check is blocking. An unrun optional check is not.
 
-## 1b) Structural exit check (required, all risks)
+## 1b) Structural exit check
+For feature intent, use:
 
-- run `python scripts/check_structure.py --working-tree`; resolve findings or record a bounded waiver.
-- Every finding (`source-file-lines`, `entrypoint-logic-lines`, `inline-test-lines`) is resolved by an applied split in this submission, or carries an explicit bounded waiver in the change brief (for example generated code).
-- Entrypoints (`main.rs`, `src/bin/*.rs`, `main.py`, `__main__.py`, `main.go`, `main.c/cc/cpp`) are wiring only; the tool's line budget is a floor, not the rule.
-- This check does not depend on triggered branches. An unresolved finding without a waiver is `no-submit`.
-
-## 2) Triggered-branch evidence (required when triggered)
-
-Confirm required evidence exists for each triggered branch:
-
-- bugfix branch → Bug Report exists; heading structure enforced by `python scripts/lint_artifacts.py` (bug-report kind).
-- UI branch → UI Visual Verification Report + artifact paths
-- concurrency branch → concurrency verification evidence (plan/shutdown-verification/logging)
-- architecture-decision-analysis branch → Architecture Decision Analysis Record with decision/no-decision, quality drivers, option tradeoffs, verification tasks, and handoffs
-- observability branch → Observability Plan with logs/metrics/traces evidence plus signal purpose, actionability, counter-metric where relevant, and artifact paths
-- implementation-economy branch → Complexity Budget plus Post-Implementation Economy Audit, including keep/delete/inline/merge decisions for new abstractions
-- design-balance branch → Responsibility Map with unit, name, responsibility sentence, reason to change, and dependency direction
-- performance-review branch → Performance Review with hot path, data scale, complexity, I/O/query count, decision, evidence, and no-measurement/no-claim limits when measurement is missing
-- unit-test-design branch → if unit tests were added or changed, the `$unit-test-design` stop criteria and changed-code coverage targets (line 90% / branch 80%, high-risk branch 90%) are met, or the recorded review fallback is present when branch tooling is absent; tests that add no new partition, boundary, rule, transition, or regression are findings
-- comment-discipline branch → new or edited implementation comments that restate How (narrate adjacent code / the diff) or What (restate the unit's purpose) are findings, fixed via `$comment-discipline` before submit; API-doc comments required by the `code-readability` documentation gate are exempt
-- refactor intent (`$refactor-workflow`) → behavior-lock baseline and equivalence evidence: pre-existing tests unchanged and green, or characterization-first records; listed test edits limited to renames/moves; under compat-mode `break-allowed`, the removed-symbol sweep (`check_api_removal.py`) returns zero hits. A behavior change under refactor intent is `no-submit`
-- hardening intent (`$hardening-workflow`) → baseline and after metrics are recorded with a delta, targets were tiered (E/S/H) with high-risk first, and the stop ceiling was respected (no normal-tier pushes toward 95/100%, no E-tier hardening). A missing baseline is `no-submit`
-- Agent-facing workflow contract branch → `reports/workflow-contract-review/<slug>.md` exists with findings resolved or explicitly accepted; required-section structure (scope, source-of-truth chain, argv replay, producer/consumer consistency, identity consistency, execution locations, deployment/runtime discovery, forbidden fallback checks, claim boundaries) enforced by `python scripts/lint_artifacts.py` (workflow-contract-review kind)
-- delegated/subagent/worker execution changed files (also: delegated run evidence case) → an explicitly cited `agent_run` record exists in `.agents/runs/agent-runs.jsonl` for this delegated run; verified via `python3 scripts/judge_agent_run.py --run-id <run_id> --require-accepted` (explicit run ID, matching changed files, validation results, accepted judgment), or the same fields manually verified from the cited record
-- feature-level embedded NFR branch → `reports/resource/nfr-gate-report.md` exists; heading structure (findings, runtime mode classification, artifact check, budget results, claims review, unknowns/limits, handoff to quality gate) enforced by `python scripts/lint_artifacts.py` (nfr-gate-report kind); accept `submit` only when the NFR gate decision is `submit`, or the feature is explicitly experimental with production claims removed
-- embedded system familiarization branch → `docs/targets/<target>/system-familiarization.md` with required/created/missing/provisional/deferred artifacts, artifact freshness/revisit conditions, controlled conditions, uncontrolled confounders, operating point coverage, claim-to-evidence traces with allowed wording, claims blocked by missing evidence, and handoff statuses (`not_needed|required_pending|completed|deferred_with_reason|blocked`)
-- hardware operating point claim → `docs/targets/<target>/controlled-operating-points.md` with controlled factors, observed covariates, uncontrolled confounders, coverage status, confidence, safety preconditions, control/verification/abort/restore methods, and allowed wording
-- hardware capability architecture claim → `docs/targets/<target>/hardware-control-surface-map.md`, `docs/targets/<target>/hardware-capability-map.md`, or `docs/targets/<target>/capability-cost-model.md` showing control surface status and cost model status
-- embedded target characterization branch → `docs/targets/<target>/target-characterization.md`, `target_profiles/<target>.yaml`, baseline paths, and characterization report when production claims depend on target behavior
-- embedded operating envelope branch → `docs/targets/<target>/operating-envelope.md` and scenario reports for normal, degraded, boundary, observer, recovery, or blackout behavior
-- embedded NFR calibration branch → `reports/nfr-calibration/<feature>.md` plus budget provenance when numeric production budgets are claimed
-- constitution-only embedded branch → constitution artifacts such as project principles, resource discipline, physical budgets, target profiles, resource harness skeleton, and PR-template section. A feature-level NFR gate report is required only when runtime changes or production-readiness claims are introduced; constitution artifacts alone satisfy this branch otherwise.
-- project-structure branch → layout decisions (file → role) plus structure budget result (pass, or findings with applied fixes/waivers)
-- staged-lowering branch → staged plan + per-pass verification log
-- legacy branch → characterization/safety-net evidence + seam/refactor notes
-- structural scan branch → smells/anti-patterns result (new/worsened handled)
-- function-boundary-governor branch → function-boundary decision record (`keep|rename|split|merge|replace|inline|delete|no-op`) + rationale; when `no-op` is chosen → explicit reasoning
-- destructive-refactor branch → convergence record (`replaced|no-op|rollback`), migrated call-sites evidence, red-state usage record; when `no-op` or `rollback` is chosen → explicit reasoning
-- refactor branch under compat-mode `break-allowed` → no surviving old symbols/shims/aliases (`no-submit` otherwise); verified via `python scripts/check_api_removal.py --symbol <old-name> ...` (zero hits, tool output not a claim). The staged-migration ledger escape applies only under compat-mode `staged`, never under `break-allowed`.
-- API-touching or rework/consolidation/deletion task → recorded compat-mode (`preserve|staged|break-allowed`; `break-allowed` quotes the requester's waiver)
-- function-design ledger-needed cases → ledger entry present (replaced abstraction / intentional duplication / staged adapter)
-- C++ header branch → Doxygen completeness evidence
-- ExecPlan required case → `plans/<slug>.md` exists and is current; required-section structure (purpose, scope, constraints, context, design, validation, WBS/progress, surprises, decisions, handoff, outcomes) enforced by `python scripts/lint_artifacts.py` (execplan kind). If the ExecPlan declares quantitative targets, the Outcomes section records measured value vs. each target, and every unmet target has a Decision log entry that re-baselines it or explicitly accepts the miss with rationale — a fully-checked WBS with silently unmet declared targets is `no-submit`
-
-## 3) Minimum exit criteria review (always)
-
-- Path-specific instructions were identified and followed.
-- Requirements/acceptance changes (if any) are reflected in docs/tests.
-- Default-lane evidence is present for normal/high-risk work, or the low-risk skip reason is explicit.
-- Agent-facing workflow, generated instruction, collect plan, executable handoff, multi-step CLI workflow, or cross-host workflow changes are blocked unless the Workflow Contract Review Report decision is `submit`; `python scripts/lint_submission.py` re-derives this (`contract-not-submit` finding) when a submission record cites the report.
-- Delegated/subagent/worker changes are blocked unless the submission cites fresh run evidence by explicit run identity. Do not accept `latest`, newest file, mtime, raw co-presence, or agent self-assessment as evidence; `python scripts/lint_submission.py` re-derives citation acceptance and gate status (`cited-run:*` findings) when a submission record cites the run.
-- Delegated run evidence is `no-submit` when the ledger record is missing, the run ID is not explicit, required validation did not run, validation failed, validation output is missing, changed files exceed allowed files, or `judge_agent_run.py --require-accepted` fails.
-- Missing token telemetry alone never blocks: treat absent telemetry or `telemetry.status: not_collected` as acceptable when every other run-evidence criterion passes.
-- Completion claims require verification evidence. A worker report that says the task is done without validation command results remains `no-submit`.
-- If `requirements-engineering` declared measurable quality/NFR targets (metric + target + measurement method), each target records a measured value vs. the target, or an explicit `not-measured`/`unmet` entry with reason; silently unmeasured or unmet declared targets are `no-submit`.
-- Non-embedded performance/reliability claims (fast, low-latency, scalable, high-throughput, reliable, production-ready) are blocked without measurement evidence (command + result) or an explicit `provisional`/`not-measured` limit — the same no-measurement-no-claim rule embedded work already follows.
-- If embedded NFR work was triggered, no low-overhead, battery-safe, lightweight, flash-safe, thermally-safe, or production-ready claim remains without measurement evidence or explicit experimental-only limits.
-- If architecture, hardware, or embedded NFR claims depend on a hardware operating point, `controlled-operating-points.md` exists and the claim trace shows controlled evidence, adequate coverage, confidence, and allowed wording.
-- Observed natural variation under a dynamic policy is not accepted as a controlled sweep. Claims such as "works at all CPU clocks", "low overhead across frequency range", "battery safe", and "GPU offload is better" are blocked unless the corresponding controlled experiments and cost models exist or the wording is explicitly limited/provisional.
-- If a GPU/NPU/DSP/accelerator claim supports architecture selection, hardware presence alone is insufficient; the control surface, API/runtime path, transfer/setup/scheduling cost, workload fit, power/thermal cost, benchmark evidence, and fallback implications are known or the claim is blocked/provisional.
-- If embedded NFR claims depend on target behavior, target characterization exists or the claim is explicitly provisional.
-- If numeric production budgets are claimed, budget provenance exists, calibration artifacts are referenced, and calibration revisit conditions are not triggered.
-- If feature-level embedded NFR work was triggered, target-local background behavior is classified as default, burst, experimental-only, or debug-only.
-- If compat-mode was `break-allowed`, no deprecated shim, re-export alias, or parallel old/new version survives — verified by the `scripts/check_api_removal.py` sweep, not by the agent's claim.
-- The boundary gate was run with the declared mode: `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery`. `safety-review-required` findings are `no-submit` in every mode; notes about delivery-mode edits under research paths are informational.
-- Open risks or follow-ups are explicitly documented.
-
-If deeper judgment is needed, invoke dedicated skills rather than expanding this checklist:
-- readability → `$code-readability`
-- maintainability/modularity/boundaries → `$code-smells-and-antipatterns`
-- error handling → `$error-handling`
-- concurrency details → `$concurrency-core`, `$thread-safety-tooling`
-- observability details → `$observability`
-- Agent-facing workflow contract details → `$agent-workflow-contract-review`
-
-## 4) Gate decision format (required)
-
-```markdown
-Gate decision: submit|no-submit
-
-Findings:
-- [ID] location — failed/missing criterion — required fix
-
-Checks run:
-- <command> — pass|fail|skipped (reason)
-
-Live discovery:
-- <external/tool surface> — source/version/status/config/artifact evidence or not applicable
-
-Triggered branch evidence:
-- <branch> — present|missing — artifact/path
+```sh
+python scripts/check_structure.py --working-tree --mode feature
 ```
 
-Rule: `submit` only when all required criteria are satisfied and findings are 0.
+For refactor or structure-hardening intent, use `--mode strict`.
+
+- `ADVISORY` findings prompt a responsibility check and are reported as accepted
+  debt or local follow-up; they do not block feature delivery by themselves.
+  This includes small changes in files that already exceeded a hard guardrail.
+- `FINDING` entries create/cross a hard guardrail or materially grow existing hard
+  debt and block until locally fixed or covered by a bounded repository waiver.
+- Pre-existing structure debt does not authorize adding a distinct new
+  responsibility to the same oversized file.
+- A needed split extracts only the current responsibility seam. Decomposing
+  unrelated historical code is not an exit criterion.
+
+## 2) Triggered-branch evidence
+Evidence is proportional to the current DoD and boundary. Prefer an existing
+plan, PR section, test result, or machine output. A separate artifact is required
+only when it is:
+
+- an explicit acceptance condition;
+- consumed by another tool or workflow;
+- the smallest durable location for a material decision, approval, or claim.
+
+Check applicable evidence:
+
+- acceptance behavior and realistic failure behavior are verified;
+- a bug/regression fix has reproduction and regression evidence appropriate to
+  its impact;
+- compatibility mode is recorded for public/cross-module contract changes;
+- security, privacy, authorization, safety, and data-integrity boundaries have
+  evidence appropriate to their real actors and failure paths;
+- explicit performance/resource/NFR claims include measurement, or the claim is
+  narrowed to `provisional` / `not measured`;
+- mobile or target claims identify source, build, platform/target, environment,
+  oracle, and limitation; screenshots alone prove only what they show;
+- delegated changes cite an explicit accepted run identity with in-scope files
+  and focused validation results;
+- Agent-facing machine-consumed or cross-host workflow changes preserve typed
+  identities, execution locations, and claim boundaries;
+- `break-allowed` migrations contain no surviving compatibility path unless the
+  request explicitly retained one.
+- When the locked route includes function design, verify the
+  function-boundary decision, destructive-refactor convergence, required ledger
+  entry, validation commands, and that any no-op or rollback has explicit reasoning.
+
+Skill invocation alone is not evidence and does not make its full template an
+exit requirement.
+
+## 3) Minimum exit criteria review
+A finding is **blocking** only when it is concrete, inside the stated operating
+boundary, and establishes one of:
+
+1. the observable DoD is unmet;
+2. the candidate introduces or worsens a material regression in a supported
+   journey, or breaches a compatibility contract;
+3. a repository-required check fails;
+4. a safety, security, privacy, authorization, compliance, or data-integrity
+   defect exists for a realistic actor or failure path;
+5. an explicit measured NFR or resource limit is violated;
+6. a hard structure guardrail is newly crossed or materially worsened by the
+   candidate.
+
+A blocking finding records:
+
+```text
+violated criterion:
+concrete failure path:
+affected actor or user journey:
+introduced or worsened by this candidate:
+smallest required fix:
+```
+
+A regression is material when it prevents a supported common journey, causes a
+normal-input crash or hang, corrupts data, violates an explicit contract, or has
+impact that would reasonably require rollback. A documented cosmetic defect or
+rare low-impact edge case outside the DoD is optional unless acceptance says
+otherwise.
+
+P0/P1/P2/P3 labels are supporting evidence, not authority. A label without the
+fields above does not block.
+
+The following are optional by default unless they prevent a blocking criterion:
+
+- style or naming preferences;
+- readability polish;
+- pre-existing structural debt;
+- additional test cases with no distinct acceptance or regression risk;
+- future generalization or an additional consumer that does not yet exist;
+- a generic framework, harness, abstraction, or broad refactor;
+- speculative hardening or an out-of-boundary scenario.
+
+Optional findings receive `accept-now | defer | refute | acknowledge`. Do not
+create an issue for each note. After DoD passes, `user-value-delivery` permits one
+bounded polish pass; remaining optional notes may stay in the PR.
+
+Also verify:
+
+- open claim limits and known limitations are explicit;
+- required approvals and branch-protection conditions are satisfied;
+- no accepted fix remains uncommitted;
+- the candidate did not change materially after its final evidence was produced.
+
+## 4) Gate decision format
+```markdown
+Gate decision: submit|no-submit
+Candidate: <identity>
+Blocking findings: <count>
+
+Required checks:
+- <command/evidence> — pass|fail|skipped
+
+Blocking findings:
+- [ID] <criterion, failure path, affected journey, minimum fix>
+
+Optional findings:
+- [ID] <accept-now|defer|refute|acknowledge> — <note>
+
+Structure:
+- <advisories / hard findings / none>
+
+Evidence reused:
+- <source identity and why it matches>
+
+Claim limits / remaining limitations:
+- <limit or none>
+```
+
+`submit` requires zero blocking findings and passing required checks. Optional
+findings may remain with dispositions.
 
 ## Gotchas
-
-- **Common pitfall:** deciding `no-submit` at the first failed item and skipping the rest of the checklist.
-  **Instead:** finish the full sweep first so the submitter can fix everything in one round; then decide.
-- **Common pitfall:** repeating deep-review taxonomy in quality-gate and making it verbose.
-  **Instead:** limit gate to exit-criteria decisions and delegate deep dives to dedicated skills.
-- **Common pitfall:** approving as mostly OK while required artifacts are missing.
-  **Instead:** keep `no-submit` until required evidence for triggered branches is complete.
-- **Common pitfall:** passing a structurally degraded change because all process artifacts exist (a monolithic entrypoint full of inline tests can satisfy every triggered-branch checklist).
-  **Instead:** the structural exit check is its own criterion; findings from `scripts/check_structure.py` block submit even when every artifact is present.
-- **Common pitfall:** duplicating the workflow-contract deep checklist inside this final gate.
-  **Instead:** verify the report exists and its decision/findings status, then route deep issues back to `agent-workflow-contract-review`.
-- **Common pitfall:** marking `submit` with vague records of unrun commands.
-  **Instead:** for unrun commands, always record reason + reproduction steps and reflect that in submission decision.
-- **Common pitfall:** accepting delegated work from a success claim or latest ledger entry.
-  **Instead:** verify the explicitly cited run record and require validation/scope evidence; token absence alone is not a failure.
-
-## Verify-by-artifact reminders
-
-- Verify ledger by checking canonical path `.agents/design-ledger/function-boundaries.md`, not only final-response text.
-- Verify delegated run evidence by checking `.agents/runs/agent-runs.jsonl` with an explicit run ID, not by latest/newest record selection.
-- Verify embedded NFR evidence by checking `reports/resource/nfr-gate-report.md`, not only final-response text; `reports/resource/nfr-gate-report.md` is now covered by `python scripts/lint_artifacts.py`.
-- Verify constitution-only evidence by checking the generated project artifacts, not only final-response text.
-- Verify controlled operating point claims by checking the target pack artifact paths, not only final-response text.
-- Verify artifact structure by running `python scripts/lint_artifacts.py` (resolve findings or record them in the baseline with an adjudication).
+- Do not convert a gate into a second architecture review.
+- Do not block because a template section is empty when the section is not needed
+  for the current DoD or boundary.
+- Do not rerun a full HOST/CI/target gate for an unchanged candidate solely
+  because a new agent took ownership.
+- Do not treat an advisory structure threshold as a hard limit.
+- Do not weaken concrete safety, security, privacy, or data-integrity findings in
+  the name of delivery speed.

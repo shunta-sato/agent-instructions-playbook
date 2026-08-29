@@ -1,221 +1,108 @@
-## 3. Naming (variables, functions, classes)
+## 3. Naming
 
-A name should carry the key facts the reader needs, without forcing them to read the implementation first.
-If you need an extra comment to decode a name, prefer improving the name.
-
-### 3.1 Put key facts into names
-
-- Avoid generic verbs (e.g., `get`, `do`, `process`). Use a verb that matches the actual action.  
-  Example: `FetchUserProfileFromApi` vs `ReadUserProfileFromCache` makes the data source explicit.
-- Avoid placeholder names like `tmp` or `retval` unless the short lifetime or “just a return value” is the most important fact.
-- If a value has a unit, include it in the name when it prevents mistakes.  
-  Example: `timeout_ms`, `size_bytes`, `max_items`.
-- If trust or safety changes how a value must be handled, surface that in the name.  
-  Example: `untrusted_*`, `user_input_*`, `raw_*` (before validation/escaping).
-- If the best explanation is “see comment”, rename instead of patching with comments.
-
-### 3.2 Choose names that resist misinterpretation
-
-After naming something, try to misread it like a new teammate would. If a plausible wrong interpretation exists, rename now.
-
-- Avoid overloaded verbs that can imply opposite outcomes. Prefer explicit pairs like `include` / `exclude`, `keep` / `drop`.
-- For ranges and boundaries, encode inclusiveness/exclusiveness in the name.  
-  Example: `start_inclusive` + `end_exclusive` (half-open), or `lower_inclusive` + `upper_inclusive` when both ends are included.
-- For booleans, make “true means what?” obvious.  
-  Prefer `is_*` / `has_*` / `can_*`. Avoid negated names (`not_*`, `disable_*`) unless the negative concept is the natural one.
-
-### 3.3 Names should be pronounceable, searchable, and distinguishable
-
-Avoid names that make the reader stop. Prefer “easy to find” and “easy to tell apart” over brevity.
-
-- Use pronounceable names. If abbreviations or odd spellings block conversation, switch back to normal words.
-- Use searchable names. Single-letter variables or bare numeric constants are only acceptable in very small scopes.
-- Do not create differences by adding suffix numbers (e.g., `data` vs `data2`). If you cannot explain the difference, rethink the split.
-
-### 3.4 Use formatting to distinguish kinds of names
-
-Formatting conventions are reading cues. Repository conventions come first.
-
-- Example: `CamelCase` for classes, `snake_case` for variables, trailing `_` for member variables, etc.  
-  The goal is that you can recognize the kind of name at a glance.
-- Follow existing style in the codebase. Consistency improves readability more than personal preference.
+Names should expose facts that prevent plausible mistakes: action, source,
+ownership, trust level, unit, or boundary semantics. Follow repository style.
+Rename only when the changed surface is materially easier to misread; brevity or
+personal preference is not a finding.
 
 ## 4. Comments
 
-Write comments to fill gaps that are not obvious from reading the code. Do not repeat what the code already says.
-
-Comments get stale. Do not justify unclear code with comments—first make the code clearer. A wrong comment is worse than no comment.
-
-Implementation comments follow the Why-not channel rule in `comment-discipline`: keep only what code, tests, and commit messages cannot express. Documentation-gate comments (Doxygen headers, public-API docstrings — §4.4) are contract documentation and are exempt from that rule.
+Implementation comments carry constraints, rejected alternatives, hazards, or
+external requirements that code, tests, types, and commit history cannot express.
+Do not narrate adjacent code. A clear implementation needs no comment quota.
 
 ### 4.1 What to write
 
-- **Intent**: why this approach, why this order, why this condition.
-- **Assumptions**: what inputs are guaranteed, what happens with bad data.
-- **Pitfalls**: common misreads, edge cases, performance or safety reasons.
+Useful comments explain intent, assumptions, invariants, units, ownership,
+lifetime, compatibility, or non-obvious failure behavior.
 
 ### 4.2 How to write
 
-- Do not rely on vague pronouns (“this/that/it”). Point with nouns.
-- Do not cram too much into one line. Use short, complete sentences.
-- If an example is the fastest way to explain, add a small input/output example (especially for edge cases).
+Use short, stable statements. Prefer a name, type, assertion, or test when it
+expresses the same contract more reliably.
 
 ### 4.3 Prohibited
 
-- **Do not keep code by commenting it out.** Version control already preserves history. If deleting is hard, fix the reason first.
-- **Do not include who/when metadata** in comments. History already captures that.
+Do not keep commented-out code, author/date history, generated narration, or
+speculative explanations of behavior the code does not guarantee.
 
-### 4.4 Required documentation for C++ headers (`.hpp`)
+### 4.4 C++ header documentation
 
-For this repo, C++ header documentation is mandatory.
+Doxygen is required for changed public/protected declarations and other stable
+contracts consumed outside the implementation unit.
 
-- Add Doxygen comments for **all declarations** in `.hpp`, including **private** members (classes/structs, methods, member fields, constants).
-- For functions/methods, include: what it does, parameter meaning (`@param`), return meaning (`@return`), and notable failure modes (exceptions / error returns) when applicable.
-- For member fields / constants, include: meaning, unit (if any), and allowed range or set of values.
+Include only applicable fields:
 
-Note: if you generate docs with Doxygen and want private members to appear, configure Doxygen to extract private members (e.g., `EXTRACT_PRIVATE = YES`). 
+- purpose and observable contract;
+- parameter meaning where the type/name is insufficient;
+- return and error semantics;
+- ownership, lifetime, thread-safety, units, ranges, or preconditions that affect
+  correct use.
 
-### 4.5 Required comments inside C++ implementations (`.cpp`)
+Private declarations do not require blanket Doxygen. Document them when a
+non-obvious invariant, hazard, unit, ownership rule, or maintenance contract
+would otherwise be lost. Boilerplate such as “returns nothing” is not required.
 
-For this repo, comments inside non-trivial functions are mandatory so a reader can follow the flow without guessing.
+### 4.5 C++ implementation comments
 
-- Split a function body into **cohesive paragraphs** (blank lines).
-- Put a **one-line intent comment** on each paragraph (the “mini-purpose” of that block).
-- Prefer “why/intent/contract” over repeating the code line-by-line.
-- Each paragraph comment must fit one of: **Intent**, **Assumptions**, **Pitfalls** (see 4.1). If it does not, delete or rewrite it.
+A `.cpp` file does not need a comment for each paragraph or external call. Add a
+Why-not comment only where a reasonable maintainer might otherwise choose an
+unsafe or incompatible alternative.
 
-### 4.6 Required comments at coupling/boundary points
+### 4.6 Coupling and boundary points
 
-Whenever code crosses a boundary or depends on another module, add a short note so the reader knows the contract.
+Document a boundary when its contract is not represented by the API, type,
+error path, or test. Routine calls and obvious I/O do not need commentary.
 
-- Before calling another module/library/service or doing I/O, write a comment that states: assumptions, what is relied on, and how failures are handled (or why they are safe to ignore).
-- Do this even for private helpers if the coupling is the important part.
+### 4.7 Fixed values
 
-### 4.7 Fixed values (constants, magic numbers/strings)
+Name domain-specific, protocol, timing, size, retry, or policy literals when the
+meaning is not evident at the use site or must stay consistent. Trivial local
+values and conventional sentinels need no audit artifact.
 
-Hard-coded values become future bugs unless their meaning is explicit.
+## 5. Visual structure
 
-- Avoid non-trivial “magic” literals. Prefer a named constant (`constexpr`, `enum`, etc.).
-- Document the constant with: meaning, unit, and allowed range (min/max) or enumerated allowed values.
-- If the value comes from an external spec, include the source reference in the comment when possible.
-- As a review step, list any new or modified numeric/string literals and justify each one (named constant or explicit exception like 0/1).
-
-## 5. Visual structure (formatting and ordering)
-
-Readability depends on layout as well as content.
-
-- If an auto-formatting tool exists, always use it and follow its output (a formatter).
-- Keep whitespace and line-break habits consistent. Do not mix ad-hoc formatting that inflates diffs.
-- Group declarations and logic into meaningful blocks. Use blank lines so readers can follow “paragraphs.”
-- Keep related concepts close. Distance increases back-and-forth scrolling.
-- Align columns only when it actually speeds reading. Do not do alignment edits if they balloon diffs.
+Use the formatter and keep related concepts together. Avoid alignment-only or
+ordering-only edits that enlarge a feature diff without reducing a real misread
+risk.
 
 ## 6. Conditionals and loops
 
-Branches and loops are places where readers often get stuck. Aim for code the reader can pass without stopping.
-
-- Write conditions in a natural order. Often it reads better to put the changing side on the left and the reference on the right.
-- Avoid deep nesting. If you can flatten with early returns, do so.
-- Short conditional expressions can be useful, but if they slow the reader, split them. (Ternary operator.)
-- If negations (`!`) stack up, rewrite toward a positive form.
+Prefer direct conditions, early exits where clearer, and bounded nesting. These
+are judgment guidelines, not numeric merge gates.
 
 ## 7. Large expressions and complex logic
 
-Long expressions increase reading load.
-
-- First split into named intermediate results. Name them so the reader knows what is being checked.
-- Do not rely on “short-circuit” behavior of `&&` / `||` to encode control flow. It hides the execution order.
-- Do not push multiple purposes into one line. Split by purpose.
+Introduce an intermediate name or local helper when it reveals a decision or
+removes duplication. Do not split expressions into helpers that force readers to
+jump between files without gaining meaning.
 
 ## 8. Working with variables
 
-Variables are useful, but the more you create, the more the reader must remember.
-
-- Remove low-value variables. If a variable only “stores an intermediate,” changing the split can often remove it.
-- Minimize scope. Declare near first use and keep visibility as small as possible.
-- Reduce the number of times a value changes. Prefer “assign once, then do not modify.”
+Keep scope small and mutation understandable. A temporary variable is useful
+when it names a concept; it is not automatically noise.
 
 ## 9. Functions
 
-Readable functions let the reader grasp “what it does” quickly.
+A function should present one coherent responsibility at the level needed by its
+caller. Line count, nesting depth, and parameter count are review prompts rather
+than fixed defects. Split only when doing so clarifies behavior or isolates a
+change boundary; avoid micro-functions that increase navigation cost.
 
-### 9.1 Reduce what a single function does
+## 10. Explain tricky decisions
 
-- Do not mix multiple tasks in one function. Split by task.
-- First separate work into paragraphs; then consider extracting functions. If a paragraph needs a heading, it is a candidate.
-- If splitting causes the reader to bounce around and slows understanding, change how you split. Smallness is a means, not the goal.
-
-### 9.2 Keep one level of abstraction per function
-
-Do not mix “the point” and “the details” in one function. Separate where you write the flow versus where you write the mechanics.
-
-- Put the flow you want the reader to see first at the top.
-- Push details down into helper functions or into other modules.
-
-### 9.3 Make parameters and return values readable
-
-- Fewer parameters are easier to read. If they grow, bundle a coherent group into one value (struct/class).
-- Do not branch on boolean parameters. Calls like `render(true)` hide meaning; prefer separate function names.
-- Avoid “mutate input then return it.” It causes readers to confuse input and output. Return a new value or only mutate owned state.
-
-### 9.4 Do not hide side effects
-
-Do not make changes that readers cannot infer from the function name. If you change state, make it obvious via naming and placement.
-
-### 9.5 Do not mix “change state” and “answer”
-
-If a function both changes state and returns a value, readers often misinterpret it.
-
-First ask questions about state, then change state. This is called **Command Query Separation**. After introducing the term, we will refer to it as “do not mix.”
-
-- Avoid patterns like `if (setX(...))`. Readers will wonder whether it “set” or “was already set.”
-- Instead of returning success/failure codes everywhere, separate the “failure path” using exceptions or explicit branching at the call site.
-
-### 9.6 Size guidelines (numbers)
-
-“Make it small” is not the goal, but limits help avoid indecision. If you exceed these limits, split the function or leave a comment explaining why it must be larger.
-
-- Lines: target ≤ 20 lines. As a rule, ≤ 30 lines. Even as an exception, cap at 40 lines.
-- Nesting: at most 2 levels of `if/for/while/try`. Even as an exception, cap at 3 levels.
-- Parameters: up to 3. If it would become 4+, bundle them.
-
-(When counting, you may exclude blank lines and lines that contain only `}`.)
-
-## 10. Turn your thinking into code
-
-Before writing tricky logic, first explain it in Japanese. Then write code that matches the explanation.
-
-- List what conditions mean “allow” and what conditions mean “fail,” and write code in that same order.
-- Reuse keywords from the explanation (e.g., `admin`, `owner`, `document`) as variable and function names.
+Before complex logic, state the decision table, invariant, or state transition in
+the plan or test list. Put only durable constraints into code comments.
 
 ## 11. Write less new code
 
-Every new line becomes future cost. Use `implementation-economy` for the active complexity budget and post-implementation audit.
-
-Readability checks still apply to new code that remains:
-
-- Names should explain why the code exists.
-- Comments should explain intent, assumptions, or pitfalls, not compensate for avoidable complexity.
-- If the simplest readable solution is deletion, inlining, or reuse, prefer that and record the decision in the `implementation-economy` audit when that skill is active.
+Reuse, deletion, and local implementation are often easier to maintain than a
+new layer. Route persistent abstraction decisions to `implementation-economy`;
+do not create an audit for ordinary local helpers.
 
 ## 12. Tests
 
-Tests are read, too. If tests are hard to read, people become afraid to change code. Readability matters especially for tests.
-
-### 12.1 Properties tests should satisfy
-
-Aim for tests that satisfy the following five properties: fast, independent, repeatable, self-validating, and timely. This is known as **FIRST** (Fast, Independent, Repeatable, Self-Validating, Timely). After introducing the term, we will treat them as “the five properties.”
-
-- **Fast**: run quickly so they can be run often.
-- **Independent**: tests should not depend on each other’s order.
-- **Repeatable**: the result should be the same across machines and environments.
-- **Self-validating**: failures should be detected by the test, not by reading logs.
-- **Timely**: write tests with changes, or clearly state why you cannot.
-
-### 12.2 How to write
-
-- Tests can serve as “documentation for implementation.” Put important conditions where the reader sees them first.
-- Make it obvious **why** this test exists and **what** it guarantees. Prefer: a behavior-focused test name + a 1–2 line comment at the top of the test explaining the rationale.
-- Do not bury the test in setup details. Make “input / action / expectation” easy to follow.
-- Write assertions so failures guide the reader toward the cause. (Assert.)
-- Do not cram too many checks into one test. Too much makes failures harder to diagnose.
+Tests should make input, action, and expected behavior visible. A behavior-focused
+name is usually enough; comments are useful only for non-obvious regression
+history or rationale. Test readability does not justify unrelated production
+refactoring.

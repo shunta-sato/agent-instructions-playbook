@@ -1,206 +1,194 @@
 # Dev-workflow router template
 
-This file is the routing template for `$dev-workflow`.
-Focus on one question: **which branches are required for this task?**
+This template answers one question: **which implementation and verification
+branches are necessary for this change?** Feature scope and non-goals come from
+`user-value-delivery` when that governor applies.
 
-## 0) Risk routing (mandatory first)
+## 0) Risk routing
+Record four independent decisions:
 
-Classify first, then plan depth is decided automatically.
+- **Change risk:** `low | normal | high`.
+  - low: local and reversible; no contract, concurrency, migration, or safety boundary.
+  - normal: the default for user-visible behavior.
+  - high: cross-boundary, difficult rollback, safety/security/data integrity,
+    strict resource limits, or broad compatibility impact.
+- **Failure criticality:** `low | standard | critical`.
+- **Maintenance horizon:** `short | bounded | durable`.
+- **Escalation trigger:** the concrete fact that would increase risk.
 
-- **Low risk**: tiny/local; no API/schema/boundary/concurrency/UI/legacy/refactor trigger.
-- **Normal risk**: default for most code/test changes.
-- **High risk**: cross-boundary impact, runtime-behavior shift, broad refactor, strict constraints, safety/perf critical.
+Do not infer durable architecture from high failure criticality. Do not reduce
+safety or data-integrity checks because code is short-lived.
 
-Embedded high-risk examples:
-
-- target-local daemon, service, logger, recorder, collector, sampler, watcher, or background loop
-- sub-100ms polling or sampling
-- target-local filesystem writes, flash wear, wakeup, battery, thermal, or jitter impact
-- resource-sensitive default behavior described as low overhead, battery safe, lightweight, or production ready
-
-Record:
-- Risk level:
-- Why this level:
-- Escalation trigger (what would raise risk):
-- Intent (`feature` | `poc` | `refactor` | `hardening`) — full definitions and tie-breaks: §0a:
-- Compat-mode (`preserve` | `staged` | `break-allowed`) when public/cross-module APIs are touched or the task is a rework/consolidation/deletion request; for `break-allowed`, quote the requester's waiver — full definitions: §0b:
-
-### Required outputs by risk
-
-| Area | Low | Normal | High |
-|---|---|---|---|
-| Change brief depth | compact | full | full |
-| Requirements depth | minimal EARS + acceptance bullets | full EARS + acceptance | full EARS + acceptance + failure-path notes |
-| Test planning | impacted tests list | Test List (3–10) | Test List (3–10) + explicit strategy |
-| Default implementation lane | skip if one file, no new abstraction, public API unchanged, no behavior expansion | required | required |
-| Complexity budget | optional only when new abstraction appears | `implementation-economy` budget + audit | `implementation-economy` budget + audit |
-| Responsibility layout | optional only when module/class layout changes | `design-balance` map when layout changes | `design-balance` map when layout changes |
-| Structure watch (`scripts/check_structure.py --working-tree`) | required | required | required |
-| Verification depth before gate | canonical minimum for changed surface | full canonical chain | full canonical chain |
-| Final gate | `$quality-gate` required | `$quality-gate` required | `$quality-gate` required |
-| ExecPlan | optional | required if complex | required if complex/long-running |
+| Route | Before implementation | Iteration | Candidate verification |
+| --- | --- | --- | --- |
+| low | compact DoD and affected surface | focused check | canonical minimum |
+| normal | DoD, failure path, vertical path | focused tests | required canonical chain |
+| high | normal plus threat/rollback/resource notes | focused tests and decisive probes | full required chain and target proof |
 
 ## 0a) Work intent
+Record `feature | poc | refactor | hardening`.
 
-Declare the work-intent and record it like compat-mode: `feature` (default) | `poc` | `refactor` | `hardening`.
+- `feature`: observable behavior is the deliverable. Local enabling refactors
+  remain part of the feature and do not become a cleanup campaign.
+- `poc`: route through `poc-workflow` on a research path.
+- `refactor`: behavior-preserving structure is the deliverable; use
+  `refactor-workflow`.
+- `hardening`: a measured quality delta is the deliverable; use
+  `hardening-workflow`.
 
-- `poc` (prototype/demo/feasibility construction): this is research-mode work — the PoC boundary must be a research-mode path or a declared research mode; route `$poc-workflow` and stop here (dev-workflow's remaining steps are delivery mandates). A PoC built on delivery paths in delivery mode gets no exemptions.
-- `refactor` (structural change, behavior preserved as the task's purpose): run the `$refactor-workflow` lane; its stages call back into this skill's parts (1b compat-mode, `$function-boundary-governor`, `$design-balance`, `$destructive-refactor`). The lane subsumes step 2's default implementation lane — after it, resume at step 6; do not re-run 1a–2 and do not seed a Test List (the lane forbids new tests for moved-but-unchanged behavior). The in-feature preparatory refactor stays step 2b — do not reroute it.
-- `hardening` (quality improvement of existing behavior as the task's purpose): run the `$hardening-workflow` lane. The lane subsumes step 2 — after it, resume at step 6; do not re-run 1a–2.
-- `feature`: continue unchanged.
-- Tie-break: intent is about the task's PURPOSE — a feature that happens to refactor en route stays `feature` (step 2b); a task whose deliverable IS the structural change or the quality delta takes the dedicated intent. Refactor-vs-hardening tie-break: a measured quality delta as the deliverable (coverage, smell count, flaky count, latency metric) → `hardening`; a specific structural transformation with no target metric → `refactor`; a behavior-preserving cleanup that names a measurable quality dimension defaults to `hardening` (the lanes gate differently — hardening requires a baseline).
+The task's purpose decides intent, not the kinds of edits encountered.
 
-## 0b) Compat-mode
+## 0b) Compatibility mode
+For public or cross-module contracts, or explicit consolidation/deletion, record:
 
-Record the compat-mode whenever the task touches public or cross-module APIs, or is a rework/consolidation/deletion request:
-
-- `preserve` (default): existing callers must keep working.
-- `staged`: temporary adapters allowed, each with a ledger entry naming its removal condition.
-- `break-allowed`: the requester explicitly waived backward compatibility — quote the waiver. Under `break-allowed`, delete rather than deprecate: old APIs, deprecated markers, re-export aliases, and parallel old/new versions are defects, not caution.
+- `preserve` (default): existing callers continue to work.
+- `staged`: temporary adapters have a named removal condition.
+- `break-allowed`: quote the requester's waiver and remove the superseded path.
 
 ## 1) Default implementation lane
+For feature intent:
 
-Run this lane before trigger branches for normal/high-risk implementation. For low risk, record the skip reason only when all are true: one file, no new abstraction, public API unchanged, no behavior expansion, and the structure watch passes on every touched source file.
+1. Inherit or state the observable DoD and explicit non-goals.
+2. Name the shortest path from input/trigger to observable output and required
+   failure behavior.
+3. Choose the cheapest decisive focused proof.
+4. Add tests for acceptance, regression, and realistic boundary failures. Test
+   count and coverage percentage are not goals by themselves.
+5. Use `design-balance` only when ownership of a new durable responsibility is
+   genuinely undecided.
+6. Use `implementation-economy` only for a persistent abstraction/layer or when
+   support work risks exceeding the remaining user-facing work.
+7. Refactor before the feature only when the current path cannot be changed
+   safely or reviewably without a local extraction.
+8. After DoD passes, allow one bounded polish pass under `user-value-delivery`.
 
-1. Requirements/DoD: record the smallest acceptance criteria and Definition of Done.
-2. Test List: seed from acceptance criteria when behavior can be tested; route to `$test-driven-development` when using Red/Green/Refactor.
-3. Responsibility layout: run `$design-balance` when the change introduces 2+ classes/modules, adds a layer/interface, or adds a new reason-to-change to an existing class/module.
-4. Complexity budget: run `$implementation-economy` for normal/high-risk work and for any new helper, wrapper, adapter, class, module, or indirection.
-5. Lightweight readability check: check that touched names predict responsibilities; rename if a class/module/function name cannot be explained in one sentence.
-6. Preparatory refactor check (make the change easy first): if the landing area has structure-budget findings, near-duplicate functions the feature would extend, or forces a boolean-flag/shotgun edit, do a scoped preparatory refactor as its own verified step (tests green before and after), then implement the feature.
+Record decisions in the active plan or PR. A standalone artifact is not required
+unless it is an acceptance condition, a machine-consumed contract, or the
+smallest durable location for a material decision.
 
-Default lane output:
-- Definition of Done / acceptance criteria:
-- Prep-refactor: done | not-needed (one-line reason):
-- Test List source or skip reason:
-- Responsibility map path/summary or skip reason:
-- Complexity budget + audit path/summary or skip reason:
-- Naming/responsibility check result:
+## 2) Required trigger branches
+List only triggered branches, each with one-line evidence. Do not enumerate all
+non-triggered skills.
 
-## 2) Required trigger branches (all risks)
+- New file/module placement or a blocking structure finding → `project-structure`.
+- Concrete bug, material regression, crash, hang, corruption, or flake →
+  `bug-investigation-and-rca`.
+- Public/cross-module API migration or multi-call-site replacement →
+  `function-boundary-governor`; add `destructive-refactor` only for actual
+  replacement/convergence work.
+- New durable module/class ownership, layer, or interface → `design-balance`.
+- Persistent wrapper/adapter/indirection or scope-inversion risk →
+  `implementation-economy`.
+- A measured architecture choice with competing boundaries →
+  `architecture-decision-analysis`; use `requirements-engineering` first when
+  metric, target, or measurement method is missing.
+- Concurrency semantics change → `concurrency-core` plus the platform-specific
+  concurrency skill and `thread-safety-tooling` when applicable.
+- A real operating failure boundary lacks sufficient existing diagnostic
+  signals → `observability`.
+- An explicit performance/resource claim, target, or credible hot-path risk →
+  `performance-review` or the embedded route in §2a.
+- Auth/session, schema migration, or public generated-client boundary → matching
+  `preflight-*` skill.
+- Unit-test strategy, boundary partitions, coverage policy, test doubles, or
+  flakiness requires judgment → `unit-test-design`. Merely editing a test does
+  not trigger it.
+- Explicit readability/maintainability review → the matching review skill.
+- C++ public or stable API documentation is changed → `code-readability`.
+- UI behavior or appearance changes → platform evidence and
+  `visual-regression-testing` when visual proof is part of acceptance.
+- Agent-facing machine-consumed or cross-host workflow contracts change →
+  `agent-workflow-contract-review`.
 
-Mark each line as `triggered` or `not triggered` with one-line evidence.
-
-- new source file/module/crate/package created, test placement decision, or structure budget finding on a touched file → `$project-structure`
-- explicit rework/rewrite/consolidation/simplification request, API deletion, or backward compatibility explicitly waived → record compat-mode (§0b), then `$function-boundary-governor` (function/API level) or `$design-balance` (module/class level); if the change replaces, consolidates, or removes code across multiple call sites → also `$destructive-refactor` (its protocol permits temporary red state and enforces convergence or rollback)
-- code or API with zero remaining callers → `$function-boundary-governor` (`delete` action)
-- bug/regression/flaky/crash/hang → `$bug-investigation-and-rca`
-- cross-boundary architecture/technology option comparison with measurable quality drivers (metric + target + measurement method all present) → `$architecture-decision-analysis`
-- generic structural maintainability/boundary review → `$code-smells-and-antipatterns`
-- module/class responsibility layout, new layer/interface, 2+ new classes/modules, or existing class/module gains a second reason-to-change → `$design-balance`
-- normal/high-risk implementation or new abstraction/helper/wrapper/adapter/indirection → `$implementation-economy`
-- non-embedded request/render/job path, input-proportional collection processing, loop I/O, N+1 query risk, repeated serialization/allocation, serial awaits, or cache/batching/pagination decisions → `$performance-review`
-- function/helper/API/call-site design change → `$function-boundary-governor`
-- replacing a flawed abstraction across multiple call sites → `$destructive-refactor` (its protocol permits temporary red state and enforces convergence or rollback)
-- concurrency/parallelism change → `$concurrency-core` + `$thread-safety-tooling`
-- ROS2 concurrency context → `$concurrency-ros2`
-- Android concurrency context → `$concurrency-android`
-- runtime behavior change (new/changed async or background work, external call, periodic job, user-visible operation, or retry/timeout/fallback path) → `$observability`
-- embedded/edge/target-local work where target behavior, hardware capability, workload envelope, bottlenecks, margins, or NFR provenance are not understood → `$embedded-system-familiarization`
-- embedded/edge/target-local runtime, daemon, logger, recorder, collector, sampler, polling, or resource-sensitive always-on behavior → route by the Embedded NFR routing table (§2a)
-- auth/session, DB migration/schema-change, or public-API/generated-client work, or an unfamiliar/cross-service/high-risk task needing context preparation → the matching `$preflight-*` skill (`$preflight-engineering` as the generic entry)
-- ambiguous requirements or explicit quality/NFR target → `$requirements-engineering`
-- strict-constraint/low-level synthesis OR repeated compile/test loops → `$staged-lowering`
-- weak tests / nondeterminism / legacy refactor → `$working-with-legacy-code`
-- unit tests being added, changed, or reviewed; deciding test cases, boundaries, coverage, or mock use → `$unit-test-design`
-- C++ headers touched (`.h/.hpp/...`) → `$code-readability` (Doxygen)
-- UI changes → `$visual-regression-testing` + matching platform reference
-- cleaning up redundant/AI-narration comments, or an explicit comment-policy decision → `$comment-discipline` (the channel rule itself is always-on in AGENTS.md)
+A review suggestion does not create a new branch unless it meets the blocking
+standard in `user-value-delivery`.
 
 ## 2a) Embedded NFR routing table
+Use embedded skills only for a physical target constraint such as power,
+thermal, flash wear, real-time deadlines, constrained target resources, or a
+separate target device.
 
-Use this table to avoid opening all embedded NFR skills by default.
-
-| Skill | Trigger |
+| Need | Route |
 | --- | --- |
-| `$embedded-system-familiarization` | Broad target-learning, optimization, or architecture-shaping work where target behavior, hardware capability, workload envelope, bottlenecks, margins, or NFR provenance are not understood. |
-| `$embedded-target-characterization` | If target profile, normal workload, measurement surface, resource headroom, or physical budget provenance is missing. |
-| `$embedded-operating-envelope-discovery` | If normal, near-boundary, degraded, failure-adjacent, recovery, or telemetry blackout behavior is unknown. |
-| `$embedded-nfr-calibration` | If budget values are being set or revised from target characterization, baselines, or operating envelope evidence. |
-| `$embedded-nfr-design` | Always for embedded physical-footprint work after missing target context has been routed to characterization or explicitly marked unknown/provisional. |
-| `$embedded-hot-path-review` | Target-local loop/polling/sampling/collector/recorder hot path, sub-100ms cadence, per-iteration I/O, repeated serialization, or hot-path allocation. |
-| `$embedded-observer-effect-review` | Target-local logging/recording/collection/tracing/profiling/measurement that can perturb scheduler, power, thermal, I/O, memory, wakeups, or workload. |
-| `$embedded-nfr-harness-design` | Embedded physical budgets require measurement or a target smoke command. |
-| `$embedded-nfr-gate` | Feature-level embedded NFR design, harness, hot-path, or observer-effect branch was triggered; route before `$quality-gate`. |
-| `$embedded-project-constitution` | Only for project bootstrap, a new embedded runtime class, or a new physical target with no recorded project profile. |
+| target/workload/baseline unknown and decision depends on it | `embedded-system-familiarization` plus the missing characterization stage |
+| explicit physical budget or production claim | `embedded-nfr-design` and the evidence stage needed for that claim |
+| target-local hot loop or measurement observer effect | `embedded-hot-path-review` and/or `embedded-observer-effect-review` |
+| feature-level embedded NFR proof | `embedded-nfr-gate` before final quality gate |
 
-**Chain composition** (router rule — route together, not one at a time):
-
-- Broad target-learning/optimization work → `$embedded-system-familiarization` as orchestrator, riding together with whichever stages still lack context: `$embedded-target-characterization` (target/workload/baseline unknown), `$embedded-operating-envelope-discovery` (normal/boundary/degraded/blackout behavior unknown), `$embedded-nfr-calibration` (budgets set or revised from that evidence).
-- Any measurement/benchmark/budget-proof need also adds `$embedded-nfr-harness-design`; any measurement that can perturb the target also adds `$embedded-observer-effect-review`.
-- An unsupported embedded performance/battery/reliability claim routes to the learning chain that would produce the evidence, not only to the gates that reject the claim.
-- An embedded malfunction symptom (blackout/dropout/missed deadline) with an uncharacterized operating envelope routes to the learning chain in addition to `$bug-investigation-and-rca`.
-
-Use `$embedded-system-familiarization` as an orchestrator for broad target-learning or optimization efforts. Use the specific embedded skills directly for narrow tasks with known target context.
-
-The embedded table adds branches; it never replaces the general trigger branches in section 2 (an embedded daemon with changed runtime behavior still triggers `$observability`). Work is embedded only when a physical target constraint exists (battery/power, thermal, flash wear, real-time deadline, constrained target CPU/RAM, or a separate target device); logger/collector/polling vocabulary alone does not qualify.
+Do not build a generic measurement harness merely because future measurements
+could be useful. Require it only for the current acceptance target or claim.
 
 ## 2b) Routing precedence
+Resolve the first decision in this order:
 
-Resolve overlaps with the routing precedence table. Walk the rows top-down; the **first matching row wins** and that skill runs before implementation. Later rows may still be triggered branches, but the winning row decides what runs first.
+1. safety/security/data-integrity boundary;
+2. incomplete measurable requirement;
+3. architecture or technology choice;
+4. embedded physical target uncertainty;
+5. responsibility ownership;
+6. public/cross-module function or API migration;
+7. implementation economy;
+8. focused implementation.
 
-| # | The decision this task needs first is... | Route first |
-|---|---|---|
-| 1 | choosing among cross-boundary architecture or technology options — and every quality driver has metric + target + measurement method | `$architecture-decision-analysis` |
-| 2 | same as row 1, but at least one quality driver lacks metric, target, or measurement method | `$requirements-engineering`, and only after that `$architecture-decision-analysis` |
-| 3 | embedded physical-footprint NFRs that are broad, optimization-oriented, or architecture-shaping, and target behavior or hardware capability is not understood | `$embedded-system-familiarization` |
-| 4 | embedded physical-footprint NFRs that are narrow | the specific embedded skills for missing target context (§2a Embedded NFR routing table), and after that `$embedded-nfr-design` |
-| 5 | which module/class/layer owns a responsibility, naming, layer count, or reason-to-change split | `$design-balance` |
-| 6 | function boundary, helper/API shape, side-effect placement, or call-site migration | `$function-boundary-governor` |
-| 7 | too much code, extra helpers/wrappers, or premature generality | `$implementation-economy` |
-| 8 | performance of target-local / embedded physical footprint | embedded NFR skills + `$embedded-hot-path-review` |
-| 9 | performance of host/app request, render, or job paths | `$performance-review` |
-
-Add `$code-smells-and-antipatterns` on top of any row only when module-layer dependencies, coupling, architecture boundaries, or adapters are also changing.
+Later branches may still apply, but they cannot silently enlarge the locked DoD.
 
 ## 2c) Structure watch
+Use `python scripts/check_structure.py --working-tree --mode feature` for feature
+intent. It has two tiers:
 
-Run the structure watch (all risks, including low): run `python scripts/check_structure.py --working-tree`; resolve findings or record a bounded waiver.
+- advisory threshold: prompts a responsibility check but does not block;
+- hard guardrail: blocks new oversized code unless fixed locally or covered by a
+  bounded waiver.
 
-- Any finding makes `$project-structure` required in this change: apply the split (layout), routing naming/ownership to `$design-balance` and function moves to `$function-boundary-governor`.
-- This step is state-based on purpose: it fires on accumulated size even when this change added only a few lines.
+A pre-existing advisory is not feature scope. Existing hard debt also remains
+editable for small changes inside its current responsibility: the checker compares
+with `HEAD` or the diff-range base and treats up to 50 net metric lines as advisory.
+Crossing a hard guardrail, creating an oversized file, or growing existing hard
+debt by more than that allowance blocks. Do not decompose unrelated historical
+code. Put a distinct new responsibility beside an oversized file, or extract only
+the narrow seam required for the feature. Refactor/hardening intent may use
+`--mode strict`.
 
-## 3) Route summary (handoff contract)
+## 3) Route summary
+Record before implementation:
 
-Fill this before implementation starts:
+- selected risk / criticality / horizon:
+- intent / compatibility mode:
+- locked DoD and non-goals:
+- required branches with evidence:
+- deferred branches and why:
+- focused proof:
+- planned production surface:
+- final-gate owner:
 
-- Selected risk route:
-- Default lane executed or skipped:
-- Required branches to execute:
-- Required verification depth before gate:
-- Non-triggered branches explicitly skipped:
+After this point, route additions need new blocking evidence.
 
-## 4) Live external discovery (when applicable)
+## 4) Live external discovery
+When the change depends on external tools, schemas, services, CI, or target
+state, inspect the current interface/version/status needed for the decision.
+Do not turn discovery into a general environment survey.
 
-If the task touches external systems, repo tooling, CI, schemas/configs, or artifact-producing tools, discover current reality before trusting examples.
+## 5) Implementation and verification log
+Record only:
 
-Record:
-- Repo command/interface discovered (file, target, script, CI job, or help output):
-- Current version/status output:
-- Schema/config/connection state checked:
-- Artifact/log/output paths expected:
+- capability delta;
+- changed production surface;
+- focused checks and results;
+- structure advisories/blockers;
+- unresolved blocking gap;
+- candidate identity.
 
-## 5) Implementation + verify execution log (short)
+## 6) Gate handoff
+The orchestrator assigns one final-gate owner for a candidate identity. Workers
+supply focused validation and explicit run evidence; they do not repeat the full
+quality gate. Reviewers inspect blocking criteria and the requested surface.
+Unchanged evidence is reused. Material candidate changes create a new identity
+and may require the affected checks again.
 
-- Default lane outputs:
-- Branches executed:
-- Structure watch result (`scripts/check_structure.py --working-tree`; findings + applied splits, or pass):
-- Verification commands executed:
-- Live discovery evidence captured (or `not applicable`):
-- Remaining known gaps before gate (if any):
-
-## 6) Gate handoff (mandatory)
-
-Always finish by invoking `$quality-gate`.
-`$dev-workflow` does not decide final submit readiness; it hands off required evidence.
+Finish with `quality-gate`; `dev-workflow` does not decide submit readiness.
 
 ## Gotchas
-
-- **Common pitfall:** following optional skill lists after routing and blurring required-branch decisions.
-  **Instead:** maintain only-triggered branches as required and do not execute untriggered branches.
-- **Common pitfall:** forcing low risk and bypassing required branches.
-  **Instead:** re-evaluate risk when API/behavior/UI/concurrency/boundary changes appear, and add required branches.
-- **Common pitfall:** treating each small append to one file as low risk forever, so no layout skill ever fires while the file becomes a monolith.
-  **Instead:** the structure watch is mandatory at every risk level; a budget finding forces `$project-structure` regardless of how small this change is.
-- **Common pitfall:** trying to make pass/fail decisions in dev-workflow.
-  **Instead:** limit dev-workflow to specifying required verification depth; delegate final judgment to `$quality-gate`.
+- More skills do not mean better coverage; route only concrete decisions.
+- A pre-existing code smell is not automatically part of a feature.
+- A reviewer label without a violated criterion and failure path is not a blocker.
+- Full gates during iteration spend evidence twice; use focused checks first.

@@ -2,46 +2,32 @@
 applyTo: "**/*.{h,hpp,hh,hxx,cpp,cc,cxx}"
 ---
 
-# C++ instructions (readability + maintainability)
+# C++ instructions
 
-## Header documentation (`.hpp` / `.h`)
+## Header contracts
 
-Doxygen documentation is mandatory for this repository.
+Use Doxygen for changed public/protected declarations and other stable contracts
+consumed outside the implementation unit. Document applicable semantics such as
+parameters, return/error behavior, ownership, lifetime, thread-safety, units,
+ranges, and preconditions.
 
-- Add Doxygen comments for **all declarations**, including **private** members:
-  - classes/structs
-  - methods
-  - member fields
-  - constants
-- For functions/methods, include:
-  - what it does
-  - parameter meaning (`@param`)
-  - return meaning (`@return`, or state explicitly that there is no return value)
-  - notable failure modes (exceptions / error returns) when applicable
-- For fields/constants, include:
-  - meaning
-  - unit (if any)
-  - allowed range or allowed set of values
+Private declarations need documentation only for a non-obvious invariant,
+hazard, unit, ownership rule, or maintenance contract. Do not add boilerplate to
+each member merely because a header was touched.
 
-If you generate docs and want private members to appear, configure Doxygen accordingly (e.g., `EXTRACT_PRIVATE = YES`).
+## Implementation comments
 
-## Source documentation (`.cpp`)
+Comments explain constraints, rejected alternatives, hazards, or external
+requirements that code and tests cannot express. Do not narrate each paragraph,
+routine call, or I/O operation.
 
-- **Paragraph comments** must explain one of:
-  - intent (why this approach)
-  - assumptions / invariants
-  - pitfalls / failure modes
-- Do not write comments that restate what the code already says.
+## Literals
 
-## Magic values
+Name domain-specific, protocol, timing, size, retry, or policy literals when the
+meaning is not evident locally or must remain consistent. Trivial local values
+and conventional sentinels need no audit record.
 
-- Avoid “magic values” (numeric/string literals that encode meaning).
-- Use `constexpr`, `enum class`, or named constants.
-- Exceptions are allowed only for trivial literals where meaning is universally obvious, and must include a short reason.
+## Scope
 
-## Required audits when changing `.cpp`
-
-If the change touches `.cpp`:
-
-- **Comment intent audit**: list changed/added comments and classify each as intent/assumption/pitfall. Rewrite or delete anything that cannot be classified.
-- **Magic value audit**: list newly introduced literals and show the named constant/enum replacement (or justify the exception).
+Apply readability changes to the current diff and its direct contract. Do not
+expand a feature into a general comment, naming, or constant-conversion cleanup.
