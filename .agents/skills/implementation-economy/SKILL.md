@@ -1,64 +1,47 @@
 ---
 name: implementation-economy
-description: "Use before and after normal/high-risk implementation when a complexity budget is needed: declare new classes/helpers/wrappers/indirection/estimated lines, justify each new abstraction, and delete or inline abstractions that are not worth their weight. Do not use for low-risk one-file changes with no new abstraction, public API change, or behavior expansion."
+description: "Use when a change introduces a persistent abstraction, wrapper, adapter, layer, or generic infrastructure, or when supporting implementation risks becoming larger than the remaining user-facing behavior. Do not use for a local helper whose purpose is obvious and confined to the current feature."
 metadata:
-  short-description: Implementation complexity budget
+  short-description: Scope-inversion and abstraction budget
 ---
 
 ## Purpose
 
-Use this skill to keep implementation scope small enough to review, test, and maintain.
-
-It answers one question:
-
-**Is each new abstraction or layer worth the future cost it adds?**
+Keep implementation cost proportionate to the capability and its expected
+maintenance horizon. This skill is not a required audit for ordinary local code.
 
 ## When to use
 
-Use this skill when one or more applies:
+Use when at least one applies:
 
-- `dev-workflow` selects the normal/high-risk default implementation lane.
-- The implementation adds classes, modules, helpers, wrappers, adapters, or new indirection.
-- The implementation could solve the problem either by reusing existing code or by adding a new abstraction.
-- A review asks for less code, less layering, fewer helpers, or simpler implementation.
+- a persistent class, module, interface, wrapper, adapter, or indirection is new;
+- generic infrastructure is proposed for one immediate use;
+- support code, harness work, or preparatory refactoring approaches the size of
+  the remaining user-facing implementation;
+- a review asks for broader generalization or another abstraction layer.
 
-Do not use it for low-risk edits that touch one file, add no abstraction, keep public APIs unchanged, and do not expand behavior.
+A small local helper, ordinary reuse, or test fixture does not trigger this skill
+unless it creates a lasting boundary or scope-inversion risk.
 
 ## How to use
 
-1. Before editing, write a **Complexity Budget**:
-   - changed files target
-   - new classes/modules target
-   - new helpers/wrappers/adapters target
-   - new indirection layers target
-   - rough production/test line budget
-   - When working under an ExecPlan with quantitative targets, reconcile this
-     change-level budget with the plan's contribution decomposition (the net
-     line budgets across phases must sum to the plan target, or the plan
-     forecast must be updated).
+1. State the user-facing implementation still missing.
+2. Set a compact budget: production files/lines, persistent abstractions, and
+   support work.
+3. For each persistent abstraction, give one sentence covering the present
+   consumer, complexity removed, and why local code is insufficient.
+4. Prefer deletion, reuse, inlining, or a local implementation when the expected
+   maintenance horizon does not justify a durable boundary.
+5. Activate the scope-inversion stop when support work becomes larger than the
+   remaining capability. Publish the current reviewable state and request a scope
+   decision rather than continuing.
+6. After implementation, list only persistent additions and mark
+   `keep | inline | merge | delete | defer`.
 
-2. Prefer reuse, deletion, inlining, or local changes before adding a new abstraction.
-   - Boundary: splitting an oversized file or moving tests to their canonical location (`project-structure` structure budget) is complexity **placement**, not a new abstraction. Required splits never count against this budget, and this skill must not be used to justify keeping code in one file beyond the structure budget.
-
-3. For each new abstraction, write a one-line **worth-its-weight** justification:
-   - what complexity it removes
-   - what duplication or boundary risk it prevents
-   - why the existing code cannot carry the behavior cleanly
-
-4. After implementation, produce a **Post-Implementation Economy Audit**:
-
-   | New abstraction | Justification | Decision | Evidence |
-   |---|---|---|---|
-   | `<name>` | `<why it is worth its weight>` | `keep/delete/inline/merge` | `<tests, call sites, or diff evidence>` |
-
-5. If the implementation exceeds the budget, first delete, inline, or merge unjustified abstractions. If the budget must grow, record the reason and the smallest acceptable increase.
-
-6. Hand off to `design-balance` when module/class responsibility layout is unclear, and to `function-boundary-governor` when function/helper/API shape is the main decision.
+Record this in the active plan or PR. A standalone budget/audit artifact is not
+required unless another tool consumes it or the decision is material and durable.
 
 ## Output expectation
 
-Return:
-
-- Complexity Budget (5 lines).
-- Post-Implementation Economy Audit table.
-- Any budget overruns and what was deleted, inlined, merged, or intentionally kept.
+Return the remaining user-facing work, compact budget, persistent-abstraction
+decisions, actual support cost, and whether the scope-inversion stop activated.

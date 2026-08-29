@@ -1,8 +1,8 @@
 ---
 name: quality-gate
-description: "Use before every delivery-mode submission to decide whether required checks, artifacts, and branch evidence are complete enough to submit."
+description: "Use before a delivery-mode submission to decide whether the identified candidate passed required checks and has zero blocking findings. Non-blocking findings may remain with explicit dispositions."
 metadata:
-  short-description: Final quality gate
+  short-description: Blocking-finding quality gate
   requires:
     - references/quality-gate.md
   resources:
@@ -11,42 +11,37 @@ metadata:
     - references/react-native-expo-test-adapter.md
     - references/maestro-agentic-verification-policy.md
 ---
-
 ## Purpose
-
-Use this skill as the final submit gate. It answers one question: **is this change ready to submit now?**
-
+Decide whether one identified candidate is ready to submit. This is an exit gate,
+not a broad codebase review or a request for ideal architecture.
 ## When to use
-
-Invoke this skill before every delivery-mode submission. Research probes use the research evidence gate; promotion into delivery paths re-enters this gate in full.
-
+Use before a delivery-mode submission. The orchestrator assigns one final-gate
+owner per candidate identity. Research probes use their research evidence gate.
 ## How to use
-
-0) Open `references/quality-gate.md` and run its checklist as one complete sweep; never stop at the first failed item.
-
-1) Verify canonical commands are green at the required depth.
-
-1b) Run `python scripts/check_structure.py --working-tree` and apply the no-waiver/no-submit structure rule.
-
-1c) Run `python3 scripts/check_research_evidence.py --working-tree --policy .agents/project-policy.yml --mode delivery`; `safety-review-required` is `no-submit` in every mode.
-
-2) Validate required artifacts/evidence from every triggered branch.
-   - For any mobile claim, open `references/mobile-test-evidence-matrix.md` and select evidence from the changed boundary rather than framework preference.
-   - For Flutter, also open `references/flutter-mobile-test-matrix.md`.
-   - For React Native/Expo, also open `references/react-native-expo-test-adapter.md`.
-   - When Maestro, agent-device, Argent, `.ad`, or another device-driving harness contributed evidence, open `references/maestro-agentic-verification-policy.md`.
-   - Web/shared tests cannot replace Android/iOS native/runtime evidence. A missing macOS/iOS path remains blocked.
-   - `mobile-feature-parity` with missing required platform evidence or `parity-blocked` is `no-submit` for a both-platform completion claim.
-   - Runtime evidence marked `pass` without source/build/target/environment identity and an explicit oracle is `no-submit`; screenshot-only or exploratory no-finding evidence is `inconclusive`.
-
-3) Run concise exit-criteria review only. Route deep analysis to its dedicated skill and return.
-
-4) Output `submit` or `no-submit` with all findings.
+0) Open `references/quality-gate.md` and complete one blocker-focused sweep.
+1) Verify the commands and evidence required by the locked route and DoD. Reuse
+unchanged evidence from workers, CI, and target runs after checking its identity.
+2) Apply the structural exit check. Advisory structure findings are reported but
+do not block; hard-guardrail findings do.
+3) Validate only evidence required by acceptance, a real operating boundary, a
+machine-consumed contract, or a material claim. Skill invocation does not
+automatically require a standalone artifact.
+   - Open `references/mobile-test-evidence-matrix.md` for any mobile completion
+     claim.
+   - Open `references/flutter-mobile-test-matrix.md` when the changed mobile
+     surface is Flutter.
+   - Open `references/react-native-expo-test-adapter.md` when the changed mobile
+     surface is React Native or Expo.
+   - Open `references/maestro-agentic-verification-policy.md` when Maestro,
+     agent-device, Argent, `.ad`, or another device-driving harness contributed
+     evidence.
+4) Assign each finding `blocking` or `optional` using the concrete standard in
+the reference. Reviewer severity labels do not decide this classification.
+5) Output `submit` when blocking findings are zero and required checks pass;
+otherwise output `no-submit` with the smallest required fixes.
 
 ## Output expectation
-
-- Start with `Gate decision: submit` or `Gate decision: no-submit`.
-- If `no-submit`, list each finding with location, missing/failed criterion, and required fix.
-- For mobile claims, report shared, Android, iOS, web, and runtime evidence separately as applicable.
-- Distinguish regression evidence, target-bound runtime verification, and observation; do not overstate screenshots or agent self-assessment.
-- Only output `0 findings` when every exit criterion is satisfied.
+Start with `Gate decision: submit` or `Gate decision: no-submit`. Include candidate
+identity, required checks, blocking findings, optional findings and dispositions,
+structure advisories, reused evidence, and remaining claim limits. State
+`0 blocking findings`, not `0 findings`, when optional notes remain.

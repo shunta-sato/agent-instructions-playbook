@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "feature-campaign-internal-work-dominates",
+      "prompt": "Implement the customer export feature. The current branch has spent hours on helper abstractions, extra review passes, and a generic harness without a working export path.",
+      "should_trigger": ["user-value-delivery"],
+      "should_not_trigger": []
+    },
+    {
+      "id": "stalled-feature-pr-recovery",
+      "prompt": "Recover this draft PR: acceptance is mostly implemented, but repeated CI pushes and speculative P3 fixes have prevented publication.",
+      "should_trigger": ["user-value-delivery"],
+      "should_not_trigger": []
+    },
+    {
+      "id": "backlog-capability-campaign",
+      "prompt": "Work through these related backlog issues as one releasable user journey while keeping PR and review cost bounded.",
+      "should_trigger": ["user-value-delivery"],
+      "should_not_trigger": []
+    },
+    {
+      "id": "tiny-isolated-fix",
+      "prompt": "Change one typo in an error message and run the focused test.",
+      "should_trigger": [],
+      "should_not_trigger": ["user-value-delivery"]
+    },
+    {
+      "id": "factual-answer",
+      "prompt": "Explain what the structure checker does. Do not change files.",
+      "should_trigger": [],
+      "should_not_trigger": ["user-value-delivery"]
+    },
+    {
+      "id": "research-only-probe",
+      "prompt": "Create a disposable research probe under the declared research path to compare two parsing approaches. No delivery claim is requested.",
+      "should_trigger": [],
+      "should_not_trigger": ["user-value-delivery"]
+    },
+    {
+      "id": "explicit-refactor-deliverable",
+      "prompt": "Perform the approved behavior-preserving module split; the structural transformation itself is the deliverable.",
+      "should_trigger": [],
+      "should_not_trigger": ["user-value-delivery"]
+    }
+  ]
+}

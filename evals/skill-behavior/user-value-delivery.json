@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "skill": "user-value-delivery",
+  "cases": [
+    {
+      "id": "optional-polish-does-not-block",
+      "prompt": "The feature DoD and required checks pass. Review found naming polish, one small duplication, and a possible future abstraction. Govern the next action.",
+      "given": [
+        "observable DoD passes",
+        "required checks pass",
+        "findings do not identify a regression, contract breach, safety boundary, or explicit NFR miss"
+      ],
+      "expected_decision": "reviewable",
+      "expected_findings": [],
+      "expected_output_contains": [
+        "non-blocking",
+        "bounded polish",
+        "user"
+      ]
+    },
+    {
+      "id": "concrete-security-defect-still-blocks",
+      "prompt": "The user journey works, but the candidate lets an unauthenticated actor read another user's export. Govern the next action.",
+      "given": [
+        "realistic unauthenticated actor",
+        "authorization boundary is inside the operating scope",
+        "candidate introduces the exposure"
+      ],
+      "expected_decision": "blocked",
+      "expected_findings": [
+        "authorization defect remains blocking"
+      ],
+      "expected_output_contains": [
+        "blocking",
+        "failure path",
+        "smallest required fix"
+      ]
+    },
+    {
+      "id": "scope-inversion-stops-generic-harness",
+      "prompt": "The remaining feature behavior is about 80 production lines. A reviewer proposes a 500-line generic harness before the vertical path can be published.",
+      "given": [
+        "generic harness is not an acceptance condition",
+        "supporting implementation exceeds remaining user-facing work"
+      ],
+      "expected_decision": "stop",
+      "expected_findings": [
+        "scope inversion activated"
+      ],
+      "expected_output_contains": [
+        "scope inversion",
+        "publish",
+        "decision"
+      ]
+    },
+    {
+      "id": "repeated-cause-stops-third-attempt",
+      "prompt": "The same target admission cause failed twice with equivalent diagnostics and no changed hypothesis. Decide whether to try again.",
+      "given": [
+        "two equivalent attempts",
+        "same candidate and cause",
+        "no materially different hypothesis"
+      ],
+      "expected_decision": "stop",
+      "expected_findings": [
+        "third equivalent attempt is not admitted"
+      ],
+      "expected_output_contains": [
+        "stop",
+        "evidence",
+        "scope decision"
+      ]
+    }
+  ]
+}

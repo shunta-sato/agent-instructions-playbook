@@ -1,8 +1,4 @@
-"""Tests for check_structure.py's git-driven selection modes (--working-tree,
---diff-range), added alongside the pre-existing explicit-list mode. Fixture
-style mirrors tests/test_research_os_gate.py (real git repos in a tempdir);
-mode dispatch is exercised end-to-end through ``main()``, like
-tests/test_context_budget.py does for its own CLI entry point."""
+"""End-to-end tests for structure checker selection and feature/strict modes."""
 
 from __future__ import annotations
 
@@ -42,26 +38,39 @@ def _write(root: Path, rel: str, text: str) -> Path:
 
 
 class WorkingTreeModeTests(unittest.TestCase):
-    def test_added_and_modified_files_are_checked(self) -> None:
+    def test_working_tree_defaults_to_feature_and_blocks_hard_findings(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _git_init(root)
             _write(root, "src/clean.py", "x = 1\n")
             _commit_all(root, "base")
-            _write(root, "src/clean.py", "x = 1\n" * 500)  # modified, now oversized
-            _write(root, "src/new_big.py", "y = 1\n" * 500)  # untracked, oversized
+            _write(root, "src/clean.py", "x = 1\n" * 1600)
+            _write(root, "src/new_big.py", "y = 1\n" * 1600)
             rc, output = _capture(["--working-tree", "--repo-root", str(root)])
         self.assertEqual(rc, 1)
+        self.assertIn("mode=feature", output)
         self.assertIn("src/clean.py", output)
         self.assertIn("src/new_big.py", output)
+
+    def test_feature_advisory_reports_but_exits_zero(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "src/app.py", "x = 1\n")
+            _commit_all(root, "base")
+            _write(root, "src/app.py", "x = 1\n" * 700)
+            rc, output = _capture(["--working-tree", "--repo-root", str(root)])
+        self.assertEqual(rc, 0)
+        self.assertIn("ADVISORY source-file-lines", output)
+        self.assertIn("pass (1 advisory", output)
 
     def test_deleted_file_is_skipped(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _git_init(root)
-            path = _write(root, "src/gone.py", "x = 1\n" * 500)
+            path = _write(root, "src/gone.py", "x = 1\n" * 1600)
             _commit_all(root, "base")
-            path.unlink()  # unstaged deletion
+            path.unlink()
             rc, output = _capture(["--working-tree", "--repo-root", str(root)])
         self.assertEqual(rc, 0)
         self.assertNotIn("gone.py", output)
@@ -78,23 +87,36 @@ class WorkingTreeModeTests(unittest.TestCase):
 
 
 class DiffRangeModeTests(unittest.TestCase):
-    def test_changed_file_still_present_is_checked(self) -> None:
+    def test_diff_range_defaults_to_feature_mode(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _git_init(root)
             _write(root, "src/app.py", "x = 1\n")
             _commit_all(root, "base")
-            _write(root, "src/app.py", "x = 1\n" * 500)
+            _write(root, "src/app.py", "x = 1\n" * 700)
+            _commit_all(root, "grow")
+            rc, output = _capture(["--diff-range", "HEAD~1..HEAD", "--repo-root", str(root)])
+        self.assertEqual(rc, 0)
+        self.assertIn("ADVISORY source-file-lines", output)
+        self.assertIn("mode=feature", output)
+
+    def test_diff_range_hard_finding_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "src/app.py", "x = 1\n")
+            _commit_all(root, "base")
+            _write(root, "src/app.py", "x = 1\n" * 1600)
             _commit_all(root, "grow")
             rc, output = _capture(["--diff-range", "HEAD~1..HEAD", "--repo-root", str(root)])
         self.assertEqual(rc, 1)
-        self.assertIn("src/app.py", output)
+        self.assertIn("FINDING source-file-lines", output)
 
     def test_file_deleted_at_head_is_skipped(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _git_init(root)
-            path = _write(root, "src/gone.py", "x = 1\n" * 500)
+            path = _write(root, "src/gone.py", "x = 1\n" * 1600)
             _commit_all(root, "base")
             path.unlink()
             _commit_all(root, "remove")
@@ -103,18 +125,93 @@ class DiffRangeModeTests(unittest.TestCase):
         self.assertNotIn("gone.py", output)
 
 
-class ExplicitListModeTests(unittest.TestCase):
-    def test_explicit_list_mode_is_unaffected(self) -> None:
+class FeatureNoMaterialWorseningTests(unittest.TestCase):
+    def test_small_change_in_preexisting_hard_debt_is_advisory(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            path = _write(root, "src/big.py", "x = 1\n" * 500)
+            _git_init(root)
+            _write(root, "src/legacy.py", "x = 1\n" * 1600)
+            _commit_all(root, "base")
+            _write(root, "src/legacy.py", "x = 1\n" * 1601)
+            rc, output = _capture(["--working-tree", "--repo-root", str(root)])
+        self.assertEqual(rc, 0)
+        self.assertIn("ADVISORY source-file-lines", output)
+        self.assertIn("pre-existing hard debt", output)
+        self.assertIn("delta=+1", output)
+
+    def test_material_growth_in_preexisting_hard_debt_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "src/legacy.py", "x = 1\n" * 1600)
+            _commit_all(root, "base")
+            _write(root, "src/legacy.py", "x = 1\n" * 1651)
+            rc, output = _capture(["--working-tree", "--repo-root", str(root)])
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING source-file-lines", output)
+        self.assertIn("grew materially", output)
+
+    def test_crossing_hard_guardrail_blocks_even_for_small_delta(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "src/app.py", "x = 1\n" * 1499)
+            _commit_all(root, "base")
+            _write(root, "src/app.py", "x = 1\n" * 1501)
+            rc, output = _capture(["--working-tree", "--repo-root", str(root)])
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING source-file-lines", output)
+
+    def test_new_file_over_hard_guardrail_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "README.md", "base\n")
+            _commit_all(root, "base")
+            _write(root, "src/new_big.py", "x = 1\n" * 1501)
+            rc, output = _capture(["--working-tree", "--repo-root", str(root)])
+        self.assertEqual(rc, 1)
+        self.assertIn("FINDING source-file-lines", output)
+
+    def test_diff_range_uses_left_ref_as_baseline(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _git_init(root)
+            _write(root, "src/legacy.py", "x = 1\n" * 1600)
+            _commit_all(root, "base")
+            _write(root, "src/legacy.py", "x = 1\n" * 1602)
+            _commit_all(root, "small fix")
+            rc, output = _capture([
+                "--diff-range", "HEAD~1..HEAD", "--repo-root", str(root)
+            ])
+        self.assertEqual(rc, 0)
+        self.assertIn("pre-existing hard debt", output)
+
+
+class ExplicitListModeTests(unittest.TestCase):
+    def test_explicit_list_defaults_to_strict(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = _write(root, "src/big.py", "x = 1\n" * 700)
             rc, output = _capture([str(path)])
         self.assertEqual(rc, 1)
-        self.assertIn("src/big.py", output)
+        self.assertIn("mode=strict", output)
+
+    def test_explicit_feature_mode_is_available(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = _write(root, "src/big.py", "x = 1\n" * 700)
+            rc, output = _capture([str(path), "--mode", "feature"])
+        self.assertEqual(rc, 0)
+        self.assertIn("ADVISORY", output)
 
     def test_modes_are_mutually_exclusive(self) -> None:
         with self.assertRaises(SystemExit):
             main(["--working-tree", "some/file.py"])
+
+    def test_hard_limit_cannot_be_below_advisory_limit(self) -> None:
+        with self.assertRaises(SystemExit):
+            main(["--hard-source-lines", "500", "--max-source-lines", "600"])
 
 
 class WaiverIntegrationTests(unittest.TestCase):
@@ -127,7 +224,7 @@ class WaiverIntegrationTests(unittest.TestCase):
             _git_init(root)
             self._write_policy(root, [{"path": "experiments/", "reason": "disposable probe code"}])
             _commit_all(root, "policy")
-            _write(root, "experiments/probe.py", "x = 1\n" * 500)
+            _write(root, "experiments/probe.py", "x = 1\n" * 1600)
             rc, output = _capture(["--working-tree", "--repo-root", str(root)])
         self.assertEqual(rc, 0)
         self.assertIn("waived", output)
@@ -139,7 +236,7 @@ class WaiverIntegrationTests(unittest.TestCase):
             self._write_policy(root, [{"path": "experiments/", "reason": "disposable probe code"}])
             _write(root, "experiments/probe.py", "x = 1\n")
             _commit_all(root, "base")
-            _write(root, "experiments/probe.py", "x = 1\n" * 500)
+            _write(root, "experiments/probe.py", "x = 1\n" * 1600)
             _commit_all(root, "grow")
             rc, output = _capture(["--diff-range", "HEAD~1..HEAD", "--repo-root", str(root)])
         self.assertEqual(rc, 0)

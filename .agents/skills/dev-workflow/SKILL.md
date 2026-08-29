@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: "Use for any delivery-mode task that changes code or tests. Routes implementation work by risk and applicable branch skills before editing."
+description: "Use for delivery-mode code or test changes after feature scope has been governed when applicable. Selects risk, work intent, compatibility mode, and only the specialist branches supported by concrete facts before editing."
 metadata:
   short-description: Risk-routed dev workflow
   requires:
@@ -9,45 +9,38 @@ metadata:
 
 ## Purpose
 
-This skill is the router for implementation work in this repository.
-
-It decides **which branch workflows are required** for the current task.
+Route implementation work without allowing process, review, or maintenance
+concerns to silently expand the requested capability.
 
 ## When to use
 
-Use this skill **for any delivery-mode task that changes code and/or tests**. It is mandatory in delivery mode. In research mode (see `.agents/project-policy.yml`), route through `$research-workflow` instead; promotion of research results into delivery paths re-enters this skill.
+Use for delivery-mode code or test changes. Feature campaigns, backlog work, and
+stalled feature PRs first use `user-value-delivery`; research paths use
+`research-workflow` until promotion.
 
 ## How to use
 
 0) Open `references/dev-workflow.md` and fill it top-down.
 
-1) Route by risk first (`low` | `normal` | `high`) and record why — full risk definitions and the required-outputs-by-risk table: `references/dev-workflow.md` §0.
+1) Record risk, failure criticality, maintenance horizon, work intent, and
+compatibility mode from §0, §0a, and §0b.
 
-1a) Declare the work-intent (`feature` default | `poc` | `refactor` | `hardening`) — full definitions and tie-breaks: `references/dev-workflow.md` §0a.
+2) Build the shortest vertical path in §1. Use focused tests while iterating.
 
-1b) Record the compat-mode whenever public/cross-module APIs are touched or the task reworks/consolidates/deletes — full definitions: `references/dev-workflow.md` §0b.
+3) Select only fact-triggered branches from §2, applying §2a and §2b when
+embedded or overlapping decisions exist.
 
-2) Run the default implementation lane when required by risk — full lane: `references/dev-workflow.md` §1.
+4) Record the Route Summary in §3 before implementation. The route is then
+locked; add a branch only for newly discovered blocking evidence.
 
-2b) Preparatory refactor is part of the default lane (§1 item 6, normal/high risk) — do not reroute it into a separate step.
+5) Apply the structure watch in §2c. Advisory findings do not expand a feature;
+blocking hard-guardrail findings require a local fix or bounded waiver.
 
-3) Apply required trigger-based branches only when facts trigger them — full trigger list: `references/dev-workflow.md` §2. Embedded work routes through the Embedded NFR routing table: `references/dev-workflow.md` §2a.
-
-4) Resolve overlaps with the routing precedence table — first matching row wins: `references/dev-workflow.md` §2b.
-
-5) Execute implementation with the selected route + required branches.
-
-6) Run the structure watch (all risks, including low): `python scripts/check_structure.py --working-tree` — consequences of a finding: `references/dev-workflow.md` §2c.
-
-7) Run canonical verification at the depth required by the selected risk route (`references/dev-workflow.md` §0 table).
-
-8) Hand off to `$quality-gate` for final submission readiness — `$dev-workflow` never decides submit readiness itself: `references/dev-workflow.md` §6.
+6) Verify at the depth selected in §0 and hand the identified candidate to the
+single final-gate owner under §6.
 
 ## Output expectation
 
-- Output must make the required route obvious:
-  - selected risk and rationale
-  - triggered required branches
-  - structure watch result (pass, or findings + applied splits)
-  - verification depth to run before gate
-- Final submit/no-submit judgment belongs to `$quality-gate`.
+State the selected route, risk and rationale, failure criticality, maintenance
+horizon, triggered branches, deferred branches, structure result, focused proof,
+verification depth, candidate identity, and final-gate owner.

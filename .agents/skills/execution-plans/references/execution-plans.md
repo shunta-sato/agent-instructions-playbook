@@ -1,80 +1,60 @@
-# Execution Plans (ExecPlans) — reference
+# Execution Plans reference
 
-This file is the reference template for `$execution-plans`.
+## 1) Decide whether durable planning is needed
 
-## 1) Decide: do we need an ExecPlan?
+Record:
 
-Open `PLANS.md` and evaluate the triggers.
+- ExecPlan required: `yes | no`.
+- Durable trigger: session/owner handoff, independent milestones, irreversible
+  decision record, explicit request, or monitor lane.
+- Existing plan to reuse, if present.
 
-Record in your response:
+Use the active PR/Delivery Control instead when one owner can keep the feature
+reviewable without a durable handoff document.
 
-- ExecPlan required? yes|no
-- Plan path: `plans/<slug>.md`
-- Why (one sentence)
+## 2) Create or update the plan
 
-If “no”, continue with `$dev-workflow` only.
+Use `plans/YYYYMMDD-<slug>.md` and the repository template. Keep the required
+sections concise:
 
-If “yes”, continue below.
+- purpose and observable outcome;
+- in-scope and non-goals;
+- real constraints and explicit targets;
+- paths and current context;
+- chosen design and material boundaries;
+- milestone/progress state;
+- validation and acceptance;
+- surprises and decisions that affect continuation;
+- handoff and outcomes.
 
-## 2) Create/update the plan file
+Unknowns need a cheapest decisive proof, not an open-ended research section.
 
-1) Pick a file name (recommended: `YYYYMMDD-<short-slug>.md`).
-2) Copy `plans/_template_execplan.md`.
-3) Fill the sections in this order:
+## 3) Maintain only durable state
 
-- Purpose / scope
-- Constraints / quality targets
-- Context & orientation (facts, paths, conventions, unknowns)
-- Design (boundaries + errors + observability + tests)
-- Milestones (3–7 sentences)
-- Progress (WBS) (checkbox list)
+Update at milestone completion, owner/session transfer, material scope change,
+or blocker publication. A short pause does not require a document rewrite when
+no durable fact changed.
 
-If you do not know something, write it as an explicit “Unknown” with a plan to learn it.
+Minimum handoff:
 
-## 3) Maintain the plan while coding
+- branch/candidate identity;
+- capability now working and remaining gap;
+- exact checks and results;
+- blocker or risk that changes the next action;
+- next one to three steps and key files.
 
-### Update rules (non-negotiable)
+Quantitative targets are recorded only when they are actual acceptance or
+operating constraints. Include metric, target, measurement method, and measured
+result. Do not invent proxy targets to make a plan appear measurable.
 
-- **Progress (WBS)**: keep it current.
-- **Decision log**: log decisions that affect interfaces, rollouts, data models, or concurrency.
-- **Default-lane decisions**: when `implementation-economy` or `design-balance` is triggered, record the complexity budget and responsibility map summary so handoff does not lose why the implementation stayed small or split the way it did.
-- **Surprises & discoveries**: log newly learned constraints (with evidence when possible).
-- **Handoff**: update at every stop (even a short pause), so another agent can continue.
+## 4) Delegation
 
-### Minimum handoff content
+A worker brief names the user journey/DoD, non-goals, allowed files, commands,
+focused validation, expected output, and stop conditions. Workers update their
+run evidence; the root agent updates the ExecPlan and final candidate state.
 
-- branch + commit SHA (or “uncommitted changes exist”)
-- what is done vs not done
-- how to run and how to test (commands)
-- known failures / open risks
-- next 1–3 concrete steps
-- pointers: the 3–5 most relevant files to read first
+## 5) Closeout
 
-## 4) Status update format (human-facing)
-
-Use this format (keep bullets ≤ 3 each):
-
-```markdown
-## Status update
-- Summary:
-- Done:
-  - ...
-- Next:
-  - ...
-- Risks/Blocks:
-  - ...
-- Links:
-  - Plan: plans/<slug>.md
-  - Verification: <commands/results>
-```
-
-## 5) Integration points
-
-- If requirements are unclear, invoke `$requirements-engineering` before filling “Design”.
-- If the plan declares quantitative quality targets, validate them with
-  `$requirements-engineering` acceptance-criteria discipline
-  (metric, threshold, measurement method, verification method).
-- If runtime behavior changes, invoke `$observability` and record the plan’s signals in the ExecPlan.
-- If concurrency is introduced/changed, invoke `$concurrency-core` (+ platform skill) and record the plan in the ExecPlan.
-- Before finishing, run `$quality-gate` and ensure the ExecPlan is updated with final outcomes.
-- At closeout, evaluate the `$failure-retrospective` trigger; when it fires, write the details to the retrospective pack and keep only the link in the ExecPlan's "Outcomes & Retrospective" section.
+At merge, explicit block, abandonment, or monitor transfer, record the outcome,
+remaining limitations, and continuation owner. Link a failure retrospective only
+when its own trigger applies.
