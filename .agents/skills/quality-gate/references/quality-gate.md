@@ -67,8 +67,9 @@ Check applicable evidence:
 - `break-allowed` migrations contain no surviving compatibility path unless the
   request explicitly retained one.
 - When the locked route includes function design, verify the
-  function-boundary decision, destructive-refactor convergence, required ledger
-  entry, validation commands, and that any no-op or rollback has explicit reasoning.
+  function-boundary decision, destructive-refactor convergence, that required
+  ledger evidence is present, validation commands, and that any no-op or rollback
+  has explicit reasoning.
 
 Skill invocation alone is not evidence and does not make its full template an
 exit requirement.

@@ -1,7 +1,9 @@
+@AGENTS.md
+
 # CLAUDE.md — Claude Code entry point
 
-`AGENTS.md` is the canonical repository contract. Read it first. This file maps
-that contract to Claude Code and does not redefine delivery or quality policy.
+`AGENTS.md` is the canonical repository contract. This file maps that contract
+to Claude Code and does not redefine delivery or quality policy.
 
 ## Claude Code mapping
 
