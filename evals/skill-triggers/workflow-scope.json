@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "scope-local-bug-no-boundary",
+      "prompt": "Fix an off-by-one loop in a private function and add its regression test. The repository and test route are known. No API, caller structure, side-effect ownership, sensitive boundary, or TDD policy changes.",
+      "should_trigger": [
+        "dev-workflow",
+        "bug-investigation-and-rca"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "preflight-engineering",
+        "test-driven-development",
+        "unit-test-design"
+      ],
+      "expected_decisions": [
+        "Use a scoped implementation and regression proof without a function-design inventory or test-count quota"
+      ],
+      "expected_evidence": [
+        "The focused regression test and required canonical checks are identified"
+      ]
+    },
+    {
+      "id": "scope-textual-similarity-alone",
+      "prompt": "Add a small local formatter branch using the established pattern. It resembles another branch textually but has a distinct domain contract. No shared API or boundary redesign is requested or required.",
+      "should_trigger": [
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Check the local contract without treating textual similarity as a boundary redesign trigger"
+      ],
+      "expected_evidence": [
+        "Acceptance behavior is checked without introducing a shared helper merely to remove similarity"
+      ]
+    },
+    {
+      "id": "scope-explicit-boundary-review",
+      "prompt": "Use function-boundary-governor to review two tiny parsing functions. One returns None on missing input; the other raises because its callers require an error. Do not assume they should merge.",
+      "should_trigger": [
+        "function-boundary-governor"
+      ],
+      "should_not_trigger": [
+        "destructive-refactor"
+      ],
+      "expected_decisions": [
+        "Honor the explicit boundary review and allow keep-parallel or no-op"
+      ],
+      "expected_evidence": [
+        "Caller and error-contract evidence supports the decision without an unsafe merge"
+      ]
+    },
+    {
+      "id": "scope-api-migration",
+      "prompt": "Replace the cross-module invoice API and migrate all internal callers. The requester requires preserve compatibility mode for existing external callers; the required compatibility strategy must be resolved before breaking that contract.",
+      "should_trigger": [
+        "dev-workflow",
+        "function-boundary-governor",
+        "destructive-refactor"
+      ],
+      "should_not_trigger": [],
+      "expected_decisions": [
+        "Apply boundary discovery and convergence checks; do not infer a break-allowed waiver"
+      ],
+      "expected_evidence": [
+        "Caller inventory, recorded compatibility mode, migration evidence, and required ledger entry"
+      ]
+    },
+    {
+      "id": "scope-explicit-single-test-tdd",
+      "prompt": "Use TDD to fix a private predicate with one known failing input. Existing tests cover the other partitions. No mocks, placement decision, sensitive boundary, or unresolved test strategy is involved.",
+      "should_trigger": [
+        "dev-workflow",
+        "test-driven-development"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "unit-test-design",
+        "preflight-engineering"
+      ],
+      "expected_decisions": [
+        "Keep a one-item Test List and execute Red before the production fix, then Green"
+      ],
+      "expected_evidence": [
+        "Actual failing and passing test results, not an invented minimum of three cases"
+      ]
+    },
+    {
+      "id": "scope-project-required-tdd",
+      "prompt": "Implement a small private predicate change. The applicable project policy requires TDD. The acceptance case, test placement, and remaining regression coverage are already clear.",
+      "should_trigger": [
+        "dev-workflow",
+        "test-driven-development"
+      ],
+      "should_not_trigger": [
+        "unit-test-design",
+        "function-boundary-governor"
+      ],
+      "expected_decisions": [
+        "Honor project-required TDD even without an explicit TDD phrase in the implementation request"
+      ],
+      "expected_evidence": [
+        "A requirement-derived Test List and actual Red-Green evidence"
+      ]
+    },
+    {
+      "id": "scope-tdd-strategy-judgment",
+      "prompt": "Use TDD for timeout and retry behavior. First decide boundary partitions, fake-clock versus mock strategy, and how to eliminate existing timing flakiness.",
+      "should_trigger": [
+        "test-driven-development",
+        "unit-test-design"
+      ],
+      "should_not_trigger": [],
+      "expected_decisions": [
+        "Load unit-test-design because strategy and test doubles require judgment, not merely because tests will change"
+      ],
+      "expected_evidence": [
+        "A bounded case selection and justified deterministic timing strategy"
+      ]
+    },
+    {
+      "id": "scope-one-file-auth-preflight",
+      "prompt": "Prepare preflight for a one-file OAuth refresh-token rotation change. Replay behavior and invalidation requirements are not documented. Do not implement or deploy yet.",
+      "should_trigger": [
+        "preflight-engineering",
+        "preflight-auth-session"
+      ],
+      "should_not_trigger": [],
+      "expected_decisions": [
+        "Do not use the small-file-count skip for an unresolved security boundary"
+      ],
+      "expected_evidence": [
+        "Replay and invalidation invariants, approval needs, and targeted test routing without reading secret values"
+      ]
+    },
+    {
+      "id": "scope-preflight-explicit-skip-continues",
+      "prompt": "First use preflight-engineering if needed, then correct a low-risk typo in a private error message. AGENTS.md and canonical tests are known; no external contract, security, or compatibility boundary is affected.",
+      "should_trigger": [
+        "preflight-engineering",
+        "dev-workflow"
+      ],
+      "should_not_trigger": [
+        "function-boundary-governor",
+        "test-driven-development"
+      ],
+      "expected_decisions": [
+        "Read the explicitly named skill, skip unnecessary preflight, and return to the authorized implementation task"
+      ],
+      "expected_evidence": [
+        "A brief skip reason followed by the scoped edit and verification, without readiness artifacts"
+      ]
+    }
+  ]
+}
