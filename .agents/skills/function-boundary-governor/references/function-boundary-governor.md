@@ -2,115 +2,83 @@
 
 ## Required discovery
 
-After confirming a trigger in SKILL.md, build an inventory of the affected
-boundary, not every function incidentally touched by the patch:
+After confirming a SKILL.md trigger, inventory the affected boundary, not every
+function incidentally formatted or touched. Identify relevant callers and search
+semantic neighbors by domain concept, invariants, effects, errors, and tests.
+Classify neighbors as `same concept | parallel concept | obsolete abstraction |
+uncertain`. Resolve module ownership through `design-balance` only when needed.
 
-- List new/edited/deleted functions relevant to that boundary.
-- For each function in the inventory, list direct callers when feasible.
-- Search semantic neighbors: similarly named functions, similar bodies, same domain noun/verb, helpers in common/shared/util modules, and tests encoding the same concept.
-- Classify each neighbor: `same concept | parallel concept | obsolete abstraction | uncertain`.
+## Evidence-based decision rule
 
-If class/module/layer ownership is the main uncertainty, hand that decision to `design-balance`, then resume here once ownership is clear. This handoff does not terminate the user task or authorize unrelated redesign.
+Use these questions, with evidence from callers, code, tests, or a stated
+requirement. Do not calculate scores, totals, or numeric approval thresholds.
 
-## Scoring model (separate polarity)
+- **Present benefit:** what current responsibility, defect, duplication, or
+  call-site difficulty does the change resolve? Why is the existing/local design
+  insufficient for this task?
+- **Contract:** which inputs, outputs, invariants, error behavior, side effects,
+  and supported callers must remain compatible? Is any change explicitly allowed?
+- **Boundary:** who owns each invariant/effect afterward, and is the resulting
+  concept clearer without mode flags or unnecessary indirection?
+- **Proof:** which characterization/regression tests, caller migration checks,
+  and convergence/rollback evidence demonstrate the result?
 
-Positive evidence (score 0-2 each):
-- concept clarity
-- single reason to change
-- invariant ownership
-- call-site readability gain
-- side-effect control
-- error behavior clarity
-- test protection
-
-Risk evidence (score 0-2 each):
-- abstraction cost
-- duplication risk
-- future divergence likelihood
-- boundary crossing risk
-- public API churn
-- parameterization pressure
-
-### Numeric decision rule
-
-There are 7 positive criteria (0-2 each, maximum 14) and 6 risk criteria (0-2 each).
-
-Proceed with merge/split/replace ONLY IF all of the following hold:
-- every positive criterion scores >= 1, AND
-- the positive total is >= 10 (two-thirds of the 14-point positive maximum), AND
-- every risk criterion scores <= 1.
-
-Otherwise the decision is `no-op`.
+Proceed when the current benefit is concrete, the relevant contracts are
+preserved or explicitly waived/staged, and the required proof is available.
+Unknown safety or compatibility evidence is not a low score to average away.
+For an optional refactor, choose no-op when benefit or proof is insufficient.
+For a required fix, obtain the missing proof or report the exact blocker; a
+no-op does not complete an unmet acceptance condition.
 
 ## Decision rules
 
-The numeric decision rule above is authoritative. The absolute merge conditions below are illustrative of what a strong merge looks like, not an additional zero-risk gate — do not require all of them to hold before merging when the numeric rule already passes.
+- **Merge** only for the same domain concept and compatible invariants, errors,
+  effects, and callers, with a current simplification benefit. Fewer lines alone
+  is not evidence. Prove migration and remove superseded paths as required.
+- **Split/replace** when a concrete responsibility or side-effect boundary is
+  wrong. Preserve behavior under the recorded mode, migrate callers, and use
+  `destructive-refactor` for replacement/convergence when applicable.
+- **Keep parallel** when error behavior differs, side effects differ, or distinct
+  invariants/reasons to change justify independent implementations. A breaking
+  waiver does not make different concepts identical.
+- **Keep/no-op** when the boundary already works or the proposed gain is
+  speculative. Explicit boundary review still requires its relevant discovery.
+- **Rename/inline** when the current concept becomes clearer without shifting
+  contracts or introducing another abstraction.
+- **Delete** only with no remaining required callers; honor external compatibility
+  obligations except where the requester's recorded waiver explicitly applies.
 
-Merge only if all are true:
-- concept clarity >= 2
-- invariant ownership >= 2
-- side effects and error behavior match
-- call-site readability gain > 0
-- boundary crossing risk == 0
-- parameterization pressure == 0
+## Review prompts, not a second gate
 
-When duplication risk is high and compat-mode is `break-allowed`, prefer consolidation whenever the numeric rule passes — small nonzero risk (<=1) does not justify keeping near-duplicates.
-
-Replace when:
-- one or more replacement reasons are true:
-  - current abstraction owns wrong responsibility or side effects
-  - sibling/helper accumulation exists
-  - reuse requires flags/options
-- and migration feasibility is true:
-  - all call sites can migrate now, or
-  - staged adapter is explicitly ledgered with removal condition
-
-Keep parallel when one or more are true:
-- error behavior differs
-- side effects differ
-- future divergence likelihood >= 2
-- concepts are only textually similar
-
-No-op when one or more are true:
-- improvement is speculative
-- tests/characterization are insufficient
-- duplication is small and likely to diverge
+Concept clarity, single reason to change, invariant ownership, call-site
+readability, side-effect control, error behavior, and test protection help
+explain a decision. Abstraction cost, duplication risk, future divergence
+likelihood, boundary crossing risk, public API churn, and parameterization
+pressure identify questions to investigate, not numbers to manufacture.
 
 ## Mandatory reject signals
 
-Checkable test for "textual only": similarity is textual-only when a single unit test could NOT express both call sites' expected behavior without branching on the caller — if invariants, error behavior, or reasons-to-change differ, it is textual-only; reject the merge.
+Reject merging when similarity is textual only: callers require different
+invariants, error behavior, effects, or reasons to change. A shared test shape
+or similar body is not proof that the concepts are the same.
 
-Reject refactor (or choose no-op) when:
-- similarity is textual only
-- abstraction needs vague names
-- abstraction requires flags/options for semantic switching
-- call sites become harder to read
-- tests are insufficient for safe migration
+Reject or revise a proposed abstraction when:
+- it needs vague names (`common`, `util`, `helper`) to conceal its responsibility;
+- boolean flags/options switch between unrelated semantic contracts;
+- call sites become harder to read without a required boundary benefit;
+- tests are insufficient to establish safe migration;
+- it violates authorization or the recorded compatibility mode.
+
+Useful local helpers, domain flags that actually belong to the contract, and
+justified security/resource boundaries are not prohibited by these signals.
 
 ## Required evidence log
 
-For each function in the boundary inventory capture:
-- concept, reason-to-change axis, owned invariants
-- side effects and error contract
-- caller set and neighbor classification
-- chosen action and rejected alternatives
-- action taken and touched files
-- old names searched and cleanup result; under `break-allowed`, backed by `scripts/check_api_removal.py` sweep output rather than prose
+For the affected boundary, reuse the plan/PR or required ledger to capture the
+concept/invariants, callers, side-effect profile and error contract, chosen
+action, important rejected alternative, and actual verification. A numeric
+worksheet and per-function comments are not evidence requirements.
 
-
-## Action guidance for keep/rename/split/inline/delete
-
-Keep when:
-- concept, invariant, side-effect profile, and call sites are already coherent.
-
-Rename when:
-- responsibility is right but name hides the domain concept or invariant.
-
-Split when:
-- one function owns multiple reasons to change or mixes pure logic with effects.
-
-Inline when:
-- abstraction cost exceeds value and call sites become clearer without it.
-
-Delete when:
-- call-site discovery confirms zero remaining callers; under `break-allowed`, external callers outside the repo do not count as callers.
+Record temporary adapters and their removal conditions. Under `break-allowed`,
+back obsolete-name cleanup with `scripts/check_api_removal.py` evidence. Keep
+intentional parallel concepts distinct from unremoved superseded APIs.

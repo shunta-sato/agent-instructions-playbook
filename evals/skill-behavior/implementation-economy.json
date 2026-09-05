@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "skill": "implementation-economy",
+  "cases": [
+    {
+      "id": "economy-reject-future-framework",
+      "prompt": "Implement the one required CSV export using the existing module. Review a proposed exporter registry and plugin interface.",
+      "given": [
+        "Only CSV is requested and supported.",
+        "No security, resource, or integration requirement needs a new interface."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "existing",
+        "future",
+        "defer"
+      ]
+    },
+    {
+      "id": "economy-no-silent-success-fallback",
+      "prompt": "Review a catch-all handler added around an internal transformation to return an empty successful result on every exception.",
+      "given": [
+        "The input has already been validated at the trust boundary.",
+        "Callers require failures to remain observable; no fallback contract exists."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "failure",
+        "contract",
+        "remove"
+      ]
+    },
+    {
+      "id": "economy-retain-real-boundary",
+      "prompt": "A single consumer needs an adapter to isolate an untrusted external service. Is one consumer enough to reject it?",
+      "given": [
+        "The current security contract requires the isolation.",
+        "The adapter enforces required validation and failure handling without generalizing."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "security",
+        "retain"
+      ]
+    },
+    {
+      "id": "economy-keep-local-helper-and-regression",
+      "prompt": "A small helper names a repeated domain calculation and one regression test prevents the reported bug. Should both be inlined/deleted to reduce file size?",
+      "given": [
+        "The helper clarifies the current behavior without introducing a lasting interface.",
+        "The test proves the actual failure path."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "helper",
+        "regression",
+        "keep"
+      ]
+    },
+    {
+      "id": "economy-preserve-is-not-optional-legacy",
+      "prompt": "A compatibility wrapper is required by supported external clients. Remove all legacy wrappers to prevent slop?",
+      "given": [
+        "The recorded mode is preserve.",
+        "No waiver or completed client migration exists."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "compatibility",
+        "preserve"
+      ]
+    }
+  ]
+}

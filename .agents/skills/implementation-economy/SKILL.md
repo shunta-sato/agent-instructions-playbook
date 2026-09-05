@@ -7,41 +7,50 @@ metadata:
 
 ## Purpose
 
-Keep implementation cost proportionate to the capability and its expected
-maintenance horizon. This skill is not a required audit for ordinary local code.
+Keep implementation proportional to the current contract. This is not a required
+audit for ordinary local code, nor a requirement to minimize lines at any cost.
 
 ## When to use
 
-Use when at least one applies:
-
-- a persistent class, module, interface, wrapper, adapter, or indirection is new;
-- generic infrastructure is proposed for one immediate use;
-- support code, harness work, or preparatory refactoring approaches the size of
-  the remaining user-facing implementation;
-- a review asks for broader generalization or another abstraction layer.
-
-A small local helper, ordinary reuse, or test fixture does not trigger this skill
-unless it creates a lasting boundary or scope-inversion risk.
+Use for a new lasting boundary, speculative generic infrastructure, proposed
+layering, or support work that may displace the requested capability. A small
+local helper, ordinary reuse, or test fixture does not itself trigger this skill.
 
 ## How to use
 
-1. State the user-facing implementation still missing.
-2. Set a compact budget: production files/lines, persistent abstractions, and
-   support work.
-3. For each persistent abstraction, give one sentence covering the present
-   consumer, complexity removed, and why local code is insufficient.
-4. Prefer deletion, reuse, inlining, or a local implementation when the expected
-   maintenance horizon does not justify a durable boundary.
-5. Activate the scope-inversion stop when support work becomes larger than the
-   remaining capability. Publish the current reviewable state and request a scope
-   decision rather than continuing.
-6. After implementation, list only persistent additions and mark
-   `keep | inline | merge | delete | defer`.
+1. Identify the behavior still missing. Reuse the current DoD and project budget;
+   do not invent a file/line quota or separate audit artifact.
+2. For a persistent addition, identify its present consumer or explicit contract,
+   the concrete complexity it removes, and why the existing/local path is not
+   sufficient. One sentence is usually enough; no numerical score is required.
+3. Prefer the existing pattern or direct implementation unless evidence supports
+   a lasting boundary. One consumer can justify a boundary for a real security,
+   resource, platform, or testing constraint; consumer count alone is not a gate.
+4. Review support-work growth against necessity, not just size. Stop speculative
+   expansion, but do not discard required infrastructure because it exceeds a
+   short call site. Ask for a scope decision only for materially different work.
+5. In the existing diff review, keep justified additions and remove those with no
+   current requirement. Do not review untouched code or launch another audit.
 
-Record this in the active plan or PR. A standalone budget/audit artifact is not
-required unless another tool consumes it or the decision is material and durable.
+## Speculative additions to reject
+
+Unless required by the current task, supported callers, or applicable policy:
+- factories, registries, plugin systems, configuration surfaces, wrappers, and
+  dependency injection introduced only for hypothetical future implementations;
+- legacy adapters, migration scaffolding, backfills, or fallback paths without a
+  supported compatibility obligation; a `preserve` contract still takes priority;
+- repeated validation of established internal invariants, catch-all handlers that
+  hide failures, or success-shaped defaults for an error the caller must observe;
+- permanent harnesses and extra test files promoted from disposable probes;
+- preparatory refactors and broad cleanup unrelated to the requested behavior.
+
+Keep validation at real trust boundaries, authorized retries with failure
+semantics, necessary resource cleanup, regression tests, and diagnostics for
+supported failures. Removing these is not simplicity. A small helper that names
+a real concept is not slop; a large deletion is not automatically an improvement.
 
 ## Output expectation
 
-Return the remaining user-facing work, compact budget, persistent-abstraction
-decisions, actual support cost, and whether the scope-inversion stop activated.
+Report only material addition/removal decisions and unresolved scope questions in
+the current plan or PR. No per-function inventory, numeric score, or standalone
+budget is needed unless explicitly required by an actual consumer.

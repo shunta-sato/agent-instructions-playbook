@@ -54,6 +54,48 @@
         "Inventory the quote boundary and relevant callers/neighbors, not every incidentally formatted function.",
         "Retain required boundary decisions and verification for the actual responsibility change."
       ]
+    },
+    {
+      "id": "boundary-score-cannot-override-contract",
+      "prompt": "A proposed merge has a 13/14 design score but silently changes a required error into None. Decide from the actual contracts.",
+      "given": [
+        "Compatibility is preserve.",
+        "The caller requires the error and the regression test establishes it."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "error",
+        "contract",
+        "reject"
+      ]
+    },
+    {
+      "id": "boundary-required-fix-without-scoring",
+      "prompt": "Remove persistence from a normalization function and migrate its two callers. Characterization and caller tests establish the required behavior.",
+      "given": [
+        "The side-effect boundary is the explicit deliverable.",
+        "No numeric design worksheet exists; migration and rollback evidence can be produced."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "side-effect",
+        "migration",
+        "evidence"
+      ]
+    },
+    {
+      "id": "boundary-waiver-does-not-erase-independent-concepts",
+      "prompt": "A breaking-change waiver covers replacing one API. A reviewer also wants to merge two independent parsers with different error contracts.",
+      "given": [
+        "Those parsers are not superseded APIs and are outside the replacement.",
+        "Their separate contracts are supported and tested."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "parallel",
+        "scope",
+        "contract"
+      ]
     }
   ]
 }

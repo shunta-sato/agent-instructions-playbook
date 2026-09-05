@@ -20,7 +20,8 @@ stalled feature PRs first use `user-value-delivery`; research paths use
 
 ## How to use
 
-0) Open `references/dev-workflow.md` and fill it top-down.
+0) Open `references/dev-workflow.md`; use applicable sections and reuse decisions
+already established for this task.
 
 1) Record risk, failure criticality, maintenance horizon, work intent, and
 compatibility mode from §0, §0a, and §0b.
@@ -36,8 +37,16 @@ locked; add a branch only for newly discovered blocking evidence.
 5) Apply the structure watch in §2c. Advisory findings do not expand a feature;
 blocking hard-guardrail findings require a local fix or bounded waiver.
 
-6) Verify at the depth selected in §0 and hand the identified candidate to the
-single final-gate owner under §6.
+6) During the existing diff review, remove additions with no current requirement:
+future-only abstractions, unneeded compatibility paths, silent error fallbacks,
+redundant comments/docstrings, and permanent scratch artifacts. Follow existing
+patterns; keep useful helpers, trust-boundary checks, required tests/API docs,
+licenses, tool directives, and non-obvious constraints. Do not narrate obvious
+code, add comments to untouched code, or require a separate anti-slop checklist.
+
+7) Verify at the depth selected in §0 and hand the identified candidate to the
+single final-gate owner under §6. Re-run affected proof after any cleanup edit;
+an earlier green result does not cover a changed candidate automatically.
 
 ## Output expectation
 

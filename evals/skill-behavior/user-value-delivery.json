@@ -10,13 +10,13 @@
         "required checks pass",
         "findings do not identify a regression, contract breach, safety boundary, or explicit NFR miss"
       ],
-      "expected_decision": "reviewable",
       "expected_findings": [],
       "expected_output_contains": [
         "non-blocking",
         "bounded polish",
         "user"
-      ]
+      ],
+      "expected_decision": "reviewable"
     },
     {
       "id": "concrete-security-defect-still-blocks",
@@ -26,7 +26,6 @@
         "authorization boundary is inside the operating scope",
         "candidate introduces the exposure"
       ],
-      "expected_decision": "blocked",
       "expected_findings": [
         "authorization defect remains blocking"
       ],
@@ -34,7 +33,8 @@
         "blocking",
         "failure path",
         "smallest required fix"
-      ]
+      ],
+      "expected_decision": "blocked"
     },
     {
       "id": "scope-inversion-stops-generic-harness",
@@ -43,7 +43,6 @@
         "generic harness is not an acceptance condition",
         "supporting implementation exceeds remaining user-facing work"
       ],
-      "expected_decision": "stop",
       "expected_findings": [
         "scope inversion activated"
       ],
@@ -51,7 +50,8 @@
         "scope inversion",
         "publish",
         "decision"
-      ]
+      ],
+      "expected_decision": "stop"
     },
     {
       "id": "repeated-cause-stops-third-attempt",
@@ -61,7 +61,6 @@
         "same candidate and cause",
         "no materially different hypothesis"
       ],
-      "expected_decision": "stop",
       "expected_findings": [
         "third equivalent attempt is not admitted"
       ],
@@ -69,6 +68,74 @@
         "stop",
         "evidence",
         "scope decision"
+      ],
+      "expected_decision": "stop"
+    },
+    {
+      "id": "delivery-new-evidence-allows-another-check",
+      "prompt": "Two CI attempts found different causes. A new log now identifies the remaining failure precisely. May the authorized fix and affected CI check proceed?",
+      "given": [
+        "No explicit attempt or cost budget exists.",
+        "The new hypothesis differs materially; required checks still block submission."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "new evidence",
+        "affected",
+        "required checks"
+      ]
+    },
+    {
+      "id": "delivery-advisory-time-is-not-a-hard-stop",
+      "prompt": "The work took longer than an hour but the latest probe resolved an acceptance risk. Continue or stop?",
+      "given": [
+        "No user or project deadline was set.",
+        "A bounded next action follows directly from the new evidence."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "continue",
+        "evidence"
+      ]
+    },
+    {
+      "id": "delivery-explicit-budget-remains-binding",
+      "prompt": "The user allowed at most two paid target runs. Both have been used; a new hypothesis requires a third paid run.",
+      "given": [
+        "The limit is explicit and no extension is authorized.",
+        "Independent local inspection remains authorized and costs no target run."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "hard",
+        "authorization",
+        "independent"
+      ]
+    },
+    {
+      "id": "delivery-required-support-not-size-veto",
+      "prompt": "A mandatory access-control boundary takes more code than the remaining one-line export call. Should it be deleted as scope inversion?",
+      "given": [
+        "Access control is part of the DoD.",
+        "The implementation is the existing project pattern, not a generic framework."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "required",
+        "security"
+      ]
+    },
+    {
+      "id": "delivery-no-mandatory-polish-or-audit",
+      "prompt": "The DoD and required checks pass, and the changed diff contains no unnecessary additions. Finish the task.",
+      "given": [
+        "No optional cleanup was requested.",
+        "No machine consumer needs a separate report or per-attempt counters."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "complete",
+        "no"
       ]
     }
   ]

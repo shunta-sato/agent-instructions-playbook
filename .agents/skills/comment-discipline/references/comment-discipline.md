@@ -1,77 +1,70 @@
 # Comment discipline reference (How / What / Why / Why-not)
 
-AI-written comments are often redundant or meaningless because they restate
-code the reader can already see. This repository assigns each kind of
-information to exactly one channel so nothing needs to be said twice.
-
 ## 1) The channel split
 
-- **Code carries How.** The implementation itself expresses how something is
-  done.
-- **Test code carries What.** Test names and structure state the expected
-  behavior/spec.
-- **Commit log carries Why.** The motivation and context for the change.
-- **Code comments carry Why-not.** Only information the code cannot express:
-  constraints, rejected alternatives ("why not the obvious approach"),
-  non-obvious hazards, external requirements.
+Code expresses implementation; test names/assertions express expected behavior;
+history records change motivation. Implementation comments preserve durable
+knowledge the adjacent code cannot express: a constraint, rejected alternative,
+non-obvious hazard, external requirement, or surprising rationale.
 
-A comment that duplicates a channel the reader already has is waste, not
-documentation.
+This is an information test, not a blanket ban on explanatory comments. Public
+API documentation is a separate contract channel, not redundant implementation
+narration. Follow the repository's documentation requirements.
 
 ## 2) Before writing or keeping a comment
 
-Ask, in order:
+Ask what the reader would lose by deleting the comment. If only a paraphrase of
+the next line disappears, omit it. If a necessary constraint or reason would be
+lost, retain it concisely near the affected code. A clear local name can remove
+ambiguity; comment cleanup alone does not justify a new abstraction or refactor.
 
-1. Is this Why-not information — a constraint, a rejected alternative, a
-   non-obvious hazard, or an external requirement? If yes, keep it.
-2. Does it restate How (narrates the next lines) or What (restates the
-   function's purpose)? If yes, delete it.
-3. Did the urge to write it come from unclear code? Rename or restructure
-   instead of patching with a comment. This matches `code-readability` §4
-   Comments — follow that section's "what to write" rules; do not contradict
-   it.
+Scope review to the requested diff. Do not add comments to unchanged code, delete
+unrelated historical notes, or impose a comment-count/line-count target.
 
-## 3) AI-specific anti-patterns (ban explicitly)
+## 3) AI-specific anti-patterns
 
-Reject these on sight, in AI-generated or human-written diffs alike:
+Remove redundant forms when they carry no additional contract information:
+- diff narration such as "added validation" or "now handles empty inputs";
+- unsupported assurances such as "safe and robust" or "cannot break anything";
+- section banners that merely label obvious setup, validation, or return steps;
+- prose copies of type signatures and boilerplate docstrings for private helpers;
+- per-line narration and author/date metadata already recorded by version control.
 
-- Comments narrating the diff: "added X", "now handles Y", "changed to use
-  Z".
-- Comments arguing correctness to a reviewer ("this is safe because...",
-  "note this won't break anything").
-- Section-banner comments (`// ---- Setup ----`, `# === Validation ===`).
-- Restating a type signature or parameter list in prose.
-- Who/when metadata (author, date, ticket-as-narration). Version control
-  already carries this.
+Do not delete by wording alone. "Safe because the lock remains held" may convey
+a real synchronization invariant. Preserve that invariant, not empty reassurance.
 
 ## 4) Test code
 
-Expected behavior belongs in the test name and structure, not in a comment
-above the assertion. If a test needs a comment to explain what it checks,
-rename the test or restructure its arrange/act/assert shape instead.
+Names and assertions should state behavior without repeating it above each line.
+Keep a concise explanation for non-obvious fixtures, historical regressions,
+protocol constraints, or deliberately unusual inputs. No mandatory test-comment
+quota or arrange/act/assert banners.
 
 ## 5) Commit messages
 
-- State Why: motivation, constraint, trade-off.
-- Do not narrate the diff file-by-file (that is How, and belongs to the code
-  or the review, not the log).
-- Commit messages stay in English (existing repository convention).
+Use English to state motivation and meaningful constraints/trade-offs. Avoid a
+file-by-file diff narration. Do not copy the development conversation into code.
 
-## 6) Carve-out: public API documentation
+## 6) Carve-out: public API documentation and directives
 
-Public API documentation comments — the C++ Doxygen gate in
-`code-readability` §4.4, and public-API docstrings in other languages — are a
-different genre: contract documentation, i.e. What at the API boundary. They
-remain mandatory wherever that gate applies. This skill governs
-**implementation comments only**; it does not loosen or replace the
-documentation gate.
+Preserve the C++ Doxygen gate in `code-readability` §4.4 and required public API
+docstrings in other languages. Document real caller contracts such as units,
+ownership, lifetime, errors, and compatibility; avoid speculative guarantees.
+
+Licenses, copyright notices, generated-file markers, type-checker/linter/compiler
+directives, and suppression reasons with a real constraint are not narration.
+Do not remove them to reach a lower comment count.
 
 ## 7) Quick triage table
 
-| Symptom | Channel it belongs to | Fix |
-| --- | --- | --- |
-| "This fetches the user record" above a line that fetches the user record | How | Delete; rename if the line itself is unclear |
-| "// added pagination support" | How (diff narration) | Delete; let the commit message carry it |
-| "Returns a list of Order objects" above a typed function signature | What | Delete; the signature/tests already say this |
-| "Retries 3x because the upstream API rate-limits at 4 req/s" | Why-not (external requirement) | Keep |
-| "Not using a hash map here: keys are non-comparable at this boundary" | Why-not (rejected alternative) | Keep |
+| Added text | Decision |
+| --- | --- |
+| `# Increment the attempt counter` above `attempt += 1` | Remove |
+| `# Now validates input safely` | Remove unsupported narration |
+| Boilerplate private-helper docstring repeating its typed signature | Omit |
+| `# Register only after setting state: this callback may run synchronously.` | Keep the ordering hazard |
+| `# This peer rejects chunked uploads; Content-Length is required.` | Keep the external requirement |
+| Public API ownership/error contract, SPDX notice, or meaningful tool directive | Preserve |
+
+Model-specific verbosity is an evaluation target, not a reason to ban all
+comments from that model. Apply the same information standard to every author.
