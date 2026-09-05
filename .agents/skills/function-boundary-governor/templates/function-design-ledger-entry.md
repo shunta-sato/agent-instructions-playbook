@@ -10,19 +10,20 @@
 ## Decision
 - Old abstraction(s):
 - New abstraction(s):
-- Compat-mode: preserve|staged|break-allowed
-- Keep parallel? yes/no (invalid to answer yes under `break-allowed`)
+- Compat-mode: preserve|staged|break-allowed (waiver scope when applicable)
+- Keep parallel? yes/no; distinguish independent concepts from superseded APIs
 
 ## Reasoning
-- Concept boundaries:
-- Invariant ownership:
-- Side-effect profile:
-- Error behavior:
+- Present requirement and benefit:
+- Concept boundaries and invariant ownership:
+- Side-effect profile and error behavior:
+- Supported callers and compatibility evidence:
 - Future divergence expectation:
+- Material unknown or rejected alternative (no numeric scoring):
 
 ## Guardrails
 - Do not reintroduce:
-- Merge allowed only if:
+- Conditions for any future consolidation:
 - Adapter removal condition (if staged):
 
 ## Verification evidence

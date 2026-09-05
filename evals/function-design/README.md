@@ -92,3 +92,12 @@ reports/function-design-evals/YYYYMMDD-HHMMSS/<scenario>/
 ```
 
 The report is evidence for comparing agent behavior over time. It is not a substitute for the oracle inspecting the resulting files.
+
+## Compare real runs without trusting response text
+
+Use [the anti-slop ablation runbook](ablation.md) for minimal/core/full comparisons
+and `scripts/grade_run.py` to grade a supplied final workspace with pinned
+acceptance tests. The tool never invokes a model. Its unit suite calibrates the
+existing fixtures and rejects added narration/unused abstractions in a no-op task.
+Calibration, caller-supplied run labels, and real model performance are separate
+kinds of evidence; do not promote one into another.

@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "skill": "comment-discipline",
+  "cases": [
+    {
+      "id": "comments-drop-private-boilerplate",
+      "prompt": "Clean up the new implementation comments in this diff.",
+      "given": [
+        "A private typed helper gained an Args/Returns docstring that only repeats its signature.",
+        "Each assignment has a comment paraphrasing that assignment.",
+        "No additional contract or hazard is documented by those comments."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "redundant",
+        "remove"
+      ]
+    },
+    {
+      "id": "comments-preserve-real-hazard-and-api-contract",
+      "prompt": "Review the new comments without increasing narration.",
+      "given": [
+        "A comment explains that registering a callback can synchronously invoke it, so state must be set first.",
+        "The public API doc states ownership and error behavior required by project policy.",
+        "A reviewer asks to delete both to reduce the comment count."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "retain",
+        "hazard",
+        "API"
+      ]
+    },
+    {
+      "id": "comments-preserve-directives-and-licenses",
+      "prompt": "Remove redundant comments from this diff.",
+      "given": [
+        "The diff contains an SPDX notice, a generated-file marker, a type-checker directive, and an obvious return-value narration.",
+        "The marker and directive are required by the existing toolchain."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "preserve",
+        "directive",
+        "narration"
+      ]
+    },
+    {
+      "id": "comments-no-keyword-deletion",
+      "prompt": "A comment says the operation is safe because the lock is held across the callback. Should it be deleted as AI reassurance?",
+      "given": [
+        "The lock invariant is real, non-obvious, and required for correctness.",
+        "The comment documents that invariant rather than merely claiming quality."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "invariant",
+        "keep"
+      ]
+    },
+    {
+      "id": "comments-cleanup-does-not-create-refactor",
+      "prompt": "Clean redundant comments in the changed function only.",
+      "given": [
+        "Unchanged surrounding functions contain historical comments.",
+        "A local rename would clarify one line; a new helper hierarchy is unnecessary."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "scope",
+        "local",
+        "unchanged"
+      ]
+    }
+  ]
+}
