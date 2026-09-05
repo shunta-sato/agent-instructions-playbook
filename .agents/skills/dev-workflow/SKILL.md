@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: "Use for delivery-mode code or test changes after feature scope has been governed when applicable. Selects risk, work intent, compatibility mode, and only the specialist branches supported by concrete facts before editing."
+description: "Use for delivery-mode code or test changes after feature scope has been governed when applicable. Establish or inherit quality context, then select risk, intent, compatibility, and fact-triggered specialist branches before editing."
 metadata:
   short-description: Risk-routed dev workflow
   requires:
@@ -15,25 +15,20 @@ Use for delivery-mode code/test changes. Feature campaigns and stalled feature
 PRs first use `user-value-delivery`; research paths use `research-workflow`.
 
 ## How to use
-0) Open `references/dev-workflow.md`; use applicable sections and reuse decisions
-already established for this task.
-1) Record risk, failure criticality, maintenance horizon, work intent, and
-compatibility mode from §0, §0a, and §0b.
-2) Build the shortest vertical path in §1; use focused tests during iteration.
-3) Select only fact-triggered branches from §2, applying §2a and §2b when needed.
-4) Record the Route Summary in §3. Add branches only for new blocking evidence.
-5) Apply §2c's structure watch. Advisory findings do not expand scope; blocking
-hard-guardrail findings require a local fix or bounded waiver.
-6) In the existing diff review, remove additions with no current requirement:
-future-only abstractions, unneeded compatibility paths, silent error fallbacks,
-redundant comments/docstrings, and permanent scratch artifacts. Follow existing
-patterns; keep useful helpers, trust-boundary checks, required tests/API docs,
-licenses, tool directives, and non-obvious constraints. Do not narrate obvious
-code, add comments to untouched code, or require a separate anti-slop checklist.
-7) Verify at §0's required depth and hand the candidate to the single final-gate
-owner under §6. Re-run affected proof after cleanup; earlier green evidence does
-not automatically cover a changed candidate.
+0) Open `references/dev-workflow.md`; reuse current context and applicable decisions.
+1) Apply §0–§0c: risk, criticality, lifecycle/changes, intent, compatibility, and
+quality context. Missing workload or required quality is not automatically low risk.
+2) Build §1's vertical path with functional and required NFR acceptance.
+3) Select fact-triggered branches from §2; use §2a and §2b when needed.
+4) Record §3's route summary. New present-use evidence can revise the affected DoD.
+5) Apply §2c's structure watch; advisory findings do not enlarge scope.
+6) In the existing diff review, remove future-only abstractions, unneeded legacy
+paths, silent error fallbacks, redundant comments/docstrings, and permanent scratch
+artifacts. Keep quality-required boundaries, useful helpers, tests/API contracts,
+licenses, tool directives, and non-obvious constraints. No separate slop checklist.
+7) Verify the selected contract and hand the candidate to §6's single gate owner.
+Re-run affected proof after cleanup or changes to workload/target assumptions.
 
 ## Output expectation
-State route/risk and rationale, criticality/horizon, triggered/deferred branches,
-structure result, focused proof, verification depth, candidate, and gate owner.
+State route/risk and rationale, criticality/horizon, quality-context deltas,
+triggered branches, material deferrals, focused proof, candidate, and gate owner.
