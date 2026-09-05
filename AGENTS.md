@@ -119,8 +119,10 @@ end|AGENT_INDEX_V1
   `function-boundary-governor` or `destructive-refactor` is triggered, prefer
   the smallest coherent final design within the current scope.
 - No broad cleanups unrelated to the task.
-- Separate failure criticality from maintenance horizon. The former sets
-  correctness/safety depth; the latter sets structure and generalization depth.
+- Set required quality from affected use, failure impact, lifecycle/expected changes,
+  workload, and update/recovery conditions before locking DoD; reuse current context.
+  Keep criticality, maintainability investment, and performance proof independent.
+  Newly discovered necessary NFRs can revise scope; speculative additions cannot.
 - Fix blocking concrete defects and material regressions in the supported journey.
   Record minor limitations without turning them into an unbounded polish loop.
   Prevent material structural worsening; defer pre-existing debt and speculation.
