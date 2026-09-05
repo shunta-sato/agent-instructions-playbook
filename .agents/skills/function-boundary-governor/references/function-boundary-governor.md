@@ -50,11 +50,12 @@ no-op does not complete an unmet acceptance condition.
 
 ## Review prompts, not a second gate
 
-Concept clarity, single reason to change, invariant ownership, call-site
-readability, side-effect control, error behavior, and test protection help
-explain a decision. Abstraction cost, duplication risk, future divergence
-likelihood, boundary crossing risk, public API churn, and parameterization
-pressure identify questions to investigate, not numbers to manufacture.
+Concept clarity, single reason to change, invariant ownership, and
+call-site readability help explain a decision, along with side-effect control,
+error behavior, and test protection. Abstraction cost, duplication risk,
+future divergence likelihood, boundary crossing risk, public API churn, and
+parameterization pressure identify questions to investigate, not numbers to
+manufacture.
 
 ## Mandatory reject signals
 
