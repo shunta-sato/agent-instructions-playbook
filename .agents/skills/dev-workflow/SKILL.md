@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: "Use for delivery-mode code or test changes after feature scope has been governed when applicable. Establish or inherit quality context, then select risk, intent, compatibility, and fact-triggered specialist branches before editing."
+description: "Use for delivery-mode code or test changes with current or unresolved quality context, change risk, intent, compatibility, and specialist-routing decisions. Feature scope is governed separately when applicable; research-only work uses research-workflow."
 metadata:
   short-description: Risk-routed dev workflow
   requires:
