@@ -1,6 +1,6 @@
 ---
 name: preflight-engineering
-description: "Preflight, AGENTS.md, agent context, skill routing, test routing, subagent handoff, prompt caching readiness. Use before long-running, multi-agent, unfamiliar, high-risk, or cross-service coding tasks. Do not use for small one-file edits."
+description: "Preflight, AGENTS.md, agent context, skill routing, test routing, subagent handoff, prompt caching readiness. Use before long-running, multi-agent, unfamiliar, high-risk, or cross-service coding tasks. Skip only already-routed, low-risk small work without an unresolved sensitive boundary."
 metadata:
   short-description: Preflight agent context and handoff
   resources:
@@ -27,9 +27,11 @@ This skill prepares the work environment; it does not implement product fixes, r
 ## How to use
 
 0. Decide whether preflight is needed.
-   - Use lightweight preflight when one area is involved, `AGENTS.md` exists, and test routing is clear.
+   - Use lightweight preflight when one low-risk area is involved, `AGENTS.md` exists, and test routing is clear.
    - Use full preflight for multi-service work, auth/billing/security/public API/DB/infra changes, subagent work, unfamiliar repos, missing docs, missing `AGENTS.md`, or repos that agents will revisit.
-   - For obvious one-file fixes, typo fixes, formatter-only changes, or already-routed small work, state why preflight is unnecessary and stop.
+   - File count does not exempt auth, security, compatibility, data-integrity, or other sensitive boundaries from preflight.
+   - For already-routed low-risk fixes without such a boundary, report why preflight is skipped and return to the calling workflow to continue the authorized task. Do not terminate that task or run the collectors/templates below.
+   - For a preflight-only request, return the brief skip result; do not begin unrequested product work.
 
 1. Inventory stable repository surfaces.
    - Inspect instruction files, README/CONTRIBUTING, package and lock files, CI/test config, docs, `.agent/` (if `.agent/wiki/index.md` exists, read only entries matching the task's paths/components), `.agents/skills/`, schema files, generated-code directories, migrations, deploy config, and secret-like filename patterns.
@@ -113,13 +115,14 @@ This skill prepares the work environment; it does not implement product fixes, r
 
 ## Output expectation
 
+If skipped, return only the reason and continuation (calling workflow or preflight-only completion). Otherwise use the following result structure.
+
 ```markdown
 # Preflight result
 
 ## Summary
 
 ## Repository readiness score
-
 - AGENTS.md:
 - Agent context docs:
 - Skill routing:
@@ -155,12 +158,9 @@ This skill prepares the work environment; it does not implement product fixes, r
 ## Self-review
 
 - This skill prepares the environment and does not implement product changes.
-- The description can trigger implicitly for long-running or multi-agent work.
 - `AGENTS.md` stays compact and stable.
 - Human docs and Agent context docs stay separate.
 - Skill routing is referenced, not pasted.
-- A development commander handoff prompt is produced.
-- Cache-readiness is checked.
-- Subagents are treated as useful but token-expensive.
-- Compression remains readable and auditable.
+- When preflight runs, produce the commander handoff prompt and check cache readiness.
+- Keep subagent cost and context readability auditable.
 - The OAuth refresh token example remains available.

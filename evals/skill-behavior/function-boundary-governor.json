@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "skill": "function-boundary-governor",
+  "cases": [
+    {
+      "id": "boundary-explicit-local-edit-noop",
+      "prompt": "Use function-boundary-governor, then rename the local variable tmp to subtotal.",
+      "given": [
+        "The variable is private to one function; no API, caller, effect, or responsibility changes.",
+        "The edit is authorized and the verification route is already known."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "No function-boundary decision is required; give a brief scoped no-op and continue the requested local edit.",
+        "Do not fabricate a scoring rubric, discovery inventory, or design-ledger entry."
+      ]
+    },
+    {
+      "id": "boundary-explicit-review-still-discovers",
+      "prompt": "Review two similar parsers with function-boundary-governor and decide whether to merge.",
+      "given": [
+        "One caller requires an exception for absent input; the other requires None.",
+        "Existing caller tests establish both contracts."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Perform relevant caller and semantic-neighbor discovery because a boundary review was explicitly requested.",
+        "Keep parallel or choose no-op based on distinct error behavior; do not merge from textual similarity alone."
+      ]
+    },
+    {
+      "id": "boundary-migration-retains-safeguards",
+      "prompt": "Replace the shared normalizeAndSaveUser API with clearer pure and effectful boundaries.",
+      "given": [
+        "Internal callers and external consumers exist; preserve is the recorded compatibility mode.",
+        "No breaking-change waiver has been supplied.",
+        "The task requires moving side-effect ownership and migrating internal callers."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Identify affected callers, invariants, and side-effect/error contracts, and preserve external compatibility.",
+        "Require migration, convergence, and applicable ledger evidence; do not treat a design preference as authorization to break the API."
+      ]
+    },
+    {
+      "id": "boundary-discovery-stays-scoped",
+      "prompt": "Perform boundary review for the changed quote calculator; the same patch also contains formatter-only edits.",
+      "given": [
+        "Only calculateQuote and its direct caller participate in the responsibility change.",
+        "Twenty unrelated functions were formatted but have unchanged contracts."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Inventory the quote boundary and relevant callers/neighbors, not every incidentally formatted function.",
+        "Retain required boundary decisions and verification for the actual responsibility change."
+      ]
+    }
+  ]
+}

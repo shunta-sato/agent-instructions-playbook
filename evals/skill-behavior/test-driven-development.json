@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "skill": "test-driven-development",
+  "cases": [
+    {
+      "id": "tdd-one-case-is-sufficient",
+      "prompt": "Use TDD to fix the single remaining predicate regression.",
+      "given": [
+        "The one missing input is specified and existing tests cover all other required partitions.",
+        "Test placement and strategy are clear; there are no sensitive-boundary checks beyond the canonical suite."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Create a one-item Test List without inventing extra cases or loading unit-test-design.",
+        "Run the test to observe the intended failure before changing production code, then run it to confirm Green."
+      ]
+    },
+    {
+      "id": "tdd-execution-unavailable-is-not-evidence",
+      "prompt": "Implement this small change using TDD.",
+      "given": [
+        "The acceptance behavior is clear but the test runner is unavailable.",
+        "No test execution result has been obtained."
+      ],
+      "expected_findings": [
+        "Red-Green execution evidence is unavailable"
+      ],
+      "expected_output_contains": [
+        "Report that Red and Green have not been observed; do not claim test success from inspection.",
+        "Provide a reproducible verification procedure and retain the required verification limitation."
+      ]
+    },
+    {
+      "id": "tdd-no-repeated-list-or-cleanup-quota",
+      "prompt": "Finish the remaining TDD case and hand off the result.",
+      "given": [
+        "The Test List was already shown and its scope has not changed.",
+        "Red has been observed for the correct reason; the scoped implementation passes required cases.",
+        "No structural improvement is needed and unrelated cleanup is outside the task."
+      ],
+      "expected_findings": [],
+      "expected_output_contains": [
+        "Do not repeat an unchanged list after each tool call or require a refactor solely to finish a cycle.",
+        "At handoff, summarize the Test List status and actual results, then retain routed final verification."
+      ]
+    },
+    {
+      "id": "tdd-required-safety-cases-not-optional",
+      "prompt": "Use TDD for this authorization predicate; keep the case set bounded.",
+      "given": [
+        "Acceptance requires allowed-role success and rejection of unauthorized and expired credentials.",
+        "Only the allowed-role success case is currently covered.",
+        "The canonical security checks are mandatory."
+      ],
+      "expected_findings": [
+        "Required rejection-path coverage is missing"
+      ],
+      "expected_output_contains": [
+        "Include the missing required rejection cases rather than interpreting no quota as permission to test only success.",
+        "Preserve Red-Green evidence and mandatory security checks."
+      ]
+    }
+  ]
+}

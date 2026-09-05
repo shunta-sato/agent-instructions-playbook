@@ -2,14 +2,15 @@
 
 ## Required discovery
 
-Before deciding, build a boundary inventory:
+After confirming a trigger in SKILL.md, build an inventory of the affected
+boundary, not every function incidentally touched by the patch:
 
-- List new/edited/deleted functions.
-- For each changed function, list direct callers when feasible.
+- List new/edited/deleted functions relevant to that boundary.
+- For each function in the inventory, list direct callers when feasible.
 - Search semantic neighbors: similarly named functions, similar bodies, same domain noun/verb, helpers in common/shared/util modules, and tests encoding the same concept.
 - Classify each neighbor: `same concept | parallel concept | obsolete abstraction | uncertain`.
 
-If the main uncertainty is which class/module/layer should own a responsibility, stop and route that decision to `design-balance`. Return here only after the module/class layout is clear.
+If class/module/layer ownership is the main uncertainty, hand that decision to `design-balance`, then resume here once ownership is clear. This handoff does not terminate the user task or authorize unrelated redesign.
 
 ## Scoring model (separate polarity)
 
@@ -88,7 +89,7 @@ Reject refactor (or choose no-op) when:
 
 ## Required evidence log
 
-For each affected function capture:
+For each function in the boundary inventory capture:
 - concept, reason-to-change axis, owned invariants
 - side effects and error contract
 - caller set and neighbor classification

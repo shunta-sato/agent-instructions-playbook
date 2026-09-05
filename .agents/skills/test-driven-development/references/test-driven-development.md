@@ -1,15 +1,17 @@
 # Test-driven development quick reference
 
-This file is the reference for the `test-driven-development` skill. Use it to keep TDD as a fixed procedure.
+Use this reference after TDD is explicitly requested, required by project policy, or selected as the test-first route. It preserves Red → Green, not a fixed amount of process.
 
 ## 1) Test List (do this first)
 
 - List “variants” of expected behavior for the new change.
-- Seed the list from requirements acceptance criteria or Definition of Done when those exist.
+- Seed the list from acceptance criteria, regression evidence, and realistic boundary failures.
+- There is no item quota. One decisive case may suffice; required safety/repository checks still apply.
+- Load `unit-test-design` only for unresolved strategy, partition, coverage, test-double, or flakiness decisions.
 - This is analysis, but it is **behavior analysis**, not a full spec rewrite.
 - Do not write all tests at once. Pick one item from the list and finish it end-to-end.
 
-Example Test List:
+Illustrative Test List (include only cases relevant to the current requirement):
 
 - basic case
 - key not in DB
@@ -19,15 +21,17 @@ Example Test List:
 
 ## 2) One item at a time (Red → Green → Refactor)
 
-- **Red**: write exactly one failing test and confirm it fails for the expected reason.
+- **Red**: write one failing test and run it to confirm the expected failure before changing production code. Unexecuted tests are not Red evidence.
 - **Green**: implement the smallest change to make it pass, and keep all existing tests passing.
-- **Refactor**: improve structure without changing behavior (tests + production code), while keeping tests green. If `implementation-economy` is active, remove or inline abstractions that exceed the budget unless they are explicitly justified in the audit.
+- **Refactor**: make a scoped structural improvement only when needed, without changing behavior; keep tests green. If `implementation-economy` is active, honor its budget. No cleanup is required just to complete a cycle.
 
 ## 3) Ordering tips
 
 - Start with the smallest case you can make pass (few dependencies, easy observation).
 - Then move to edge cases and failure paths.
-- When you discover a new case during implementation, put it back into the Test List (do not expand scope immediately).
+- When a relevant new case appears, update the Test List; defer unrelated cases rather than silently expanding scope.
+- Stop when required cases are covered and perform the routed final verification.
+- Show the list initially, at material scope changes, and at handoff, not after every tool call.
 
 ## 4) Minimum test readability rules
 
