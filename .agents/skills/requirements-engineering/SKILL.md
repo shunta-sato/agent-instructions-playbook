@@ -1,6 +1,6 @@
 ---
 name: requirements-engineering
-description: "Use for ambiguous or non-trivial feature planning and requirements documentation: problem framing, spec-before-build checks, requirements briefs/specs, EARS-style requirements, acceptance criteria, traceability, and ISO/IEC 25010 quality scenarios. Do not use for tiny unambiguous implementation tasks, architecture option comparison, or diff-focused design review unless requirements output is requested."
+description: "Use when acceptance is ambiguous or non-trivial, or lifecycle, workload, failure impact, or operating constraints expose unresolved quality requirements. Form verifiable functional/NFR conditions before design; do not require a specification for small work with current inherited context."
 metadata:
   short-description: Requirements engineering
   resources:
@@ -8,71 +8,69 @@ metadata:
     - references/iso25010-quality-scenarios.md
     - references/mobile-quality-scenarios.md
     - references/requirements-briefs-and-specs.md
+    - references/quality-context.md
 ---
 
 ## Purpose
 
-Use this skill to turn unclear feature work into verifiable requirements and lightweight design inputs. It may start with a small Problem Frame when a request risks solution-first implementation or unclear problem ownership.
-
-It covers:
-
-- small Problem Frames and spec-before-build checks
-- requirements briefs, specs, and SRS-style sections
-- EARS-style requirement statements
-- measurable acceptance criteria and verification methods
-- requirement-to-design/test traceability
-- Definition of Done (observable completion conditions)
-- ISO/IEC 25010 quality scenarios for non-functional requirements
+Turn the present use into verifiable functional and quality requirements without
+creating a full specification for every task. Discover necessary NFRs even when
+the request names only a feature; do not invent hypothetical future consumers.
 
 ## When to use
 
-### Checkable thresholds
+Use when acceptance cannot be stated from existing evidence, workload/lifecycle/
+operating assumptions change a design decision, risky or cross-component work
+needs requirements first, or a brief/spec is requested. Vague words such as fast,
+reliable, maintainable, or production-ready require applicable criteria.
 
-- **ambiguous** = testable acceptance criteria cannot be written from the request alone.
-- **non-trivial** = any of: ≥2 modules touched, OR ≥2 user-visible behaviors added/changed, OR a new domain concept is introduced.
-
-Use this skill when:
-
-- a request is ambiguous, cross-component, user-facing, or risky enough to need requirements first
-- you are creating or updating a requirements brief/spec
-- vague qualities such as "fast", "reliable", "secure", or "usable" need measurable targets
-- mobile requirements must distinguish shared product capability, iOS/Android parity, platform constraints, and measurable mobile quality targets
-- non-embedded performance expectations need scale assumptions, latency/throughput acceptance criteria, or handoff to `performance-review`
-- embedded physical-footprint qualities such as CPU, RAM, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect need high-level requirement wording before NFR design
-- requirements must be traceable to design decisions, tests, or monitoring
-
-Do not use it for small, already-clear implementation tasks unless the user asks for requirements documentation. If architecture options must be compared, route to `architecture-decision-analysis`. If NFRs involve embedded physical footprint, route to `embedded-nfr-design` after drafting the smallest useful high-level requirement.
+Tiny unambiguous work can inherit current context and tests. File/module count
+alone does not determine requirement depth. `architecture-decision-analysis`
+compares designs after decision-driving requirements are sufficiently understood.
 
 ## How to use
 
-1. If the request is solution-first or problem ownership is unclear, write the smallest useful Problem Frame before requirements.
-2. Choose the smallest useful output; do not require a full requirements spec for every task.
-3. Open only the needed reference:
-   - `references/requirements-briefs-and-specs.md` for briefs, specs, IDs, and trace tables
-   - `references/ears-requirements-to-design.md` for EARS statements, boundaries, failure paths, and test seeds
-   - `references/iso25010-quality-scenarios.md` for measurable quality attributes and NFRs
-   - `references/mobile-quality-scenarios.md` when iOS/Android/Flutter/mobile platform constraints or cross-platform parity materially affect requirement classification or verification
-4. Write 1-5 requirements first unless the task genuinely needs more.
-5. For each requirement, include acceptance criteria, a Definition of Done, and a verification method.
-6. If an embedded NFR requirement depends on target behavior, do not finalize numeric acceptance criteria until `embedded-target-characterization` exists or the requirement is explicitly unknown/provisional.
-7. If the requirement involves embedded CPU, memory, wakeups, battery, flash wear, thermal, latency/jitter, or observer effect, hand off to `embedded-nfr-design` for physical budgets and no-measurement-no-claim handling.
-8. If the requirement involves non-embedded request latency, render cost, throughput, data-size scaling, or N+1 risk, hand off to `performance-review` with scale assumptions and acceptance criteria.
-8b. If one mobile capability must be implemented or verified across both iOS and Android, hand the stable requirement IDs and measurable quality targets to `mobile-feature-parity`; requirements define what must hold, parity owns per-platform evidence and allowed deviations.
-9. Trace acceptance criteria into the `test-driven-development` Test List and the `quality-gate` exit criteria when implementation will follow.
-9b. Record every measurable quality/NFR target in a gate-checkable Quality Targets list: `metric | target | measurement method | measured result (filled before gate, or not-measured with reason)`. The quality gate blocks submission when a declared target is silently unmeasured or unmet.
-10. Add assumptions, open questions, and traceability only where they reduce ambiguity.
+1. Reuse the current product/component contract and inspect task deltas. If scope,
+   problem ownership, or solution-first framing is unclear, state a small Problem
+   Frame. Do not ask again for facts already present in trusted task context.
+2. Open only what changes a decision:
+   - `references/quality-context.md` for missing/stale context, NFR discovery,
+     obligation/evidence separation, sources, thresholds, and handoff semantics;
+   - `references/iso25010-quality-scenarios.md` for relevant quality attributes;
+   - `references/requirements-briefs-and-specs.md` for requested briefs/specs;
+   - `references/ears-requirements-to-design.md` for EARS wording and test seeds;
+   - `references/mobile-quality-scenarios.md` for mobile/platform requirements.
+3. Establish use/failure impact, lifespan/expected changes, workload/cadence/scale,
+   operation/recovery/update, and applicable obligations. Separate confirmed,
+   inferred, and unknown facts. Industry labels are not risk classifications.
+4. Define only relevant functional/NFR requirements. Quality Targets preserve
+   `ID/behavior | applies-to/workload | required/target/out-of-scope | source/status |
+   criterion | verification method | result/evidence identity | revisit condition`.
+   These fields can live in prose or the existing plan/PR, not a new schema/file.
+5. Separate required criteria from optional targets and from measured baselines.
+   Do not pick thresholds merely to pass current code. A provisional proposal
+   needs its source and resolution/revisit condition, not a production guarantee.
+6. For maintainability use expected change/diagnosis/upgrade/handoff scenarios,
+   not design scores or lifespan alone. Keep necessary safety and useful comments
+   without requiring generic extensibility or redundant narration.
+7. Choose proof proportionate to impact and uncertainty: inspection/analysis,
+   focused tests/measurements, or target/workload/assurance evidence. Missing
+   required proof remains blocking for its intended use, even if labeled unmeasured.
+8. Route non-embedded scaling/latency/resource decisions to `performance-review`.
+   Route physical target constraints to `embedded-nfr-design` and only missing
+   characterization/calibration stages. Do not finalize target-validated claims
+   without target evidence; host measurements do not substitute.
+9. For cross-platform mobile capability, send stable requirements and quality
+   conditions to `mobile-feature-parity`. It owns platform evidence/deviations.
+10. Include required quality in DoD before locking the route. Trace it to tests
+    (the TDD Test List only when TDD is selected) and `quality-gate`. Newly found
+    present-use obligations can revise affected acceptance; preserve source and
+    owner authority. Do not let scope lock suppress a necessary quality requirement.
 
 ## Output expectation
 
-Depending on the task, produce one or more of:
-
-- Problem Frame
-- Spec-before-build checklist
-- Quality Targets list (metric | target | measurement method | measured result or not-measured reason)
-- Requirements Brief or Requirements Spec section
-- EARS requirements with IDs, priority, rationale, acceptance criteria, and verification method
-- Definition of Done with observable completion conditions
-- ISO/IEC 25010 quality scenarios with metrics, thresholds, measurement, tests/monitoring, and design notes
-- boundary sketch covering actors, systems, changed components, external dependencies, and out-of-scope areas
-- failure paths and seeded test list
-- trace table linking requirements to design, tests, and monitoring
+Return the smallest useful Problem Frame, brief/spec, or plan/PR section with
+functional acceptance, relevant Quality Targets, material assumptions/unknowns,
+verification and routing. Reuse context references and IDs where they aid handoff.
+Do not populate every ISO category, require a numerical NFR score, or duplicate
+existing requirements. The gate must receive the same applicability and criteria.

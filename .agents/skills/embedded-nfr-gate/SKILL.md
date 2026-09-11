@@ -35,7 +35,9 @@ Do not use for host-side CLIs, batch tools, servers, or ordinary daemons that ha
 
 ## How to use
 
-1. Gather required artifacts:
+1. Inherit the same Quality Targets, intended use, workload, and required criteria
+   from preflight/requirements. Gather only the artifacts/equivalent records needed
+   by those criteria or their actual downstream consumers:
    - NFR matrix
    - physical budget file
    - target profile or explicit missing-target reason
@@ -45,7 +47,9 @@ Do not use for host-side CLIs, batch tools, servers, or ordinary daemons that ha
    - calibration report when numeric production budgets are claimed
    - hot-path report when loop/polling/sampling risk exists
    - observer-effect report when instrumentation can perturb workload
-2. Compare measurements against budgets.
+2. Compare measurements against the inherited budgets and operating envelope.
+   Keep required limits, optional targets, baselines, and results distinct; do not
+   move a limit to fit current measurements or discharge it by removing a claim.
 3. Search changed docs/user-visible text for resource claims and verify evidence supports each claim.
 4. Apply hard rules:
    - no-measurement-no-claim
@@ -64,7 +68,10 @@ Do not use for host-side CLIs, batch tools, servers, or ordinary daemons that ha
 5. Decide:
    - `submit`: budgets pass and claims are measured or limited
    - `no-submit`: budget exceeded, artifact missing, or unsupported claim remains
-   - `experimental-only`: production claims removed and unknowns are explicit
+   - `experimental-only`: only when experimental delivery/use is authorized,
+     its own safety/quality obligations pass, and production claims are removed.
+     Missing required evidence for a requested production use remains `no-submit`;
+     the agent cannot silently change the requested use to bypass that evidence.
 6. Write `reports/resource/nfr-gate-report.md` using `templates/nfr-gate-report.md`.
 7. Hand off the report path to `quality-gate`.
 
@@ -85,7 +92,7 @@ Check calibrated budget sources when numeric production budgets are claimed:
 - `standard_or_platform_guidance`
 - `placeholder_unknown`
 
-Treat `placeholder_unknown` as `no-submit` or `experimental-only`.
+Treat `placeholder_unknown` as `no-submit`, or authorized `experimental-only` under the rule above.
 
 ## Gotchas
 

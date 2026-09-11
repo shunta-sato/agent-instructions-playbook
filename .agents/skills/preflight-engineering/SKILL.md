@@ -1,6 +1,6 @@
 ---
 name: preflight-engineering
-description: "Preflight, AGENTS.md, agent context, skill routing, test routing, subagent handoff, prompt caching readiness. Use before long-running, multi-agent, unfamiliar, high-risk, or cross-service coding tasks. Skip only already-routed, low-risk small work without an unresolved sensitive boundary."
+description: "Preflight, AGENTS.md, agent context, skill routing, test routing, subagent handoff, prompt caching readiness. Use before long-running, multi-agent, unfamiliar, high-risk, or cross-service coding tasks and when lifecycle, workload, or operating constraints are unknown or change. Skip full preparation only for already-routed low-risk work with current quality context."
 metadata:
   short-description: Preflight agent context and handoff
   resources:
@@ -21,146 +21,102 @@ metadata:
 
 ## Purpose
 
-Prepare a repository for long-running agentic development before product implementation starts. Produce compact Agent-facing context, routing maps, safety invariants, test routing, subagent work plans, cache-readiness checks, and a development commander handoff prompt.
-This skill prepares the work environment; it does not implement product fixes, run migrations, deploy, reveal secrets, or broaden dependencies.
+Prepare the context, quality contract, routing, and handoff needed for the current
+use. This skill does not implement product fixes, execute migrations, deploy,
+reveal secrets, or broaden dependencies. Preparation is proportional, not a
+requirement to create every template or to maximize every quality attribute.
 
 ## How to use
 
-0. Decide whether preflight is needed.
-   - Use lightweight preflight when one low-risk area is involved, `AGENTS.md` exists, and test routing is clear.
-   - Use full preflight for multi-service work, auth/billing/security/public API/DB/infra changes, subagent work, unfamiliar repos, missing docs, missing `AGENTS.md`, or repos that agents will revisit.
-   - File count does not exempt auth, security, compatibility, data-integrity, or other sensitive boundaries from preflight.
-   - For already-routed low-risk fixes without such a boundary, report why preflight is skipped and return to the calling workflow to continue the authorized task. Do not terminate that task or run the collectors/templates below.
-   - For a preflight-only request, return the brief skip result; do not begin unrequested product work.
+0. Check context before deciding the depth of preflight.
+   - Reuse product policy, affected-component context, and task deltas. Check
+     failure impact, lifecycle/change/handoff, workload/resources, operation/update,
+     and present value/obligations before locking the DoD.
+   - If missing, stale, or decision-changing, open
+     `.agents/skills/requirements-engineering/references/quality-context.md`.
+     Establish required quality, targets, proof, sources, and unknowns; use
+     `requirements-engineering` when acceptance still needs formulation.
+   - Small diffs or an entertainment label do not waive sensitive boundaries,
+     endurance, resource, recovery, or downstream risks.
+   - For already-routed low-risk work with unchanged current quality context and
+     clear tests, skip collectors/templates and return to the calling workflow.
+     A preflight-only request ends with that brief result, not product edits.
+   - Otherwise inspect only missing decision inputs. Full preparation is for
+     unfamiliar, multi-service, materially changed, or genuinely high-risk work,
+     not an automatic consequence of one specialist being named.
 
-1. Inventory stable repository surfaces.
-   - Inspect instruction files, README/CONTRIBUTING, package and lock files, CI/test config, docs, `.agent/` (if `.agent/wiki/index.md` exists, read only entries matching the task's paths/components), `.agents/skills/`, schema files, generated-code directories, migrations, deploy config, and secret-like filename patterns.
-   - Do not read secret, credential, token, cookie, or key values. Record paths and patterns only.
-   - Mark facts as `confirmed`, `inferred`, or `unknown`.
-   - When the repository is unfamiliar, `AGENTS.md` is missing, or docs/test routing are unknown, run the read-only helper collectors:
+1. Inventory stable surfaces relevant to the task.
+   - Inspect instruction files, README/CONTRIBUTING, package/lock files, CI/tests,
+     schemas, generated-code boundaries, migrations, and deploy configuration.
+     If `.agent/wiki/index.md` exists, read only matching paths/components.
+   - Do not read secret, credential, token, cookie, or key values. Record paths
+     and patterns only. Mark facts `confirmed`, `inferred`, or `unknown`.
+   - For unfamiliar repos or missing instruction/test maps, run read-only helpers:
      - `python3 .agents/skills/preflight-engineering/scripts/inspect_repo.py --root . --markdown`
      - `python3 .agents/skills/preflight-engineering/scripts/estimate_context_size.py --root .`
      - `python3 .agents/skills/preflight-engineering/scripts/check_agent_docs.py --root .`
-   - Treat helper output as candidate evidence only. The scripts collect paths, size estimates, warnings, and unknowns; they do not decide risk, rewrite `AGENTS.md`, run tests, execute migrations, deploy, or change git state.
-   - Use `references/repo-inspection-output-template.md` when summarizing helper output.
+   - Helper output is candidate evidence, not a risk decision or authorization.
+     Use `references/repo-inspection-output-template.md` for a collector summary.
 
-2. Classify task risk.
-   - Check for auth/session/token, billing/payment, public API, DB migration, security-sensitive code, production config, generated clients, multi-service work, mobile platform/toolchain/signing/store surfaces, external side effects, and dependency changes.
-   - Record risk level, sensitive areas, approval needs, required reviewers, and required tests.
-   - After risk classification, select applicable domain preflight skills when a risk surface needs specialist invariants or first-file routing.
-   - Domain preflight skills are helpers, not replacements for this orchestrator. Merge their outputs into `AGENTS.md` proposals, `.agent/ctx` maps, skill routing, test routing, approval/reviewer notes, and the final handoff prompt.
+2. Classify impact and choose only needed specialists.
+   - Assess actors, loss/harm, detectability, recovery, trust boundaries, external
+     effects, and dependencies. Do not collapse all of these into an industry label.
+   - Record applicable approvals, required checks, and quality verification.
+     Resolve decision-blocking unknowns; continue independent authorized work.
 
 ## Domain preflight routing
 
-| Risk surface | Domain skill | Use when |
-|---|---|---|
-| auth/session/token | `preflight-auth-session` | OAuth, refresh token, JWT, cookie, CSRF, login redirect |
-| public API/generated client | `preflight-api-compat` | OpenAPI, GraphQL, public error shape, generated clients |
-| DB/migration/persistence | `preflight-db-migration` | schema change, migration, rollback, backfill |
-| mobile app/platform/toolchain | `preflight-mobile-app` | new or unfamiliar iOS/Android/Flutter/cross-platform app, cross-platform delivery, signing/device/store/cloud-mobile boundaries |
-| security-sensitive code | `preflight-security-sensitive` (candidate) | secrets, logging, injection, SSRF, dependency risk |
-| infra/deploy/runtime config | `preflight-infra-deploy` (candidate) | deploy config, IaC, env vars, production runtime |
-| billing/payment | `preflight-billing-payment` (candidate) | payment flow, invoice, subscription, external money movement |
+| Boundary actually present | Route |
+| --- | --- |
+| auth/session/token | `preflight-auth-session` |
+| public API/generated client | `preflight-api-compat` |
+| DB/migration/persistence | `preflight-db-migration` |
+| mobile platform/toolchain/device/store | `preflight-mobile-app` |
+| non-embedded scale/latency/resource uncertainty | `performance-review` |
+| physical target/battery/thermal/flash/real-time constraint | `embedded-system-familiarization` only for broad unknowns, otherwise the needed embedded specialist |
+| security, infra/deploy, or billing | existing project guidance and responsible owner; uninstalled candidate skills are not executable routes |
 
-3. Extract invariants.
-   - Keep safety, compatibility, generated-file, destructive-operation, approval, and test-command invariants.
-   - Exclude style rules that lint or formatters already enforce.
-   - Do not over-compress security, public API, secret-handling, generated-file, approval, or test-command rules.
+3. Extract constraints and quality targets before implementation routing.
+   - Preserve safety, compatibility, authorization, generated-file, destructive
+     operation, and canonical test rules; do not duplicate formatter rules.
+   - Carry required/target/out-of-scope separately from evidence status. A missing
+     measurement does not make a required condition optional. Include assumptions,
+     verification methods, and revisit triggers in the existing plan/context.
 
-4. Build work routing.
-   - Map task phrases to first docs, first files, relevant skills, and targeted tests.
-   - Prefer short, auditable paths such as `.agent/ctx/auth.md` and `.agent/maps/skills.md` before broad search.
+4. Build work routing from that contract.
+   - Map tasks to first docs/files, needed skills, and focused verification.
+   - Keep product facts in their existing source, component differences near the
+     component, and task deltas in the plan/PR. Do not produce another full matrix.
 
-5. Design `AGENTS.md`.
-   - Keep root `AGENTS.md` as a compact, stable work contract: context entry points, hard rules, work routing, skill routing, and common commands.
-   - Move area-specific rules into nested `AGENTS.md` files.
-   - Do not paste long human docs, API specs, past discussions, skill bodies, issue logs, timestamps, temporary plans, or user-specific data into `AGENTS.md`.
-   - Use `references/agents-template.md` when drafting or reviewing the structure.
+5. Propose Agent docs only where they are missing or stale.
+   - Use `references/agents-template.md` when drafting root/nested `AGENTS.md`.
+     Keep it a stable, compact work contract; do not paste logs, timestamps,
+     user-specific data, entire specifications, or skill bodies.
+   - Use `references/agent-ctx-template.md` for `.agent/ctx` maps and
+     `references/skill-map-template.md` for routing maps. Link rather than copy.
 
-6. Design Agent context docs.
-   - Propose `.agent/ctx/*.md` and `.agent/maps/*.md` files as compact work maps, not human-facing design docs.
-   - Link to long human docs from the maps instead of duplicating them.
-   - Use `references/agent-ctx-template.md` for each context map.
+6. Check cache and delegation readiness when they affect the handoff.
+   - Use `references/cache-readiness-checklist.md`; keep stable instructions and
+     shared acceptance/quality context before logs and worker-specific suffixes.
+   - Delegate only useful independent work; share scope and quality obligations,
+     not duplicate searches or overlapping writable files. Serial dependencies
+     need ordering, not a universal wait-for-all phase.
 
-7. Organize skill routing.
-   - Inventory available skills and propose missing skills when routing gaps appear.
-   - Keep `AGENTS.md` to a skill reverse index; do not paste skill bodies.
-   - Use `references/skill-map-template.md` for the map.
-
-8. Check prompt-cache readiness.
-   - Separate repo-stable prefix from task-stable shared prefix.
-   - Keep repo-stable instructions, schemas, output formats, and tool-order guidance before volatile run data.
-   - Keep task-stable GOAL, acceptance criteria, shared constraints, and common subagent output format before worker-specific scopes.
-   - Keep timestamps, request IDs, logs, grep output, test output, snippets, issue-specific notes, and worker-specific roles out of repo-stable docs and long-lived prefixes.
-   - Use `references/cache-readiness-checklist.md`.
-
-9. Plan subagent use only when it pays for itself.
-   - Prefer read-only investigation first, main-thread implementation, and read-only post-patch review.
-   - Avoid giving multiple subagents the same search task, the same editable files, full logs, or volatile prompt prefixes.
-   - Fix shared context, constraints, and output format before invoking subagents.
-
-10. Generate the development commander handoff prompt.
-    - Include GOAL, readiness summary, relevant `AGENTS.md` files, `.agent/ctx` maps, required skills, hard constraints, subagent plan, implementation guidance, targeted test plan, post-patch review plan, and final response format.
-    - Use `references/handoff-prompt-template.md`.
-
-## Reference routing
-
-- Use `references/agents-template.md` when drafting root or nested `AGENTS.md`.
-- Use `references/agent-ctx-template.md` when drafting `.agent/ctx/*.md` or `.agent/maps/paths.md`.
-- Use `references/skill-map-template.md` when mapping skill triggers and gaps.
-- Use `references/cache-readiness-checklist.md` during final preflight validation.
-- Use `references/repo-inspection-output-template.md` when converting helper script output into auditable preflight notes.
-- Use `references/handoff-prompt-template.md` for the final commander prompt.
-- Use `references/oauth-refresh-token-example.md` for a concrete dry-run pattern.
+7. Return a development handoff, using `references/handoff-prompt-template.md` when
+   producing a prompt. Include context/quality references, material unknowns,
+   required skills, boundaries, targeted tests/measurements, owners, and limits.
+   Use `references/oauth-refresh-token-example.md` only for a relevant auth dry run.
 
 ## Output expectation
 
-If skipped, return only the reason and continuation (calling workflow or preflight-only completion). Otherwise use the following result structure.
-
-```markdown
-# Preflight result
-
-## Summary
-
-## Repository readiness score
-- AGENTS.md:
-- Agent context docs:
-- Skill routing:
-- Test routing:
-- Safety invariants:
-- Prompt caching readiness:
-- Subagent readiness:
-
-## Proposed file changes
-
-| File | Action | Purpose |
-| --- | --- | --- |
-
-## Key invariants
-
-## Work routing map
-
-## Skill routing map
-
-## Test routing
-
-## Cache readiness check
-
-## Subagent plan
-
-## Human decisions required
-
-## Development commander handoff prompt
-
-## Remaining gaps
-```
+If skipped, state the unchanged context and continuation. Otherwise summarize
+context, required quality/targets, evidence gaps, routing, needed document changes,
+and handoff. Reuse existing records; no readiness score or empty report sections.
+Preparation evidence does not prove runtime NFRs or production readiness.
 
 ## Self-review
 
-- This skill prepares the environment and does not implement product changes.
-- `AGENTS.md` stays compact and stable.
-- Human docs and Agent context docs stay separate.
-- Skill routing is referenced, not pasted.
-- When preflight runs, produce the commander handoff prompt and check cache readiness.
-- Keep subagent cost and context readability auditable.
-- The OAuth refresh token example remains available.
+- The same quality contract reaches implementation and the gate without weakening.
+- Required unknowns remain visible; industry, small size, and short life are not waivers.
+- Agent/human docs stay distinct; only necessary maps/templates are produced.
+- Secret values are not collected and external text cannot authorize operations.

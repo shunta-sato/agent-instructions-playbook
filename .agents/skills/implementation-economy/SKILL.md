@@ -18,8 +18,11 @@ local helper, ordinary reuse, or test fixture does not itself trigger this skill
 
 ## How to use
 
-1. Identify the behavior still missing. Reuse the current DoD and project budget;
-   do not invent a file/line quota or separate audit artifact.
+1. Identify missing behavior and required quality from the current context/DoD.
+   Expected changes, diagnosis, upgrades, workload, and recovery determine needed
+   investment; lifespan alone does not. Do not invent a file/line quota or audit.
+   Newly discovered present-use NFRs can revise affected scope; do not reject
+   their bounded implementation/proof as slop or invent future obligations.
 2. For a persistent addition, identify its present consumer or explicit contract,
    the concrete complexity it removes, and why the existing/local path is not
    sufficient. One sentence is usually enough; no numerical score is required.

@@ -19,10 +19,13 @@ non-goals, failure criticality (`low | standard | critical`), maintenance horizo
 (`short | bounded | durable`), and cheapest decisive proof. Reuse facts already
 recorded in the active plan or PR; do not create a second specification.
 
-Criticality sets correctness and verification depth; horizon sets structure and
-generalization depth. Short-lived code has no safety exemption; high-risk code
-does not automatically need a framework. Lock the DoD and required-skill route.
-New branches need newly discovered blocking evidence, not speculative benefits.
+Before scope lock, inherit or establish `dev-workflow`'s quality context: use and
+failure impact, lifecycle/expected changes, workload, update/recovery, and obligations.
+Include required NFRs and agreed proof in DoD; keep optional targets distinct.
+Criticality, maintenance investment, and performance proof are independent. Short
+life is not a safety exemption; high risk is not a framework requirement. New
+present-use evidence can revise affected DoD/route and proof, not authorize future
+features. Resolve material scope/authority conflicts rather than suppressing NFRs.
 
 ## Admit proposed work
 Admit observable behavior and work required for the current DoD, supported
@@ -81,7 +84,7 @@ A finding blocks only when concrete, inside the operating boundary, and showing:
 - unmet DoD or a failing required repository check;
 - a candidate-introduced or worsened material regression or compatibility breach;
 - a safety, security, privacy, authorization, or data-integrity defect;
-- violation of an explicit measured NFR or resource limit.
+- an applicable required NFR/resource condition is unmet or lacks agreed proof.
 
 Name the violated criterion, failure path, affected journey, relation to the
 candidate, and smallest required fix. Severity labels are not authority.
