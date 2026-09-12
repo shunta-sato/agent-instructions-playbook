@@ -1,0 +1,145 @@
+name: Apply verified Astra redesign
+
+on:
+  push:
+    branches: [astra/contract-first-redesign]
+    paths: [.github/workflows/astra-apply.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.repository == 'shunta-sato/agent-instructions-playbook' && github.ref == 'refs/heads/astra/contract-first-redesign'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download content-addressed verified delta
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > "$RUNNER_TEMP/astra-delta.xz"
+          for sha in \
+            5b2adce8e4bb90c9e6889ffd7b721cde237f367f \
+            a8842a1515834f5c807b3ab39fd625b9c11fe797 \
+            102b764f2e755a0ce939b2a10f87ea99943a3e63 \
+            409c2a8b07717c4b8db3e1302e1e6444c2dc5f7c \
+            189ec40ade0de919b0127151b35641ea36fca69e
+          do
+            gh api --method GET "repos/shunta-sato/agent-instructions-playbook/git/blobs/$sha" --jq .content | base64 --decode >> "$RUNNER_TEMP/astra-delta.xz"
+          done
+          echo "6ab9930cbf291c7d869355a98eb5bdd3a58e19d49383e37d84fb3527490c3793  $RUNNER_TEMP/astra-delta.xz" | sha256sum --check -
+      - name: Apply exact tree and remove temporary transport workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 7c3b885fd72629f2fb91f4662dbbb16d502c2e38 HEAD
+          python3 - "$RUNNER_TEMP/astra-delta.xz" <<'PY'
+          import hashlib
+          import json
+          import lzma
+          from pathlib import Path, PurePosixPath
+          import subprocess
+          import sys
+
+          compressed = Path(sys.argv[1]).read_bytes()
+          expected_digest = '6ab9930cbf291c7d869355a98eb5bdd3a58e19d49383e37d84fb3527490c3793'
+          if hashlib.sha256(compressed).hexdigest() != expected_digest:
+              raise SystemExit('Payload digest mismatch')
+          payload = json.loads(lzma.decompress(compressed))
+          base = '7c3b885fd72629f2fb91f4662dbbb16d502c2e38'
+          if payload['base_commit'] != base:
+              raise SystemExit('Unexpected source commit')
+          root = Path.cwd()
+
+          def git(*args):
+              return subprocess.check_output(['git', *args])
+
+          def safe_path(name):
+              parts = PurePosixPath(name)
+              if parts.is_absolute() or '..' in parts.parts or not parts.parts or '.git' in parts.parts:
+                  raise ValueError(f'Unsafe path: {name}')
+              path = root.joinpath(*parts.parts)
+              for parent in path.parents:
+                  if parent == root:
+                      break
+                  if parent.is_symlink():
+                      raise ValueError(f'Symlink parent: {name}')
+              return path
+
+          def source(name):
+              safe_path(name)
+              return git('show', f'{base}:{name}')
+
+          materialized = []
+          for entry in payload['files']:
+              if 'content' in entry:
+                  content = entry['content'].encode('utf-8')
+              else:
+                  original = source(entry['source'])
+                  object_id = hashlib.sha1(b'blob ' + str(len(original)).encode() + b'\0' + original).hexdigest()
+                  if object_id != entry['source_sha']:
+                      raise ValueError(f'Original blob mismatch: {entry["source"]}')
+                  lines = original.decode('utf-8').splitlines(keepends=True)
+                  content = ''.join(''.join(lines[p[0]:p[1]]) if isinstance(p, list) else p
+                                    for p in entry['pieces']).encode('utf-8')
+              materialized.append((entry, content))
+          for entry in payload['copies']:
+              materialized.append((entry, source(entry['source'])))
+
+          for name in payload['delete'] + [
+              '.github/workflows/astra-source-snapshot.yml',
+              '.github/workflows/astra-apply.yml',
+          ]:
+              path = safe_path(name)
+              if path.is_symlink() or path.is_file():
+                  path.unlink()
+              elif path.exists():
+                  raise ValueError(f'Refusing directory deletion: {name}')
+
+          for entry, content in materialized:
+              path = safe_path(entry['path'])
+              path.parent.mkdir(parents=True, exist_ok=True)
+              if path.is_symlink() or path.is_file():
+                  path.unlink()
+              if entry['mode'] == '120000':
+                  path.symlink_to(content.decode('utf-8'))
+              elif entry['mode'] in {'100644', '100755'}:
+                  path.write_bytes(content)
+                  path.chmod(0o755 if entry['mode'] == '100755' else 0o644)
+              else:
+                  raise ValueError(f'Unexpected mode: {entry["mode"]}')
+
+          subprocess.run(['git', 'add', '-A'], check=True)
+          subprocess.run(['git', 'diff', '--cached', '--check'], check=True)
+          actual = git('write-tree').decode().strip()
+          if actual != payload['expected_tree']:
+              raise SystemExit(f'Tree mismatch: expected {payload["expected_tree"]}, got {actual}')
+          if actual != 'a4e39c9fb6d015cff360e802c21d1b1107b5a76d':
+              raise SystemExit('Unexpected candidate tree')
+          print(f'Exact verified tree: {actual}')
+          PY
+      - name: Verify candidate without repository credentials
+        run: make verify
+      - name: Commit and publish only the redesign branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git write-tree)" = a4e39c9fb6d015cff360e802c21d1b1107b5a76d
+          git diff --exit-code
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat!: rebuild playbook around outcome contracts and selective specialist skills' -m 'Replace 67 procedural entrypoints with 21 selective specialists. Preserve context-driven NFRs, evidence identity, useful research tooling and UI assets. Add collision-safe installation, evidence verification and executable task-evaluation scaffolding. Live Astra behavior comparisons remain unrun.'
+          auth="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" push https://github.com/shunta-sato/agent-instructions-playbook.git HEAD:refs/heads/astra/contract-first-redesign
+          git rev-parse HEAD
