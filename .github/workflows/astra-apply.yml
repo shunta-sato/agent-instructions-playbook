@@ -106,6 +106,15 @@ jobs:
                   path.unlink()
               elif path.exists():
                   raise ValueError(f'Refusing directory deletion: {name}')
+          # Git does not track empty directories. Match a clean checkout after deletion.
+          for name in payload['delete']:
+              parent = safe_path(name).parent
+              while parent != root:
+                  try:
+                      parent.rmdir()
+                  except OSError:
+                      break
+                  parent = parent.parent
 
           for entry, content in materialized:
               path = safe_path(entry['path'])
