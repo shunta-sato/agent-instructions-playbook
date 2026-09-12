@@ -1,0 +1,27 @@
+name: Astra source snapshot
+
+on:
+  push:
+    branches: [astra/contract-first-redesign]
+    paths: [.github/workflows/astra-source-snapshot.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 7c3b885fd72629f2fb91f4662dbbb16d502c2e38
+          persist-credentials: false
+      - name: Archive tracked public source only
+        run: git archive --format=tar -o "$RUNNER_TEMP/playbook-source.tar" HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: playbook-source-7c3b885
+          path: ${{ runner.temp }}/playbook-source.tar
+          retention-days: 1
+          if-no-files-found: error
