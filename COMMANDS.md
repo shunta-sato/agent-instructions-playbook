@@ -1,24 +1,12 @@
-# COMMANDS.md — canonical build/test/lint commands
+# Contributor commands
 
-## Initialization verification
-- verified by agent: yes (2026-05-30)
-- verification command: make verify
-- note: initialized for this repository after `make verify` succeeded.
+`make verify` is the canonical local/CI chain:
 
-## Build
-- build (debug): make build-debug
-- build (release): make build-release
+1. `python3 scripts/validate_playbook.py`
+2. `python3 scripts/check_research_evidence.py --check-ledger`
+3. `python3 -m unittest discover -s tests -v`
 
-## Format / Lint / Static analysis
-- format: make format
-- lint: make lint
-- static analysis: make analysis
-
-## Tests
-- unit tests: make test-unit
-- integration/e2e tests: make test-integration
-
-## Notes
-- If a command differs between local and CI, document both.
-- If a command is intentionally unavailable, explain the alternative.
-- If `make verify` fails during initialization, keep the verification placeholder and document the failure plus next steps in `INIT_REPORT.md` (or append to this file).
+`make test` runs only the test suite. `make lint` runs only structural/syntax validation.
+All tests use local disposable fixtures; no live model API or production target is called.
+An executed test is distinct from a live model evaluation. The latter requires a separately
+authorized adapter and environment; see `evals/README.md`.

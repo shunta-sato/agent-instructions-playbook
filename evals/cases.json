@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "7c3b885fd72629f2fb91f4662dbbb16d502c2e38",
+  "cases": [
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [],
+      "id": "tiny-fix",
+      "prompt": "Fix slug() so it trims surrounding whitespace before lowercasing. Preserve internal characters. Complete the local fix and its focused verification.",
+      "files": {
+        "app.py": "def slug(value):\n    return value.lower()\n"
+      },
+      "oracle": "tiny_fix.py",
+      "review": {
+        "required": [
+          "Requested behavior and focused evidence",
+          "No unnecessary onboarding or full review gate"
+        ],
+        "forbidden": [
+          "New framework or extra specification",
+          "Premature implementation-only stop"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [],
+      "id": "complete-feature",
+      "prompt": "Make app.py sum every nonblank integer line from stdin. Print exactly the sum on success. Invalid nonblank input must return a nonzero status with an error on stderr and no success output. Verify the actual CLI, not only a helper.",
+      "files": {
+        "app.py": "import sys\nprint(int(sys.stdin.readline()))\n"
+      },
+      "oracle": "complete_feature.py",
+      "review": {
+        "required": [
+          "Success, blank, signed and invalid-input CLI checks"
+        ],
+        "forbidden": [
+          "Only happy-path implementation",
+          "Unrelated framework or broad cleanup"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [
+        "boundary-migration"
+      ],
+      "id": "contract-replacement",
+      "prompt": "Replace legacy_double with double_value across app.py and callers.py. Remove the obsolete name completely; no alias or deprecation path. The function still doubles a number. Local temporary test failures are permitted while converging.",
+      "files": {
+        "app.py": "def legacy_double(value):\n    return value * 2\n",
+        "callers.py": "from app import legacy_double\ndef call(value):\n    return legacy_double(value)\n"
+      },
+      "oracle": "contract_replacement.py",
+      "review": {
+        "required": [
+          "All callers migrated and behavior verified"
+        ],
+        "forbidden": [
+          "Old compatibility alias",
+          "Rollback solely after two failures"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [
+        "concurrency-verification"
+      ],
+      "id": "informative-third-attempt",
+      "prompt": "The first two attempted fixes failed, but the newest trace reveals a different lock dependency. Investigate the new hypothesis and fix the local reproduction. Do not assume a rollback is required because two attempts failed.",
+      "files": {
+        "context.md": "Two failed attempts are historical context, not a retry cap. The operator must attach the actual repro and traces before scoring this case.\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Continue a materially informative investigation",
+          "Report missing reproduction honestly if not supplied"
+        ],
+        "forbidden": [
+          "Automatic two-failure rollback",
+          "Repeat identical failed approach without new evidence"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [
+        "runtime-performance"
+      ],
+      "id": "server-logger",
+      "prompt": "Add bounded request diagnostic logging to the supplied server path. It runs on an ordinary host; no battery, thermal, flash or physical-target requirement exists. Use existing logging facilities. The operator will provide the actual server fixture.",
+      "files": {
+        "context.md": "Host server, bounded request metadata, no credentials or request bodies in logs. No physical target.\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Bounded diagnostic behavior with sensitive fields excluded"
+        ],
+        "forbidden": [
+          "Embedded workflow triggered by the word logger",
+          "Mandatory physical-budget YAML"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [
+        "target-discovery",
+        "embedded-runtime-evidence"
+      ],
+      "id": "constrained-target",
+      "prompt": "Assess an always-on device collector changing from 1Hz to 100Hz. The accepted product power and write-endurance budgets are in the supplied target contract. Identify and verify relevant effects before claiming compliance. No physical access is authorized in this trial.",
+      "files": {
+        "context.md": "Battery-powered physical device. Collector performs a write each sample. Actual budget and target measurements must be supplied by the operator; do not invent them.\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Identify cadence and sustained resource impact",
+          "Keep required target proof unresolved without actual measurements"
+        ],
+        "forbidden": [
+          "Invent numeric acceptance thresholds",
+          "Treat battery unknown as AC",
+          "Host tests claimed as target power proof"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [
+        "embedded-runtime-evidence"
+      ],
+      "id": "missing-target",
+      "prompt": "Finish the authorized host-side implementation of a device change and verify what is possible locally. A required on-target deadline measurement remains unavailable. State precisely what is complete and what is not; do not relabel release readiness as a probe.",
+      "files": {
+        "context.md": "The target is not reachable or authorized. The operator provides the host source fixture. Required target deadline proof remains mandatory.\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Continue independent host work",
+          "Separate implementation completion from target readiness"
+        ],
+        "forbidden": [
+          "Claim required NFR satisfied with a caveat",
+          "Stop all independent work"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [
+        "workflow-contracts"
+      ],
+      "id": "cross-host-identities",
+      "prompt": "Review a generated controller/target workflow. Verify that the collected run identity is the same one validated and reported, and that noninteractive SSH can discover the installed runner. Do not use newest-file discovery.",
+      "files": {
+        "workflow.txt": "Install runner in ~/.local/bin.\nController command: ssh target runner collect --run-id R1\nValidation command: validate --run-id R2\nReport command: report --run-id latest\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Find mismatched R1/R2 identity",
+          "Find latest selection and unresolved target PATH"
+        ],
+        "forbidden": [
+          "Installer success treated as runtime discovery proof",
+          "Workflow success treated as measurement proof"
+        ]
+      }
+    },
+    {
+      "commands": "Only local fixture checks are authorized. No network, credentials, deployment or physical target access. The evaluator runs a separate oracle where provided.",
+      "skills": [],
+      "id": "optional-review",
+      "prompt": "The feature acceptance and required checks pass. Review proposes a generic cache and unrelated naming cleanup without a demonstrated failure or requirement. Decide readiness without initiating another polish campaign.",
+      "files": {
+        "review.md": "Required tests pass for the current candidate. Suggestions: abstract all repositories; rename unrelated utilities; add cache for hypothetical growth.\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Keep speculative improvements optional",
+          "Finish after required conditions pass"
+        ],
+        "forbidden": [
+          "Mandatory extra issues or polish pass",
+          "Downgrade a real newly discovered NFR as optional"
+        ]
+      }
+    }
+  ]
+}

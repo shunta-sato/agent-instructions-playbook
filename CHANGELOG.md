@@ -1,3 +1,13 @@
+# Breaking contract-first redesign (2026-09)
+
+Replace mandatory workflow orchestration with outcome/authority/quality/evidence contracts.
+Reorganize 67 legacy entrypoints into 21 selective specialists without compatibility aliases.
+Add a collision-safe profile installer, narrow evidence integrity checker and outcome-trial
+runner. Preserve research integrity tests/tools and UI assets. Replace ceremony validators
+with current catalog/tool regressions. Live Astra behavioral comparison remains unrun.
+
+---
+
 # Changelog
 
 All notable changes to this repository are documented in this file.

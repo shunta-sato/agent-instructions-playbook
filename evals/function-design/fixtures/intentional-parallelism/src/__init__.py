@@ -1,1 +1,0 @@
-"""Intentional-parallelism baseline package."""
