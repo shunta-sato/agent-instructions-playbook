@@ -1,0 +1,342 @@
+{
+  "version": 2,
+  "base": "7c3b885fd72629f2fb91f4662dbbb16d502c2e38",
+  "runtime_aliases": false,
+  "entries": [
+    {
+      "old": "agent-workflow-contract-review",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/agent-workflow-contracts/SKILL.md"
+    },
+    {
+      "old": "architecture-decision-analysis",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/requirements-decision/SKILL.md"
+    },
+    {
+      "old": "branch-completion",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/pull-request-lifecycle/SKILL.md"
+    },
+    {
+      "old": "bug-investigation-and-rca",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/incident-investigation/SKILL.md"
+    },
+    {
+      "old": "code-readability",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "code-smells-and-antipatterns",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "comment-discipline",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "concurrency-android",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/concurrency-verification/SKILL.md"
+    },
+    {
+      "old": "concurrency-core",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/concurrency-verification/SKILL.md"
+    },
+    {
+      "old": "concurrency-ros2",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/concurrency-verification/SKILL.md"
+    },
+    {
+      "old": "design-balance",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "destructive-refactor",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/contract-change/SKILL.md"
+    },
+    {
+      "old": "dev-workflow",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "embedded-hot-path-review",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/embedded-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "embedded-nfr-calibration",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/embedded-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "embedded-nfr-design",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/embedded-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "embedded-nfr-gate",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/embedded-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "embedded-nfr-harness-design",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/embedded-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "embedded-observer-effect-review",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/embedded-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "embedded-operating-envelope-discovery",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/target-discovery/SKILL.md"
+    },
+    {
+      "old": "embedded-project-constitution",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/target-discovery/SKILL.md"
+    },
+    {
+      "old": "embedded-system-familiarization",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/target-discovery/SKILL.md"
+    },
+    {
+      "old": "embedded-target-characterization",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/target-discovery/SKILL.md"
+    },
+    {
+      "old": "error-handling",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "execution-plans",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "experiment-loop",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/experiment-evidence/SKILL.md"
+    },
+    {
+      "old": "failure-retrospective",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/instruction-maintenance/SKILL.md"
+    },
+    {
+      "old": "function-boundary-governor",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/contract-change/SKILL.md"
+    },
+    {
+      "old": "hardening-workflow",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "implementation-economy",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "japanese-tech-writing",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/japanese-tech-writing/SKILL.md"
+    },
+    {
+      "old": "mobile-feature-parity",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/mobile-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "mobile-release-coordination",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/mobile-release/SKILL.md"
+    },
+    {
+      "old": "mobile-runtime-verification",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/mobile-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "observability",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "performance-review",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/performance-evidence/SKILL.md"
+    },
+    {
+      "old": "playbook-template-authoring",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/instruction-maintenance/SKILL.md"
+    },
+    {
+      "old": "poc-workflow",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/research-exploration/SKILL.md"
+    },
+    {
+      "old": "preflight-api-compat",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/contract-change/SKILL.md"
+    },
+    {
+      "old": "preflight-auth-session",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/auth-session-boundary/SKILL.md"
+    },
+    {
+      "old": "preflight-db-migration",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/database-migration/SKILL.md"
+    },
+    {
+      "old": "preflight-domain-template",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "preflight-engineering",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/repo-onboarding/SKILL.md"
+    },
+    {
+      "old": "preflight-mobile-app",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/mobile-runtime-evidence/SKILL.md"
+    },
+    {
+      "old": "project-initialization",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/repo-onboarding/SKILL.md"
+    },
+    {
+      "old": "project-structure",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "quality-gate",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "receiving-code-review",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/pull-request-lifecycle/SKILL.md"
+    },
+    {
+      "old": "refactor-workflow",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/contract-change/SKILL.md"
+    },
+    {
+      "old": "requesting-code-review",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/pull-request-lifecycle/SKILL.md"
+    },
+    {
+      "old": "requirements-engineering",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/requirements-decision/SKILL.md"
+    },
+    {
+      "old": "research-synthesis",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/research-synthesis/SKILL.md"
+    },
+    {
+      "old": "research-workflow",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/research-exploration/SKILL.md"
+    },
+    {
+      "old": "staged-lowering",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/staged-lowering/SKILL.md"
+    },
+    {
+      "old": "test-driven-development",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "thread-safety-tooling",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/concurrency-verification/SKILL.md"
+    },
+    {
+      "old": "tonemana-apply",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/ui-design/SKILL.md"
+    },
+    {
+      "old": "tonemana-catalog",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/ui-design/SKILL.md"
+    },
+    {
+      "old": "uidesign-flow",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/ui-design/SKILL.md"
+    },
+    {
+      "old": "uidesign-orchestrator",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/ui-design/SKILL.md"
+    },
+    {
+      "old": "uiux-core",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/ui-design/SKILL.md"
+    },
+    {
+      "old": "uiux-flow-preview",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/ui-design/SKILL.md"
+    },
+    {
+      "old": "unit-test-design",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "user-value-delivery",
+      "disposition": "standalone-recipe-retired",
+      "destination": "templates/AGENTS.md"
+    },
+    {
+      "old": "variant-exploration",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/research-exploration/SKILL.md"
+    },
+    {
+      "old": "visual-regression-testing",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/visual-verification/SKILL.md"
+    },
+    {
+      "old": "working-with-legacy-code",
+      "disposition": "domain-content-reworked",
+      "destination": "skills/contract-change/SKILL.md"
+    }
+  ]
+}
