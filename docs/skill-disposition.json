@@ -18,8 +18,8 @@
     },
     {
       "old": "bug-investigation-and-rca",
-      "disposition": "retired-or-merged",
-      "destination": "working-contract"
+      "disposition": "rewritten",
+      "destination": "bug-investigation-and-rca"
     },
     {
       "old": "code-readability",

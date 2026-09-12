@@ -8,7 +8,8 @@
       "repo-onboarding",
       "decision-analysis",
       "boundary-migration",
-      "workflow-contracts"
+      "workflow-contracts",
+      "bug-investigation-and-rca"
     ],
     "embedded": [
       "target-discovery",

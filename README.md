@@ -38,7 +38,7 @@ requirements and instructions remain authoritative within their proper scope.
 
 | Profile | Specialists |
 | --- | --- |
-| core | repo-onboarding, decision-analysis, boundary-migration, workflow-contracts |
+| core | repo-onboarding, decision-analysis, boundary-migration, workflow-contracts, bug-investigation-and-rca |
 | embedded | target-discovery, embedded-runtime-evidence, runtime-performance, concurrency-verification |
 | backend | auth-session, db-migration, runtime-performance |
 | research | research-workflow, experiment-loop, research-synthesis |
@@ -67,11 +67,11 @@ continues within authority; uninformative repetition changes approach.
 
 ## Breaking migration
 
-Old Skill names, aggregate links, `--overlay`, generated indexes and model-routing configs
-are retired without aliases or fallbacks. Inspect and explicitly remove/relocate old
+Retired Skill names, aggregate links, `--overlay`, generated indexes and model-routing configs
+remain retired without aliases or fallbacks. `bug-investigation-and-rca` is intentionally rewritten in place as a lightweight evidence contract, not restored as the old procedural workflow. Inspect and explicitly remove/relocate old
 playbook-owned links before installing; the installer will not guess ownership. Update
 project instructions that invoke retired names. `docs/skill-disposition.json` accounts for
-all 67 old entrypoints and their replacement or retirement. The 21 current entrypoints
+all 67 old entrypoints and their replacement or retirement. The 22 current entrypoints
 are a design choice, not a measured optimal number.
 
 Old plans/reports/experiments and run evidence remain historical, not active guidance.

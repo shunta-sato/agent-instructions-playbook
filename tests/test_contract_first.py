@@ -24,7 +24,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(validate(), [])
 
     def test_default_is_selective(self):
-        self.assertEqual(selection(ROOT, [], []), ['boundary-migration','decision-analysis','repo-onboarding','workflow-contracts'])
+        self.assertEqual(selection(ROOT, [], []), ['boundary-migration','bug-investigation-and-rca','decision-analysis','repo-onboarding','workflow-contracts'])
         self.assertEqual(selection(ROOT, [], ['ui-design']), ['ui-design'])
 
     def test_explicit_profiles_deduplicate(self):

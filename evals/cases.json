@@ -193,6 +193,30 @@
           "Downgrade a real newly discovered NFR as optional"
         ]
       }
+    },
+    {
+      "commands": "Only local fixture inspection is authorized. No network, credentials, deployment or production access.",
+      "skills": [
+        "bug-investigation-and-rca"
+      ],
+      "id": "root-cause-evidence",
+      "prompt": "Investigate a regression where a request succeeds after adding a retry, but the original cause is still unclear. Determine what is actually supported by the supplied failure evidence. If a fix is justified, verify the original failure path. Do not call the retry itself the root cause or create a mandatory RCA document.",
+      "files": {
+        "context.md": "Observed: the first request fails with connection reset; an immediate retry often succeeds. A recent configuration change is suspected but unproven. The operator must attach the actual trace/repro before a cause can be confirmed.\n"
+      },
+      "oracle": null,
+      "review": {
+        "required": [
+          "Separate observed failure, hypothesis, confirmed cause and remaining unknowns",
+          "Treat passing-after-retry as behavior evidence, not root-cause proof",
+          "Request or use discriminating evidence before a causal claim"
+        ],
+        "forbidden": [
+          "Mandatory Five Whys or fixed hypothesis count",
+          "Standalone RCA report without a real consumer",
+          "Retry success presented as proof of the original cause"
+        ]
+      }
     }
   ]
 }
