@@ -1,0 +1,48 @@
+{
+  "schema_version": 2,
+  "default_profiles": [
+    "core"
+  ],
+  "profiles": {
+    "core": [
+      "repo-onboarding",
+      "decision-analysis",
+      "boundary-migration",
+      "workflow-contracts",
+      "bug-investigation-and-rca",
+      "preflight-engineering",
+      "agentic-tdd"
+    ],
+    "embedded": [
+      "target-discovery",
+      "embedded-runtime-evidence",
+      "runtime-performance",
+      "concurrency-verification"
+    ],
+    "backend": [
+      "auth-session",
+      "db-migration",
+      "runtime-performance"
+    ],
+    "research": [
+      "research-workflow",
+      "experiment-loop",
+      "research-synthesis"
+    ],
+    "mobile": [
+      "mobile-platform",
+      "mobile-verification",
+      "mobile-release",
+      "concurrency-verification"
+    ],
+    "ui": [
+      "ui-design",
+      "ui-verification"
+    ],
+    "authoring": [
+      "playbook-authoring",
+      "lessons-learned",
+      "japanese-tech-writing"
+    ]
+  }
+}

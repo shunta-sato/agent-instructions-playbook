@@ -1,0 +1,5 @@
+{
+  "note": "Copy only from a validated ui_spec.json meta.tone_and_manner.token_refs.json path under assets/styles/tokens/ ending in .tokens.json as a stable snapshot; never copy absolute paths or paths containing .. traversal.",
+  "copied_from": "<fill>",
+  "tokens": {}
+}

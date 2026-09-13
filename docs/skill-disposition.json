@@ -1,0 +1,340 @@
+{
+  "baseline": "7c3b885fd72629f2fb91f4662dbbb16d502c2e38",
+  "skills": [
+    {
+      "old": "agent-workflow-contract-review",
+      "disposition": "retired-or-merged",
+      "destination": "workflow-contracts"
+    },
+    {
+      "old": "architecture-decision-analysis",
+      "disposition": "retired-or-merged",
+      "destination": "decision-analysis"
+    },
+    {
+      "old": "branch-completion",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "bug-investigation-and-rca",
+      "disposition": "rewritten",
+      "destination": "bug-investigation-and-rca"
+    },
+    {
+      "old": "code-readability",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "code-smells-and-antipatterns",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "comment-discipline",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "concurrency-android",
+      "disposition": "retired-or-merged",
+      "destination": "concurrency-verification"
+    },
+    {
+      "old": "concurrency-core",
+      "disposition": "retired-or-merged",
+      "destination": "concurrency-verification"
+    },
+    {
+      "old": "concurrency-ros2",
+      "disposition": "retired-or-merged",
+      "destination": "concurrency-verification"
+    },
+    {
+      "old": "design-balance",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "destructive-refactor",
+      "disposition": "retired-or-merged",
+      "destination": "boundary-migration"
+    },
+    {
+      "old": "dev-workflow",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "embedded-hot-path-review",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "embedded-nfr-calibration",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "embedded-nfr-design",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "embedded-nfr-gate",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "embedded-nfr-harness-design",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "embedded-observer-effect-review",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "embedded-operating-envelope-discovery",
+      "disposition": "retired-or-merged",
+      "destination": "target-discovery"
+    },
+    {
+      "old": "embedded-project-constitution",
+      "disposition": "retired-or-merged",
+      "destination": "target-discovery"
+    },
+    {
+      "old": "embedded-system-familiarization",
+      "disposition": "retired-or-merged",
+      "destination": "target-discovery"
+    },
+    {
+      "old": "embedded-target-characterization",
+      "disposition": "retired-or-merged",
+      "destination": "target-discovery"
+    },
+    {
+      "old": "error-handling",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "execution-plans",
+      "disposition": "retired-or-merged",
+      "destination": "task-brief"
+    },
+    {
+      "old": "experiment-loop",
+      "disposition": "rewritten",
+      "destination": "experiment-loop"
+    },
+    {
+      "old": "failure-retrospective",
+      "disposition": "retired-or-merged",
+      "destination": "lessons-learned"
+    },
+    {
+      "old": "function-boundary-governor",
+      "disposition": "retired-or-merged",
+      "destination": "boundary-migration"
+    },
+    {
+      "old": "hardening-workflow",
+      "disposition": "retired-or-merged",
+      "destination": "runtime-performance"
+    },
+    {
+      "old": "implementation-economy",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "japanese-tech-writing",
+      "disposition": "rewritten",
+      "destination": "japanese-tech-writing"
+    },
+    {
+      "old": "mobile-feature-parity",
+      "disposition": "retired-or-merged",
+      "destination": "mobile-platform"
+    },
+    {
+      "old": "mobile-release-coordination",
+      "disposition": "retired-or-merged",
+      "destination": "mobile-release"
+    },
+    {
+      "old": "mobile-runtime-verification",
+      "disposition": "retired-or-merged",
+      "destination": "mobile-verification"
+    },
+    {
+      "old": "observability",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "performance-review",
+      "disposition": "retired-or-merged",
+      "destination": "runtime-performance"
+    },
+    {
+      "old": "playbook-template-authoring",
+      "disposition": "retired-or-merged",
+      "destination": "playbook-authoring"
+    },
+    {
+      "old": "poc-workflow",
+      "disposition": "retired-or-merged",
+      "destination": "research-workflow"
+    },
+    {
+      "old": "preflight-api-compat",
+      "disposition": "retired-or-merged",
+      "destination": "boundary-migration"
+    },
+    {
+      "old": "preflight-auth-session",
+      "disposition": "retired-or-merged",
+      "destination": "auth-session"
+    },
+    {
+      "old": "preflight-db-migration",
+      "disposition": "retired-or-merged",
+      "destination": "db-migration"
+    },
+    {
+      "old": "preflight-domain-template",
+      "disposition": "retired-or-merged",
+      "destination": "playbook-authoring"
+    },
+    {
+      "old": "preflight-engineering",
+      "disposition": "rewritten",
+      "destination": "preflight-engineering"
+    },
+    {
+      "old": "preflight-mobile-app",
+      "disposition": "retired-or-merged",
+      "destination": "mobile-platform"
+    },
+    {
+      "old": "project-initialization",
+      "disposition": "retired-or-merged",
+      "destination": "repo-onboarding"
+    },
+    {
+      "old": "project-structure",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "quality-gate",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "receiving-code-review",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "refactor-workflow",
+      "disposition": "retired-or-merged",
+      "destination": "boundary-migration"
+    },
+    {
+      "old": "requesting-code-review",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "requirements-engineering",
+      "disposition": "retired-or-merged",
+      "destination": "decision-analysis"
+    },
+    {
+      "old": "research-synthesis",
+      "disposition": "rewritten",
+      "destination": "research-synthesis"
+    },
+    {
+      "old": "research-workflow",
+      "disposition": "rewritten",
+      "destination": "research-workflow"
+    },
+    {
+      "old": "staged-lowering",
+      "disposition": "retired-or-merged",
+      "destination": "embedded-runtime-evidence"
+    },
+    {
+      "old": "test-driven-development",
+      "disposition": "retired-or-merged",
+      "destination": "agentic-tdd"
+    },
+    {
+      "old": "thread-safety-tooling",
+      "disposition": "retired-or-merged",
+      "destination": "concurrency-verification"
+    },
+    {
+      "old": "tonemana-apply",
+      "disposition": "retired-or-merged",
+      "destination": "ui-design"
+    },
+    {
+      "old": "tonemana-catalog",
+      "disposition": "retired-or-merged",
+      "destination": "ui-design"
+    },
+    {
+      "old": "uidesign-flow",
+      "disposition": "retired-or-merged",
+      "destination": "ui-design"
+    },
+    {
+      "old": "uidesign-orchestrator",
+      "disposition": "retired-or-merged",
+      "destination": "ui-verification"
+    },
+    {
+      "old": "uiux-core",
+      "disposition": "retired-or-merged",
+      "destination": "ui-design"
+    },
+    {
+      "old": "uiux-flow-preview",
+      "disposition": "retired-or-merged",
+      "destination": "ui-design"
+    },
+    {
+      "old": "unit-test-design",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "user-value-delivery",
+      "disposition": "retired-or-merged",
+      "destination": "working-contract"
+    },
+    {
+      "old": "variant-exploration",
+      "disposition": "retired-or-merged",
+      "destination": "research-workflow"
+    },
+    {
+      "old": "visual-regression-testing",
+      "disposition": "retired-or-merged",
+      "destination": "ui-verification"
+    },
+    {
+      "old": "working-with-legacy-code",
+      "disposition": "retired-or-merged",
+      "destination": "boundary-migration"
+    }
+  ]
+}

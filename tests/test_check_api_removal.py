@@ -4,7 +4,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.check_api_removal import DEFAULT_ALLOWED_PREFIXES, sweep
+import importlib.util
+
+_spec = importlib.util.spec_from_file_location(
+    "api_removal", Path(__file__).resolve().parents[1] /
+    ".agents/skills/boundary-migration/scripts/check_api_removal.py")
+_mod = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_mod)
+DEFAULT_ALLOWED_PREFIXES, sweep = _mod.DEFAULT_ALLOWED_PREFIXES, _mod.sweep
 
 
 class SweepTests(unittest.TestCase):

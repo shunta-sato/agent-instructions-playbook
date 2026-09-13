@@ -1,113 +1,20 @@
 ---
 name: bug-investigation-and-rca
-description: "Use when fixing or investigating crashes, regressions, flakes, hangs, incorrect outputs, or incidents."
-metadata:
-  short-description: Bug investigation & RCA
-  resources:
-    - references/bug-investigation-and-rca.md
-    - references/bug-report-template.md
+description: "Use for non-trivial or unclear bugs, regressions, crashes, hangs, flakes, incidents, or explicit root-cause/RCA work where the cause must be established from evidence."
 ---
 
-## Purpose
+# Evidence-backed bug investigation
 
-This skill exists to make bugfixes diagnosable and repeatable by enforcing evidence → root cause → fix → verification → prevention.
+Use this skill when the defect is not already explained by a direct, verified local cause, or when the request asks for root cause. An obvious typo or small defect with a clear cause can stay on the ordinary working contract.
 
-## When to use (triggers)
+Establish the observed failure and relevant environment first. Prefer a reproducible signal, failing test, trace, log, dump, or other discriminating observation. If reproduction is unavailable, say so and use the strongest available evidence without turning inference into fact.
 
-Use this skill when any of these apply:
+Keep observations, live hypotheses, and confirmed cause distinct. A final patch passing is evidence that behavior changed; by itself it does not prove why the original failure occurred. Choose the cheapest next observation that can distinguish plausible explanations. Change an uninformative approach instead of repeating it. There is no required hypothesis count, Five Whys sequence, or retry limit.
 
-- Task mentions: bug, regression, flaky, crash, hang, error, incident, outage, “why”, or “root cause”.
-- Fixing a test failure that is not a simple typo (behavior-level failure).
-- Introducing workaround/ops mitigation.
-- Any change that alters failure-handling paths (exceptions, retries, fallbacks).
+When a fix is requested, address the supported cause rather than only hiding the symptom. Verify the original failure path and relevant neighboring boundaries at the lowest useful level, plus higher-level behavior when the contract crosses a real integration boundary. A regression check should fail on the defective behavior and pass with the fix when that comparison is practical.
 
-## How to use (procedure; anti-cheat)
+Distinguish a root-cause fix from a mitigation or workaround. A retained workaround needs its risk and removal/revisit condition when those matter to the supported use. Do not invent a prevention project for every bug.
 
-1) Reproduce (or explain why reproduction is currently impossible).
-2) Capture evidence (logs/metrics/traces, stack traces, minimal repro, or failing test output).
-3) Form hypotheses (max 2) and pick the leading one.
-4) Validate the hypothesis (add/adjust logging, add a minimal test, or use debugger/tooling). The regression test follows the `$unit-test-design` fix criteria (fails before, passes after, minimal repro, lowest appropriate level, sibling boundaries reviewed).
-5) Apply the smallest safe fix.
-6) Verify with tests/repro/tooling output.
-7) Add prevention actions (at least 1) with a verifiable end state.
+Use other specialists only when the evidence reaches their concrete boundary, for example concurrency, performance, auth/session, database migration, target runtime, or generated cross-host workflow semantics. Escalate to `lessons-learned` when the useful output is durable learning from a recurring or consequential process/tool/instruction failure, not for every single bug.
 
-If the root cause is a missed workflow/product contract, prevention must include:
-
-- the missing invariant class
-- a regression test against the generated workflow, not only helper functions
-- a Skill / quality-gate update if the review process failed to route the issue
-- a replay fixture or generated artifact snapshot when applicable
-
-For details and guidance, open `references/bug-investigation-and-rca.md`.
-
-Open `references/bug-report-template.md` when filling in the Bug Report (RCA) output below.
-
-Helper for deterministic artifact bootstrap:
-- `python scripts/init_artifact.py --kind bug-report --slug <ticket-or-topic>` (default output: `reports/bug-reports/<slug>.md`)
-
-## Gotchas
-
-- **Common pitfall:** patching immediately, losing reproducibility and evidence.  
-  **Instead:** first lock reproduction steps and failure evidence, then secure a minimal repro or failing test.
-- **Common pitfall:** fixing multiple hypotheses at once, making it unclear what worked.  
-  **Instead:** pick one leading hypothesis, add observation points (logs/tests/metrics), verify, then fix.
-- **Common pitfall:** filling Five Whys with guesses, making prevention vague.  
-  **Instead:** label each Why as evidence or assumption, and define measurable completion criteria for prevention.
-- **Common pitfall:** shipping a workaround as permanent without follow-up tracking.  
-  **Instead:** document risk, removal conditions, and tracking ticket, then plan removal timing.
-
-## Output expectation
-
-Strict format; always emit.
-
-## Bug Report (RCA)
-- Title:
-- Symptom (actual behavior):
-- Expected behavior:
-- Severity/Impact:
-- Environment (versions, platform, config):
-- Detection (how it was found):
-
-### Reproduction
-- Steps to reproduce:
-- Minimal repro (if available):
-- Frequency:
-
-### Evidence
-- Logs / stack trace / metrics / traces:
-- What changed recently (if known):
-
-### Root Cause Analysis (Five Whys)
-1) Why #1:
-2) Why #2:
-3) Why #3:
-4) Why #4:
-5) Why #5 (root cause):
-
-> Rule: each “Why” must be backed by evidence or a clearly labeled assumption.
-
-### Fix
-- What changed (summary):
-- Why this fix addresses the root cause:
-
-### Verification
-- Tests run:
-- Repro re-run result:
-- Tooling run (if relevant):
-
-### Prevention (must include at least one, measurable)
-- Prevent:
-- Detect:
-- Mitigate:
-- Follow-up tasks (with owners / tracking IDs if available):
-- If missed workflow/product contract: missing invariant class, generated-workflow regression, process update, replay fixture or artifact snapshot:
-
-### Workaround (only if unavoidable)
-- Workaround description:
-- Risk:
-- Removal plan / tracking:
-
-If reproduction is impossible:
-- explicitly state why,
-- and what evidence was used instead,
-- and what instrumentation/test should be added next.
+Report the symptom, the confirmed cause or remaining hypothesis, decisive evidence, the fix when requested, verification, and material limits. Create a standalone RCA document only when the requester, incident process, compliance rule, or downstream consumer actually needs one.

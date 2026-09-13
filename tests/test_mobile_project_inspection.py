@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SCRIPT = REPO_ROOT / ".agents/skills/preflight-mobile-app/scripts/inspect_mobile_project.py"
+SCRIPT = REPO_ROOT / ".agents/skills/mobile-platform/scripts/inspect_mobile_project.py"
 SPEC = importlib.util.spec_from_file_location("inspect_mobile_project", SCRIPT)
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)

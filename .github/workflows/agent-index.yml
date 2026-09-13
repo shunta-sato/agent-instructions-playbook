@@ -3,8 +3,10 @@ name: Validate agent instructions
 on:
   pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
+
+permissions:
+  contents: read
 
 concurrency:
   group: validate-agent-instructions-${{ github.event.pull_request.number || github.ref }}
@@ -13,95 +15,13 @@ concurrency:
 jobs:
   agent-index:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          # Full history so the pull_request boundary gate can resolve the
-          # merge-base for origin/<base_ref>...HEAD.
-          fetch-depth: 0
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+          persist-credentials: false
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
-      - name: Validate skills
-        run: python scripts/validate_skills.py
-
-      - name: Check metadata.requires manifests are current
-        run: python scripts/update_skill_requires.py --check
-
-      - name: Check Claude Code skills mirror is in sync
-        run: python scripts/sync_claude_skills.py --check
-
-      - name: Check route lockfile is current
-        run: python scripts/generate_route_lockfile.py --check
-
-      - name: Validate skill trigger eval seeds
-        run: python scripts/validate_skill_trigger_evals.py
-
-      - name: Validate skill behavior eval seeds
-        run: python scripts/validate_skill_behavior_evals.py
-
-      - name: Validate function-design protocol concepts
-        run: python scripts/validate_function_design_protocol.py
-
-      - name: Validate model routing
-        run: python scripts/validate_model_routing.py
-
-      - name: Validate model routing eval seeds
-        run: python scripts/validate_model_routing_evals.py
-
-      - name: Check research evidence ledger
-        run: python scripts/check_research_evidence.py --check-ledger
-
-      - name: Check skill inventory
-        run: python scripts/report_skill_inventory.py --check --format text
-
-      - name: Check AGENTS.md index is up to date
-        run: python scripts/generate_agent_index.py --check
-
-      - name: Check context budget
-        run: python scripts/check_context_budget.py
-
-      - name: Check instruction graph
-        run: python scripts/lint_instruction_graph.py
-
-      - name: Check command docs drift
-        run: python scripts/lint_command_docs.py
-
-      - name: Check artifact structure
-        run: python scripts/lint_artifacts.py
-
-      # Cheap static check on the PR's changed file set; guarded the same
-      # way as the boundary-gate step below (needs the base ref fetched by
-      # the full-history checkout above). Runs before the test/boundary
-      # steps since it does not depend on either.
-      - name: Check structure (diff)
-        if: github.event_name == 'pull_request'
-        run: python3 scripts/check_structure.py --diff-range "origin/${{ github.base_ref }}...HEAD"
-
-      # Validate-if-present (plans/20260726-submission-evidence.md,
-      # adjudication 3): guarded like the structure-diff step above (PR-only,
-      # relies on the same full-history checkout to resolve the base ref).
-      - name: Check submission evidence
-        if: github.event_name == 'pull_request'
-        run: python scripts/lint_submission.py --diff-range "origin/${{ github.base_ref }}...HEAD"
-
-      # G4: the 197-test suite must actually run in CI (not just locally),
-      # and it must run BEFORE the boundary gate below judges the same
-      # changed-path set the tests could still fail on.
-      - name: Run unit tests
-        run: make test-unit
-
-      # Runs LAST among validator steps: it judges the whole PR's file set,
-      # so every other structural/content check must have already run.
-      # M1: no --mode is passed here on purpose — this CI invocation derives
-      # research-effectiveness itself from the base-ref policy's default_mode
-      # (plus any changed path that resolves to research), and fails closed
-      # with `mode-undeclared` unless the ledger carries a matching
-      # `declared_mode: research` agent_run record for this change.
-      - name: Check research promotion/safety boundary (PR only)
-        if: github.event_name == 'pull_request'
-        run: python scripts/check_research_evidence.py --diff-range "origin/${{ github.base_ref }}...HEAD" --policy .agents/project-policy.yml
+          python-version: '3.11'
+      - name: Verify contracts, tools and regression evidence
+        run: make verify
