@@ -15,6 +15,11 @@ is an optional read-only collector. Its output suggests paths and commands; it
 neither proves commands safe nor authorizes execution. Do not collect secret values.
 Inspect the actual CI/configuration before adopting a command.
 
+This Skill repairs repository facts. `preflight-engineering` aligns unresolved human
+intent/authority and demonstrates the task's execution and verification path. Knowing
+the command is not proof that required E2E can run. Return readiness gaps to that
+conversation instead of certifying the environment from inspection alone.
+
 Use the project-local working-contract template in `templates/AGENTS.md` only when
 creating or repairing agent instructions. Keep facts near their existing owner;
 record task deltas in the existing task/PR. Do not generate an instruction map,

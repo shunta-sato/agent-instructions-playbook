@@ -1,9 +1,10 @@
 # AI Agent Instructions Playbook — contract-first edition
 
-A breaking redesign for Astra-generation coding agents: a small working contract,
-selectively installed specialist knowledge, and executable evidence tools. Ordinary work
-may use **zero Skills**. The model chooses the method; the task and product define outcome,
-authority, required quality and completion evidence.
+A breaking redesign for Astra-generation coding agents: a working contract, selectively
+installed specialist knowledge, and executable evidence tools. Ordinary small work may
+use **zero Skills**. The model chooses implementation methods; the requester and project
+define outcome, authority, required quality and completion evidence. Substantial delivery
+starts with human alignment and a demonstrated verification path, not blind autonomy.
 
 ## Install only what the project needs
 
@@ -30,15 +31,16 @@ or edit Git configuration/ignore rules. Review/ignore the generated links and ow
 file according to your project's policy. Keep the manifest local with its matching links.
 A source checkout update changes linked Skills; pin a revision for reproducibility.
 
-For a new project, adapt `templates/AGENTS.md` with real commands and authorized execution
-boundaries. Do **not** copy this repository's contributor `AGENTS.md`. Existing project
-requirements and instructions remain authoritative within their proper scope.
+Adapt `templates/AGENTS.md` with real commands, authorized execution boundaries, acceptance
+requirements and escalation contacts. Installation alone does not update an existing
+project's instructions. Remove retired workflow mandates while preserving local requirements.
+Do **not** copy this repository's contributor `AGENTS.md` into a consumer project.
 
 ## Profiles
 
 | Profile | Specialists |
 | --- | --- |
-| core | repo-onboarding, decision-analysis, boundary-migration, workflow-contracts, bug-investigation-and-rca |
+| core | repo-onboarding, decision-analysis, boundary-migration, workflow-contracts, bug-investigation-and-rca, preflight-engineering, agentic-tdd |
 | embedded | target-discovery, embedded-runtime-evidence, runtime-performance, concurrency-verification |
 | backend | auth-session, db-migration, runtime-performance |
 | research | research-workflow, experiment-loop, research-synthesis |
@@ -46,11 +48,37 @@ requirements and instructions remain authoritative within their proper scope.
 | ui | ui-design, ui-verification |
 | authoring | playbook-authoring, lessons-learned, japanese-tech-writing |
 
-Descriptions are selection boundaries, not an always-on workflow. References and scripts
-are used only for the decision they address. The UI profile retains seven style/token
-families and executable preview assets. Specialist scripts travel with their Skill.
-Bundled research-ledger scripts remain optional project-level tools; see the research
-Skills' references before adopting their machine format.
+Profiles make Skills available; they are not execution sequences. Descriptions are selection
+boundaries. References and scripts are used only for the decision they address. The UI profile
+retains seven style/token families and preview assets. Specialist scripts travel with their
+Skill. Bundled research-ledger tools remain optional project-level tools; see their references.
+
+## Entry, human alignment and E2E
+
+Start from the request plus the project working contract. Before substantial dependent work,
+align on the user's outcome, acceptance/E2E boundary, NFRs and allowed execution/actions.
+Reuse prior answers. Ask only for material unresolved decisions, with the impact and a bounded
+recommendation; silence is not consent. Continue independent authorized work without making
+up a missing requirement or asking permission for every ordinary command.
+
+`preflight-engineering` is a rewritten human-communication and readiness Skill, not the old
+full-repository preparation workflow. Demonstrate start/drive/observe/reset for the necessary
+verification path early. A greenfield task can first build a minimal executable slice. Reuse
+valid readiness evidence and revisit affected changes. `repo-onboarding` only repairs missing
+repository facts; knowing an execution command does not prove the environment works.
+
+`agentic-tdd` puts executable acceptance/E2E outside a focused UT/integration loop for
+user-visible runtime delivery and explicit TDD. Environment failure is not feature Red;
+UT success, no-tests/all-skipped, screenshots or a healthy process are not E2E Green.
+Use the appropriate public boundary for pure library/static work instead of manufacturing an
+unnecessary UI/system test. Required performance/physical claims need their own evidence.
+
+Fix environment gaps inside granted authority. Raise missing access, real targets or material
+requirements when discovered, not at submission. Do not bypass denial through a different
+tool/host/CI/agent, search for credentials, disable security or weaken assertions. A separately
+approved alternative is allowed; it cannot silently broaden what the evidence claims.
+Partial work may be shared in a Draft PR but is not a completed feature with required E2E missing.
+These duties live in the common contract too, so missed Skill selection does not waive them.
 
 ## Quality without ceremony
 
@@ -60,24 +88,25 @@ Required-but-unverified is not complete; an optional improvement may remain unme
 proof only while candidate, target, workload, configuration and method still support it.
 Use `docs/quality-contract.md` when requirements are unresolved, not as a per-edit checklist.
 
-Ordinary development has no compulsory router, final-gate Skill, role roster, function
-ledger, report pack, retry count or universal performance/structure threshold. A concrete
-failure still requires correction and appropriate regression proof. Informative debugging
+No compulsory generic delivery router, final-gate Skill, role roster, function ledger, report
+pack, retry count or universal performance/structure threshold. This does not remove real
+sequencing dependencies: unresolved material agreement or unavailable required verification
+must not be ignored while dependent implementation accumulates. Informative debugging
 continues within authority; uninformative repetition changes approach.
 
 ## Breaking migration
 
-Retired Skill names, aggregate links, `--overlay`, generated indexes and model-routing configs
-remain retired without aliases or fallbacks. `bug-investigation-and-rca` is intentionally rewritten in place as a lightweight evidence contract, not restored as the old procedural workflow. Inspect and explicitly remove/relocate old
-playbook-owned links before installing; the installer will not guess ownership. Update
-project instructions that invoke retired names. `docs/skill-disposition.json` accounts for
-all 67 old entrypoints and their replacement or retirement. The 22 current entrypoints
+Retired Skill names, aggregate links, `--overlay`, indexes and model-routing configs remain
+retired without aliases or fallbacks. `bug-investigation-and-rca` and `preflight-engineering`
+are intentionally rewritten in place; `test-driven-development` maps to `agentic-tdd`.
+Their former fixed workflows and report obligations are not restored. Inspect and explicitly
+remove/relocate old playbook-owned links before installing; ownership is never guessed.
+`docs/skill-disposition.json` accounts for all 67 old entrypoints. The 24 current entrypoints
 are a design choice, not a measured optimal number.
 
 Old plans/reports/experiments and run evidence remain historical, not active guidance.
 The research evidence schema stays readable because preserving experiment provenance is
-not compatibility with the retired Skill workflow. No downstream product API/data waiver
-is implied by this playbook's breaking release.
+not compatibility with the retired workflow. No downstream product API/data waiver is implied.
 
 ## Contributor verification
 
@@ -85,12 +114,11 @@ is implied by this playbook's breaking release.
 make verify
 ```
 
-This runs catalog/reference validation, Python syntax checks, the preserved research-ledger
-integrity check, and real unit/integration regressions. CI runs the same command. There is
-no separate generated-index gate or substring rubric for model behavior.
+CI runs the same catalog/reference/syntax validation, research-ledger integrity check and
+unit/integration regressions. New preflight fixtures exercise an actual CLI across processes,
+including missing environment, meaningful acceptance failure and persistence. Those fixture
+tests do not prove that a model asks questions at the right time or respects authority.
 
-Live model evaluation is separate: `evals/README.md` describes matched baseline/minimal/
-selective arms, executable task oracles and pending trace review. **Live Astra A/B trials
-have not been run for this redesign.** Tool tests are not model capability evidence.
-
+`evals/README.md` describes matched baseline/minimal/selective arms, task oracles and pending
+trace/communication review. **Live Astra A/B trials have not been run for this redesign.**
 See `docs/astra-redesign.md` for boundaries, evaluation limits and the source rationale.

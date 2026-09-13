@@ -24,7 +24,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(validate(), [])
 
     def test_default_is_selective(self):
-        self.assertEqual(selection(ROOT, [], []), ['boundary-migration','bug-investigation-and-rca','decision-analysis','repo-onboarding','workflow-contracts'])
+        self.assertEqual(selection(ROOT, [], []), ['agentic-tdd','boundary-migration','bug-investigation-and-rca','decision-analysis','preflight-engineering','repo-onboarding','workflow-contracts'])
         self.assertEqual(selection(ROOT, [], ['ui-design']), ['ui-design'])
 
     def test_explicit_profiles_deduplicate(self):
@@ -209,6 +209,7 @@ Path(p['trace_path']).write_text(json.dumps({'type':'fixture-only'})+'\\n')
         solutions={
           'tiny-fix':{'app.py':'def slug(value):\n    return value.strip().lower()\n'},
           'complete-feature':{'app.py':'import sys\ntry:\n    total=sum(int(s) for s in sys.stdin if s.strip())\nexcept ValueError:\n    print("invalid integer",file=sys.stderr);sys.exit(1)\nprint(total)\n'},
+          'preflight-e2e-persistence':{'app.py':(ROOT/'tests/fixtures/preflight_e2e_solution.py').read_text(),'settings.json':'{\"store\": \"state.json\"}\n'},
           'contract-replacement':{'app.py':'def double_value(value):\n    return value*2\n','callers.py':'from app import double_value\ndef call(value):\n    return double_value(value)\n'}
         }
         for case in json.loads((ROOT/'evals/cases.json').read_text())['cases']:

@@ -213,8 +213,8 @@
     },
     {
       "old": "preflight-engineering",
-      "disposition": "retired-or-merged",
-      "destination": "repo-onboarding"
+      "disposition": "rewritten",
+      "destination": "preflight-engineering"
     },
     {
       "old": "preflight-mobile-app",
@@ -274,7 +274,7 @@
     {
       "old": "test-driven-development",
       "disposition": "retired-or-merged",
-      "destination": "working-contract"
+      "destination": "agentic-tdd"
     },
     {
       "old": "thread-safety-tooling",
