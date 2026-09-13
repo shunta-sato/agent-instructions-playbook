@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import secrets
 import sqlite3
 import threading
 
@@ -48,8 +49,16 @@ class SessionStore:
         if state['schema_version'] != 1:
             self.close()
             raise ValueError('Unsupported session schema')
+        # UI recovery keys identify the database, not its temporary port or access token.
+        if 'session_id' not in state:
+            state['session_id'] = secrets.token_hex(16)
+            state['active_turn'] = None
+            state['cancel_requested'] = False
+            with self.db:
+                self.db.execute('UPDATE session SET body=? WHERE id=1', (json.dumps(state),))
         if state['busy']:
-            self.fail_message('前回の対話は中断されました。自動再送はしていません。')
+            self.fail_message('前回の対話は中断されました。自動再送はしていません。',
+                              turn_id=state['active_turn'])
 
     def close(self):
         with self.lock:
@@ -72,11 +81,11 @@ class SessionStore:
             self.db.execute('UPDATE session SET body=? WHERE id=1', (payload,))
         return deepcopy(state)
 
-    def _check(self, revision: int) -> dict:
+    def _check(self, revision: int, *, allow_busy: bool = False) -> dict:
         state = self.read()
         if type(revision) is not int or revision != state['revision']:
             raise Conflict('別の画面または対話で内容が更新されました。最新の差分を確認してください。')
-        if state['busy']:
+        if state['busy'] and not allow_busy:
             raise Conflict('応答中です。対話が終わってから内容を確認してください。')
         return state
 
@@ -89,26 +98,43 @@ class SessionStore:
             if sum(len(m['text']) for m in state['messages']) + len(message) > 100_000:
                 raise ValueError('会話が長くなりました。内容を整理して別セッションへ引き継いでください。')
             state['messages'].append({'role': 'user', 'text': message, 'at': now()})
-            state.update(busy=True, error=None, approval=None)
+            state.update(busy=True, error=None, approval=None, proposals=[],
+                         active_turn=secrets.token_hex(16), cancel_requested=False)
             return self._write(state, 'message', 'human')
 
-    def finish_message(self, reply: dict) -> dict:
-        # This method has no approval parameter or execution callback.
+    def request_cancel(self, revision: int, turn_id: str) -> dict:
+        with self.lock:
+            state = self._check(revision, allow_busy=True)
+            if not state['busy'] or turn_id != state['active_turn']:
+                raise Conflict('停止対象の対話が変わりました。最新の状態を確認してください。')
+            if state['cancel_requested']:
+                return state
+            state.update(cancel_requested=True, approval=None, proposals=[])
+            # Busy stays true until the owned provider has finished unwinding.
+            return self._write(state, 'cancel-requested', 'human')
+
+    def finish_message(self, reply: dict, *, turn_id: str) -> dict:
         from .providers import validate_reply
         reply = validate_reply(reply)
         with self.lock:
             state = self.read()
-            if not state['busy']:
-                raise Conflict('この応答は既に中断されています。')
+            if not state['busy'] or state['active_turn'] != turn_id:
+                return state  # A late callback cannot complete a different turn.
+            if state['cancel_requested']:
+                return self.fail_message('応答を停止しました。質問を直して対話を続けられます。', turn_id=turn_id)
             state['messages'].append({'role': 'assistant', 'text': reply['reply'], 'at': now()})
             state['proposals'] = reply['proposals']
-            state.update(busy=False, error=None)
+            state.update(busy=False, error=None, active_turn=None, cancel_requested=False)
             return self._write(state, 'reply', 'assistant', {'proposals': reply['proposals']})
 
-    def fail_message(self, error: str) -> dict:
+    def fail_message(self, error: str, *, turn_id: str | None) -> dict:
         with self.lock:
             state = self.read()
-            state.update(busy=False, approval=None, error=text(error))
+            if not state['busy'] or state['active_turn'] != turn_id:
+                return state
+            state.update(busy=False, approval=None, error=text(error), active_turn=None,
+                         cancel_requested=False, proposals=[])
+            state['messages'][-1]['status'] = 'interrupted'
             return self._write(state, 'interrupted', 'system')
 
     def edit(self, revision: int, fields: dict) -> dict:
@@ -122,6 +148,7 @@ class SessionStore:
             if not changes:
                 return state
             state['draft'].update(values)
+            state['proposals'] = []
             state['approval'] = None
             return self._write(state, 'draft-edited', 'human', changes)
 

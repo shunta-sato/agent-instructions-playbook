@@ -1,0 +1,2 @@
+# Optional browser tests only. Install in a dedicated venv, never via Skill setup.
+playwright==1.57.0

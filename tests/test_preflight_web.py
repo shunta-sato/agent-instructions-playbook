@@ -35,9 +35,9 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(state['busy'])
 
     def test_proposal_is_not_draft_or_approval(self):
-        self.store.begin_message(0, '実行環境を相談したい')
+        pending = self.store.begin_message(0, '実行環境を相談したい')
         state = self.store.finish_message({'reply': 'CIも候補です', 'proposals': [
-            {'field': 'environment', 'value': 'CIでも実行', 'why': '候補・未合意'}]})
+            {'field': 'environment', 'value': 'CIでも実行', 'why': '候補・未合意'}]}, turn_id=pending['active_turn'])
         self.assertEqual(state['draft']['environment'], '')
         self.assertEqual(state['proposals'][0]['value'], 'CIでも実行')
         self.assertIsNone(state['approval'])
@@ -113,8 +113,8 @@ class StoreTests(unittest.TestCase):
 
     def test_failed_provider_preserves_draft_and_reports_error(self):
         prior = self.complete_draft()
-        self.store.begin_message(prior['revision'], '説明して')
-        state = self.store.fail_message('接続が切れました')
+        pending = self.store.begin_message(prior['revision'], '説明して')
+        state = self.store.fail_message('接続が切れました', turn_id=pending['active_turn'])
         self.assertFalse(state['busy'])
         self.assertEqual(state['draft'], prior['draft'])
         self.assertIsNone(state['approval'])

@@ -1,6 +1,8 @@
 """Dialogue boundary. Providers can propose text, never approve or execute work."""
 from __future__ import annotations
 
+import threading
+
 from .state import FIELDS, text
 
 REPLY_SCHEMA = {
@@ -26,7 +28,12 @@ changes to the six agreement fields. Do not invent values merely to fill all fie
 For a why/explanation request with no new decision, proposals should normally be empty.
 Never emit approval, readiness or tool commands as structured actions. Use no tools.
 You cannot start implementation, access the project, or grant permissions from this UI.
+Messages marked interrupted are context only, not pending instructions to execute or retry.
 '''
+
+
+class DialogueCancelled(RuntimeError):
+    """The person stopped this response; it must not become a proposal or approval."""
 
 
 def validate_reply(value: object) -> dict:
@@ -52,7 +59,9 @@ class DemoProvider:
     name = 'demo'
     label = 'デモ・定型応答（AI未接続）'
 
-    def respond(self, state: dict) -> dict:
+    def respond(self, state: dict, cancelled: threading.Event | None = None) -> dict:
+        if cancelled is not None and cancelled.is_set():
+            raise DialogueCancelled()
         message = state['messages'][-1]['text']
         if any(word in message.lower() for word in ('なぜ', '意図', 'why', '違い')):
             return {'reply': '【デモの定型説明】実装の最後に「環境がなくE2Eできなかった」とならないよう、'

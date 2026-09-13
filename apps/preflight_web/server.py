@@ -11,7 +11,7 @@ import secrets
 import threading
 from urllib.parse import parse_qs, urlsplit
 
-from .providers import DemoProvider
+from .providers import DemoProvider, DialogueCancelled
 from .state import Conflict, SessionStore
 
 STATIC = Path(__file__).parent / 'static'
@@ -22,26 +22,47 @@ MAX_BODY = 65536
 
 class ConsoleServer(ThreadingHTTPServer):
     daemon_threads = True
-    allow_reuse_address = False
+    allow_reuse_address = True
 
     def __init__(self, store, provider, port=8765, token=None):
         self.store, self.provider = store, provider
         self.token = token or secrets.token_urlsafe(32)
         self.worker = None
+        self.cancelled = threading.Event()
+        self.turn_lock = threading.Lock()
         super().__init__(('127.0.0.1', port), Handler)
         self.origin = f'http://127.0.0.1:{self.server_port}'
 
-    def reply(self, state):
+    def begin_message(self, revision, message):
+        with self.turn_lock:
+            if self.worker and self.worker.is_alive():
+                raise Conflict('前の応答を終了しています。状態更新後に送信してください。')
+            state = self.store.begin_message(revision, message)
+            self.cancelled = threading.Event()
+            self.worker = threading.Thread(target=self.reply, args=(state, self.cancelled), daemon=True)
+            self.worker.start()
+
+    def cancel_message(self, revision, turn_id):
+        with self.turn_lock:
+            self.store.request_cancel(revision, turn_id)
+            self.cancelled.set()
+
+    def reply(self, state, cancelled):
+        turn_id = state['active_turn']
         try:
-            self.store.finish_message(self.provider.respond(state))
+            response = self.provider.respond(state, cancelled)
+            self.store.finish_message(response, turn_id=turn_id)
+        except DialogueCancelled:
+            self.store.fail_message('応答を停止しました。質問を直して対話を続けられます。', turn_id=turn_id)
         except Exception:
-            # Keep provider transport errors and credentials out of HTTP responses.
-            self.store.fail_message('対話接続に失敗または中断しました。自動再送・自動承認はしていません。接続設定を確認してください。')
+            self.store.fail_message('対話接続に失敗または中断しました。自動再送・自動承認はしていません。接続設定を確認してください。',
+                                    turn_id=turn_id)
 
     def server_close(self):
-        self.provider.close()
+        self.cancelled.set()
         if self.worker:
-            self.worker.join(timeout=5)
+            self.worker.join(timeout=8)
+        self.provider.close()
         super().server_close()
 
 
@@ -115,27 +136,31 @@ class Handler(BaseHTTPRequestHandler):
         if not self.guard():
             return
         if self.headers.get('Transfer-Encoding'):
-            self.send(400, {'error': 'Transfer-Encoding is unsupported'}); return
+            self.send(400, {'error': 'Transfer-Encoding is unsupported'})
+            return
         if self.headers.get('Content-Type', '').split(';')[0] != 'application/json':
-            self.send(415, {'error': 'JSONのみ受理します。'}); return
+            self.send(415, {'error': 'JSONのみ受理します。'})
+            return
         try:
             length = int(self.headers.get('Content-Length', '0'))
             if not 0 < length <= MAX_BODY:
-                self.send(413, {'error': '入力サイズが範囲外です。'}); return
+                self.send(413, {'error': '入力サイズが範囲外です。'})
+                return
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
                 raise ValueError('JSON object required')
             path = urlsplit(self.path).path
             if path == '/api/messages':
-                state = self.server.store.begin_message(data.get('revision'), data.get('text'))
-                self.server.worker = threading.Thread(target=self.server.reply, args=(state,), daemon=True)
-                self.server.worker.start()
+                self.server.begin_message(data.get('revision'), data.get('text'))
+            elif path == '/api/cancel':
+                self.server.cancel_message(data.get('revision'), data.get('turn_id'))
             elif path == '/api/draft':
                 self.server.store.edit(data.get('revision'), data.get('fields'))
             elif path == '/api/approve':
                 self.server.store.approve(data.get('revision'), data.get('reviewed'))
             else:
-                self.send(404, {'error': 'その操作はありません。'}); return
+                self.send(404, {'error': 'その操作はありません。'})
+                return
             self.send(200, self.state())
         except Conflict as exc:
             self.send(409, {'error': str(exc)})
@@ -160,7 +185,6 @@ def main():
         parser.error('state-dir must not be a symlink')
     args.state_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     os.chmod(args.state_dir, 0o700)
-    # POSIX-only MVP: refuse simultaneous servers on the same session database.
     import fcntl
     lock = (args.state_dir / 'server.lock').open('a')
     try:
