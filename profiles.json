@@ -46,6 +46,10 @@
     ],
     "quality": [
       "code-health"
+    ],
+    "maintenance": [
+      "code-health",
+      "codebase-rehabilitation"
     ]
   }
 }

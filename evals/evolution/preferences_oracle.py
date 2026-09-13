@@ -9,6 +9,10 @@ import sys
 import tempfile
 
 
+if not __debug__:
+    raise RuntimeError("The acceptance oracle requires enabled assertions")
+
+
 def verify(root: Path, stage: str) -> None:
     if stage not in {"cli", "batch", "normalize", "rehabilitate", "rehab-normalize"}:
         raise ValueError("Unknown stage")
