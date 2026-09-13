@@ -47,6 +47,7 @@ Do **not** copy this repository's contributor `AGENTS.md` into a consumer projec
 | mobile | mobile-platform, mobile-verification, mobile-release, concurrency-verification |
 | ui | ui-design, ui-verification |
 | authoring | playbook-authoring, lessons-learned, japanese-tech-writing |
+| quality | code-health |
 
 Profiles make Skills available; they are not execution sequences. Descriptions are selection
 boundaries. References and scripts are used only for the decision they address. The UI profile
@@ -94,6 +95,26 @@ sequencing dependencies: unresolved material agreement or unavailable required v
 must not be ignored while dependent implementation accumulates. Informative debugging
 continues within authority; uninformative repetition changes approach.
 
+## Code health and continued change
+
+The common contract gives the supervisor responsibility for integrated design, not just
+worker reports and green tests. For ongoing development, install the optional specialist:
+
+```sh
+./setup.sh /path/to/project --profile core --profile quality
+```
+
+`code-health` covers shared rule ownership, justified compatibility/abstraction, useful
+comments, related restructuring and evidence-backed findings. It is not another mandatory
+router or a universal LOC/complexity score. The short contract applies even without the Skill;
+installation does not update a consumer AGENTS.md automatically.
+
+`evals/evolution/README.md` describes executable continued-change trials: CLI persistence,
+a second entrypoint, then a changed shared rule with a fresh conversation and retained code.
+Use `python3 -m scripts.run_evolution_evals --help` for the explicit sandboxed adapter contract.
+Model/team identities and checkpoint evidence are recorded, but live Astra/Fable/worker-team
+trials have not run. Functional passes require separate design/maintenance trace review.
+
 ## Breaking migration
 
 Retired Skill names, aggregate links, `--overlay`, indexes and model-routing configs remain
@@ -101,7 +122,7 @@ retired without aliases or fallbacks. `bug-investigation-and-rca` and `preflight
 are intentionally rewritten in place; `test-driven-development` maps to `agentic-tdd`.
 Their former fixed workflows and report obligations are not restored. Inspect and explicitly
 remove/relocate old playbook-owned links before installing; ownership is never guessed.
-`docs/skill-disposition.json` accounts for all 67 old entrypoints. The 24 current entrypoints
+`docs/skill-disposition.json` accounts for all 67 old entrypoints. The 25 current entrypoints
 are a design choice, not a measured optimal number.
 
 Old plans/reports/experiments and run evidence remain historical, not active guidance.

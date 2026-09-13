@@ -51,3 +51,18 @@ Changes to Skill names, installer behavior or evidence contracts need matching t
 current docs. Old plans/reports/runs are historical, not active instructions. Retain regression
 cases before adding general prose. Report outcome, actual checks, material limits and any
 instruction responsible for an unexpected stop. Do not weaken test expectations to pass.
+
+## Retained design and delegated work
+
+Find the existing rule/state owner before adding another implementation. Necessary internal
+restructuring belongs to the requested change; neither minimal diff nor a mandatory refactor
+pass is the goal. Retain wrappers, compatibility, fallback and configuration only for a real
+consumer or constraint. Preserve useful rationale, invariants and error behavior, not narrative
+comments. Similar syntax is not necessarily the same policy; do not force harmful abstractions.
+The supervisor owns the integrated design and challenges its own plan: delegate shared meaning
+and change authority, then inspect actual code/callers/tests rather than trusting summaries.
+Use `code-health` for consequential ownership/complexity questions when available. Resolve
+concrete change burdens within scope; do not optimize LOC, invent numeric design scores or
+start unrelated polish. Representative follow-up changes can test maintainability in disposable
+workspaces; they are not future features to ship or a mandatory drill for every edit.
+

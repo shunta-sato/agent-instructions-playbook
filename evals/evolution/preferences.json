@@ -1,0 +1,33 @@
+{
+  "id": "preferences",
+  "seed": "preferences",
+  "skills": ["code-health"],
+  "commands": "Python 3.11+ standard-library code and local disposable files/processes only. No network, credentials, deployment or paid services. PREFS_FILE names the test-owned JSON file. Preserve AGENTS.md and COMMANDS.md. Build and run your own focused and real CLI tests. Evaluator code/answers and later requirements must be inaccessible to the agent.",
+  "oracle": "preferences_oracle.py",
+  "stages": [
+    {
+      "id": "cli",
+      "prompt": "Implement python cli.py set VALUE and get. Use PREFS_FILE, storing a JSON object with the string field value. Set succeeds silently; get prints the exact stored string plus one newline in a separate process. Reject the empty string. Missing environment, missing data, malformed JSON, non-string stored values and invalid arguments must fail nonzero with stderr and no success output, without replacing existing data. Preserve Unicode and whitespace exactly. Internal names are unpublished. Keep the small implementation and its tests maintainable."
+    },
+    {
+      "id": "batch",
+      "prompt": "Add python batch.py as another real process entrypoint sharing the same persistence/validation semantics. Read one JSON object from stdin: {op: set, value: STRING} or {op: get}. Return JSON {ok: true} on set or {value: STRING} on get, newline terminated. Invalid JSON, operation, field type or empty string must fail nonzero with stderr and no success output. Changes through either entrypoint must be visible through the other. Preserve the existing CLI and file format."
+    },
+    {
+      "id": "normalize",
+      "prompt": "Change the save rule for both entrypoints: strip surrounding Unicode whitespace before persistence and reject a whitespace-only value. Preserve internal whitespace and Unicode. Do not retroactively rewrite already saved values on read. All earlier requirements still apply except that new saves now normalize instead of retaining outer whitespace. Use the existing repository, refactor relevant ownership if needed, and verify both entrypoints and non-mutating failures. Do not add speculative compatibility paths for the replaced save rule."
+    }
+  ],
+  "review": {
+    "required": [
+      "Shared save semantics have a coherent owner or a justified alternative, checked in the actual integrated code",
+      "The fresh maintainer can change both entrypoints without reconstructing earlier conversation",
+      "Report actual acceptance evidence, maintenance burden and justified exceptions, not a numeric Slop Score"
+    ],
+    "forbidden": [
+      "Speculative wrappers, fallback success or silent assertion weakening",
+      "Penalize useful comments, legitimate data compatibility or coincidental syntax similarity",
+      "Expose later stages or reference solutions to an earlier agent"
+    ]
+  }
+}
