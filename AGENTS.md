@@ -1,8 +1,9 @@
 # Playbook contributor contract
 
-This repository supplies specialist skills and a reusable working contract, not an
-application runtime. Consumer instructions are in `templates/AGENTS.md`; do not copy this
-contributor file into another project. Ordinary small changes may use no Skill.
+This repository supplies specialist skills, a reusable working contract, and optional
+apps such as the local Preflight Console. Consumer instructions are in
+`templates/AGENTS.md`; do not copy this contributor file into another project. Ordinary
+small changes may use no Skill. Apps are not installed or started by Skill setup.
 
 Deliver the requested outcome and required verification, not a prescribed Skill sequence.
 Before substantial dependent implementation, reuse known context and briefly align the
@@ -51,3 +52,9 @@ Changes to Skill names, installer behavior or evidence contracts need matching t
 current docs. Old plans/reports/runs are historical, not active instructions. Retain regression
 cases before adding general prose. Report outcome, actual checks, material limits and any
 instruction responsible for an unexpected stop. Do not weaken test expectations to pass.
+
+For `apps/preflight_web`, use its README for the separate real-browser E2E and live
+connection requirements. HTTP tests, offline UI fixtures and Codex wire-protocol fixtures
+are distinct evidence; none substitutes for a blocked browser E2E or an unrun live model.
+Content confirmation is not execution permission. Do not add an execution endpoint or
+forward CLI approvals without an explicitly agreed executor/authority contract.
