@@ -48,6 +48,7 @@ Do **not** copy this repository's contributor `AGENTS.md` into a consumer projec
 | ui | ui-design, ui-verification |
 | authoring | playbook-authoring, lessons-learned, japanese-tech-writing |
 | quality | code-health |
+| maintenance | code-health, codebase-rehabilitation |
 
 Profiles make Skills available; they are not execution sequences. Descriptions are selection
 boundaries. References and scripts are used only for the decision they address. The UI profile
@@ -115,6 +116,24 @@ Use `python3 -m scripts.run_evolution_evals --help` for the explicit sandboxed a
 Model/team identities and checkpoint evidence are recorded, but live Astra/Fable/worker-team
 trials have not run. Functional passes require separate design/maintenance trace review.
 
+## Rehabilitate an already degraded repository
+
+```sh
+./setup.sh /path/to/project --profile core --profile maintenance
+```
+
+Then request `codebase-rehabilitation` for a named subsystem and painful maintenance task.
+Agree on preserved/retired/fixed/unknown behavior, establish characterization and the real
+verification path, refactor coherent ownership, and prove the final behavior plus a relevant
+follow-up change. No universal rewrite, LOC target or forced compatibility removal.
+
+The Skill bundles an optional read-only, tracked-Python inspection tool with explicit paths,
+source hashes and clone/branch-statement diagnostics. It never imports project code or
+performs repairs, and incomplete analysis cannot be called clean. Other languages use the
+project's existing analyzers. See `docs/codebase-rehabilitation.md` for invocation and limits.
+`evals/evolution/rehabilitation.json` exercises a degraded fixture, a bounded repair, and a
+fresh-maintainer rule change while preserving a real external compatibility boundary.
+
 ## Breaking migration
 
 Retired Skill names, aggregate links, `--overlay`, indexes and model-routing configs remain
@@ -122,7 +141,7 @@ retired without aliases or fallbacks. `bug-investigation-and-rca` and `preflight
 are intentionally rewritten in place; `test-driven-development` maps to `agentic-tdd`.
 Their former fixed workflows and report obligations are not restored. Inspect and explicitly
 remove/relocate old playbook-owned links before installing; ownership is never guessed.
-`docs/skill-disposition.json` accounts for all 67 old entrypoints. The 25 current entrypoints
+`docs/skill-disposition.json` accounts for all 67 old entrypoints. The 26 current entrypoints
 are a design choice, not a measured optimal number.
 
 Old plans/reports/experiments and run evidence remain historical, not active guidance.

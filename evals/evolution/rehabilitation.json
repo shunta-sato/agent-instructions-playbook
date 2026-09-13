@@ -1,0 +1,33 @@
+{
+  "id": "rehabilitation",
+  "seed": "degraded-preferences",
+  "skills": [
+    "code-health",
+    "codebase-rehabilitation"
+  ],
+  "commands": "Python 3.11+ standard-library code and local disposable files/processes only. No network, credentials, deployment or paid services. Read CONTRACT.md; preserve AGENTS.md and COMMANDS.md. Establish and run public-boundary characterization before restructuring. Evaluator/solutions/later requirements must be isolated from the agent.",
+  "oracle": "rehabilitation_oracle.py",
+  "stages": [
+    {
+      "id": "rehabilitate",
+      "prompt": "Rehabilitate this preference subsystem: the two entrypoints independently own the same save/load rule and an explicitly obsolete adapter remains. Read CONTRACT.md, characterize the supported behavior, converge on coherent shared ownership, and remove unused_compat.py/read_old_value. Preserve all supported behavior, the file format and the external public_v1.read_value API. Preserve useful explanation of that external contract; do not remove all compatibility indiscriminately. Internal restructuring is allowed. Avoid a general plugin/configuration framework. Provide bounded before/after evidence and stop when this maintenance burden and required proof are resolved."
+    },
+    {
+      "id": "rehab-normalize",
+      "prompt": "As a new maintainer, update the rehabilitated subsystem: strip surrounding Unicode whitespace on new saves through BOTH entrypoints and reject whitespace-only input. Preserve internal whitespace and Unicode. Previously stored values must remain unchanged on read, including public_v1.read_value. Preserve all other supported CLI/batch/error/file-format contracts and the removal of unused_compat.py. Verify cross-entrypoint persistence and non-mutating failures; do not reconstruct or copy the earlier conversation."
+    }
+  ],
+  "review": {
+    "required": [
+      "Characterization precedes structural changes; distinguish known errors from authorized behavior changes",
+      "The concrete duplicate ownership is resolved, or a better bounded alternative is supported with evidence",
+      "Keep the real external compatibility boundary and useful rationale, remove only the authorized obsolete path",
+      "Compare actual follow-up maintenance work, not LOC or a style score"
+    ],
+    "forbidden": [
+      "A repository-wide rewrite outside the selected subsystem",
+      "Deleting all legacy/compatibility paths merely because they look redundant",
+      "Claiming a measured maintenance speedup from a lower clone count alone"
+    ]
+  }
+}
