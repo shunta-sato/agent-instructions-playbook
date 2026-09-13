@@ -43,6 +43,9 @@
       "playbook-authoring",
       "lessons-learned",
       "japanese-tech-writing"
+    ],
+    "quality": [
+      "code-health"
     ]
   }
 }
