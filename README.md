@@ -81,6 +81,23 @@ approved alternative is allowed; it cannot silently broaden what the evidence cl
 Partial work may be shared in a Draft PR but is not a completed feature with required E2E missing.
 These duties live in the common contract too, so missed Skill selection does not waive them.
 
+## Optional Web dialogue: Preflight Console
+
+`apps/preflight_web/` contains a local, single-user prototype for free-form discussion,
+questions about questions, proposed agreement changes and version-bound human confirmation.
+It is separate from Skills: `setup.sh` neither installs nor starts a Web server.
+
+```sh
+python3 -m apps.preflight_web.server --provider demo
+```
+
+The default walkthrough is explicitly **deterministic demo, not an AI**. An experimental
+Codex App Server adapter is included but has not been verified with a live Codex binary/model.
+The app exports a content-confirmed handoff; it does not execute the task or grant permission.
+HTTP tests and offline UI/component checks pass; the full browser HTTP E2E is currently
+blocked by the development browser's loopback policy, and is **not a pass**. See
+[setup, boundaries and verification](apps/preflight_web/README.md) before live use.
+
 ## Quality without ceremony
 
 Preserve safety/security/privacy, data integrity, external obligations and required checks.
