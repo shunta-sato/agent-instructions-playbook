@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
 </head>
 <body>
-  <header class="topbar"><div class="brand"><span class="mark" aria-hidden="true">P</span><div>Preflight Console<small>AGENT INSTRUCTIONS PLAYBOOK</small></div></div><span id="provider" class="badge">接続を確認中</span></header>
+  <header class="topbar"><div class="brand"><span class="mark" aria-hidden="true">P</span><div>Preflight Console<small>AGENT INSTRUCTIONS PLAYBOOK</small></div></div><div><span id="connection" class="badge" role="status">接続を確認中</span><span id="provider" class="badge">接続を確認中</span></div></header>
   <main>
     <section class="intro"><div><span class="eyebrow">DISCUSS BEFORE YOU DECIDE</span><h1>まず、同じ理解をつくる。</h1><p>選ぶ前に、聞き返す。前提を直す。合意できた範囲だけを次の作業へ。</p></div><div class="scope-note"><strong>ローカル・単一ユーザー版</strong><span>この画面に実行機能はありません</span></div></section>
     <p id="notice" class="notice" role="status" aria-live="polite"></p>
@@ -14,7 +14,8 @@
       <section class="panel dialogue" aria-label="対話">
         <div class="panel-header"><h2>対話</h2><span class="muted">回答しなくても、質問できます</span></div>
         <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
-        <div id="thinking" class="thinking" hidden>応答を待っています。合意・実行許可は変更しません。</div>
+        <div id="thinking" class="thinking" hidden>応答を待っています。</div>
+        <div class="suggestions"><button id="cancel-response" type="button" hidden>応答を止めて相談に戻る</button></div>
         <div class="suggestions"><button type="button" data-prompt="なぜこの質問が必要？">なぜ必要？</button><button type="button" data-prompt="その前提が違います。">前提を訂正する</button><button type="button" data-prompt="選択肢の違いと推奨理由を説明してください。">選択肢を相談する</button></div>
         <form id="chat-form" class="composer"><label for="message" class="sr-only">メッセージ</label><textarea id="message" rows="3" maxlength="8000" placeholder="希望、質問、前提の訂正を自由に。秘密情報は入力しないでください。" required></textarea><div class="composer-bottom"><span>Enterで改行 · Ctrl / ⌘ + Enterで送信</span><button id="send" class="primary" type="submit">送信</button></div></form>
       </section>
@@ -23,6 +24,7 @@
         <p class="panel-description">AIの提案は自動で反映されません。内容を編集し、確認した版だけを確定します。</p>
         <div id="proposals" class="proposals" aria-live="polite"></div>
         <form id="draft-form"><div id="fields" class="fields"></div><button type="submit" class="secondary">合意案を保存</button><span id="dirty-note" class="muted"></span></form>
+        <div id="conflict" class="notice" hidden><p>保存済みの案が更新されました。未保存の入力は保持しています。</p><div class="actions"><button id="resolve" type="button">最新との差分を確認</button><button id="discard" type="button">未保存の編集を破棄</button></div></div>
         <div class="readiness"><span id="readiness">環境・E2E：未検証</span><small>合意の確定と、動作検証の成功は別です。</small></div>
         <div class="actions"><button id="confirm" class="primary" type="button">内容を確認して確定</button><button id="export" class="secondary" type="button" disabled>引き継ぎJSON</button></div>
         <details class="history"><summary>変更・確認の履歴 <span id="revision"></span></summary><div id="history"></div></details>
@@ -30,6 +32,7 @@
     </section>
     <footer>Playbookは「何を合意するか」。Consoleは「どう対話するか」。実行環境の権限は変更しません。</footer>
   </main>
+  <dialog id="merge-dialog"><h2>未保存の変更と最新の案を比較</h2><p>変更した項目だけを最新の案へ重ねます。同じ項目の他の編集を置き換える場合は、下の差分を確認してください。この操作は内容の確定ではありません。</p><pre id="merge-snapshot"></pre><div class="actions"><button id="merge-back" class="secondary" type="button">編集に戻る</button><button id="merge-save" class="primary" type="button">表示した差分を保存</button></div></dialog>
   <dialog id="confirm-dialog"><h2>この版の内容を確認します</h2><p>下の内容を「理解した条件」として記録します。作業開始、本番接続、費用発生、権限変更の許可にはなりません。</p><pre id="confirm-snapshot"></pre><label class="review-check"><input id="reviewed" type="checkbox">これは内容の確認であり、実行許可ではないことを理解しました</label><div class="actions"><button id="back" class="secondary" type="button">相談に戻る</button><button id="approve" class="primary" type="button">この版を確定</button></div></dialog>
 </body>
 </html>
